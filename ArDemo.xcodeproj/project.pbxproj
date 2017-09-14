@@ -1,0 +1,695 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0401E04B1F612C240075D823 /* BarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0401E04A1F612C240075D823 /* BarView.xib */; };
+		0401E04E1F612D910075D823 /* BarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0401E04D1F612D910075D823 /* BarView.m */; };
+		0401E0521F62E6150075D823 /* Animator.m in Sources */ = {isa = PBXBuildFile; fileRef = 0401E0511F62E6150075D823 /* Animator.m */; };
+		041503C61F28944F00887400 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 041503C51F28944F00887400 /* AppDelegate.m */; };
+		041503D21F28944F00887400 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D01F28944F00887400 /* Main.storyboard */; };
+		041503D71F28944F00887400 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D51F28944F00887400 /* LaunchScreen.storyboard */; };
+		041503DA1F28944F00887400 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 041503D91F28944F00887400 /* main.m */; };
+		0449DE071F4D7F000057F639 /* MessageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0449DE061F4D7F000057F639 /* MessageController.m */; };
+		045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */; };
+		045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */; };
+		045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2EA21F28EE6C0005FF96 /* TouchView.m */; };
+		04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */; };
+		04A806771F3D9ED900B8732C /* PlaneNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806761F3D9ED900B8732C /* PlaneNode.m */; };
+		04A8067A1F3DCAA200B8732C /* AnchorNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806791F3DCAA200B8732C /* AnchorNode.m */; };
+		04A815681F419EB60082D31D /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A815671F419EB60082D31D /* Models.scnassets */; };
+		04A8156A1F419F840082D31D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 041503D31F28944F00887400 /* Assets.xcassets */; };
+		04A8156D1F41BA660082D31D /* HitAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A8156C1F41BA660082D31D /* HitAnchor.m */; };
+		04A815791F42DA990082D31D /* FocusNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A815781F42DA990082D31D /* FocusNode.m */; };
+		04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A82BEE1F58566100F64A5D /* HitTestResult.m */; };
+		04A93D3A1F63CC8D002928CA /* SCNNode+Show.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A93D391F63CC8D002928CA /* SCNNode+Show.m */; };
+		04A983781F32291100120CF8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983751F32277E00120CF8 /* ViewController.m */; };
+		04A983791F32291900120CF8 /* RecordController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983711F32271B00120CF8 /* RecordController.m */; };
+		04A9837A1F32291D00120CF8 /* ARKController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983651F32268900120CF8 /* ARKController.m */; };
+		04A9837B1F32292200120CF8 /* Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983671F3226A500120CF8 /* Renderer.m */; };
+		04A9837C1F32292900120CF8 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836A1F3226A500120CF8 /* Shaders.metal */; };
+		04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836B1F3226BC00120CF8 /* LocationManager.m */; };
+		04A9837E1F32293100120CF8 /* WebController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836D1F3226E000120CF8 /* WebController.m */; };
+		04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1241F3C64A100F96C5A /* ARKMetalController.m */; };
+		04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1281F3C64DF00F96C5A /* ARKSceneKitController.m */; };
+		04F309501F690D8900FF3C13 /* WebXR.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F3094F1F690D8900FF3C13 /* WebXR.m */; };
+		04F309531F690E2B00FF3C13 /* WXRConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F309521F690E2B00FF3C13 /* WXRConfiguration.m */; };
+		04F309561F69129D00FF3C13 /* WXRView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F309551F69129D00FF3C13 /* WXRView.m */; };
+		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
+		A8AFA84387C4A5B97A8E5814 /* Pods_ArDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7ED42568C04611107BF5582D /* Pods_ArDemo.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0401E04A1F612C240075D823 /* BarView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BarView.xib; sourceTree = "<group>"; };
+		0401E04C1F612D910075D823 /* BarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarView.h; sourceTree = "<group>"; };
+		0401E04D1F612D910075D823 /* BarView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BarView.m; sourceTree = "<group>"; };
+		0401E0501F62E6150075D823 /* Animator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Animator.h; sourceTree = "<group>"; };
+		0401E0511F62E6150075D823 /* Animator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Animator.m; sourceTree = "<group>"; };
+		041503C11F28944F00887400 /* ArDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		041503C41F28944F00887400 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		041503C51F28944F00887400 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		041503D11F28944F00887400 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		041503D31F28944F00887400 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		041503D61F28944F00887400 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		041503D81F28944F00887400 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		041503D91F28944F00887400 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		0449DE051F4D7F000057F639 /* MessageController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageController.h; sourceTree = "<group>"; };
+		0449DE061F4D7F000057F639 /* MessageController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessageController.m; sourceTree = "<group>"; };
+		045B2E9B1F28E8A30005FF96 /* UIOverlayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIOverlayController.h; sourceTree = "<group>"; };
+		045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UIOverlayController.m; sourceTree = "<group>"; };
+		045B2E9E1F28EE4B0005FF96 /* OverlayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayViewController.h; sourceTree = "<group>"; };
+		045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OverlayViewController.m; sourceTree = "<group>"; };
+		045B2EA11F28EE6C0005FF96 /* TouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TouchView.h; sourceTree = "<group>"; };
+		045B2EA21F28EE6C0005FF96 /* TouchView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TouchView.m; sourceTree = "<group>"; };
+		045B2EA81F2A02710005FF96 /* OverlayHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayHeader.h; sourceTree = "<group>"; };
+		04A712C21F46EF48005D91E2 /* ARSCNView+HitTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ARSCNView+HitTest.h"; sourceTree = "<group>"; };
+		04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ARSCNView+HitTest.m"; sourceTree = "<group>"; };
+		04A806751F3D9ED900B8732C /* PlaneNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaneNode.h; sourceTree = "<group>"; };
+		04A806761F3D9ED900B8732C /* PlaneNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaneNode.m; sourceTree = "<group>"; };
+		04A806781F3DCAA200B8732C /* AnchorNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnchorNode.h; sourceTree = "<group>"; };
+		04A806791F3DCAA200B8732C /* AnchorNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnchorNode.m; sourceTree = "<group>"; };
+		04A815671F419EB60082D31D /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
+		04A8156B1F41BA660082D31D /* HitAnchor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HitAnchor.h; sourceTree = "<group>"; };
+		04A8156C1F41BA660082D31D /* HitAnchor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HitAnchor.m; sourceTree = "<group>"; };
+		04A815771F42DA990082D31D /* FocusNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FocusNode.h; sourceTree = "<group>"; };
+		04A815781F42DA990082D31D /* FocusNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FocusNode.m; sourceTree = "<group>"; };
+		04A82BED1F58566000F64A5D /* HitTestResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HitTestResult.h; path = ArDemo/ARKController/HitTestResult.h; sourceTree = SOURCE_ROOT; };
+		04A82BEE1F58566100F64A5D /* HitTestResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HitTestResult.m; path = ArDemo/ARKController/HitTestResult.m; sourceTree = SOURCE_ROOT; };
+		04A93D381F63CC8D002928CA /* SCNNode+Show.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SCNNode+Show.h"; sourceTree = "<group>"; };
+		04A93D391F63CC8D002928CA /* SCNNode+Show.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SCNNode+Show.m"; sourceTree = "<group>"; };
+		04A983651F32268900120CF8 /* ARKController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKController.m; sourceTree = "<group>"; };
+		04A983661F32268900120CF8 /* ARKController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKController.h; sourceTree = "<group>"; };
+		04A983671F3226A500120CF8 /* Renderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Renderer.m; sourceTree = "<group>"; };
+		04A983681F3226A500120CF8 /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
+		04A983691F3226A500120CF8 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
+		04A9836A1F3226A500120CF8 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		04A9836B1F3226BC00120CF8 /* LocationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
+		04A9836C1F3226BC00120CF8 /* LocationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
+		04A9836D1F3226E000120CF8 /* WebController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebController.m; sourceTree = "<group>"; };
+		04A9836E1F3226E000120CF8 /* WebController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebController.h; sourceTree = "<group>"; };
+		04A9836F1F3226E000120CF8 /* WebARKHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebARKHeader.h; sourceTree = "<group>"; };
+		04A983711F32271B00120CF8 /* RecordController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordController.m; sourceTree = "<group>"; };
+		04A983721F32271B00120CF8 /* RecordController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordController.h; sourceTree = "<group>"; };
+		04A983741F32277E00120CF8 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		04A983751F32277E00120CF8 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		04B1E1231F3C64A100F96C5A /* ARKMetalController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKMetalController.h; sourceTree = "<group>"; };
+		04B1E1241F3C64A100F96C5A /* ARKMetalController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKMetalController.m; sourceTree = "<group>"; };
+		04B1E1271F3C64DF00F96C5A /* ARKSceneKitController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKSceneKitController.h; sourceTree = "<group>"; };
+		04B1E1281F3C64DF00F96C5A /* ARKSceneKitController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKSceneKitController.m; sourceTree = "<group>"; };
+		04B1E12A1F3C660300F96C5A /* ARKControllerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKControllerProtocol.h; sourceTree = "<group>"; };
+		04BB9D641F39BE40004328A2 /* ARKHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKHelper.h; sourceTree = "<group>"; };
+		04C296D31F331FC700D6909D /* Prefix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.h; sourceTree = "<group>"; };
+		04F3094E1F690D8900FF3C13 /* WebXR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebXR.h; sourceTree = "<group>"; };
+		04F3094F1F690D8900FF3C13 /* WebXR.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebXR.m; sourceTree = "<group>"; };
+		04F309511F690E2B00FF3C13 /* WXRConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WXRConfiguration.h; sourceTree = "<group>"; };
+		04F309521F690E2B00FF3C13 /* WXRConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WXRConfiguration.m; sourceTree = "<group>"; };
+		04F309541F69129D00FF3C13 /* WXRView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WXRView.h; sourceTree = "<group>"; };
+		04F309551F69129D00FF3C13 /* WXRView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WXRView.m; sourceTree = "<group>"; };
+		3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		7ED42568C04611107BF5582D /* Pods_ArDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ArDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		041503BE1F28944F00887400 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A8AFA84387C4A5B97A8E5814 /* Pods_ArDemo.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0401E04F1F62E5E70075D823 /* Animator */ = {
+			isa = PBXGroup;
+			children = (
+				0401E0501F62E6150075D823 /* Animator.h */,
+				0401E0511F62E6150075D823 /* Animator.m */,
+			);
+			path = Animator;
+			sourceTree = "<group>";
+		};
+		041503B81F28944F00887400 = {
+			isa = PBXGroup;
+			children = (
+				041503C31F28944F00887400 /* ArDemo */,
+				041503C21F28944F00887400 /* Products */,
+				7D7C33BA317D85DB2BCA41A4 /* Pods */,
+				9EE6424F03FF3C89B7FDD2EB /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		041503C21F28944F00887400 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				041503C11F28944F00887400 /* ArDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		041503C31F28944F00887400 /* ArDemo */ = {
+			isa = PBXGroup;
+			children = (
+				04F3094D1F690C9700FF3C13 /* WebXR */,
+				04A983771F32280000120CF8 /* AppDelegate */,
+				04A983731F32276600120CF8 /* ViewController */,
+				04A983631F32216800120CF8 /* ARKController */,
+				04A983611F32213800120CF8 /* WebController */,
+				0449DE041F4D7EEA0057F639 /* MessageController */,
+				04A983701F3226FD00120CF8 /* RecordController */,
+				04A983621F32215300120CF8 /* LocationManager */,
+				045B2EA41F28EE790005FF96 /* Overlay */,
+				A6160A081F651AF2009F4402 /* Reachability */,
+				0401E04F1F62E5E70075D823 /* Animator */,
+				04A983761F32279900120CF8 /* Resources */,
+			);
+			path = ArDemo;
+			sourceTree = "<group>";
+		};
+		0449DE041F4D7EEA0057F639 /* MessageController */ = {
+			isa = PBXGroup;
+			children = (
+				0449DE051F4D7F000057F639 /* MessageController.h */,
+				0449DE061F4D7F000057F639 /* MessageController.m */,
+			);
+			path = MessageController;
+			sourceTree = "<group>";
+		};
+		045B2EA41F28EE790005FF96 /* Overlay */ = {
+			isa = PBXGroup;
+			children = (
+				045B2EA81F2A02710005FF96 /* OverlayHeader.h */,
+				045B2E9B1F28E8A30005FF96 /* UIOverlayController.h */,
+				045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */,
+				045B2E9E1F28EE4B0005FF96 /* OverlayViewController.h */,
+				045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */,
+				045B2EA11F28EE6C0005FF96 /* TouchView.h */,
+				045B2EA21F28EE6C0005FF96 /* TouchView.m */,
+			);
+			path = Overlay;
+			sourceTree = "<group>";
+		};
+		04A983611F32213800120CF8 /* WebController */ = {
+			isa = PBXGroup;
+			children = (
+				04A9836F1F3226E000120CF8 /* WebARKHeader.h */,
+				04A9836E1F3226E000120CF8 /* WebController.h */,
+				04A9836D1F3226E000120CF8 /* WebController.m */,
+				0401E04C1F612D910075D823 /* BarView.h */,
+				0401E04D1F612D910075D823 /* BarView.m */,
+				0401E04A1F612C240075D823 /* BarView.xib */,
+			);
+			path = WebController;
+			sourceTree = "<group>";
+		};
+		04A983621F32215300120CF8 /* LocationManager */ = {
+			isa = PBXGroup;
+			children = (
+				04A9836C1F3226BC00120CF8 /* LocationManager.h */,
+				04A9836B1F3226BC00120CF8 /* LocationManager.m */,
+			);
+			path = LocationManager;
+			sourceTree = "<group>";
+		};
+		04A983631F32216800120CF8 /* ARKController */ = {
+			isa = PBXGroup;
+			children = (
+				04BB9D641F39BE40004328A2 /* ARKHelper.h */,
+				04A983661F32268900120CF8 /* ARKController.h */,
+				04A983651F32268900120CF8 /* ARKController.m */,
+				04B1E12A1F3C660300F96C5A /* ARKControllerProtocol.h */,
+				04A8156B1F41BA660082D31D /* HitAnchor.h */,
+				04A8156C1F41BA660082D31D /* HitAnchor.m */,
+				04A82BED1F58566000F64A5D /* HitTestResult.h */,
+				04A82BEE1F58566100F64A5D /* HitTestResult.m */,
+				04B1E1261F3C64C100F96C5A /* SceneKit */,
+				04B1E1221F3C648200F96C5A /* Metal */,
+			);
+			path = ARKController;
+			sourceTree = "<group>";
+		};
+		04A983641F32262200120CF8 /* Render */ = {
+			isa = PBXGroup;
+			children = (
+				04A983691F3226A500120CF8 /* Renderer.h */,
+				04A983671F3226A500120CF8 /* Renderer.m */,
+				04A9836A1F3226A500120CF8 /* Shaders.metal */,
+				04A983681F3226A500120CF8 /* ShaderTypes.h */,
+			);
+			path = Render;
+			sourceTree = "<group>";
+		};
+		04A983701F3226FD00120CF8 /* RecordController */ = {
+			isa = PBXGroup;
+			children = (
+				04A983721F32271B00120CF8 /* RecordController.h */,
+				04A983711F32271B00120CF8 /* RecordController.m */,
+			);
+			path = RecordController;
+			sourceTree = "<group>";
+		};
+		04A983731F32276600120CF8 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				04A983741F32277E00120CF8 /* ViewController.h */,
+				04A983751F32277E00120CF8 /* ViewController.m */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		04A983761F32279900120CF8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				041503D81F28944F00887400 /* Info.plist */,
+				041503D91F28944F00887400 /* main.m */,
+				041503D31F28944F00887400 /* Assets.xcassets */,
+				041503D01F28944F00887400 /* Main.storyboard */,
+				041503D51F28944F00887400 /* LaunchScreen.storyboard */,
+				04C296D31F331FC700D6909D /* Prefix.h */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		04A983771F32280000120CF8 /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				041503C41F28944F00887400 /* AppDelegate.h */,
+				041503C51F28944F00887400 /* AppDelegate.m */,
+			);
+			path = AppDelegate;
+			sourceTree = "<group>";
+		};
+		04B1E1221F3C648200F96C5A /* Metal */ = {
+			isa = PBXGroup;
+			children = (
+				04B1E1231F3C64A100F96C5A /* ARKMetalController.h */,
+				04B1E1241F3C64A100F96C5A /* ARKMetalController.m */,
+				04A983641F32262200120CF8 /* Render */,
+			);
+			path = Metal;
+			sourceTree = "<group>";
+		};
+		04B1E1261F3C64C100F96C5A /* SceneKit */ = {
+			isa = PBXGroup;
+			children = (
+				04B1E1271F3C64DF00F96C5A /* ARKSceneKitController.h */,
+				04B1E1281F3C64DF00F96C5A /* ARKSceneKitController.m */,
+				04A712C21F46EF48005D91E2 /* ARSCNView+HitTest.h */,
+				04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */,
+				04A93D381F63CC8D002928CA /* SCNNode+Show.h */,
+				04A93D391F63CC8D002928CA /* SCNNode+Show.m */,
+				04A815771F42DA990082D31D /* FocusNode.h */,
+				04A815781F42DA990082D31D /* FocusNode.m */,
+				04A806751F3D9ED900B8732C /* PlaneNode.h */,
+				04A806761F3D9ED900B8732C /* PlaneNode.m */,
+				04A806781F3DCAA200B8732C /* AnchorNode.h */,
+				04A806791F3DCAA200B8732C /* AnchorNode.m */,
+				04A815671F419EB60082D31D /* Models.scnassets */,
+			);
+			path = SceneKit;
+			sourceTree = "<group>";
+		};
+		04F3094D1F690C9700FF3C13 /* WebXR */ = {
+			isa = PBXGroup;
+			children = (
+				04F3094E1F690D8900FF3C13 /* WebXR.h */,
+				04F3094F1F690D8900FF3C13 /* WebXR.m */,
+				04F309511F690E2B00FF3C13 /* WXRConfiguration.h */,
+				04F309521F690E2B00FF3C13 /* WXRConfiguration.m */,
+				04F309541F69129D00FF3C13 /* WXRView.h */,
+				04F309551F69129D00FF3C13 /* WXRView.m */,
+			);
+			path = WebXR;
+			sourceTree = "<group>";
+		};
+		7D7C33BA317D85DB2BCA41A4 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */,
+				A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		9EE6424F03FF3C89B7FDD2EB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7ED42568C04611107BF5582D /* Pods_ArDemo.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A6160A081F651AF2009F4402 /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				A6160A0A1F651B14009F4402 /* Reachability.h */,
+				A6160A091F651B14009F4402 /* Reachability.m */,
+			);
+			path = Reachability;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		041503C01F28944F00887400 /* ArDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 041503DD1F28944F00887400 /* Build configuration list for PBXNativeTarget "ArDemo" */;
+			buildPhases = (
+				20F4E46B4FFAE2848E06BE98 /* [CP] Check Pods Manifest.lock */,
+				041503BD1F28944F00887400 /* Sources */,
+				041503BE1F28944F00887400 /* Frameworks */,
+				041503BF1F28944F00887400 /* Resources */,
+				8837850E75F84273D6039AFF /* [CP] Embed Pods Frameworks */,
+				0D0870D7ABB063D15C544816 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ArDemo;
+			productName = ArDemo;
+			productReference = 041503C11F28944F00887400 /* ArDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		041503B91F28944F00887400 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = Exalt;
+				TargetAttributes = {
+					041503C01F28944F00887400 = {
+						CreatedOnToolsVersion = 9.0;
+					};
+				};
+			};
+			buildConfigurationList = 041503BC1F28944F00887400 /* Build configuration list for PBXProject "ArDemo" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 041503B81F28944F00887400;
+			productRefGroup = 041503C21F28944F00887400 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				041503C01F28944F00887400 /* ArDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		041503BF1F28944F00887400 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				041503D71F28944F00887400 /* LaunchScreen.storyboard in Resources */,
+				0401E04B1F612C240075D823 /* BarView.xib in Resources */,
+				041503D21F28944F00887400 /* Main.storyboard in Resources */,
+				04A8156A1F419F840082D31D /* Assets.xcassets in Resources */,
+				04A815681F419EB60082D31D /* Models.scnassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0D0870D7ABB063D15C544816 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		20F4E46B4FFAE2848E06BE98 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		8837850E75F84273D6039AFF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		041503BD1F28944F00887400 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */,
+				04A9837E1F32293100120CF8 /* WebController.m in Sources */,
+				04A983781F32291100120CF8 /* ViewController.m in Sources */,
+				045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */,
+				04A9837B1F32292200120CF8 /* Renderer.m in Sources */,
+				04F309531F690E2B00FF3C13 /* WXRConfiguration.m in Sources */,
+				0401E04E1F612D910075D823 /* BarView.m in Sources */,
+				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
+				04F309561F69129D00FF3C13 /* WXRView.m in Sources */,
+				041503DA1F28944F00887400 /* main.m in Sources */,
+				04F309501F690D8900FF3C13 /* WebXR.m in Sources */,
+				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
+				0401E0521F62E6150075D823 /* Animator.m in Sources */,
+				041503C61F28944F00887400 /* AppDelegate.m in Sources */,
+				04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */,
+				04A93D3A1F63CC8D002928CA /* SCNNode+Show.m in Sources */,
+				04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */,
+				04A9837A1F32291D00120CF8 /* ARKController.m in Sources */,
+				04A815791F42DA990082D31D /* FocusNode.m in Sources */,
+				04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */,
+				045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */,
+				04A806771F3D9ED900B8732C /* PlaneNode.m in Sources */,
+				045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */,
+				04A8067A1F3DCAA200B8732C /* AnchorNode.m in Sources */,
+				04A983791F32291900120CF8 /* RecordController.m in Sources */,
+				04A8156D1F41BA660082D31D /* HitAnchor.m in Sources */,
+				04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */,
+				0449DE071F4D7F000057F639 /* MessageController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		041503D01F28944F00887400 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				041503D11F28944F00887400 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		041503D51F28944F00887400 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				041503D61F28944F00887400 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		041503DB1F28944F00887400 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		041503DC1F28944F00887400 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		041503DE1F28944F00887400 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 6SBP555295;
+				GCC_PREFIX_HEADER = ArDemo/Resources/Prefix.h;
+				INFOPLIST_FILE = ArDemo/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.xrdemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		041503DF1F28944F00887400 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 6SBP555295;
+				GCC_PREFIX_HEADER = ArDemo/Resources/Prefix.h;
+				INFOPLIST_FILE = ArDemo/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mozilla.xrdemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		041503BC1F28944F00887400 /* Build configuration list for PBXProject "ArDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				041503DB1F28944F00887400 /* Debug */,
+				041503DC1F28944F00887400 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		041503DD1F28944F00887400 /* Build configuration list for PBXNativeTarget "ArDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				041503DE1F28944F00887400 /* Debug */,
+				041503DF1F28944F00887400 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 041503B91F28944F00887400 /* Project object */;
+}

@@ -1,0 +1,13 @@
+.DS_Store
+.svn
+*~
+*.pyc
+xcuserdata
+*.pbxuser
+/build
+_last_build_vars.sh
+_last_revision.sh
+duplication.xml
+coverage*.xml
+*.gcno
+test-results

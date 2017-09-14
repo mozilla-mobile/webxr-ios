@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13189.4" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13165.3"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="BarView">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1LK-v0-sqL" userLabel="backView">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="T5z-0b-MVG" customClass="URLTextField">
+                    <rect key="frame" x="127.5" y="10" width="120" height="30"/>
+                    <color key="backgroundColor" red="0.87058823529411766" green="0.87450980392156863" blue="0.87058823529411766" alpha="0.69512521404109584" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="29.5" id="JiL-UK-7MC"/>
+                    </constraints>
+                    <nil key="textColor"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mqO-Dv-xI4">
+                    <rect key="frame" x="27.5" y="14" width="15" height="22"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="15" id="7HR-tE-oHA"/>
+                    </constraints>
+                    <state key="normal" image="backSelected"/>
+                    <connections>
+                        <action selector="backAction:" destination="iN0-l3-epB" eventType="touchDown" id="yZ3-L0-dss"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Feq-Eq-O9v">
+                    <rect key="frame" x="87" y="14" width="15" height="22"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="15" id="kF3-pG-J02"/>
+                    </constraints>
+                    <state key="normal" image="forwardSelected"/>
+                    <connections>
+                        <action selector="forwardAction:" destination="iN0-l3-epB" eventType="touchDown" id="5l8-zq-29a"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="Feq-Eq-O9v" firstAttribute="leading" secondItem="mqO-Dv-xI4" secondAttribute="trailing" constant="44.5" id="3fq-5j-9NK"/>
+                <constraint firstItem="mqO-Dv-xI4" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="27.5" id="5Ax-qJ-e3U"/>
+                <constraint firstItem="Feq-Eq-O9v" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="5u1-sE-5an"/>
+                <constraint firstItem="mqO-Dv-xI4" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="77R-wb-2K3"/>
+                <constraint firstItem="1LK-v0-sqL" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="Bzp-LA-GGi"/>
+                <constraint firstItem="T5z-0b-MVG" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="127.5" id="Ild-BC-X2d"/>
+                <constraint firstItem="T5z-0b-MVG" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="QGZ-jO-9Ah"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="1LK-v0-sqL" secondAttribute="trailing" id="cJc-g7-xXV"/>
+                <constraint firstAttribute="bottom" secondItem="1LK-v0-sqL" secondAttribute="bottom" id="hns-XJ-IsD"/>
+                <constraint firstItem="1LK-v0-sqL" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="qGi-E5-hv3"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="T5z-0b-MVG" secondAttribute="trailing" constant="127.5" id="tAI-og-bAa"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="backBtn" destination="mqO-Dv-xI4" id="9XM-SO-666"/>
+                <outlet property="forwardBtn" destination="Feq-Eq-O9v" id="PZu-iD-Ele"/>
+                <outlet property="urlField" destination="T5z-0b-MVG" id="mck-MR-ueM"/>
+            </connections>
+        </view>
+    </objects>
+    <resources>
+        <image name="backSelected" width="10" height="18"/>
+        <image name="forwardSelected" width="10" height="18"/>
+    </resources>
+</document>
