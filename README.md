@@ -18,7 +18,11 @@ You do not need to run `pod install` as the cocoapods are currently checked into
 
 The app will only build if your build target is an iOS 11 *device*, not the simulator. The symptom of this is a missing `CVMetalTextureRef` reference.
 
+For your development build, go to the project settings by clicking the project name in the "Project navigator" (usually the left most item in the left panel), selecting "Automatically manage signing" in the "Signing section", then choose your Team. You may need to add an account if you don't already have a team.
+
 ## Building your own WebXR apps
+
+We have started a [WebXR polyfill](https://github.com/mozilla/webxr-polyfill/) that can use the ARKit to Javascript bridge exposed in this application. You can include that in any web page and use the example code in the same repository to get started building your own XR web applications. 
 
 While your iOS device is cabled to your development machine, you can use Safari 11 or newer to connect developer tools via Safari's `Develop` menu.
 
