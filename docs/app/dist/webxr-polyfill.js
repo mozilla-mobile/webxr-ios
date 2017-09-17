@@ -162,7 +162,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Quaternion = __webpack_require__(3);
+var _Quaternion = __webpack_require__(2);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
@@ -467,58 +467,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*
-XRAnchors provide per-frame coordinates which the Reality attempts to pin "in place".
-In a virtual Reality these coordinates do not change. 
-In a Reality based on environment mapping sensors, the anchors may change coordinates on a per-frame bases as the system refines its map.
-*/
-var XRAnchor = function () {
-	function XRAnchor(xrCoordinates) {
-		var uid = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-		_classCallCheck(this, XRAnchor);
-
-		this._uid = uid == null ? XRAnchor._generateUID() : uid;
-		this._coordinates = xrCoordinates;
-	}
-
-	_createClass(XRAnchor, [{
-		key: 'uid',
-		get: function get() {
-			return this._uid;
-		}
-	}, {
-		key: 'coordinates',
-		get: function get() {
-			return this._coordinates;
-		}
-	}], [{
-		key: '_generateUID',
-		value: function _generateUID() {
-			return 'anchor-' + new Date().getTime() + '-' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-		}
-	}]);
-
-	return XRAnchor;
-}();
-
-exports.default = XRAnchor;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/*
 Quaternion wraps a vector of length 4 used as an orientation value.
 
 Taken from https://github.com/googlevr/webvr-polyfill/blob/master/src/math-util.js which took it from Three.js
@@ -570,8 +518,13 @@ var Quaternion = function () {
 
 			var m11 = array16[0],
 			    m12 = array16[4],
-			    m13 = array16[8];
-			m21 = array16[1], m22 = array16[5], m23 = array16[9], m31 = array16[2], m32 = array16[6], m33 = array16[10];
+			    m13 = array16[8],
+			    m21 = array16[1],
+			    m22 = array16[5],
+			    m23 = array16[9],
+			    m31 = array16[2],
+			    m32 = array16[6],
+			    m33 = array16[10];
 
 			var trace = m11 + m22 + m33;
 
@@ -768,6 +721,61 @@ var Quaternion = function () {
 }();
 
 exports.default = Quaternion;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+XRAnchors provide per-frame coordinates which the Reality attempts to pin "in place".
+In a virtual Reality these coordinates do not change. 
+In a Reality based on environment mapping sensors, the anchors may change coordinates on a per-frame bases as the system refines its map.
+*/
+var XRAnchor = function () {
+	function XRAnchor(xrCoordinates) {
+		var uid = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+		_classCallCheck(this, XRAnchor);
+
+		this._uid = uid == null ? XRAnchor._generateUID() : uid;
+		this._coordinates = xrCoordinates;
+	}
+
+	_createClass(XRAnchor, [{
+		key: 'uid',
+		get: function get() {
+			return this._uid;
+		}
+	}, {
+		key: 'coordinates',
+		get: function get() {
+			return this._coordinates;
+		},
+		set: function set(value) {
+			this._coordinates = value;
+		}
+	}], [{
+		key: '_generateUID',
+		value: function _generateUID() {
+			return 'anchor-' + new Date().getTime() + '-' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+		}
+	}]);
+
+	return XRAnchor;
+}();
+
+exports.default = XRAnchor;
 
 /***/ }),
 /* 4 */
@@ -1012,7 +1020,7 @@ var Reality = function (_EventHandlerBase) {
 
 	}, {
 		key: '_addAnchor',
-		value: function _addAnchor(anchor) {
+		value: function _addAnchor(anchor, display) {
 			// returns DOMString anchor UID
 			throw 'Exending classes should implement _addAnchor';
 		}
@@ -1023,7 +1031,7 @@ var Reality = function (_EventHandlerBase) {
 
 	}, {
 		key: '_findAnchor',
-		value: function _findAnchor(coordinates) {
+		value: function _findAnchor(coordinates, display) {
 			// returns DOMString anchor UID
 			throw 'Exending classes should implement _findAnchor';
 		}
@@ -1602,11 +1610,11 @@ var ARKitWrapper = function (_EventHandlerBase) {
 		var eventCallbacks = [['onStartRecording', ARKitWrapper.RECORD_START_EVENT], ['onStopRecording', ARKitWrapper.RECORD_STOP_EVENT], ['didMoveBackground', ARKitWrapper.DID_MOVE_BACKGROUND_EVENT], ['willEnterForeground', ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT], ['arkitInterrupted', ARKitWrapper.INTERRUPTED_EVENT], ['arkitInterruptionEnded', ARKitWrapper.INTERRUPTION_ENDED_EVENT], ['showDebug', ARKitWrapper.SHOW_DEBUG_EVENT]];
 
 		var _loop = function _loop(_i) {
-			window[eventCallbacks[_i][0]] = function (details) {
-				details = details || null;
+			window[eventCallbacks[_i][0]] = function (detail) {
+				detail = detail || null;
 				_this.dispatchEvent(new CustomEvent(ARKitWrapper[eventCallbacks[_i][1]], {
 					source: _this,
-					details: details
+					detail: detail
 				}));
 			};
 		};
@@ -2013,7 +2021,21 @@ var ARKitWrapper = function (_EventHandlerBase) {
 
 			if (typeof ARKitWrapper.GLOBAL_INSTANCE === 'undefined') {
 				ARKitWrapper.GLOBAL_INSTANCE = new ARKitWrapper();
-				options = options && (typeof options === 'undefined' ? 'undefined' : _typeof(options)) == 'object' ? options : {};
+				options = options && (typeof options === 'undefined' ? 'undefined' : _typeof(options)) == 'object' ? options : {
+					ui: {
+						browser: true,
+						points: true,
+						focus: false,
+						rec: true,
+						rec_time: true,
+						mic: false,
+						build: false,
+						plane: false,
+						warnings: true,
+						anchors: false,
+						debug: false
+					}
+				};
 				ARKitWrapper.GLOBAL_INSTANCE._sendInit(options);
 			}
 			return ARKitWrapper.GLOBAL_INSTANCE;
@@ -2167,13 +2189,13 @@ var XRCoordinateSystem = function () {
 		value: function getTransformTo(otherCoordinateSystem) {
 			var out = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
-			// apply inverse of this system's poseModelMatrix to the identity matrix
+			// apply inverse of other system's poseModelMatrix to the identity matrix
 			var inverse = new Float32Array(16);
-			_MatrixMath2.default.mat4_invert(inverse, this._poseModelMatrix);
+			_MatrixMath2.default.mat4_invert(inverse, otherCoordinateSystem._poseModelMatrix);
 			_MatrixMath2.default.mat4_multiply(out, inverse, out);
 
-			// apply other system's poseModelMatrix
-			_MatrixMath2.default.mat4_multiply(out, otherCoordinateSystem._poseModelMatrix, out);
+			// apply this system's poseModelMatrix
+			_MatrixMath2.default.mat4_multiply(out, this._poseModelMatrix, out);
 			return out;
 		}
 	}, {
@@ -2234,6 +2256,10 @@ var _MatrixMath = __webpack_require__(1);
 
 var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
 
+var _Quaternion = __webpack_require__(2);
+
+var _Quaternion2 = _interopRequireDefault(_Quaternion);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2292,6 +2318,16 @@ var XRViewPose = function () {
 			this._poseModelMatrix[12] = array3[0];
 			this._poseModelMatrix[13] = array3[1];
 			this._poseModelMatrix[14] = array3[2];
+		}
+	}, {
+		key: '_orientation',
+		get: function get() {
+			var quat = new _Quaternion2.default();
+			quat.setFromRotationMatrix(this._poseModelMatrix);
+			return quat.toArray();
+		},
+		set: function set(array4) {
+			_MatrixMath2.default.mat4_fromRotationTranslation(this._poseModelMatrix, array4, this._position);
 		}
 	}]);
 
@@ -2364,7 +2400,7 @@ var _Vector = __webpack_require__(8);
 
 var _Vector2 = _interopRequireDefault(_Vector);
 
-var _Quaternion = __webpack_require__(3);
+var _Quaternion = __webpack_require__(2);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
@@ -2475,7 +2511,7 @@ var _XRLightEstimate = __webpack_require__(20);
 
 var _XRLightEstimate2 = _interopRequireDefault(_XRLightEstimate);
 
-var _XRAnchor = __webpack_require__(2);
+var _XRAnchor = __webpack_require__(3);
 
 var _XRAnchor2 = _interopRequireDefault(_XRAnchor);
 
@@ -2959,7 +2995,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _XRAnchor2 = __webpack_require__(2);
+var _XRAnchor2 = __webpack_require__(3);
 
 var _XRAnchor3 = _interopRequireDefault(_XRAnchor2);
 
@@ -3015,7 +3051,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _XRAnchor = __webpack_require__(2);
+var _XRAnchor = __webpack_require__(3);
 
 var _XRAnchor2 = _interopRequireDefault(_XRAnchor);
 
@@ -3161,7 +3197,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _XRAnchor = __webpack_require__(2);
+var _XRAnchor = __webpack_require__(3);
 
 var _XRAnchor2 = _interopRequireDefault(_XRAnchor);
 
@@ -3181,15 +3217,21 @@ var XRPresentationFrame = function () {
 
 	_createClass(XRPresentationFrame, [{
 		key: 'addAnchor',
+
+
+		/*
+  Create an anchor at a specific position defined by XRAnchor.coordinates
+  */
 		value: function addAnchor(anchor) {
 			//DOMString? addAnchor(XRAnchor anchor);
-			return this._session.reality._addAnchor(anchor);
+			return this._session.reality._addAnchor(anchor, this._session.display);
 		}
 	}, {
 		key: 'findAnchor',
 		value: function findAnchor(coordinates) {
+			throw 'This needs to change to handle ARKit x,y screen hit coordinates';
 			// XRAnchorOffset? findAnchor(XRCoordinates); // cast a ray to find or create an anchor at the first intersection in the Reality
-			return this._session.reality._findAnchor(coordinates);
+			return this._session.reality._findAnchor(coordinates, this._session.display);
 		}
 	}, {
 		key: 'removeAnchor',
@@ -3197,6 +3239,11 @@ var XRPresentationFrame = function () {
 			// void removeAnchor(DOMString uid);
 			return this._session.reality._removeAnchor(uid);
 		}
+
+		/*
+  Returns an existing XRAnchor or null if uid is unknown
+  */
+
 	}, {
 		key: 'getAnchor',
 		value: function getAnchor(uid) {
@@ -3261,6 +3308,11 @@ var XRPresentationFrame = function () {
 			//readonly attribute XRLightEstimate? lightEstimate;
 			return null;
 		}
+
+		/*
+  Returns an array of known XRAnchor instances. May be empty.
+  */
+
 	}, {
 		key: 'anchors',
 		get: function get() {
@@ -3389,13 +3441,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _XRCoordinateSystem = __webpack_require__(11);
-
-var _XRCoordinateSystem2 = _interopRequireDefault(_XRCoordinateSystem);
-
 var _MatrixMath = __webpack_require__(1);
 
 var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
+
+var _Quaternion = __webpack_require__(2);
+
+var _Quaternion2 = _interopRequireDefault(_Quaternion);
+
+var _XRCoordinateSystem = __webpack_require__(11);
+
+var _XRCoordinateSystem2 = _interopRequireDefault(_XRCoordinateSystem);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3459,6 +3515,13 @@ var XRCoordinates = function () {
 		key: 'position',
 		get: function get() {
 			return new Float32Array([this._poseMatrix[12], this._poseMatrix[13], this._poseMatrix[14]]);
+		}
+	}, {
+		key: 'orientation',
+		get: function get() {
+			var quat = new _Quaternion2.default();
+			quat.setFromRotationMatrix(this._poseMatrix);
+			return quat.toArray();
 		}
 	}]);
 
@@ -3603,7 +3666,7 @@ var _MatrixMath = __webpack_require__(1);
 
 var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
 
-var _Quaternion = __webpack_require__(3);
+var _Quaternion = __webpack_require__(2);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
@@ -3908,7 +3971,7 @@ var _MatrixMath = __webpack_require__(1);
 
 var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
 
-var _Quaternion = __webpack_require__(3);
+var _Quaternion = __webpack_require__(2);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
@@ -4204,7 +4267,8 @@ var CameraReality = function (_Reality) {
 				if (this._initialized === false) {
 					this._initialized = true;
 					this._arKitWrapper = _ARKitWrapper2.default.GetOrCreate();
-					this._arKitWrapper.addEventListener(_ARKitWrapper2.default.ADD_OBJECT_NAME, this._handleARKitAddObject.bind(this));
+					this._arKitWrapper.addEventListener(_ARKitWrapper2.default.ADD_ANCHOR_EVENT, this._handleARKitAddObject.bind(this));
+					this._arKitWrapper.addEventListener(_ARKitWrapper2.default.WATCH_EVENT, this._handleARKitWatch.bind(this));
 					this._arKitWrapper.waitForInit().then(function () {
 						_this2._arKitWrapper.watch();
 					});
@@ -4250,17 +4314,63 @@ var CameraReality = function (_Reality) {
 			}
 		}
 	}, {
+		key: '_handleARKitWatch',
+		value: function _handleARKitWatch(ev) {
+			if (ev.detail && ev.detail.objects) {
+				var _iteratorNormalCompletion2 = true;
+				var _didIteratorError2 = false;
+				var _iteratorError2 = undefined;
+
+				try {
+					for (var _iterator2 = ev.detail.objects[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+						// The iOS app is handing up incomplete anchor transforms, so this is commented out for now.
+						// Bug is tracked here: https://github.com/mozilla/webxr-ios/issues/2
+						//this._updateAnchorFromARKitUpdate(anchorInfo.uuid, anchorInfo)
+
+						var anchorInfo = _step2.value;
+					}
+				} catch (err) {
+					_didIteratorError2 = true;
+					_iteratorError2 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion2 && _iterator2.return) {
+							_iterator2.return();
+						}
+					} finally {
+						if (_didIteratorError2) {
+							throw _iteratorError2;
+						}
+					}
+				}
+			}
+		}
+	}, {
 		key: '_handleARKitAddObject',
 		value: function _handleARKitAddObject(ev) {
-			console.log('AR add object', ev);
+			this._updateAnchorFromARKitUpdate(ev.detail.uuid, ev.detail);
+		}
+	}, {
+		key: '_updateAnchorFromARKitUpdate',
+		value: function _updateAnchorFromARKitUpdate(uuid, anchorInfo) {
+			var anchor = this._anchors.get(uid) || null;
+			if (anchor === null) {
+				console.log('unknown anchor', anchor);
+				return;
+			}
+			// This assumes that the anchor's coordinates are in the stage coordinate system
+			anchor.coordinates.poseMatrix = anchorInfo.transform;
 		}
 	}, {
 		key: '_addAnchor',
-		value: function _addAnchor(anchor) {
-			console.log('reality adding anchor', anchor);
-
-			// TODO talk to ARKit or ARCore to create an anchor
-
+		value: function _addAnchor(anchor, display) {
+			// Convert coordinates to the stage coordinate system so that updating from ARKit transforms is simple
+			anchor.coordinates = anchor.coordinates.getTransformedCoordinates(display._stageCoordinateSystem);
+			if (this._arKitWrapper !== null) {
+				this._arKitWrapper.addAnchor(anchor.uid, anchor.coordinates.poseMatrix);
+			} else if (this._vrDisplay) {
+				// TODO talk to ARCore to create an anchor
+			}
 			this._anchors.set(anchor.uid, anchor);
 			return anchor.uid;
 		}
@@ -4271,10 +4381,10 @@ var CameraReality = function (_Reality) {
 
 	}, {
 		key: '_findAnchor',
-		value: function _findAnchor(coordinates) {
+		value: function _findAnchor(coordinates, display) {
 			// XRAnchorOffset? findAnchor(XRCoordinates); // cast a ray to find or create an anchor at the first intersection in the Reality
 			// TODO talk to ARKit to create an anchor
-			throw 'Need to implement in CameraReality';
+			throw new Error('Need to implement findAnchor in CameraReality');
 		}
 	}, {
 		key: '_removeAnchor',
