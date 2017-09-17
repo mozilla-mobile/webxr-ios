@@ -10,6 +10,10 @@ Record and share videos taken of your web content in the real world.
 
 To learn more about Project WebXR Viewer and other ways Mozilla is working to bring augmented reality, virtual reality, and mixed reality to the web, visit our website at [mixedreality.mozilla.com](https://mixedreality.mozilla.com/).
 
+## WARNING
+
+This application is *not* intended to replace a fully featured web browser. It is meant only for experimenting with building WebXR applications.
+
 ## Building the app for iOS 11
 
 Building this app requires XCode 9 (beta 6 or newer) and an iPhone or iPad running at least iOS 11.
