@@ -1,6 +1,6 @@
 #  Project WebXR Viewer: A VR and AR Project by Mozilla
 
-Help Mozilla Research by taking part in Project WebXR Viewer, an augmented reality and virtual reality (together what we call "XR") viewer that lets you navigate to XR experiences just like websites.
+Help Mozilla Research by taking part in Project WebXR Viewer, an augmented reality and virtual reality viewer that lets you navigate to XR experiences just like websites.
 
 ## In this initial release, you can:
 
