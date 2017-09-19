@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
-    <device id="retina4_7" orientation="landscape">
+    <device id="retina5_5" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -14,24 +14,82 @@
             <objects>
                 <viewController id="BV1-FR-VrT" customClass="ViewController" sceneMemberID="viewController">
                     <view key="view" opaque="NO" contentMode="scaleToFill" id="3se-qz-xqx">
-                        <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
+                        <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="backgroundHorizontal" translatesAutoresizingMaskIntoConstraints="NO" id="0Zx-bn-O3A">
-                                <rect key="frame" x="0.0" y="0.0" width="667" height="375"/>
-                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pr5-sC-23l" userLabel="ARKView" customClass="LayerView">
+                                <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RAF-Ke-Lef" userLabel=" WebView" customClass="LayerView">
+                                <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NaB-9b-LZq" userLabel="HotView" customClass="LayerView">
+                                <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </view>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="73L-9y-k0E" userLabel="SplashView" customClass="LayerView">
+                                <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="backgroundHorizontal" translatesAutoresizingMaskIntoConstraints="NO" id="0Zx-bn-O3A">
+                                        <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                                    </imageView>
+                                    <activityIndicatorView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="NsR-hH-fKn">
+                                        <rect key="frame" x="706" y="384" width="20" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="H9i-rs-sIs"/>
+                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="OCh-Gf-xa2"/>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="wUj-QZ-c3S"/>
+                                            <constraint firstAttribute="width" constant="20" id="yCA-Ra-OIG"/>
+                                        </constraints>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="NsR-hH-fKn" secondAttribute="trailing" constant="10" id="6to-ax-Fyc"/>
+                                    <constraint firstAttribute="bottom" secondItem="NsR-hH-fKn" secondAttribute="bottom" constant="10" id="Mog-uO-hHr"/>
+                                    <constraint firstItem="0Zx-bn-O3A" firstAttribute="leading" secondItem="73L-9y-k0E" secondAttribute="leading" id="PRr-1B-Z7m"/>
+                                    <constraint firstAttribute="bottom" secondItem="0Zx-bn-O3A" secondAttribute="bottom" id="b6P-3P-En1"/>
+                                    <constraint firstAttribute="trailing" secondItem="0Zx-bn-O3A" secondAttribute="trailing" id="bki-hj-Nrk"/>
+                                    <constraint firstItem="0Zx-bn-O3A" firstAttribute="top" secondItem="73L-9y-k0E" secondAttribute="top" id="ehD-2L-HM0"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="L8Y-Me-cba" firstAttribute="bottom" secondItem="0Zx-bn-O3A" secondAttribute="bottom" id="2lK-d6-Bcb"/>
-                            <constraint firstItem="L8Y-Me-cba" firstAttribute="trailing" secondItem="0Zx-bn-O3A" secondAttribute="trailing" id="E3s-fb-xa0"/>
-                            <constraint firstItem="0Zx-bn-O3A" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="Tt1-uC-ETS"/>
-                            <constraint firstItem="0Zx-bn-O3A" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="wns-vc-FaK"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="2c2-sH-loz"/>
+                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="2qV-Bb-iAI"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="D3d-fu-aKE"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="GFe-uq-zen"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="Gvp-8I-EIt"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="IVQ-2x-L76"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="MSF-Ba-Gy1"/>
+                            <constraint firstItem="L8Y-Me-cba" firstAttribute="bottom" secondItem="Pr5-sC-23l" secondAttribute="bottom" id="NeL-ZY-iQh"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="P6w-lb-rW2"/>
+                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="RBb-Ar-FV4"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="V1j-Ro-quZ"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="Y2f-OP-taj"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="ecg-bu-gQi"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="gIe-3g-LF3"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="ivb-Sb-gYU"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="kES-oz-U7r"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="kPL-7d-ZYR"/>
+                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="ltL-KU-uG7"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="m7O-0J-noB"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="rZh-KL-mp1"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="rdY-e9-qs9"/>
+                            <constraint firstItem="L8Y-Me-cba" firstAttribute="trailing" secondItem="Pr5-sC-23l" secondAttribute="trailing" id="zAq-Ca-Y1L"/>
+                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="zhZ-5g-8Va"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="zqr-RF-nCV"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="L8Y-Me-cba"/>
                     </view>
                     <connections>
-                        <outlet property="backView" destination="0Zx-bn-O3A" id="xmT-0f-Hsr"/>
+                        <outlet property="arkLayerView" destination="Pr5-sC-23l" id="Cgf-zM-pDx"/>
+                        <outlet property="hotLayerView" destination="NaB-9b-LZq" id="tA1-p4-0P7"/>
+                        <outlet property="splashLayerView" destination="73L-9y-k0E" id="f0u-08-WWW"/>
+                        <outlet property="webLayerView" destination="RAF-Ke-Lef" id="cPN-4w-nXv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>

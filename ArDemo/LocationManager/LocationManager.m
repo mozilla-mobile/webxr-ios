@@ -186,10 +186,11 @@
                 break;
             case kCLAuthorizationStatusAuthorizedAlways:
             case kCLAuthorizationStatusAuthorizedWhenInUse:
-                 [self authBlock](YES);
+                [self authBlock](YES);
                 break;
         }
     }
 }
 
 @end
+

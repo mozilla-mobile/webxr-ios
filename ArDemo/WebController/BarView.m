@@ -52,7 +52,6 @@
     [[self ai] stopAnimating];
     [[self cancelBtn] setHidden:YES];
     [[self reloadBtn] setHidden:NO];
-    [[self urlField] setText:url];
 }
 
 - (void)setBackEnabled:(BOOL)enabled
@@ -72,40 +71,40 @@
     [[self backBtn] setEnabled:NO];
     [[self forwardBtn] setEnabled:NO];
     
-	[[self urlField] setDelegate:self];
+    [[self urlField] setDelegate:self];
     
     UIActivityIndicatorView *i = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     [[self urlField] setLeftView:i];
     [[self urlField] setLeftViewMode:UITextFieldViewModeUnlessEditing];
     [i hidesWhenStopped];
     [self setAi:i];
-
+    
     [[self urlField] setClearButtonMode:UITextFieldViewModeWhileEditing];
     [[self urlField] setReturnKeyType:UIReturnKeyGo];
-
+    
     [[self urlField] setTextContentType:UITextContentTypeURL];
     [[self urlField] setPlaceholder:@"Search or enter website name"];
     [[[self urlField] layer] setCornerRadius:URL_FIELD_HEIGHT / 4];
     [[self urlField] setTextAlignment:NSTextAlignmentCenter];
-
+    
     UIButton *reloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [reloadButton setImage:[UIImage imageNamed:@"reload"] forState:UIControlStateNormal];
     [reloadButton addTarget:self action:@selector(reloadAction:) forControlEvents:UIControlEventTouchDown];
     [reloadButton setFrame:CGRectMake(0, 0, URL_FIELD_HEIGHT, URL_FIELD_HEIGHT)];
     [reloadButton setHidden:NO];
-
+    
     UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [cancelButton setImage:[UIImage imageNamed:@"cancel"] forState:UIControlStateNormal];
     [cancelButton addTarget:self action:@selector(cancelAction:) forControlEvents:UIControlEventTouchDown];
     [cancelButton setFrame:CGRectMake(0, 0, URL_FIELD_HEIGHT, URL_FIELD_HEIGHT)];
     [cancelButton setHidden:YES];
-
+    
     UIView *rightView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, URL_FIELD_HEIGHT, URL_FIELD_HEIGHT)];
     [rightView addSubview:reloadButton];
     [rightView addSubview:cancelButton];
     [self setCancelBtn:cancelButton];
     [self setReloadBtn:reloadButton];
-
+    
     [[self urlField] setRightView:rightView];
     [[self urlField] setRightViewMode:UITextFieldViewModeUnlessEditing];
 }
@@ -113,6 +112,8 @@
 - (IBAction)backAction:(id)sender
 {
     DDLogDebug(@"backAction");
+    
+    [[self urlField] resignFirstResponder];
     
     if ([self backActionBlock])
     {
@@ -124,6 +125,8 @@
 {
     DDLogDebug(@"forwardAction");
     
+    [[self urlField] resignFirstResponder];
+    
     if ([self forwardActionBlock])
     {
         [self forwardActionBlock](self);
@@ -134,6 +137,8 @@
 {
     DDLogDebug(@"reloadAction");
     
+    [[self urlField] resignFirstResponder];
+    
     if ([self reloadActionBlock])
     {
         [self reloadActionBlock](self);
@@ -143,6 +148,8 @@
 - (IBAction)cancelAction:(id)sender
 {
     DDLogDebug(@"cancelAction");
+    
+    [[self urlField] resignFirstResponder];
     
     if ([self cancelActionBlock])
     {
@@ -179,9 +186,9 @@
                                          [[self backBtn] frame].size.height + increaseValue * 2);
     
     CGRect icreasedForwardRect = CGRectMake([[self forwardBtn] frame].origin.x - increaseValue,
-                                         [[self forwardBtn] frame].origin.y - increaseValue,
-                                         [[self forwardBtn] frame].size.width + increaseValue * 2,
-                                         [[self forwardBtn] frame].size.height + increaseValue * 2);
+                                            [[self forwardBtn] frame].origin.y - increaseValue,
+                                            [[self forwardBtn] frame].size.width + increaseValue * 2,
+                                            [[self forwardBtn] frame].size.height + increaseValue * 2);
     
     if (CGRectContainsPoint(icreasedBackRect, point))
     {
@@ -197,3 +204,4 @@
 }
 
 @end
+

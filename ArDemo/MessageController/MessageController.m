@@ -1,7 +1,7 @@
 #import "MessageController.h"
 #import <PopupDialog/PopupDialog-Swift.h>
 
-#warning DESIGN, LOCALIZATION
+#warning LOCALIZATION
 
 @interface MessageController ()
 @property(nonatomic, weak) UIViewController *viewController;
@@ -27,6 +27,21 @@
     }
     
     return self;
+}
+
+- (void)clean
+{
+    if ([self arPopup])
+    {
+        [[self arPopup] dismissViewControllerAnimated:NO completion:NULL];
+        
+        [self setArPopup:nil];
+    }
+    
+    if ([[self viewController] presentedViewController])
+    {
+        [[[self viewController] presentedViewController] dismissViewControllerAnimated:NO completion:NULL];
+    }
 }
 
 - (BOOL)arMessageShowing
@@ -95,7 +110,7 @@
 
 - (void)showMessageAboutFailSessionWithCompletion:(void(^)(void))completion
 {
-    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"ARSession Failed"
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"AR Session Failed"
                                                     message:@"Tap 'Ok' to restart the session"
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
@@ -120,7 +135,7 @@
     
 }
 
-- (void)showMessageAboutMemoryWarning
+- (void)showMessageAboutMemoryWarningWithCompletion:(void(^)(void))completion
 {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Memory Issue Occurred"
                                                     message:@"There was not enough memory for the application to keep working. Webpage was reloaded"
@@ -133,6 +148,11 @@
     DefaultButton *ok = [[DefaultButton alloc] initWithTitle:@"Ok" height:40 dismissOnTap:YES action:^
                          {
                              [popup dismissViewControllerAnimated:YES completion:NULL];
+                             
+                             if (completion)
+                             {
+                                 completion();
+                             }
                              
                              [self didHideMessageByUser]();
                          }];
@@ -177,7 +197,7 @@
     [PopupDialogDefaultView appearance].titleColor = [UIColor blackColor];
     [PopupDialogDefaultView appearance].messageFont = [UIFont fontWithName:@"Myriad Pro Regular" size:12];
     [PopupDialogDefaultView appearance].messageColor = [UIColor grayColor];
-
+    
     [PopupDialogOverlayView appearance].color = [UIColor colorWithWhite:0 alpha:0.5];
     [PopupDialogOverlayView appearance].blurRadius = 10;
     [PopupDialogOverlayView appearance].blurEnabled = YES;
@@ -194,3 +214,4 @@
 }
 
 @end
+

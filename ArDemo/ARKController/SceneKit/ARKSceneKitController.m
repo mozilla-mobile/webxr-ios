@@ -36,13 +36,13 @@
     DDLogDebug(@"ARKSceneKitController dealloc");
 }
 
-- (instancetype)initWithSesion:(ARSession *)session
+- (instancetype)initWithSesion:(ARSession *)session size:(CGSize)size
 {
     self = [super init];
     
     if (self)
     {
-        [self setupARWithSession:session];
+        [self setupARWithSession:session size:size];
         [self setPlanes:[NSMutableDictionary new]];
         [self setAnchorsNodes:[NSMutableArray new]];
         
@@ -62,16 +62,16 @@
 - (void)clean
 {
     [[[self planes] allValues] enumerateObjectsUsingBlock:^(PlaneNode *  _Nonnull plane, NSUInteger idx, BOOL * _Nonnull stop)
-    {
-        [plane removeFromParentNode];
-    }];
+     {
+         [plane removeFromParentNode];
+     }];
     
     [[self planes] removeAllObjects];
     
     [[self anchorsNodes] enumerateObjectsUsingBlock:^(AnchorNode *  _Nonnull node, NSUInteger idx, BOOL * _Nonnull stop)
-    {
-        [node removeFromParentNode];
-    }];
+     {
+         [node removeFromParentNode];
+     }];
     
     [[self anchorsNodes] removeAllObjects];
     
@@ -132,11 +132,12 @@
 
 #pragma mark - Private
 
-- (void)setupARWithSession:(ARSession *)session
+- (void)setupARWithSession:(ARSession *)session size:(CGSize)size
 {
     [self setSession:session];
     
-    [self setRenderView:[[ARSCNView alloc] initWithFrame:[[UIScreen mainScreen] bounds] options:@{SCNPreferredDeviceKey : MTLCreateSystemDefaultDevice()}]];
+    [self setRenderView:[[ARSCNView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)
+                                                 options:@{SCNPreferredDeviceKey : MTLCreateSystemDefaultDevice()}]];
     [[self renderView] setSession:session];
     [[self renderView] setScene:[SCNScene new]];
     [[self renderView] setShowsStatistics:NO];
@@ -179,12 +180,12 @@
     if (([self showOptions] & ARFocus))
     {
         [self setPlaneHitTestResults:
-        [[self renderView] hitTestPoint:[self hitTestFocusPoint] withResult:^(HitTestResult *result)
-         {
-             [self setCurrentHitTest:result];
-             
-             [self updateFocus];
-         }]];
+         [[self renderView] hitTestPoint:[self hitTestFocusPoint] withResult:^(HitTestResult *result)
+          {
+              [self setCurrentHitTest:result];
+              
+              [self updateFocus];
+          }]];
     }
     else
     {
@@ -240,9 +241,9 @@
 - (void)updateAnchors
 {
     [[self anchorsNodes] enumerateObjectsUsingBlock:^(SCNNode * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop)
-    {
-        [obj show:([self showOptions] & ARObject)];
-    }];
+     {
+         [obj show:([self showOptions] & ARObject)];
+     }];
 }
 
 #pragma mark - ARSCNViewDelegate
@@ -250,42 +251,42 @@
 - (void)renderer:(id <SCNSceneRenderer>)renderer updateAtTime:(NSTimeInterval)time
 {
     dispatch_async(dispatch_get_main_queue(), ^
-    {
-        CGFloat lightEstimate = [[[[self session] currentFrame] lightEstimate] ambientIntensity];
-        
-        [[[[self renderView] scene] lightingEnvironment] setIntensity:(lightEstimate / 40)];
-        
-        [self hitTest];
-        
-        [self updateCameraFocus];
-        [self updatePlanes];
-        [self updateAnchors];
-    });
+                   {
+                       CGFloat lightEstimate = [[[[self session] currentFrame] lightEstimate] ambientIntensity];
+                       
+                       [[[[self renderView] scene] lightingEnvironment] setIntensity:(lightEstimate / 40)];
+                       
+                       [self hitTest];
+                       
+                       [self updateCameraFocus];
+                       [self updatePlanes];
+                       [self updateAnchors];
+                   });
 }
 
 - (void)renderer:(id <SCNSceneRenderer>)renderer didAddNode:(SCNNode *)node forAnchor:(ARAnchor *)anchor
 {
     dispatch_async(dispatch_get_main_queue(), ^
-    {
-        if ([anchor isKindOfClass:[ARPlaneAnchor class]] )
-        {
-            PlaneNode *plane = [[PlaneNode alloc] initWithAnchor:(ARPlaneAnchor *)anchor];
-            [[self planes] setObject:plane forKey:[anchor identifier]];
-            [node addChildNode:plane];
-        }
-        else
-        {
-            AnchorNode *anchorNode = [[AnchorNode alloc] initWithAnchor:anchor];
-            [node addChildNode:anchorNode];
-            [[self anchorsNodes] addObject:anchorNode];
-            
-            // move anchor to be over the plane
-            SCNMatrix4 transform = [node worldTransform];
-            transform = SCNMatrix4Translate(transform, 0, ([anchorNode size]) / 2, 0);
-            [node setTransform:transform];
-           
-        }
-    });
+                   {
+                       if ([anchor isKindOfClass:[ARPlaneAnchor class]] )
+                       {
+                           PlaneNode *plane = [[PlaneNode alloc] initWithAnchor:(ARPlaneAnchor *)anchor];
+                           [[self planes] setObject:plane forKey:[anchor identifier]];
+                           [node addChildNode:plane];
+                       }
+                       else
+                       {
+                           AnchorNode *anchorNode = [[AnchorNode alloc] initWithAnchor:anchor];
+                           [node addChildNode:anchorNode];
+                           [[self anchorsNodes] addObject:anchorNode];
+                           
+                           // move anchor to be over the plane
+                           SCNMatrix4 transform = [node worldTransform];
+                           transform = SCNMatrix4Translate(transform, 0, ([anchorNode size]) / 2, 0);
+                           [node setTransform:transform];
+                           
+                       }
+                   });
 }
 
 - (void)renderer:(id <SCNSceneRenderer>)renderer willUpdateNode:(SCNNode *)node forAnchor:(ARAnchor *)anchor
@@ -295,28 +296,29 @@
 - (void)renderer:(id <SCNSceneRenderer>)renderer didUpdateNode:(SCNNode *)node forAnchor:(ARAnchor *)anchor
 {
     dispatch_async(dispatch_get_main_queue(), ^
-    {
-        if ([anchor isKindOfClass:[ARPlaneAnchor class]])
-        {
-            PlaneNode *plane = [[self planes] objectForKey:[anchor identifier]];
-            [plane update:(ARPlaneAnchor *)anchor];
-        }
-    });
+                   {
+                       if ([anchor isKindOfClass:[ARPlaneAnchor class]])
+                       {
+                           PlaneNode *plane = [[self planes] objectForKey:[anchor identifier]];
+                           [plane update:(ARPlaneAnchor *)anchor];
+                       }
+                   });
 }
 
 - (void)renderer:(id <SCNSceneRenderer>)renderer didRemoveNode:(SCNNode *)node forAnchor:(ARAnchor *)anchor
 {
     dispatch_async(dispatch_get_main_queue(), ^
-    {
-        if ([node isKindOfClass:[AnchorNode class]])
-        {
-            [[self anchorsNodes] removeObject:node];
-        }
-        else
-        {
-            [[self planes] removeObjectForKey:[anchor identifier]];
-        }
-    });
+                   {
+                       if ([node isKindOfClass:[AnchorNode class]])
+                       {
+                           [[self anchorsNodes] removeObject:node];
+                       }
+                       else
+                       {
+                           [[self planes] removeObjectForKey:[anchor identifier]];
+                       }
+                   });
 }
 
 @end
+

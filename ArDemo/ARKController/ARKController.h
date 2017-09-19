@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "ARKHelper.h"
-#import "OverlayHeader.h"
+#import "AppState.h"
 
 typedef NS_ENUM(NSUInteger, ARKType)
 {
@@ -21,14 +21,13 @@ typedef void (^DidChangeTrackingState)(NSString *state);
 @property(copy) DidFailSession didFailSession;
 @property(copy) DidChangeTrackingState didChangeTrackingState;
 
-- (instancetype)initWithType:(ARKType)type;
+- (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 - (UIView *)arkView;
 
 - (void)viewWillTransitionToSize:(CGSize)size;
 
-- (void)startSessionWithRequest:(NSDictionary *)request
-                       showMode:(ShowMode)mode
-                    showOptions:(ShowOptions)options;
+- (void)startSessionWithAppState:(AppState *)state;
+
 - (void)stopSession;
 
 - (NSDictionary *)arkData;
@@ -44,3 +43,4 @@ typedef void (^DidChangeTrackingState)(NSString *state);
 - (void)removeAnchors:(NSArray *)anchorNames;
 
 @end
+

@@ -36,9 +36,9 @@
 		04A9837E1F32293100120CF8 /* WebController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836D1F3226E000120CF8 /* WebController.m */; };
 		04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1241F3C64A100F96C5A /* ARKMetalController.m */; };
 		04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1281F3C64DF00F96C5A /* ARKSceneKitController.m */; };
-		04F309501F690D8900FF3C13 /* WebXR.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F3094F1F690D8900FF3C13 /* WebXR.m */; };
-		04F309531F690E2B00FF3C13 /* WXRConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F309521F690E2B00FF3C13 /* WXRConfiguration.m */; };
-		04F309561F69129D00FF3C13 /* WXRView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F309551F69129D00FF3C13 /* WXRView.m */; };
+		04C64BC81F71011700ACFB8B /* LayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BC71F71011700ACFB8B /* LayerView.m */; };
+		04C64BCE1F71094500ACFB8B /* AppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCC1F71016A00ACFB8B /* AppState.m */; };
+		04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCA1F71016A00ACFB8B /* AppStateController.m */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
 		A8AFA84387C4A5B97A8E5814 /* Pods_ArDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7ED42568C04611107BF5582D /* Pods_ArDemo.framework */; };
 /* End PBXBuildFile section */
@@ -103,12 +103,12 @@
 		04B1E12A1F3C660300F96C5A /* ARKControllerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKControllerProtocol.h; sourceTree = "<group>"; };
 		04BB9D641F39BE40004328A2 /* ARKHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKHelper.h; sourceTree = "<group>"; };
 		04C296D31F331FC700D6909D /* Prefix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.h; sourceTree = "<group>"; };
-		04F3094E1F690D8900FF3C13 /* WebXR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebXR.h; sourceTree = "<group>"; };
-		04F3094F1F690D8900FF3C13 /* WebXR.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebXR.m; sourceTree = "<group>"; };
-		04F309511F690E2B00FF3C13 /* WXRConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WXRConfiguration.h; sourceTree = "<group>"; };
-		04F309521F690E2B00FF3C13 /* WXRConfiguration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WXRConfiguration.m; sourceTree = "<group>"; };
-		04F309541F69129D00FF3C13 /* WXRView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WXRView.h; sourceTree = "<group>"; };
-		04F309551F69129D00FF3C13 /* WXRView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WXRView.m; sourceTree = "<group>"; };
+		04C64BC61F71011700ACFB8B /* LayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayerView.h; sourceTree = "<group>"; };
+		04C64BC71F71011700ACFB8B /* LayerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LayerView.m; sourceTree = "<group>"; };
+		04C64BCA1F71016A00ACFB8B /* AppStateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppStateController.m; sourceTree = "<group>"; };
+		04C64BCB1F71016A00ACFB8B /* AppStateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppStateController.h; sourceTree = "<group>"; };
+		04C64BCC1F71016A00ACFB8B /* AppState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppState.m; sourceTree = "<group>"; };
+		04C64BCD1F71016B00ACFB8B /* AppState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppState.h; sourceTree = "<group>"; };
 		3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		7ED42568C04611107BF5582D /* Pods_ArDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ArDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -158,9 +158,9 @@
 		041503C31F28944F00887400 /* ArDemo */ = {
 			isa = PBXGroup;
 			children = (
-				04F3094D1F690C9700FF3C13 /* WebXR */,
 				04A983771F32280000120CF8 /* AppDelegate */,
 				04A983731F32276600120CF8 /* ViewController */,
+				04C64BC91F71014800ACFB8B /* AppStateController */,
 				04A983631F32216800120CF8 /* ARKController */,
 				04A983611F32213800120CF8 /* WebController */,
 				0449DE041F4D7EEA0057F639 /* MessageController */,
@@ -261,6 +261,8 @@
 			children = (
 				04A983741F32277E00120CF8 /* ViewController.h */,
 				04A983751F32277E00120CF8 /* ViewController.m */,
+				04C64BC61F71011700ACFB8B /* LayerView.h */,
+				04C64BC71F71011700ACFB8B /* LayerView.m */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -317,17 +319,15 @@
 			path = SceneKit;
 			sourceTree = "<group>";
 		};
-		04F3094D1F690C9700FF3C13 /* WebXR */ = {
+		04C64BC91F71014800ACFB8B /* AppStateController */ = {
 			isa = PBXGroup;
 			children = (
-				04F3094E1F690D8900FF3C13 /* WebXR.h */,
-				04F3094F1F690D8900FF3C13 /* WebXR.m */,
-				04F309511F690E2B00FF3C13 /* WXRConfiguration.h */,
-				04F309521F690E2B00FF3C13 /* WXRConfiguration.m */,
-				04F309541F69129D00FF3C13 /* WXRView.h */,
-				04F309551F69129D00FF3C13 /* WXRView.m */,
+				04C64BCD1F71016B00ACFB8B /* AppState.h */,
+				04C64BCC1F71016A00ACFB8B /* AppState.m */,
+				04C64BCB1F71016A00ACFB8B /* AppStateController.h */,
+				04C64BCA1F71016A00ACFB8B /* AppStateController.m */,
 			);
-			path = WebXR;
+			path = AppStateController;
 			sourceTree = "<group>";
 		};
 		7D7C33BA317D85DB2BCA41A4 /* Pods */ = {
@@ -484,12 +484,10 @@
 				04A983781F32291100120CF8 /* ViewController.m in Sources */,
 				045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */,
 				04A9837B1F32292200120CF8 /* Renderer.m in Sources */,
-				04F309531F690E2B00FF3C13 /* WXRConfiguration.m in Sources */,
 				0401E04E1F612D910075D823 /* BarView.m in Sources */,
+				04C64BC81F71011700ACFB8B /* LayerView.m in Sources */,
 				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
-				04F309561F69129D00FF3C13 /* WXRView.m in Sources */,
 				041503DA1F28944F00887400 /* main.m in Sources */,
-				04F309501F690D8900FF3C13 /* WebXR.m in Sources */,
 				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
 				0401E0521F62E6150075D823 /* Animator.m in Sources */,
 				041503C61F28944F00887400 /* AppDelegate.m in Sources */,
@@ -498,6 +496,7 @@
 				04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */,
 				04A9837A1F32291D00120CF8 /* ARKController.m in Sources */,
 				04A815791F42DA990082D31D /* FocusNode.m in Sources */,
+				04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */,
 				04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */,
 				045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */,
 				04A806771F3D9ED900B8732C /* PlaneNode.m in Sources */,
@@ -506,6 +505,7 @@
 				04A983791F32291900120CF8 /* RecordController.m in Sources */,
 				04A8156D1F41BA660082D31D /* HitAnchor.m in Sources */,
 				04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */,
+				04C64BCE1F71094500ACFB8B /* AppState.m in Sources */,
 				0449DE071F4D7F000057F639 /* MessageController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -641,7 +641,7 @@
 			baseConfigurationReference = 3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 6SBP555295;
+				DEVELOPMENT_TEAM = YQ63ZZYZV7;
 				GCC_PREFIX_HEADER = ArDemo/Resources/Prefix.h;
 				INFOPLIST_FILE = ArDemo/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -657,7 +657,7 @@
 			baseConfigurationReference = A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 6SBP555295;
+				DEVELOPMENT_TEAM = YQ63ZZYZV7;
 				GCC_PREFIX_HEADER = ArDemo/Resources/Prefix.h;
 				INFOPLIST_FILE = ArDemo/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

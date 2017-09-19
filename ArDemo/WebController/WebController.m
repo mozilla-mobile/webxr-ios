@@ -36,13 +36,13 @@ inline static WebCompletion debugCompletion(NSString *name)
     DDLogDebug(@"WebController dealloc");
 }
 
-- (instancetype)initWithRootView:(UIView *)rootView atIndex:(NSUInteger)index
+- (instancetype)initWithRootView:(UIView *)rootView
 {
     self = [super init];
     
     if (self)
     {
-        [self setupWebViewWithRootView:rootView atIndex:index];
+        [self setupWebViewWithRootView:rootView];
         [self setupWebContent];
         [self setupWebUI];
         [self setupBarView];
@@ -74,7 +74,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     if ([self transferCallback] && data)
     {
         [self callWebMethod:[self transferCallback] paramJSON:data webCompletion:CHECK_UPDATE_CALL ? debugCompletion(@"sendARData") : NULL];
-
+        
         return YES;
     }
     
@@ -118,22 +118,9 @@ inline static WebCompletion debugCompletion(NSString *name)
     }
 }
 
-- (void)setRecordState:(RecordState)state
+- (void)startRecording:(BOOL)start
 {
-    NSString *message;
-
-    switch (state)
-    {
-        case RecordStateGoingToRecording:
-        case RecordStatePhoto:
-        case RecordStateRecording:
-        case RecordStateRecordingWithMicrophone:
-            message = WEB_AR_IOS_START_RECORDING_MESSAGE;
-            break;
-            
-        default:
-            message = WEB_AR_IOS_STOP_RECORDING_MESSAGE;
-    }
+    NSString *message = start ? WEB_AR_IOS_START_RECORDING_MESSAGE : WEB_AR_IOS_STOP_RECORDING_MESSAGE;
     
     [self callWebMethod:message param:@"" webCompletion:debugCompletion(@"setRecordState")];
 }
@@ -141,9 +128,9 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)showBar:(BOOL)showBar
 {
     dispatch_async(dispatch_get_main_queue(), ^
-    {
-        [[self animator] animateHidden:[self barView] onRootView:[self webView] withType:(showBar ? AnimationFromTop : AnimationToTop)];
-    });
+                   {
+                       [[self animator] animateHidden:[self barView] onRootView:[self webView] withType:(showBar ? AnimationFromTop : AnimationToTop)];
+                   });
 }
 
 - (void)showDebug:(BOOL)showDebug
@@ -151,34 +138,28 @@ inline static WebCompletion debugCompletion(NSString *name)
     [self callWebMethod:WEB_AR_IOS_SHOW_DEBUG paramJSON:@{WEB_AR_UI_DEBUG_OPTION : (showDebug ? @YES : @NO)} webCompletion:debugCompletion(@"showDebug")];
 }
 
-- (void)didMoveBackground
+- (void)wasARInterruption:(BOOL)interruption
 {
-    [self callWebMethod:WEB_AR_IOS_DID_MOVE_BACK_MESSAGE param:@"" webCompletion:debugCompletion(@"didMoveBackground")];
+    NSString *message = interruption ? WEB_AR_IOS_START_RECORDING_MESSAGE : WEB_AR_IOS_INTERRUPTION_ENDED_MESSAGE;
+    
+    [self callWebMethod:message param:@"" webCompletion:debugCompletion(@"ARinterruption")];
 }
 
-- (void)willEnterForeground
+- (void)didBackgroundAction:(BOOL)background
 {
-    [self callWebMethod:WEB_AR_IOS_WILL_ENTER_FOR_MESSAGE param:@"" webCompletion:debugCompletion(@"willEnterForeground")];
+    NSString *message = background ? WEB_AR_IOS_DID_MOVE_BACK_MESSAGE : WEB_AR_IOS_WILL_ENTER_FOR_MESSAGE;
+    
+    [self callWebMethod:message param:@"" webCompletion:debugCompletion(@"backgroundAction")];
 }
 
-- (void)arkitWasInterrupted
-{
-    [self callWebMethod:WEB_AR_IOS_WAS_INTERRUPTED_MESSAGE param:@"" webCompletion:debugCompletion(@"arkitWasInterrupted")];
-}
-
-- (void)arkitInterruptionEnded
-{
-    [self callWebMethod:WEB_AR_IOS_INTERRUPTION_ENDED_MESSAGE param:@"" webCompletion:debugCompletion(@"arkitInterruptionEnded")];
-}
-
-- (void)arkitDidChangeTrackingState:(NSString *)state
-{
-    [self callWebMethod:WEB_AR_IOS_TRACKING_STATE_MESSAGE param:state webCompletion:debugCompletion(@"arkitDidChangeTrackingState")];
-}
-
-- (void)iosDidReceiveMemoryWarning
+- (void)didReceiveMemoryWarning
 {
     [self callWebMethod:WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE param:@"" webCompletion:debugCompletion(@"iosDidReceiveMemoryWarning")];
+}
+
+- (void)didChangeARTrackingState:(NSString *)state
+{
+    [self callWebMethod:WEB_AR_IOS_TRACKING_STATE_MESSAGE param:state webCompletion:debugCompletion(@"arkitDidChangeTrackingState")];
 }
 
 #pragma mark WKScriptMessageHandler
@@ -202,18 +183,18 @@ inline static WebCompletion debugCompletion(NSString *name)
         [self callWebMethod:[[message body] objectForKey:WEB_AR_CALLBACK_OPTION]
                   paramJSON:params
               webCompletion:^(id  _Nullable param, NSError * _Nullable error)
-        {
-            DDLogDebug(@"Init AR %@", error ? @"error" : @"success");
-            
-            if (error == nil)
-            {
-                [blockSelf onInit]([message body][WEB_AR_REQUEST_OPTION][WEB_AR_UI_OPTION]);
-            }
-            else
-            {
-                [blockSelf onError](error);
-            }
-        }];
+         {
+             DDLogDebug(@"Init AR %@", error ? @"error" : @"success");
+             
+             if (error == nil)
+             {
+                 [blockSelf onInit]([message body][WEB_AR_REQUEST_OPTION][WEB_AR_UI_OPTION]);
+             }
+             else
+             {
+                 [blockSelf onError](error);
+             }
+         }];
     }
     else if ([[message name] isEqualToString:WEB_AR_LOAD_URL_MESSAGE])
     {
@@ -258,10 +239,10 @@ inline static WebCompletion debugCompletion(NSString *name)
         CGFloat y = [[[message body] objectForKey:WEB_AR_Y_POSITION_OPTION] floatValue];
         
         [self onHitTest](type, x, y, ^(NSArray *results)
-         {
-             DDLogDebug(@"Hit test - %@", [results debugDescription]);
-             [blockSelf callWebMethod:hitCallback paramJSON:results webCompletion:debugCompletion(@"onHitTest")];
-         });
+                         {
+                             DDLogDebug(@"Hit test - %@", [results debugDescription]);
+                             [blockSelf callWebMethod:hitCallback paramJSON:results webCompletion:debugCompletion(@"onHitTest")];
+                         });
     }
     else if ([[message name] isEqualToString:WEB_AR_ADD_ANCHOR_MESSAGE])
     {
@@ -270,13 +251,9 @@ inline static WebCompletion debugCompletion(NSString *name)
         NSArray *transform = [[message body] objectForKey:WEB_AR_TRANSFORM_OPTION];
         
         [self onAddAnchor](name, transform,^(NSDictionary *results)
-         {
-             [blockSelf callWebMethod:hitCallback paramJSON:results webCompletion:debugCompletion(@"onAddAnchor")];
-         });
-    }
-    else if ([[message name] isEqualToString:WEB_TEST_MEMORY_WARNING_MESSAGE])
-    {
-        [self onMemory]([[[message body] objectForKey:WEB_AR_TEST_OPTION] boolValue]);
+                           {
+                               [blockSelf callWebMethod:hitCallback paramJSON:results webCompletion:debugCompletion(@"onAddAnchor")];
+                           });
     }
     else
     {
@@ -325,7 +302,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [self setLastURL:[[[self webView] URL] absoluteString]];
     
     [self onFinishLoad]();
-
+    
     [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
     [[self barView] setBackEnabled:[[self webView] canGoBack]];
     [[self barView] setForwardEnabled:[[self webView] canGoForward]];
@@ -335,7 +312,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     DDLogError(@"Web Error - %@", error);
     
-    if ([error code] == INTERNET_OFFLINE_CODE || [error code] == URL_CANT_BE_SHOWN)
+    if ([self shouldShowError:error])
     {
         [self onError](error);
     }
@@ -349,7 +326,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     DDLogError(@"Web Error - %@", error);
     
-    if ([error code] == INTERNET_OFFLINE_CODE || [error code] == URL_CANT_BE_SHOWN)
+    if ([self shouldShowError:error])
     {
         [self onError](error);
     }
@@ -359,7 +336,17 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self barView] setForwardEnabled:[[self webView] canGoForward]];
 }
 
+- (BOOL)webView:(WKWebView *)webView shouldPreviewElement:(WKPreviewElementInfo *)elementInfo
+{
+    return NO;
+}
+
 #pragma mark Private
+
+- (BOOL)shouldShowError:(NSError *)error
+{
+    return (([error code] > 600) || ([error code] < 200));
+}
 
 - (void)layout
 {
@@ -378,6 +365,7 @@ inline static WebCompletion debugCompletion(NSString *name)
      UIViewAutoresizingFlexibleWidth |
      UIViewAutoresizingFlexibleHeight];
     
+    [[self webView] setAllowsLinkPreview:NO];
     [[self webView] setOpaque:NO];
     [[self webView] setBackgroundColor:[UIColor clearColor]];
     [[self webView] setUserInteractionEnabled:YES];
@@ -448,7 +436,6 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_SET_UI_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_HIT_TEST_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_ADD_ANCHOR_MESSAGE];
-    [[self contentController] addScriptMessageHandler:self name:WEB_TEST_MEMORY_WARNING_MESSAGE];
 }
 
 - (void)cleanWebContent
@@ -461,10 +448,9 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_SET_UI_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_HIT_TEST_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ADD_ANCHOR_MESSAGE];
-    [[self contentController] removeScriptMessageHandlerForName:WEB_TEST_MEMORY_WARNING_MESSAGE];
 }
 
-- (void)setupWebViewWithRootView:(__autoreleasing UIView*)rootView atIndex:(NSUInteger)index
+- (void)setupWebViewWithRootView:(__autoreleasing UIView*)rootView
 {
     WKWebViewConfiguration *conf = [[WKWebViewConfiguration alloc] init];
     WKUserContentController *contentController = [WKUserContentController new];
@@ -478,10 +464,11 @@ inline static WebCompletion debugCompletion(NSString *name)
     [conf setProcessPool:[WKProcessPool new]];
     
     WKWebView *wv = [[WKWebView alloc] initWithFrame:[rootView bounds] configuration:conf];
-    [rootView insertSubview:wv atIndex:index];
+    [rootView addSubview:wv];
     [wv setNavigationDelegate:self];
     [wv setUIDelegate:self];
     [self setWebView:wv];
 }
 
 @end
+

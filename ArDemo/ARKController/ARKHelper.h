@@ -148,7 +148,7 @@ static inline NSString *trackingState(ARCamera *camera)
                 case ARTrackingStateReasonNone:
                     return WEB_AR_TRACKING_STATE_LIMITED;
                 case ARTrackingStateReasonInitializing: //The AR session has not yet gathered enough camera or motion data to provide tracking information.
-                                                        //This value occurs temporarily after starting a new AR session or changing configurations.
+                    //This value occurs temporarily after starting a new AR session or changing configurations.
                     return WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING;
                 case ARTrackingStateReasonExcessiveMotion: //The device is moving too fast for accurate image-based position tracking.
                     return WEB_AR_TRACKING_STATE_LIMITED_MOTION;
@@ -189,3 +189,4 @@ static inline NSArray *hitTestResultArrayFromResult(NSArray *resultArray)
 }
 
 #endif /* ARKHelper_h */
+

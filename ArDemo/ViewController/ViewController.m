@@ -8,59 +8,40 @@
 #import "MessageController.h"
 #import "Animator.h"
 #import "Reachability.h"
+#import "AppStateController.h"
+#import "LayerView.h"
 
-#define MICROPHONE_ENABLED_BY_DEFAULT YES
-#define RECORD_STATE_BY_DEFAULT RecordStateIsReady
+#define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
-typedef NS_ENUM(NSUInteger, ViewIndex)
-{
-    ARKViewIndex,
-    WebViewIndex,
-    BackViewIndex,
-    HotViewIndex
-};
+#define WAITING_TIME_ON_MEMORY_WARNING .5f
+
+typedef void (^UICompletion)(void);
+#define RUN_UI_COMPLETION_ASYNC_MAIN(c) if(c){ dispatch_async(dispatch_get_main_queue(), ^{ c();}); }
 
 
 @interface ViewController ()
 
-@property (nonatomic, weak) IBOutlet UIImageView *backView;
-@property (nonatomic, strong) UIActivityIndicatorView *ai;
+@property (nonatomic, weak) IBOutlet LayerView *splashLayerView;
+@property (nonatomic, weak) IBOutlet LayerView *arkLayerView;
+@property (nonatomic, weak) IBOutlet LayerView *hotLayerView;
+@property (nonatomic, weak) IBOutlet LayerView *webLayerView;
 
+@property (nonatomic, strong) AppStateController *stateController;
 @property (nonatomic, strong) ARKController *arkController;
 @property (nonatomic, strong) WebController *webController;
 @property (nonatomic, strong) UIOverlayController *overlayController;
 @property (nonatomic, strong) RecordController *recordController;
 @property (nonatomic, strong) LocationManager *locationManager;
 @property (nonatomic, strong) MessageController *messageController;
-
-@property (nonatomic, copy) NSDictionary *aRRequest;
-
-#warning Test Memory Warning
-@property (nonatomic) BOOL testMemoryWarning;
-@property (nonatomic) BOOL didReceiveMemoryWaring;
-@property (nonatomic) BOOL willEnterForeground;
-
-@property (nonatomic, copy) NSString *urlOnMemoryWarning;
-
-@property(nonatomic) ShowMode showMode;
-@property(nonatomic) ShowMode onMessageShowMode;
-
-@property(nonatomic) ShowOptions showOptions;
-
-@property(nonatomic) RecordState recordState;
-
 @property (nonatomic, strong) Animator *animator;
-
-@property (nonatomic) Reachability *reachability;
-@property (nonatomic) BOOL reloadByReachability;
-
-@property (nonatomic) BOOL webXR;
-#define  WAITING_FOR_WEB_XR 1
+@property (nonatomic, strong) Reachability *reachability;
 
 @end
 
 
 @implementation ViewController
+
+#pragma mark UI
 
 - (void)dealloc
 {
@@ -71,27 +52,19 @@ typedef NS_ENUM(NSUInteger, ViewIndex)
 {
     [super viewDidLoad];
     
-    [self setAnimator:[Animator new]];
-    
-    [self setShowMode:ShowNothing];
-    [self setShowOptions:None];
-    
-    [self startAI];
+    [self setupCommonControllers];
     
     dispatch_async(dispatch_get_main_queue(), ^
-    {
-        [self setupMessageController];
-        [self setupReachability];
-        [self setupNotifications];
-        [self setupControllers];
-    });
+                   {
+                       [self setupTargetControllers];
+                   });
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     
-    DDLogError(@"DIDRECIVEMEMORYWARNING");
+    DDLogError(@"didReceiveMemoryWarning");
     
     [self processMemoryWarning];
 }
@@ -105,76 +78,135 @@ typedef NS_ENUM(NSUInteger, ViewIndex)
     [[self webController] viewWillTransitionToSize:size];
 }
 
-#pragma mark Private
+#pragma mark Setups
 
-- (void)startAI
+- (void)setupCommonControllers
 {
-    [[self backView] setAlpha:1];
-    [self setAi:[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite]];
-    [[self ai] startAnimating];
-    [[self backView] addSubview:[self ai]];
-    CGPoint position = CGPointMake([self view].bounds.size.width - 20, [self view].bounds.size.height - 20);
-    [[self ai] setCenter:position];
+    [self setupStateController];
+    [self setupAnimator];
+    [self setupMessageController];
+    [self setupReachability];
+    [self setupNotifications];
 }
 
-- (void)stopAI
+- (void)setupStateController
 {
-    [[self ai] stopAnimating];
-    [[self ai] removeFromSuperview];
-    [self setAi:nil];
+    __weak typeof (self) blockSelf = self;
+    
+    [self setStateController:[[AppStateController alloc] initWithState:[AppState defaultState]]];
+    
+    [[self stateController] setOnDebug:^(BOOL showDebug)
+     {
+         [[blockSelf webController] showDebug:showDebug];
+     }];
+    
+    [[self stateController] setOnModeUpdate:^(ShowMode mode)
+     {
+         [[blockSelf arkController] setShowMode:mode];
+         [[blockSelf overlayController] setMode:mode];
+         
+         [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
+     }];
+    
+    [[self stateController] setOnOptionsUpdate:^(ShowOptions options)
+     {
+         [[blockSelf arkController] setShowOptions:options];
+         [[blockSelf overlayController] setOptions:options];
+         
+         [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
+     }];
+    
+    [[self stateController] setOnRecordUpdate:^(RecordState state)
+     {
+         [[blockSelf overlayController] setRecordState:state];
+         [[blockSelf webController] startRecording:[[blockSelf stateController] isRecording]];
+         [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
+     }];
+    
+    [[self stateController] setOnXRUpdate:^(BOOL xr)
+     {
+         if (xr)
+         {
+             [blockSelf setupARKController];
+             [blockSelf setupLocationController];
+             
+             [[blockSelf stateController] setShowMode:ShowSingle];
+         }
+         else
+         {
+             [blockSelf cleanARKController];
+             
+             [[blockSelf stateController] setShowMode:ShowNothing];
+         }
+     }];
+    
+    [[self stateController] setOnReachable:^(NSString *url)
+     {
+         [blockSelf loadURL:url];
+     }];
+    
+    [[self stateController] setOnEnterForeground:^(NSString *url)
+     {
+         [[blockSelf messageController] clean];
+         [blockSelf loadURL:url];
+     }];
+    
+    [[self stateController] setOnMemoryWarning:^(NSString *url)
+     {
+         [[blockSelf messageController] showMessageAboutMemoryWarningWithCompletion:^
+          {
+              [blockSelf loadURL:url];
+          }];
+     }];
+    
+    [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
+     {
+         [[blockSelf locationManager] setupForRequest:dict];
+         [[blockSelf arkController] startSessionWithAppState:[[blockSelf stateController] state]];
+     }];
+    
+    [[self stateController] setOnInterruption:^(BOOL interruption)
+     {
+         [[blockSelf recordController] stopRecordingByInterruption:blockSelf];
+         [[blockSelf messageController] showMessageAboutARInteruption:interruption];
+         
+         [[blockSelf overlayController] setARKitInterruption:interruption];
+         [[blockSelf webController] wasARInterruption:interruption];
+     }];
+    
+    [[self stateController] setOnMicUpdate:^(BOOL enabled)
+     {
+         [[blockSelf recordController] setMicEnabled:enabled];
+         [[blockSelf overlayController] setMicEnabled:enabled];
+     }];
 }
 
-- (void)processMemoryWarning
+- (void)setupAnimator
 {
-    [self setShowMode:ShowNothing];
-    [self setUrlOnMemoryWarning:[[self webController] lastURL]];
-    [[self webController] clean];
-    
-    [[[self view] subviews] enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop)
-    {
-        if (obj == [self backView])
-        {
-            [obj setAlpha:1];
-        }
-        else
-        {
-            [obj removeFromSuperview];
-        }
-    }];
-    
-    [self setDidReceiveMemoryWaring:YES];
-    
-    [self startAI];
-    
-    dispatch_async(dispatch_get_main_queue(), ^
-    {
-        [self setupControllers];
-    });
+    [self setAnimator:[Animator new]];
 }
 
-- (void)showWebError:(NSError *)error
+- (void)setupMessageController
 {
-    [[self messageController] showMessageAboutWebError:error withCompletion:^(BOOL reload)
-    {
-        dispatch_async(dispatch_get_main_queue(), ^
-        {
-            if (reload)
-            {
-                [self reload:nil];
-            }
-            else
-            {
-                [self setShowMode:[self onMessageShowMode]];
-            }
-        });
-    }];
-}
-
-- (void)reload:(id)sender
-{
-    [self setWebXR:NO];
+    [self setMessageController:[[MessageController alloc] initWithViewController:self]];
     
-    [[self webController] reload];
+    __weak typeof (self) blockSelf = self;
+    
+    [[self messageController] setDidShowMessage:^
+     {
+         [[blockSelf stateController] saveOnMessageShowMode];
+         [[blockSelf stateController] setShowMode:ShowNothing];
+     }];
+    
+    [[self messageController] setDidHideMessage:^
+     {
+         [[blockSelf stateController] applyOnMessageShowMode];
+     }];
+    
+    [[self messageController] setDidHideMessageByUser:^
+     {
+         //[[blockSelf stateController] applyOnMessageShowMode];
+     }];
 }
 
 - (void)setupNotifications
@@ -184,19 +216,14 @@ typedef NS_ENUM(NSUInteger, ViewIndex)
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
      {
          [blockSelf cleanARKController];
-         [[blockSelf webController] didMoveBackground];
+         [[blockSelf webController] didBackgroundAction:YES];
          
-         [blockSelf setShowMode:ShowNothing];
-         
-         [[blockSelf view] bringSubviewToFront:[blockSelf backView]];
-         [blockSelf startAI];
+         [[blockSelf stateController] saveMoveToBackgroundOnURL:[[blockSelf webController] lastURL]];
      }];
     
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
      {
-         [blockSelf setWillEnterForeground:YES];
-         [[blockSelf messageController] showMessageAboutARInteruption:NO];
-         [blockSelf reload:nil];
+         [[blockSelf stateController] applyOnEnterForegroundAction];
      }];
 }
 
@@ -213,16 +240,14 @@ typedef NS_ENUM(NSUInteger, ViewIndex)
         BOOL isReachable = netStatus != NotReachable;
         DDLogDebug(@"Connection isReachable - %d", isReachable);
         
-        if (isReachable && [blockSelf reloadByReachability])
+        if (isReachable)
         {
-            [blockSelf setReloadByReachability:NO];
-            [[blockSelf webController] loadURL:[[blockSelf webController] lastURL]];
+            [[blockSelf stateController] applyOnReachableAction];
         }
-        else if (isReachable == NO && [blockSelf aRRequest] == nil)
+        else if (isReachable == NO && [[blockSelf webController] lastURL] == nil)
         {
-            [blockSelf setReloadByReachability:YES];
             [[blockSelf messageController] showMessageAboutConnectionRequired];
-            [blockSelf stopAI];
+            [[blockSelf stateController] saveNotReachableOnURL:nil];
         }
     };
     
@@ -230,115 +255,14 @@ typedef NS_ENUM(NSUInteger, ViewIndex)
                                                       object:nil
                                                        queue:[NSOperationQueue mainQueue]
                                                   usingBlock:^(NSNotification * _Nonnull note)
-                                                    {
-                                                        ReachBlock();
-                                                    }];
+     {
+         ReachBlock();
+     }];
     
     ReachBlock();
 }
 
-- (void)setShowMode:(ShowMode)showMode
-{
-    _showMode = showMode;
-    
-    dispatch_async(dispatch_get_main_queue(), ^
-    {
-        [[self arkController] setShowMode:showMode];
-        [[self overlayController] setMode:showMode];
-        
-        [[self webController] showBar:([self webXR] == NO) ? YES : ((showMode >= ShowMulti) && ([self showOptions] & Browser))];
-        [[self webController] showDebug:(showMode == ShowMultiDebug ? YES : NO)];
-    });
-}
-
-- (void)setShowOptions:(ShowOptions)showOptions
-{
-    _showOptions = showOptions;
-    
-    dispatch_async(dispatch_get_main_queue(), ^
-    {
-        [[self arkController] setShowOptions:[self showOptions]];
-        [[self overlayController] setOptions:[self showOptions]];
-        
-        [[self webController] showBar:([self webXR] == NO) ? YES : ((_showMode >= ShowMulti) && ([self showOptions] & Browser))];
-    });
-}
-
-- (void)setRecordState:(RecordState)recordState
-{
-    _recordState = recordState;
-    
-    dispatch_async(dispatch_get_main_queue(), ^
-    {
-        [[self overlayController] setRecordState:recordState];
-        [[self webController] setRecordState:recordState];
-        
-        if (recordState == RecordStatePhoto ||
-            recordState == RecordStateRecording ||
-            recordState == RecordStateGoingToRecording ||
-            ((recordState == RecordStatePreviewing) && ([[UIDevice currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPad)))
-        {
-            [[self webController] showBar:NO];
-            return;
-        }
-        
-        [[self webController] showBar:([self webXR] == NO) ? YES : ((_showMode >= ShowMulti) && ([self showOptions] & Browser))];
-    });
-}
-
-- (void)setWebXR:(BOOL)webXR
-{
-    _webXR = webXR;
-    
-    dispatch_async(dispatch_get_main_queue(), ^
-    {
-        if (webXR == NO)
-        {
-            [self cleanARKController];
-        }
-        else
-        {
-            [self setupARKController];
-            [self setupLocationController];
-        }
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
-        {
-            [self setShowMode:webXR ? ShowSingle : ShowNothing];
-        });
-    });
-}
-
-- (void)cleanARKController
-{
-    [[[self arkController] arkView] removeFromSuperview];
-    [self setArkController:nil];
-}
-
-- (void)setupMessageController
-{
-    [self setMessageController:[[MessageController alloc] initWithViewController:self]];
-    
-    __weak typeof (self) blockSelf = self;
-    
-    [[self messageController] setDidShowMessage:^
-    {
-        [blockSelf setOnMessageShowMode:[blockSelf showMode]];
-        [blockSelf setShowMode:ShowNothing];
-    }];
-    
-    [[self messageController] setDidHideMessage:^
-     {
-         [blockSelf setShowMode:[blockSelf onMessageShowMode]];
-     }];
-    
-    [[self messageController] setDidHideMessageByUser:^
-     {
-         [blockSelf setShowMode:[blockSelf onMessageShowMode]];
-     }];
-}
-
-- (void)setupControllers
+- (void)setupTargetControllers
 {
     __weak typeof (self) blockSelf = self;
     
@@ -353,17 +277,13 @@ typedef NS_ENUM(NSUInteger, ViewIndex)
     else
     {
         [[self recordController] requestAuthorizationWithCompletion:^(RecordController *sender)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^
-                           {
-                               [blockSelf setupWebController];
-                               
-                               [[blockSelf view] bringSubviewToFront:[blockSelf backView]];
-                           });
-        }];
+         {
+             dispatch_async(dispatch_get_main_queue(), ^
+                            {
+                                [blockSelf setupWebController];
+                            });
+         }];
     }
-    
-    [[self view] bringSubviewToFront:[blockSelf backView]];
     
     [self setupOverlayController];
 }
@@ -371,196 +291,147 @@ typedef NS_ENUM(NSUInteger, ViewIndex)
 - (void)setupLocationController
 {
     [self setLocationManager:[[LocationManager alloc] init]];
-    [[self locationManager] setupForRequest:[self aRRequest]];
+    [[self locationManager] setupForRequest:[[[self stateController] state] aRRequest]];
 }
 
 - (void)setupARKController
 {
-    [[[self arkController] arkView] removeFromSuperview];
-    
-    [self setArkController:[[ARKController alloc] initWithType:ARKSceneKit]];
+    CLEAN_VIEW([self arkLayerView]);
     
     __weak typeof (self) blockSelf = self;
     
+    [self setArkController:[[ARKController alloc] initWithType:ARKSceneKit rootView:[self arkLayerView]]];
+    
     [[self arkController] setDidUpdate:^(ARKController *c)
-    {
-        if ([blockSelf aRRequest] != nil)
-        {
-            [blockSelf sendARKData];
-        }
-    }];
+     {
+         if ([[blockSelf stateController] shouldSendARKData])
+         {
+             [blockSelf sendARKData];
+         }
+     }];
 #define CAMERA_ACCESS_NOT_AUTORIZED_CODE 103
     [[self arkController] setDidFailSession:^(NSError *error)
      {
          if ([error code] != CAMERA_ACCESS_NOT_AUTORIZED_CODE)
          {
              dispatch_async(dispatch_get_main_queue(), ^
-             {
-                 [[blockSelf messageController] showMessageAboutFailSessionWithCompletion:^
-                 {
-                     dispatch_async(dispatch_get_main_queue(), ^
-                        {
-                            [[blockSelf webController] reload];
-                        });
-                 }];
-             });
+                            {
+                                [[blockSelf messageController] showMessageAboutFailSessionWithCompletion:^
+                                 {
+                                     dispatch_async(dispatch_get_main_queue(), ^
+                                                    {
+                                                        [[blockSelf webController] reload];
+                                                    });
+                                 }];
+                            });
          }
-    }];
+     }];
     
     [[self arkController] setDidInterupt:^(BOOL interruption)
-    {
-        dispatch_async(dispatch_get_main_queue(), ^
-        {
-            [[blockSelf recordController] stopRecordingByInterruption:self];
-            [[blockSelf messageController] showMessageAboutARInteruption:interruption];
-            [[blockSelf overlayController] setARKitInterruption:interruption];
-            
-            if (interruption)
-            {
-                [[blockSelf webController] arkitWasInterrupted];
-            }
-            else
-            {
-                [[blockSelf webController] arkitInterruptionEnded];
-            }
-        });
-    }];
+     {
+         [[blockSelf stateController] setARInterruption:interruption];
+     }];
     
     [[self arkController] setDidChangeTrackingState:^(NSString *state)
-    {
-        [[blockSelf webController] arkitDidChangeTrackingState:state];
-        [[blockSelf overlayController] setTrackingState:state];
-    }];
+     {
+         [[blockSelf webController] didChangeARTrackingState:state];
+         [[blockSelf overlayController] setTrackingState:state];
+     }];
     
+    [[self animator] animate:[self arkLayerView] toFade:NO];
     
-    [[self view] insertSubview:[[self arkController] arkView] atIndex:ARKViewIndex];
-    
-    [[self animator] animate:[[self arkController] arkView] toFade:NO];
-   
-    [[self arkController] startSessionWithRequest:[self aRRequest] showMode:[self showMode] showOptions:[self showOptions]];
+    [[self arkController] startSessionWithAppState:[[self stateController] state]];
 }
 
 - (void)setupWebController
 {
+    CLEAN_VIEW([self webLayerView]);
+    
     __weak typeof (self) blockSelf = self;
     
-    [self setWebController:[[WebController alloc] initWithRootView:[blockSelf view] atIndex:WebViewIndex]];
+    [self setWebController:[[WebController alloc] initWithRootView:[self webLayerView]]];
     [[self webController] setAnimator:[self animator]];
     [[self webController] setOnStartLoad:^
      {
-         [blockSelf setWebXR:NO];
+         [[blockSelf stateController] setWebXR:NO];
      }];
     
     [[self webController] setOnFinishLoad:^
-    {
-        [UIView animateWithDuration:0.5 animations:^
-         {
-             [[blockSelf backView] setAlpha:0];
-             [blockSelf stopAI];
-         }];
-    }];
+     {
+         [blockSelf hideSplashWithCompletion:^
+          { }];
+     }];
     
     [[self webController] setOnInit:^(NSDictionary *uiOptionsDict)
-    {
-        [blockSelf setWebXR:YES];
-        
-        ShowOptions op = showOptionsFormDict(uiOptionsDict);
-        [blockSelf setShowOptions:op];
-        
-        if ([blockSelf didReceiveMemoryWaring])
-        {
-            [blockSelf setDidReceiveMemoryWaring:NO];
-            [[blockSelf webController] iosDidReceiveMemoryWarning];
-            [[blockSelf messageController] showMessageAboutMemoryWarning];
-        }
-        
-        if ([blockSelf willEnterForeground])
-        {
-            [blockSelf setWillEnterForeground:NO];
-            [[blockSelf webController] willEnterForeground];
-        }
-    }];
+     {
+         [[blockSelf stateController] setWebXR:YES];
+         [[blockSelf stateController] setShowMode:ShowSingle];
+         [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
+         
+         [[blockSelf stateController] applyOnEnterForegroundAction];
+         [[blockSelf stateController] applyOnDidReceiveMemoryAction];
+     }];
     
     [[self webController] setOnError:^(NSError *error)
-    {
-        [blockSelf stopAI];
-        
-        if ([error code] == INTERNET_OFFLINE_CODE)
-        {
-            [blockSelf setShowMode:ShowNothing];
-            [blockSelf setReloadByReachability:YES];
-            [[blockSelf messageController] showMessageAboutConnectionRequired];
-            [[blockSelf backView] setAlpha:1];
-        }
-        else
-        {
-            [blockSelf showWebError:error];
-        }
-    }];
+     {
+         [blockSelf showWebError:error];
+     }];
     
     [[self webController] setOnIOSUpdate:^( NSDictionary * _Nullable request)
      {
-         [blockSelf setARRequest:request];
-         
-         [[blockSelf locationManager] setupForRequest:[blockSelf aRRequest]];
+         [[blockSelf stateController] setARRequest:request];
      }];
     
     [[self webController] setOnJSUpdate:^( NSDictionary * _Nullable request)
      {
-         [blockSelf setARRequest:request];
-         
-         [[blockSelf locationManager] setupForRequest:[blockSelf aRRequest]];
-         [[blockSelf arkController] startSessionWithRequest:[blockSelf aRRequest] showMode:[blockSelf showMode] showOptions:[blockSelf showOptions]];
+         [[blockSelf stateController] setARRequest:request];
      }];
     
     [[self webController] setOnJSUpdateData:^NSDictionary *
      {
          return [blockSelf commonData];
      }];
-
+    
     [[self webController] setLoadURL:^(NSString *url)
-    {
-        //... ui?
-        [[blockSelf webController] loadURL:url];
-    }];
+     {
+         [[blockSelf webController] loadURL:url];
+     }];
     
     [[self webController] setOnSetUI:^(NSDictionary *uiOptionsDict)
-    {
-        ShowOptions op = showOptionsFormDict(uiOptionsDict);
-        
-        [blockSelf setShowOptions:op];
-    }];
+     {
+         [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
+     }];
     
     [[self webController] setOnHitTest:^(NSUInteger mask, CGFloat x, CGFloat y, ResultArrayBlock result)
-    {
-        NSArray *results = [[blockSelf arkController] hitTestNormPoint:CGPointMake(x, y) types:mask];
-        
-        result(results);
-    }];
+     {
+         result([[blockSelf arkController] hitTestNormPoint:CGPointMake(x, y) types:mask]);
+     }];
     
     [[self webController] setOnAddAnchor:^(NSString *name, NSArray *transformArray, ResultBlock result)
-    {
-        if ([[blockSelf arkController] addAnchor:name transform:transformArray])
-        {
-            result(@{WEB_AR_UUID_OPTION : name, WEB_AR_TRANSFORM_OPTION : transformArray});
-        }
-        else
-        {
-            result(@{});
-        }
-    }];
+     {
+         if ([[blockSelf arkController] addAnchor:name transform:transformArray])
+         {
+             result(@{WEB_AR_UUID_OPTION : name, WEB_AR_TRANSFORM_OPTION : transformArray});
+         }
+         else
+         {
+             result(@{});
+         }
+     }];
     
     [[self webController] setOnRemoveObjects:^(NSArray *objects)
      {
          [[blockSelf arkController] removeAnchors:objects];
      }];
     
-    [[self webController] setOnMemory:^(BOOL test)
-     {
-         [blockSelf setTestMemoryWarning:test];
-    }];
-    
-    [[self webController] loadURL:[self didReceiveMemoryWaring] ? [self urlOnMemoryWarning] : WEB_URL];
+    if ([[self stateController] wasMemoryWarning])
+    {
+        [[self stateController] applyOnDidReceiveMemoryAction];
+    }
+    else
+    {
+        [[self webController] loadURL:WEB_URL];
+    }
 }
 
 - (void)setupRecordController
@@ -569,22 +440,27 @@ typedef NS_ENUM(NSUInteger, ViewIndex)
     
     RecordAction rA = ^(RecordState state)
     {
-        [blockSelf setRecordState:state];
+        [[blockSelf stateController] setRecordState:state];
     };
     
-    [self setRecordController:[[RecordController alloc] initWithAction:rA micEnabled:MICROPHONE_ENABLED_BY_DEFAULT]];
+    [self setRecordController:[[RecordController alloc] initWithAction:rA
+                                                            micEnabled:[[[self stateController] state] micEnabled]]];
     [[self recordController] setAnimator:[self animator]];
     [[self recordController] setAuthAction:^(id sender)
-    {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:^(BOOL success)
-         {}];
-    }];
+     {
+         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:^(BOOL success)
+          {}];
+     }];
 }
 
 - (void)setupOverlayController
 {
+    CLEAN_VIEW([self hotLayerView]);
+    
     __weak typeof (self) blockSelf = self;
     
+    // the overlay routes the record action to the record controller directly,
+    // because this action (buttons) must belong the record controoler
     HotAction cameraAction = ^(BOOL longTouch)
     {
         if (longTouch)
@@ -597,46 +473,124 @@ typedef NS_ENUM(NSUInteger, ViewIndex)
         }
         else
         {
-            if ([blockSelf testMemoryWarning])
-            {
-                [blockSelf processMemoryWarning];
-            }
-            else
-            {
-                [[blockSelf recordController] shotAction:blockSelf];
-            }
+            [[blockSelf recordController] shotAction:blockSelf];
         }
     };
     
+    // mic enabling should be accepted by user in ReplayKit popup
+    // this value can be changed in State comtroller on Record action
     HotAction micAction = ^(BOOL any)
     {
-        [[blockSelf recordController] micAction:blockSelf];
-        [[blockSelf overlayController] setMicrophoneEnabled:[[blockSelf recordController] microphoneEnabled]];
+        [[blockSelf stateController] invertMic];
     };
     
     HotAction showAction = ^(BOOL any)
     {
-        [blockSelf setShowMode:[blockSelf showMode] == ShowSingle ? ShowMulti : ShowSingle];
+        [[blockSelf stateController] invertShowMode];
     };
     
     HotAction debugAction = ^(BOOL any)
     {
-        [blockSelf setShowMode:[blockSelf showMode] == ShowMulti ? ShowMultiDebug : ShowMulti];
+        [[blockSelf stateController] invertDebugMode];
     };
     
-    [self setOverlayController:[[UIOverlayController alloc] initWithRootView:[self view]
-                                                                     atIndex:HotViewIndex
+    [[self hotLayerView] setProcessTouchInSubview:YES];
+    
+    [self setOverlayController:[[UIOverlayController alloc] initWithRootView:[self hotLayerView]
                                                                 cameraAction:cameraAction
                                                                    micAction:micAction
                                                                   showAction:showAction
                                                                  debugAction:debugAction]];
     
     [[self overlayController] setAnimator:[self animator]];
-    [[self overlayController] setMode:[self showMode]];
-    [[self overlayController] setOptions:[self showOptions]];
-    [[self overlayController] setMicrophoneEnabled:MICROPHONE_ENABLED_BY_DEFAULT];
-    [[self overlayController] setRecordState:RECORD_STATE_BY_DEFAULT];
+    
+    [[self overlayController] setMode:[[[self stateController] state] showMode]];
+    [[self overlayController] setOptions:[[[self stateController] state] showOptions]];
+    [[self overlayController] setMicEnabled:[[[self stateController] state] micEnabled]];
+    [[self overlayController] setRecordState:[[[self stateController] state] recordState]];
 }
+
+#pragma mark Cleanups
+
+- (void)cleanupCommonControllers
+{
+    [[self animator] clean];
+    
+    [[self stateController] setState:[AppState defaultState]];
+    
+    [[self messageController] clean];
+}
+
+- (void)cleanupTargetControllers
+{
+    [self setLocationManager:nil];
+    [self setRecordController:nil];
+    
+    [self cleanWebController];
+    [self cleanARKController];
+    
+    [self cleanOverlay];
+}
+
+- (void)cleanARKController
+{
+    CLEAN_VIEW([self arkLayerView]);
+    [self setArkController:nil];
+}
+
+- (void)cleanWebController
+{
+    [[self webController] clean];
+    CLEAN_VIEW([self webLayerView]);
+    [self setWebController:nil];
+}
+
+- (void)cleanOverlay
+{
+    [[self overlayController] clean];
+    CLEAN_VIEW([self hotLayerView]);
+    [self setOverlayController:nil];
+}
+
+#pragma mark Splash
+
+- (void)showSplashWithCompletion:(UICompletion)completion
+{
+    [[self splashLayerView] setAlpha:1];
+    
+    RUN_UI_COMPLETION_ASYNC_MAIN(completion);
+}
+
+- (void)hideSplashWithCompletion:(UICompletion)completion
+{
+    [[self splashLayerView] setAlpha:0];
+    
+    RUN_UI_COMPLETION_ASYNC_MAIN(completion);
+}
+
+#pragma mark MemoryWarning
+
+- (void)processMemoryWarning
+{
+    [[self stateController] saveDidReceiveMemoryWarningOnURL:[[self webController] lastURL]];
+    
+    [self cleanupCommonControllers];
+    
+    [self showSplashWithCompletion:^
+     {
+         [self cleanupTargetControllers];
+     }];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(WAITING_TIME_ON_MEMORY_WARNING * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
+                   {
+                       [self setupTargetControllers];
+                       
+                       [self hideSplashWithCompletion:^
+                        {}];
+                   });
+}
+
+#pragma mark Data
 
 - (NSDictionary *)commonData
 {
@@ -652,14 +606,51 @@ typedef NS_ENUM(NSUInteger, ViewIndex)
     [[self webController] sendARData:[self commonData]];
 }
 
-- (NSDictionary *)initialRequest
+#pragma mark Web
+
+- (void)showWebError:(NSError *)error
 {
-    return @{WEB_AR_H_PLANE_OPTION : @YES};
+    if ([error code] == INTERNET_OFFLINE_CODE)
+    {
+        [self showSplashWithCompletion:^
+         {
+             [[self stateController] setShowMode:ShowNothing];
+             [[self stateController] saveNotReachableOnURL:[[self webController] lastURL]];
+             [[self messageController] showMessageAboutConnectionRequired];
+         }];
+    }
+    else
+    {
+        [[self messageController] showMessageAboutWebError:error withCompletion:^(BOOL reload)
+         {
+             [self hideSplashWithCompletion:^
+              {
+                  if (reload)
+                  {
+                      [self loadURL:nil];
+                  }
+                  else
+                  {
+                      [[self stateController] applyOnMessageShowMode];
+                  }
+              }];
+         }];
+    }
 }
 
-- (ShowOptions)initialOptions
+- (void)loadURL:(NSString *)url
 {
-    return Full;
+    if (url == nil)
+    {
+        [[self webController] reload];
+    }
+    else
+    {
+        [[self webController] loadURL:url];
+    }
+    
+    [[self stateController] setWebXR:NO];
 }
 
 @end
+

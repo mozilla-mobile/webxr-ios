@@ -124,29 +124,29 @@
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted)
          {
              dispatch_async(dispatch_get_main_queue(), ^
-             {
-                 [blockSelf setupState];
-                 
-                 if (completionAction != NULL)
-                 {
-                     completionAction(blockSelf);
-                 }
-              });
+                            {
+                                [blockSelf setupState];
+                                
+                                if (completionAction != NULL)
+                                {
+                                    completionAction(blockSelf);
+                                }
+                            });
          }];
     }
     else if (avStatus != AVAuthorizationStatusAuthorized)
     {
         dispatch_async(dispatch_get_main_queue(), ^
-        {
-            if (completionAction != NULL)
-            {
-                completionAction(blockSelf);
-            }
-            else
-            {
-                [self authAction](blockSelf);
-            }
-        });
+                       {
+                           if (completionAction != NULL)
+                           {
+                               completionAction(blockSelf);
+                           }
+                           else
+                           {
+                               [self authAction](blockSelf);
+                           }
+                       });
     }
     
     PHAuthorizationStatus phStatus = [PHPhotoLibrary authorizationStatus];
@@ -156,29 +156,29 @@
         [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status)
          {
              dispatch_async(dispatch_get_main_queue(), ^
-             {
-                 [blockSelf setupState];
-                 
-                 if (completionAction != NULL)
-                 {
-                     completionAction(blockSelf);
-                 }
-             });
+                            {
+                                [blockSelf setupState];
+                                
+                                if (completionAction != NULL)
+                                {
+                                    completionAction(blockSelf);
+                                }
+                            });
          }];
     }
     else if (phStatus != PHAuthorizationStatusAuthorized)
     {
         dispatch_async(dispatch_get_main_queue(), ^
-        {
-            if (completionAction != NULL)
-            {
-                completionAction(blockSelf);
-            }
-            else
-            {
-                [self authAction](blockSelf);
-            }
-        });
+                       {
+                           if (completionAction != NULL)
+                           {
+                               completionAction(blockSelf);
+                           }
+                           else
+                           {
+                               [self authAction](blockSelf);
+                           }
+                       });
     }
 }
 
@@ -197,40 +197,46 @@
         {
             [[self recorder] stopCaptureWithHandler:^(NSError * _Nullable error)
              {
-                 if ([error code] == USER_DECLINED_RECORD_CODE)
-                 {
-                     [self action](RecordStateIsReady);
-                 }
-                 else
-                 {
-                     [self action](RecordStateError);
-                 }
-                 
-                 [blockSelf setPhotoCapturing:NO];
-
-                 DDLogError(@"Error Recording by interruption !");
+                 dispatch_async(dispatch_get_main_queue(), ^
+                                {
+                                    if ([error code] == USER_DECLINED_RECORD_CODE)
+                                    {
+                                        [self action](RecordStateIsReady);
+                                    }
+                                    else
+                                    {
+                                        [self action](RecordStateError);
+                                    }
+                                    
+                                    [blockSelf setPhotoCapturing:NO];
+                                    
+                                    DDLogError(@"Error Recording by interruption !");
+                                });
              }];
         }
         else
         {
             [[self recorder] stopRecordingWithHandler:^(RPPreviewViewController * _Nullable previewViewController, NSError * _Nullable error)
-            {
-                if ([error code] == USER_DECLINED_RECORD_CODE)
-                {
-                    [self action](RecordStateIsReady);
-                }
-                else
-                {
-                    [self action](RecordStateError);
-                }
-                
-                DDLogError(@"Error Recording by interruption !");
-            }];
+             {
+                 dispatch_async(dispatch_get_main_queue(), ^
+                                {
+                                    if ([error code] == USER_DECLINED_RECORD_CODE)
+                                    {
+                                        [self action](RecordStateIsReady);
+                                    }
+                                    else
+                                    {
+                                        [self action](RecordStateError);
+                                    }
+                                    
+                                    DDLogError(@"Error Recording by interruption !");
+                                });
+             }];
         }
     }
 }
 
-- (void)micAction:(id)sender
+- (void)setMicEnabled:(BOOL)enabled
 {
     if ([self checkAuthAvailable] == NO)
     {
@@ -238,7 +244,7 @@
         return;
     }
     
-    [self setMicrophoneEnabled:![self microphoneEnabled]];
+    [self setMicrophoneEnabled:enabled];
 }
 
 - (void)shotAction:(id)sender
@@ -263,54 +269,55 @@
     _photoCapturing = YES;
     
     __weak typeof (self) blockSelf = self;
-        
+    
     [[self recorder] startCaptureWithHandler:^(CMSampleBufferRef  _Nonnull sampleBuffer, RPSampleBufferType bufferType, NSError * _Nullable error)
-    {
-        if ((++_shotCounter) == _frameToShot)
-        {
-            DDLogDebug(@"SHOT");
-            
-            UIImage *image = [blockSelf imageTFromSampleBuffer:sampleBuffer];
-            [[blockSelf recorder] stopCaptureWithHandler:^(NSError * _Nullable error)
-            {
-                [blockSelf setPhotoCapturing:NO];
-                
-                if (image)
-                {
-                    AudioServicesPlaySystemSound(CAMERA_SHUTTER_SOUND_ID);
-                    
-                    UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
-                }
-                else
-                {
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)([[self animator] animationDuration] * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
-                    {
-                        [blockSelf action](RecordStateError);
-                    });
-                    DDLogError(@"Error Shot Image !");
-                }
-            }];
-            
-        }
-    }
-    completionHandler:^(NSError * _Nullable error) {}];
+     {
+         if ((++_shotCounter) == _frameToShot)
+         {
+             DDLogDebug(@"SHOT");
+             
+             UIImage *image = [blockSelf imageTFromSampleBuffer:sampleBuffer];
+             [[blockSelf recorder] stopCaptureWithHandler:^(NSError * _Nullable error)
+              {
+                  dispatch_async(dispatch_get_main_queue(), ^
+                                 {
+                                     [blockSelf setPhotoCapturing:NO];
+                                     
+                                     if (image)
+                                     {
+                                         AudioServicesPlaySystemSound(CAMERA_SHUTTER_SOUND_ID);
+                                         
+                                         UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
+                                     }
+                                     else
+                                     {
+                                         [blockSelf action](RecordStateError);
+                                         
+                                         DDLogError(@"Error Shot Image !");
+                                     }
+                                 });
+              }];
+             
+         }
+     }
+                           completionHandler:^(NSError * _Nullable error) {}];
 }
 
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)([[self animator] animationDuration] * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
-    {
-        if (error)
-        {
-            [self action](RecordStateError);
-            DDLogError(@"Shot image saving with error - %@", error);
-        }
-        else
-        {
-            [self action](RecordStateIsReady);
-            DDLogInfo(@"Shot image saving with success");
-        }
-    });
+    dispatch_async(dispatch_get_main_queue(), ^
+                   {
+                       if (error)
+                       {
+                           [self action](RecordStateError);
+                           DDLogError(@"Shot image saving with error - %@", error);
+                       }
+                       else
+                       {
+                           [self action](RecordStateIsReady);
+                           DDLogInfo(@"Shot image saving with success");
+                       }
+                   });
 }
 
 - (void)recordAction:(id)sender
@@ -328,44 +335,44 @@
         AudioServicesPlaySystemSound(END_RECORDING_SOUND_ID);
         
         [[self recorder] stopRecordingWithHandler:^(RPPreviewViewController * _Nullable previewViewController, NSError * _Nullable error)
-        {
-            if (error || !previewViewController)
-            {
-                DDLogError(@"Error/preview - %@", error);
-                [blockSelf action](RecordStateError);
-            }
-            else if ([blockSelf showPreviewOnCompletion])
-            {
-                [blockSelf action](RecordStatePreviewing);
-                
-                dispatch_async(dispatch_get_main_queue(), ^
-                {
-                    [previewViewController setPreviewControllerDelegate:self];
-                    
-                    if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
-                    {
-                        UIPopoverPresentationController *pc = [previewViewController popoverPresentationController];
-
-                        [pc setDelegate:self];
-                        [pc setSourceView:[previewViewController view]];
-                        CGRect rect = recordFrameIn([[UIScreen mainScreen] bounds]);
-                        CGFloat statusBarInfluence = 20;
-                        rect.origin.x -= statusBarInfluence / 2;
-                        rect.origin.y -= statusBarInfluence / 2;
-                        [pc setSourceRect:rect];
-                    }
-                    [[[[[UIApplication sharedApplication] delegate] window] rootViewController] presentViewController:previewViewController animated:YES completion:^
-                     {
-                         DDLogInfo(@"Stop Recording With Preview");
-                     }];
-                });
-            }
-            else
-            {
-                [blockSelf action](RecordStateIsReady);
-                DDLogInfo(@"Stop Recording Without Preview");
-            }
-        }];
+         {
+             dispatch_async(dispatch_get_main_queue(), ^
+                            {
+                                if (error || !previewViewController)
+                                {
+                                    DDLogError(@"Error/preview - %@", error);
+                                    [blockSelf action](RecordStateError);
+                                }
+                                else if ([blockSelf showPreviewOnCompletion])
+                                {
+                                    [blockSelf action](RecordStatePreviewing);
+                                    
+                                    [previewViewController setPreviewControllerDelegate:self];
+                                    
+                                    if([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+                                    {
+                                        UIPopoverPresentationController *pc = [previewViewController popoverPresentationController];
+                                        
+                                        [pc setDelegate:self];
+                                        [pc setSourceView:[previewViewController view]];
+                                        CGRect rect = recordFrameIn([[UIScreen mainScreen] bounds]);
+                                        CGFloat statusBarInfluence = 20;
+                                        rect.origin.x -= statusBarInfluence / 2;
+                                        rect.origin.y -= statusBarInfluence / 2;
+                                        [pc setSourceRect:rect];
+                                    }
+                                    [[[[[UIApplication sharedApplication] delegate] window] rootViewController] presentViewController:previewViewController animated:YES completion:^
+                                     {
+                                         DDLogInfo(@"Stop Recording With Preview");
+                                     }];
+                                }
+                                else
+                                {
+                                    [blockSelf action](RecordStateIsReady);
+                                    DDLogInfo(@"Stop Recording Without Preview");
+                                }
+                            });
+         }];
     }
     else
     {
@@ -374,52 +381,58 @@
         [self action](RecordStateGoingToRecording);
         
         [[self recorder] startRecordingWithHandler:^(NSError * _Nullable error)
-        {
-            if (error )
-            {
-                if ([error code] == USER_DECLINED_RECORD_CODE)
-                {
-                    [self action](RecordStateIsReady);
-                }
-                else
-                {
-                    [self action](RecordStateError);
-                }
-                DDLogError(@"Start Error - %@", error);
-            }
-            else
-            {
-                AudioServicesPlaySystemSound(BEGIN_RECORDING_SOUND_ID);
-                
-                [blockSelf setMicrophoneEnabled:[[blockSelf recorder] isMicrophoneEnabled]];
-                
-                if ([blockSelf microphoneEnabled])
-                {
-                    [blockSelf action](RecordStateRecordingWithMicrophone);
-                    DDLogInfo(@"Start recording with microphone");
-                }
-                else
-                {
-                    [blockSelf action](RecordStateRecording);
-                    DDLogInfo(@"Start recording");
-                }
-            }
-        }];
+         {
+             dispatch_async(dispatch_get_main_queue(), ^
+                            {
+                                if (error )
+                                {
+                                    if ([error code] == USER_DECLINED_RECORD_CODE)
+                                    {
+                                        [self action](RecordStateIsReady);
+                                    }
+                                    else
+                                    {
+                                        [self action](RecordStateError);
+                                    }
+                                    DDLogError(@"Start Error - %@", error);
+                                }
+                                else
+                                {
+                                    AudioServicesPlaySystemSound(BEGIN_RECORDING_SOUND_ID);
+                                    
+                                    [blockSelf setMicrophoneEnabled:[[blockSelf recorder] isMicrophoneEnabled]];
+                                    
+                                    if ([blockSelf microphoneEnabled])
+                                    {
+                                        [blockSelf action](RecordStateRecordingWithMicrophone);
+                                        DDLogInfo(@"Start recording with microphone");
+                                    }
+                                    else
+                                    {
+                                        [blockSelf action](RecordStateRecording);
+                                        DDLogInfo(@"Start recording");
+                                    }
+                                }
+                            });
+         }];
     }
 }
 
 - (void)screenRecorder:(RPScreenRecorder *)screenRecorder didStopRecordingWithPreviewViewController:(nullable RPPreviewViewController *)previewViewController error:(nullable NSError *)error
 {
-    if ([error code] == USER_DECLINED_RECORD_CODE)
-    {
-        [self action](RecordStateIsReady);
-    }
-    else
-    {
-        [self action](RecordStateError);
-    }
-
-    DDLogError(@"Stop recording with error - %@", error);
+    dispatch_async(dispatch_get_main_queue(), ^
+                   {
+                       if ([error code] == USER_DECLINED_RECORD_CODE)
+                       {
+                           [self action](RecordStateIsReady);
+                       }
+                       else
+                       {
+                           [self action](RecordStateError);
+                       }
+                       
+                       DDLogError(@"Stop recording with error - %@", error);
+                   });
 }
 
 - (void)screenRecorderDidChangeAvailability:(RPScreenRecorder *)screenRecorder
@@ -433,13 +446,13 @@
     DDLogDebug(@"RPPreviewViewController did Finish");
     
     dispatch_async(dispatch_get_main_queue(), ^
-    {
-        [previewController dismissViewControllerAnimated:YES completion:^
-         {
-             [self action](RecordStateIsReady);
-             DDLogInfo(@"Preview did Dissmiss");
-         }];
-    });
+                   {
+                       [previewController dismissViewControllerAnimated:YES completion:^
+                        {
+                            [self action](RecordStateIsReady);
+                            DDLogInfo(@"Preview did Dissmiss");
+                        }];
+                   });
 }
 
 - (void)prepareForPopoverPresentation:(UIPopoverPresentationController *)popoverPresentationController
@@ -467,7 +480,7 @@
     UIImage *image = [self makeUIImage:baseAddress cBCrBuffer:cbrBuff bufferInfo:bufferInfo width:width height:height bytesPerRow:bytesPerRow];
     
     CVPixelBufferUnlockBaseAddress(imageBuffer,0);
-
+    
     return image;
 }
 
