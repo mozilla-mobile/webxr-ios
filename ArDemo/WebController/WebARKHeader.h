@@ -6,14 +6,7 @@
 #define INTERNET_OFFLINE_CODE -1009
 
 // URL
-#define WEB_DEMO_URL @"https://exaltcg.github.io/ARjsDemo/demo.html"
-#define WEB_LIVE_URL @"https://exaltcg.github.io/ARjsDemo/demo.html"
-
-#ifdef DEBUG
-#define WEB_URL WEB_DEMO_URL
-#else
-#define WEB_URL WEB_LIVE_URL
-#endif
+#define WEB_URL @"https://mozilla.github.io/webxr-ios/app/"
 
 // MESSAGES
 #define WEB_AR_INIT_MESSAGE            @"initAR"
