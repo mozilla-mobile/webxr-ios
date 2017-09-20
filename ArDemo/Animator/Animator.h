@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 
+#define DEFAULT_ANIMATION_DURATION .5
 typedef NS_ENUM(NSUInteger, AnimationType)
 {
     AnimationFromTop,
@@ -8,7 +9,6 @@ typedef NS_ENUM(NSUInteger, AnimationType)
     AnimationToLeft,
     AnimationFromRight,
     AnimationToRight,
-    AnimationToRightH,
     AnimationFromBottom,
     AnimationToBottom
 };
@@ -17,7 +17,7 @@ typedef void (^Completion)(BOOL);
 
 @interface Animator : NSObject
 
-@property(nonatomic) CGFloat animationDuration; // 0.5 by default
+@property(nonatomic) CGFloat animationDuration;
 
 - (void)animateHidden:(UIView *)view
            onRootView:(UIView *)rootView
@@ -44,10 +44,13 @@ typedef void (^Completion)(BOOL);
 - (void)startPulseAnimation:(UIView *)view;
 - (void)stopPulseAnimation:(UIView *)view;
 
-- (void)animate:(UIView *)view frame:(CGRect)frame;
+- (void)animate:(UIView *)view toFrame:(CGRect)frame;
+- (void)animate:(UIView *)view toFrame:(CGRect)frame completion:(Completion)completion;
 
 - (void)animate:(UIView *)view toFade:(BOOL)fade;
 - (void)animate:(UIView *)view toFade:(BOOL)fade completion:(Completion)completion;
+
+- (void)clean;
 
 @end
 
@@ -65,8 +68,6 @@ static inline NSString *typeString(AnimationType type)
             return @"AnimationFromRight";
         case AnimationToLeft:
             return @"AnimationToLeft";
-        case AnimationToRightH:
-            return @"AnimationToRightH";
         case AnimationToRight:
             return @"AnimationToRight";
         case AnimationFromBottom:
@@ -75,3 +76,4 @@ static inline NSString *typeString(AnimationType type)
             return @"AnimationToBottom";
     }
 }
+

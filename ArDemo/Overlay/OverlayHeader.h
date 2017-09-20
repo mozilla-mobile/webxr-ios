@@ -2,8 +2,11 @@
 #define OverlayHeader_h
 
 #import <UIKit/UIKit.h>
+#import "AppState.h"
 
 #define RECORD_LONG_TAP_DURATION 1
+#define SHOW_ERROR_RECORDING_LABEL_DURATION 3
+
 typedef void (^HotAction)(BOOL); // long
 
 #define RECORD_SIZE 60.5
@@ -25,7 +28,7 @@ typedef void (^HotAction)(BOOL); // long
 
 #define URL_BAR_HEIGHT 49
 
-#warning DEIGN, LOCALIZATION
+#warning LOCALIZATION
 #define HELP_TEXT     @"Tap for photo, hold for video"
 #define ERROR_TEXT    @"Some error has occurred while capturing"
 #define DISABLED_TEXT @"Сapturing is disabled now"
@@ -34,36 +37,7 @@ typedef void (^HotAction)(BOOL); // long
 #define HELP_LABEL_HEIGHT 16
 #define HELP_LABEL_WIDTH 350
 
-typedef NS_ENUM(NSUInteger, ShowMode)
-{
-    ShowNothing,
-    ShowSingle,
-    ShowMulti,
-    ShowMultiDebug
-};
 
-typedef NS_OPTIONS(NSUInteger, ShowOptions)
-{
-    None         = 0,
-    
-    // ShowMulti
-    Mic          = (1 << 0),
-    Capture      = (1 << 1),
-    CaptureTime  = (1 << 2),
-    Browser      = (1 << 3),
-    ARWarnings   = (1 << 4), // showSingle
-    ARFocus      = (1 << 5),
-    ARObject     = (1 << 6),
-    Debug        = (1 << 7),
-    
-    // ShowMultiDebug
-    ARPlanes     = (1 << 8),
-    ARPoints     = (1 << 9),
-    ARStatistics = (1 << 10),
-    BuildNumber  = (1 << 11),
-    
-    Full         = NSUIntegerMax
-};
 
 static inline CGRect recordFrameIn(CGRect viewRect)
 {
@@ -122,7 +96,7 @@ static inline CGRect recordLabelFrameIn(CGRect viewRect)
 }
 
 static inline CGRect helperLabelFrameIn(CGRect viewRect)
-{    
+{
     return CGRectMake(viewRect.size.width - HELP_LABEL_HEIGHT - 5, // rotate
                       viewRect.origin.y, // rotate
                       HELP_LABEL_HEIGHT, // rotate
@@ -141,3 +115,4 @@ static inline CGRect buildFrameIn(CGRect viewRect)
 
 
 #endif /* OverlayHeader_h */
+

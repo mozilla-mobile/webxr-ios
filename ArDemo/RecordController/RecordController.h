@@ -1,18 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "Animator.h"
-
-typedef NS_ENUM(NSUInteger, RecordState)
-{
-    RecordStateIsReady,
-    RecordStatePhoto,
-    RecordStateGoingToRecording, // for preparing UI (JS) for capturing(important for first frame)
-    RecordStateRecording,
-    RecordStateRecordingWithMicrophone,
-    RecordStatePreviewing,
-    RecordStateDisabled, // by hardware
-    RecordStateAuthDisabled, // by user
-    RecordStateError
-};
+#import "AppState.h"
 
 typedef void (^RecordAction)(RecordState);
 typedef void (^RequestAuthAction)(id);
@@ -33,7 +21,8 @@ typedef void (^RequestAuthAction)(id);
 
 - (void)shotAction:(id)sender;
 - (void)recordAction:(id)sender;
-- (void)micAction:(id)sender;
+
+- (void)setMicEnabled:(BOOL)enabled;
 
 - (BOOL)isRecording;
 - (BOOL)microphoneEnabled;

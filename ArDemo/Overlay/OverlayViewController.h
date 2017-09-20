@@ -5,13 +5,12 @@
 
 @interface OverlayViewController : UIViewController
 
-@property (nonatomic) RecordState recordState;
-@property (nonatomic) ShowMode showMode;
-@property (nonatomic) ShowOptions showOptions;
-@property (nonatomic) BOOL microphoneEnabled;
-
 @property (nonatomic, strong) Animator *animator;
 
-- (void)setTrackingState:(NSString *)state;
+- (void)setShowMode:(ShowMode)showMode withAnimationCompletion:(Completion)completion;
+- (void)setShowOptions:(ShowOptions)showOptions withAnimationCompletion:(Completion)completion;
+- (void)setRecordState:(RecordState)recordState withAnimationCompletion:(Completion)completion;
+- (void)setMicrophoneEnabled:(BOOL)microphoneEnabled withAnimationCompletion:(Completion)completion;;
+- (void)setTrackingState:(NSString *)state withAnimationCompletion:(Completion)completion;
 
 @end

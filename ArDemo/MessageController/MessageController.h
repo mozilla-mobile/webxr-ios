@@ -15,6 +15,8 @@ typedef void (^DidHideMessageByUser)(void);
 
 - (BOOL)arMessageShowing;
 
+- (void)clean;
+
 - (instancetype)initWithViewController:(UIViewController *)vc;
 
 - (void)showMessageAboutWebError:(NSError *)error withCompletion:(void(^)(BOOL reload))reloadCompletion;
@@ -23,7 +25,7 @@ typedef void (^DidHideMessageByUser)(void);
 
 - (void)showMessageAboutFailSessionWithCompletion:(void(^)(void))completion;
 
-- (void)showMessageAboutMemoryWarning;
+- (void)showMessageAboutMemoryWarningWithCompletion:(void(^)(void))completion;
 
 - (void)showMessageAboutConnectionRequired;
 

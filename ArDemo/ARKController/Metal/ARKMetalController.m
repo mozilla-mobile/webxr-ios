@@ -49,21 +49,31 @@
     
 }
 
-- (id)currentHitTest {
+- (id)currentHitTest
+{
     return nil;
 }
 
 
-- (UIView *)renderView {
+- (UIView *)renderView
+{
     return _renderView;
 }
 
-- (void)setShowMode:(ShowMode)mode {
-    
+- (void)setShowMode:(ShowMode)mode
+{
 }
 
-- (void)setShowOptions:(ShowOptions)options {
-    
+- (void)setShowOptions:(ShowOptions)options
+{
+}
+
+- (void)clean
+{
+}
+
+- (void)updateSession:(ARSession *)session
+{
 }
 
 - (BOOL)setupARWithSession:(ARSession *)session

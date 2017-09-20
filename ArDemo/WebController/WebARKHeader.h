@@ -1,7 +1,9 @@
 #ifndef WebARKHeader_h
 #define WebARKHeader_h
 
-#import "OverlayHeader.h"
+#import "AppState.h"
+
+#define INTERNET_OFFLINE_CODE -1009
 
 // URL
 #define WEB_URL @"https://mozilla.github.io/webxr-ios/app/"
@@ -15,9 +17,7 @@
 #define WEB_AR_HIT_TEST_MESSAGE        @"hitTest"
 #define WEB_AR_ADD_ANCHOR_MESSAGE      @"addAnchor"
 
-#define WEB_TEST_MEMORY_WARNING_MESSAGE @"testMemoryWarningOnShot"
-
-#define WEB_AR_ON_JS_UPDATE_MESSAGE    @"onUpdate" // request from JS
+#define WEB_AR_ON_JS_UPDATE_MESSAGE    @"onUpdate" // reques from JS
 
 #define WEB_AR_IOS_SHOW_DEBUG          @"arkitShowDebug"
 
@@ -73,7 +73,6 @@
 #define WEB_IOS_IS_IPAD_OPTION         @"isIpad"
 #define WEB_IOS_DEVICE_UUID_OPTION     @"deviceUUID"
 
-//?????
 #define WEB_AR_H_PLANE_OPTION          @"h_plane"
 #define WEB_AR_H_PLANE_CENTER_OPTION   @"h_plane_center"
 #define WEB_AR_H_PLANE_EXTENT_OPTION   @"h_plane_extent"
@@ -88,7 +87,6 @@
 
 #define WEB_AR_3D_OBJECTS_OPTION       @"objects" // from IOS - [ {name , matrix} ]
 
-//#define WEB_AR_NAME_OPTION             @"name"
 #define WEB_AR_TYPE_OPTION             @"type"
 #define WEB_AR_POSITION_OPTION         @"position"
 #define WEB_AR_X_POSITION_OPTION       @"x"
@@ -188,3 +186,4 @@ static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
 }
 
 #endif /* WebARKHeader_h */
+

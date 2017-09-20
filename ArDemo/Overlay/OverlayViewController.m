@@ -4,6 +4,11 @@
 
 @interface OverlayViewController ()
 
+@property (nonatomic) RecordState recordState;
+@property (nonatomic) ShowMode showMode;
+@property (nonatomic) ShowOptions showOptions;
+@property (nonatomic) BOOL microphoneEnabled;
+
 @property (nonatomic, strong) UIButton *recordButton;
 @property (nonatomic, strong) UIButton *trackingStateButton;
 @property (nonatomic, strong) UIButton *micButton;
@@ -47,32 +52,37 @@
     [self viewWillTransitionToSize:size];
 }
 
-- (void)setShowMode:(ShowMode)showMode
+- (void)setShowMode:(ShowMode)showMode withAnimationCompletion:(Completion)completion
 {
-    _showMode = showMode;
-  
-    [self update];
-}
-
-- (void)setShowOptions:(ShowOptions)showOptions
-{
-    _showOptions = showOptions;
+    [self setShowMode:showMode];
     
-    [self update];
+    [self updateWithCompletion:completion];
 }
 
-- (void)setRecordState:(RecordState)recordState
+- (void)setShowOptions:(ShowOptions)showOptions withAnimationCompletion:(Completion)completion
 {
-    _recordState = recordState;
+    [self setShowOptions:showOptions];
     
-    [self update];
+    [self updateWithCompletion:completion];
 }
 
-- (void)setMicrophoneEnabled:(BOOL)microphoneEnabled
+- (void)setRecordState:(RecordState)recordState withAnimationCompletion:(Completion)completion
+{
+    [self setRecordState:recordState];
+    
+    [self updateWithCompletion:completion];
+}
+
+- (void)setMicrophoneEnabled:(BOOL)microphoneEnabled withAnimationCompletion:(Completion)completion
 {
     _microphoneEnabled = microphoneEnabled;
     
     [[self micButton] setSelected:microphoneEnabled];
+    
+    dispatch_async(dispatch_get_main_queue(), ^
+                   {
+                       completion(YES);
+                   });
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size
@@ -92,8 +102,31 @@
         }
     }
     
-    [[self recordButton] setFrame:recordFrameIn(updRect)];
-    [[self micButton] setFrame:micFrameIn(updRect)];
+    __weak typeof (self) blockSelf = self;
+    [[self animator] animate:[self micButton] toFrame:micFrameIn(updRect)];
+    [[self animator] animate:[self recordButton] toFrame:recordFrameIn(updRect) completion:^(BOOL f)
+     {
+         if ([blockSelf recordState] == RecordStatePhoto)
+         {
+             [[blockSelf animator] animate:[blockSelf recordButton] toFade:YES];
+             [[blockSelf animator] animate:[blockSelf micButton] toFade:YES];
+         }
+         else if (([blockSelf recordState] == RecordStateRecording) || ([blockSelf recordState] == RecordStateRecordingWithMicrophone))
+         {
+             [[blockSelf animator] animate:[blockSelf recordButton] toFade:([blockSelf showOptions] & Capture) ? NO : YES];
+             [[blockSelf animator] animate:[blockSelf micButton] toFade:([blockSelf showOptions] & Mic) ? NO : YES];
+         }
+     }];
+    
+    if ([blockSelf showMode] == ShowSingle)
+    {
+        // delay for show camera, mic frame animations
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
+                       {
+                           [[blockSelf animator] animate:[blockSelf recordButton] toFade:YES];
+                           [[blockSelf animator] animate:[blockSelf micButton] toFade:YES];
+                       });
+    }
     
     [[self helperLabel] setFrame:helperLabelFrameIn(updRect)];
     [[self helperLabel] setTransform:CGAffineTransformMakeRotation(-M_PI/2)];
@@ -116,27 +149,38 @@
     {
         [[self recordButton] setImage:[UIImage imageNamed:@"cam"] forState:UIControlStateNormal];
         [[self recordButton] setImage:[UIImage animatedImageWithImages:@[[UIImage imageNamed:@"cam"], [UIImage imageNamed:@"camPress"]]
-                                                              duration:0.75] forState:UIControlStateSelected];
+                                                              duration:[[self animator] animationDuration] ]
+                             forState:UIControlStateSelected];
         [[self micButton] setImage:[UIImage imageNamed:@"micOff"] forState:UIControlStateNormal];
         [[self micButton] setImage:[UIImage imageNamed:@"mic"] forState:UIControlStateSelected];
     }
 }
 
 // common visibility
-- (void)update
+- (void)updateWithCompletion:(Completion)completion
 {
     [self viewWillTransitionToSize:[[self view] bounds].size];
     
     switch ([self showMode])
     {
         case ShowNothing:
-            [[self animator] animate:[self showButton] toFade:YES];
+        {
+            [[self animator] animate:[self showButton] toFade:YES completion:^(BOOL f)
+             {
+                 dispatch_async(dispatch_get_main_queue(), ^
+                                {
+                                    if (completion)
+                                    {
+                                        completion(f);
+                                    }
+                                });
+             }];
             
             [[self animator] animate:[self recordButton] toFade:YES];
             [[self animator] animate:[self micButton] toFade:YES];
             
             [[self animator] animate:[self debugButton] toFade:YES];
-
+            
             [[self animator] animate:[self helperLabel] toFade:YES];
             
             [[self animator] animate:[self buildLabel] toFade:YES];
@@ -144,36 +188,63 @@
             
             [[self timer] invalidate];
             break;
-            
+        }
         case ShowSingle:
-            [[self animator] animate:[self showButton] toFade:NO];
+        {
+            [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
+             {
+                 dispatch_async(dispatch_get_main_queue(), ^
+                                {
+                                    if (completion)
+                                    {
+                                        completion(f);
+                                    }
+                                });
+             }];
             
             [[self showButton] setSelected:NO];
-            
+            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self helperLabel] toFade:YES];
-            
             [[self animator] animate:[self debugButton] toFade:YES];
-            
-            [[self animator] animate:[self recordButton] toFade:YES];
-            [[self animator] animate:[self micButton] toFade:YES];
             [[self animator] animate:[self buildLabel] toFade:YES];
             [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
             [[self timer] invalidate];
             break;
-            
+        }
         case ShowMulti:
-            [[self animator] animate:[self showButton] toFade:NO];
+        {
+            [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
+             {
+                 dispatch_async(dispatch_get_main_queue(), ^
+                                {
+                                    if (completion)
+                                    {
+                                        completion(f);
+                                    }
+                                });
+             }];
             [[self showButton] setSelected:YES];
             [self updateWithRecordStateInDebug:NO];
             break;
-            
+        }
         case ShowMultiDebug:
-            [[self animator] animate:[self showButton] toFade:NO];
+        {
+            [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
+             {
+                 dispatch_async(dispatch_get_main_queue(), ^
+                                {
+                                    if (completion)
+                                    {
+                                        completion(f);
+                                    }
+                                });
+             }];
             [[self showButton] setSelected:YES];
             [self updateWithRecordStateInDebug:YES];
             break;
+        }
     }
 }
 
@@ -191,7 +262,7 @@
     switch ([self recordState])
     {
         case RecordStateIsReady:
-            
+            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self micButton] toFade:([self showOptions] & Mic) ? NO : YES];
             [[self animator] animate:[self helperLabel] toFade:([self showOptions] & Capture) ? NO : YES];
@@ -211,9 +282,8 @@
             break;
             
         case RecordStatePhoto:
-            
-            [[self animator] animate:[self recordButton] toFade:YES];
-            [[self animator] animate:[self micButton] toFade:YES];
+        {
+            [[self showButton] setEnabled:NO];
             [[self animator] animate:[self helperLabel] toFade:YES];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
             [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
@@ -228,15 +298,14 @@
             [[self helperLabel] setTextColor:[UIColor whiteColor]];
             [[self timer] invalidate];
             break;
-            
+        }
         case RecordStateGoingToRecording:
             break;
             
         case RecordStateRecordingWithMicrophone:
         case RecordStateRecording:
         {
-            [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
-            [[self animator] animate:[self micButton] toFade:([self showOptions] & Mic) ? NO : YES];
+            [[self showButton] setEnabled:NO];
             [[self animator] animate:[self helperLabel] toFade:YES];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
             [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
@@ -272,7 +341,7 @@
         case RecordStatePreviewing:
         {
             BOOL isIpad = [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
-            
+            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self showButton] toFade:isIpad ? NO : YES];
             [[self animator] animate:[self recordButton] toFade:isIpad && ([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self micButton] toFade:isIpad && ([self showOptions] & Mic) ? NO : YES];
@@ -290,7 +359,7 @@
             break;
         }
         case RecordStateDisabled:
-            
+            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self recordButton] toFade:YES];
             [[self animator] animate:[self micButton] toFade:YES];
             [[self animator] animate:[self helperLabel] toFade:NO];
@@ -306,7 +375,7 @@
             
             break;
         case RecordStateAuthDisabled:
-            
+            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self micButton] toFade:([self showOptions] & Mic) ? NO : YES];
             [[self animator] animate:[self helperLabel] toFade:NO];
@@ -323,7 +392,7 @@
             
             break;
         case RecordStateError:
-            
+            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self micButton] toFade:([self showOptions] & Mic) ? NO : YES];
             [[self animator] animate:[self helperLabel] toFade:NO];
@@ -334,38 +403,45 @@
             
             [[self recordButton] setSelected:NO];
             [[self micButton] setSelected:_microphoneEnabled];
-           
+            
             [[self helperLabel] setText:ERROR_TEXT];
             [[self helperLabel] setTextColor:[UIColor redColor]];
             
             // move to Is Ready state
             // fix multiple block executing
+            // RF me:
             static NSUInteger counter = 0;
             counter++;
             __block NSUInteger blockCounter = counter;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
-            {
-                if ((blockCounter == counter) && [self recordState] == RecordStateError)
-                {
-                    [self setRecordState:RecordStateIsReady];
-                }
-            });
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(SHOW_ERROR_RECORDING_LABEL_DURATION * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
+                           {
+                               if ((blockCounter == counter) && [self recordState] == RecordStateError)
+                               {
+                                   [self setRecordState:RecordStateIsReady withAnimationCompletion:NULL];
+                               }
+                           });
             
             break;
     }
 }
 
-- (void)setTrackingState:(NSString *)state
+- (void)setTrackingState:(NSString *)state withAnimationCompletion:(Completion)completion;
 {
     if ([self recordState] == RecordStatePreviewing)
     {
         if ((([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) && ([self showOptions] & ARWarnings)))
         {
-            [[self animator] animate:[self trackingStateButton] toFade:NO];
+            [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+             {
+                 completion(finish);
+             }];
         }
         else
         {
-            [[self animator] animate:[self trackingStateButton] toFade:YES];
+            [[self animator] animate:[self trackingStateButton] toFade:YES completion:^(BOOL finish)
+             {
+                 completion(finish);
+             }];
         }
         
         return;
@@ -377,40 +453,54 @@
         {
             if ([state isEqualToString:WEB_AR_TRACKING_STATE_NORMAL])
             {
-                [[self animator] animate:[self trackingStateButton] toFade:YES];
-                
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)([[self animator] animationDuration] * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
-                {
-                    [[self trackingStateButton] setImage:nil forState:UIControlStateNormal];
-                });
+                [[self animator] animate:[self trackingStateButton] toFade:YES completion:^(BOOL finish)
+                 {
+                     [[self trackingStateButton] setImage:nil forState:UIControlStateNormal];
+                     completion(finish);
+                 }];
             }
             else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED])
             {
-                [[self animator] animate:[self trackingStateButton] toFade:NO];
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                 {
+                     completion(finish);
+                 }];
                 
                 [[self trackingStateButton] setImage:[UIImage imageNamed:@"warning"] forState:UIControlStateNormal];
             }
             else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING])
             {
-                [[self animator] animate:[self trackingStateButton] toFade:NO];
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                 {
+                     completion(finish);
+                 }];
                 
                 [[self trackingStateButton] setImage:[UIImage imageNamed:@"warning"] forState:UIControlStateNormal];
             }
             else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED_FEATURES])
             {
-                [[self animator] animate:[self trackingStateButton] toFade:NO];
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                 {
+                     completion(finish);
+                 }];
                 
                 [[self trackingStateButton] setImage:[UIImage imageNamed:@"warning"] forState:UIControlStateNormal];
             }
             else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED_MOTION])
             {
-                [[self animator] animate:[self trackingStateButton] toFade:NO];
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                 {
+                     completion(finish);
+                 }];
                 
                 [[self trackingStateButton] setImage:[UIImage imageNamed:@"warning"] forState:UIControlStateNormal];
             }
             else if ([state isEqualToString:WEB_AR_TRACKING_STATE_NOT_AVAILABLE])
             {
-                [[self animator] animate:[self trackingStateButton] toFade:NO];
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                 {
+                     completion(finish);
+                 }];
                 
                 [[self trackingStateButton] setImage:[UIImage imageNamed:@"disabled"] forState:UIControlStateNormal];
             }
@@ -503,3 +593,4 @@
 }
 
 @end
+

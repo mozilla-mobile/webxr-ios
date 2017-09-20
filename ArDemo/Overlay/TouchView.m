@@ -1,4 +1,5 @@
 #import "TouchView.h"
+#import "LayerView.h"
 
 @interface TouchView()
 
@@ -22,9 +23,8 @@
 
 @property(nonatomic) ShowMode showMode;
 @property(nonatomic) ShowOptions showOptions;
+@property(nonatomic) RecordState recordState;
 
-
-#warning RF: move to controller !
 #define MAX_INCREASE_ZONE_SIZE 10
 @property(nonatomic) CGFloat increaseHotZoneValue;
 
@@ -65,9 +65,19 @@
     [self updateIncreaseHotZoneValue];
 }
 
+- (void)setProcessTouches:(BOOL)process
+{
+    [(LayerView *)[self superview] setProcessTouchInSubview:process];
+}
+
 - (BOOL)pointInside:(CGPoint)point
           withEvent:(UIEvent *)event
 {
+    if ([(LayerView *)[self superview] processTouchInSubview] == NO)
+    {
+        return NO;
+    }
+    
     if ([self showMode] == ShowNothing)
     {
         return NO;
@@ -88,6 +98,11 @@
         }
         if (CGRectContainsPoint([self increasedRect:[self showRect]], point))
         {
+            if (([self recordState] == RecordStateRecording) || ([self recordState] == RecordStateRecordingWithMicrophone))
+            {
+                return NO;
+            }
+            
             [self setShowEvent:YES];
             [self setCameraEvent:NO];
             return YES;
@@ -100,47 +115,40 @@
         }
     }
     
-    return [self holdTouch];
+    return NO;
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    if ([self holdTouch] == NO)
+    if ([self cameraEvent])
     {
-        if ([self cameraEvent])
-        {
-            [self setStartTouchDate:[NSDate date]];
-            
-            __weak typeof(self) blockSelf = self;
-            
-            [self setTouchTimer:[NSTimer scheduledTimerWithTimeInterval:RECORD_LONG_TAP_DURATION repeats:NO
-                                              block:^(NSTimer * _Nonnull timer)
-                                              {
-                                                  [blockSelf cameraAction](YES);
-                                                  [blockSelf setCameraEvent:NO];
-                                                  [timer invalidate];
-                                                  [blockSelf setTouchTimer:nil];
-                                              }]];
-        }
-        else if ([self micEvent])
-        {
-            [self micAction](YES);
-            [self setMicEvent:NO];
-        }
-        else if ([self showEvent])
-        {
-            [self showAction](YES);
-            [self setShowEvent:NO];
-        }
-        else if ([self debugEvent])
-        {
-            [self debugAction](YES);
-            [self setDebugEvent:NO];
-        }
+        [self setStartTouchDate:[NSDate date]];
+        
+        __weak typeof(self) blockSelf = self;
+        
+        [self setTouchTimer:[NSTimer scheduledTimerWithTimeInterval:RECORD_LONG_TAP_DURATION repeats:NO
+                                                              block:^(NSTimer * _Nonnull timer)
+                             {
+                                 [blockSelf cameraAction](YES);
+                                 [blockSelf setCameraEvent:NO];
+                                 [timer invalidate];
+                                 [blockSelf setTouchTimer:nil];
+                             }]];
     }
-    else
+    else if ([self micEvent])
     {
-        DDLogDebug(@"Touch view in the Hold mode");
+        [self micAction](YES);
+        [self setMicEvent:NO];
+    }
+    else if ([self showEvent])
+    {
+        [self showAction](YES);
+        [self setShowEvent:NO];
+    }
+    else if ([self debugEvent])
+    {
+        [self debugAction](YES);
+        [self setDebugEvent:NO];
     }
 }
 
@@ -191,3 +199,4 @@
 }
 
 @end
+

@@ -1,9 +1,7 @@
 #import <WebKit/WebKit.h>
 #import "RecordController.h"
 #import "Animator.h"
-
-#define INTERNET_OFFLINE_CODE -1009
-#define URL_CANT_BE_SHOWN 101
+#import "AppState.h"
 
 typedef void (^OnLoad)(void);
 typedef void (^OnInit)(NSDictionary *);
@@ -21,8 +19,6 @@ typedef void (^OnSetUI)(NSDictionary *);
 typedef void (^OnHitTest)(NSUInteger, CGFloat, CGFloat, ResultArrayBlock);
 typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
 
-#warning Test Memory Warning
-typedef void (^OnTestMemoryWarning)(BOOL);
 
 @interface WebController : NSObject
 
@@ -36,13 +32,12 @@ typedef void (^OnTestMemoryWarning)(BOOL);
 @property(nonatomic, copy) OnSetUI onSetUI;
 @property(nonatomic, copy) OnHitTest onHitTest;
 @property(nonatomic, copy) OnAddAnchor onAddAnchor;
-@property(nonatomic, copy) OnTestMemoryWarning onMemory;
 @property(nonatomic, copy) OnLoad onStartLoad;
 @property(nonatomic, copy) OnLoad onFinishLoad;
 
 @property (nonatomic, strong) Animator *animator;
 
-- (instancetype)initWithRootView:(UIView *)rootView atIndex:(NSUInteger)index;
+- (instancetype)initWithRootView:(UIView *)rootView;
 - (void)viewWillTransitionToSize:(CGSize)size;
 
 - (void)loadURL:(NSString *)url;
@@ -54,20 +49,15 @@ typedef void (^OnTestMemoryWarning)(BOOL);
 
 - (void)showBar:(BOOL)showBar;
 - (void)showDebug:(BOOL)showDebug;
-
-- (void)didMoveBackground;
-- (void)willEnterForeground;
-
-- (void)arkitWasInterrupted;
-- (void)arkitInterruptionEnded;
-
-- (void)arkitDidChangeTrackingState:(NSString *)state;
-- (void)iosDidReceiveMemoryWarning;
+- (void)startRecording:(BOOL)start;
+- (void)wasARInterruption:(BOOL)interruption;
+- (void)didBackgroundAction:(BOOL)background;
+- (void)didChangeARTrackingState:(NSString *)state;
+- (void)didReceiveMemoryWarning;
 
 - (WKWebView *)webView;
 
 - (BOOL)sendARData:(NSDictionary *)data;
 
-- (void)setRecordState:(RecordState)state;
-
 @end
+

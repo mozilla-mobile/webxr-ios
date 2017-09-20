@@ -29,7 +29,6 @@
 }
 
 - (instancetype)initWithRootView:(UIView *)rootView
-                         atIndex:(NSUInteger)index
                     cameraAction:(HotAction)cameraAction
                        micAction:(HotAction)micAction
                       showAction:(HotAction)showAction
@@ -46,11 +45,23 @@
         [self setShowAction:showAction];
         [self setDebugAction:debugAction];
         
-        [self setupTouchViewAtIndex:index];
+        [self setupTouchView];
         [self setupOverlayWindow];
     }
     
     return self;
+}
+
+- (void)clean
+{
+    [[self hotView] removeFromSuperview];
+    [[self overlayWindow] setHidden:YES];
+    [self setOverlayWindow:nil];
+}
+
+- (UIView *)hotView
+{
+    return [self touchView];
 }
 
 - (void)setAnimator:(Animator *)animator
@@ -66,54 +77,64 @@
     
     [[self overlayWindow] setAlpha:mode == ShowNothing? 0 : 1];
     
-    [[self overlayVC] setShowMode:mode];
     [[self touchView] setShowMode:mode];
-        
-    [self viewWillTransitionToSize:[[self rootView] bounds].size];
     
-    [self setupTouchViewEnabled];
+    [[self touchView] setProcessTouches:NO];
+    
+    [[self overlayVC] setShowMode:mode withAnimationCompletion:^(BOOL finish)
+     {
+         [self enableTouchesOnFinishAnimation:finish];
+     }];
+    
+    [self viewWillTransitionToSize:[[self rootView] bounds].size];
 }
 
 - (void)setOptions:(ShowOptions)options
 {
     _showOptions = options;
     
-    [[self overlayVC] setShowOptions:options];
     [[self touchView] setShowOptions:options];
+    [[self overlayVC] setShowOptions:options withAnimationCompletion:^(BOOL finish)
+     {
+     }];
 }
 
 - (void)setRecordState:(RecordState)state
 {
+    DDLogDebug(@"setRecordState");
+    
     _recordState = state;
     
-    [[self overlayVC] setRecordState:state];
+    [[self touchView] setRecordState:state];
+    
+    if (state == RecordStatePhoto)
+    {
+        [[self touchView] setProcessTouches:NO];
+    }
+    
+    [[self overlayVC] setRecordState:state withAnimationCompletion:^(BOOL finish)
+     {
+         [self enableTouchesOnFinishAnimation:finish];
+     }];
+    
     [self viewWillTransitionToSize:[[self rootView] bounds].size];
-    
-    [self setupTouchViewEnabled];
 }
 
-- (void)setupTouchViewEnabled
+- (void)setMicEnabled:(BOOL)micEnabled
 {
-    BOOL touchEnabledByRecordState = (_showMode > ShowNothing) && (_recordState != RecordStateDisabled);
-    
-    if (touchEnabledByRecordState)
-    {
-        [[self touchView] setHoldTouch:YES];
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)([[self animator] animationDuration] * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
-                       {
-                           [[self touchView] setHoldTouch:NO];
-                       });
-    }
-    else
-    {
-        [[self touchView] setHoldTouch:YES];
-    }
+    [[self overlayVC] setMicrophoneEnabled:micEnabled withAnimationCompletion:^(BOOL finish)
+     { }];
 }
 
-- (void)setMicrophoneEnabled:(BOOL)microphoneEnabled
+- (void)setARKitInterruption:(BOOL)interruption
 {
-    [[self overlayVC] setMicrophoneEnabled:microphoneEnabled];
+    [[self overlayWindow] setAlpha:interruption? 1 : 0];
+}
+
+- (void)setTrackingState:(NSString *)state
+{
+    [[self overlayVC] setTrackingState:state withAnimationCompletion:^(BOOL finish)
+     {}];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size
@@ -139,19 +160,9 @@
                           debugRect:debugFrameIn(updRect)];
 }
 
-- (void)setARKitInterruption:(BOOL)interruption
-{
-    [[self overlayWindow] setAlpha:interruption? 1 : 0];
-}
-
-- (void)setTrackingState:(NSString *)state
-{
-    [[self overlayVC] setTrackingState:state];
-}
-
 #pragma mark Private
 
-- (void)setupTouchViewAtIndex:(NSUInteger)index
+- (void)setupTouchView
 {
     [self setTouchView:[[TouchView alloc] initWithFrame:[[self rootView] bounds]
                                            cameraAction:[self cameraAction]
@@ -160,19 +171,18 @@
                                             debugAction:[self debugAction]]];
     
     [self viewWillTransitionToSize:[[self rootView] bounds].size];
-     
-    [[self rootView] insertSubview:[self touchView] atIndex:index];
-    [[self rootView] bringSubviewToFront:[self touchView]];
+    
+    [[self rootView] addSubview:[self touchView]];
     
     [[self touchView] setBackgroundColor:[UIColor clearColor]];
     
     [[self touchView] setAutoresizingMask:
-    UIViewAutoresizingFlexibleRightMargin |
-    UIViewAutoresizingFlexibleLeftMargin |
-    UIViewAutoresizingFlexibleBottomMargin |
-    UIViewAutoresizingFlexibleTopMargin |
-    UIViewAutoresizingFlexibleWidth |
-    UIViewAutoresizingFlexibleHeight];
+     UIViewAutoresizingFlexibleRightMargin |
+     UIViewAutoresizingFlexibleLeftMargin |
+     UIViewAutoresizingFlexibleBottomMargin |
+     UIViewAutoresizingFlexibleTopMargin |
+     UIViewAutoresizingFlexibleWidth |
+     UIViewAutoresizingFlexibleHeight];
 }
 
 - (void)setupOverlayWindow
@@ -191,9 +201,25 @@
     [[[self overlayVC] view] setUserInteractionEnabled:NO];
     
     dispatch_async(dispatch_get_main_queue(), ^
+                   {
+                       [mainWindow makeKeyWindow];
+                   });
+}
+
+- (void)enableTouchesOnFinishAnimation:(BOOL)finish
+{
+    if (finish)
     {
-        [mainWindow makeKeyWindow];
-    });
+        [[self touchView] setProcessTouches:YES];
+    }
+    else
+    {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)([[self animator] animationDuration] * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
+                       {
+                           [[self touchView] setProcessTouches:YES];
+                       });
+    }
 }
 
 @end
+

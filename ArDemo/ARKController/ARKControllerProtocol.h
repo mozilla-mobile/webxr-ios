@@ -6,7 +6,7 @@
 
 @protocol ARKControllerProtocol<NSObject>
 
-- (instancetype)initWithSesion:(ARSession *)session;
+- (instancetype)initWithSesion:(ARSession *)session size:(CGSize)size;
 - (instancetype)init NS_UNAVAILABLE;
 
 - (void)updateSession:(ARSession *)session;

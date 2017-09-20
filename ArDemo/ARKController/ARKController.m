@@ -37,7 +37,7 @@
     DDLogDebug(@"ARKController dealloc");
 }
 
-- (instancetype)initWithType:(ARKType)type
+- (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView
 {
     self = [super init];
     
@@ -60,8 +60,9 @@
         [[self configuration] setPlaneDetection:ARPlaneDetectionHorizontal];
         
         Class cls = (type == ARKMetal) ? [ARKMetalController class] : [ARKSceneKitController class];
-        [self setController:[[cls alloc] initWithSesion:[self session]]];
-        
+        id<ARKControllerProtocol> controller = [[cls alloc] initWithSesion:[self session] size:[rootView bounds].size];
+        [self setController:controller];
+        [rootView addSubview:[controller renderView]];
         [[self controller] setHitTestFocusPoint:[[[self controller] renderView] center]];
     }
     
@@ -140,11 +141,9 @@
     return @{WEB_AR_3D_OBJECTS_OPTION : [self currentAnchorsArray]};
 }
 
-- (void)startSessionWithRequest:(NSDictionary *)request
-                       showMode:(ShowMode)mode
-                    showOptions:(ShowOptions)options
+- (void)startSessionWithAppState:(AppState *)state
 {
-    if (request == nil)
+    if ([state aRRequest] == nil)
     {
         [self setRequest:nil];
         [self removeAnchors:nil];
@@ -154,7 +153,7 @@
         return;
     }
     
-    [self setRequest:request];
+    [self setRequest:[state aRRequest]];
     
     if ([self session] == nil)
     {
@@ -167,8 +166,8 @@
     
     [self setupDeviceCamera];
     
-    [self setShowMode:mode];
-    [self setShowOptions:options];
+    [self setShowMode:[state showMode]];
+    [self setShowOptions:[state showOptions]];
 }
 
 - (void)setShowMode:(ShowMode)showMode
@@ -275,7 +274,7 @@
             {
                 newData[WEB_AR_3D_OBJECTS_OPTION] = [self currentAnchorsArray];
             }
-
+            
             os_unfair_lock_lock(&(lock));
             arkData = [newData copy];
             os_unfair_lock_unlock(&(lock));
@@ -293,14 +292,14 @@
     {
         __block NSString *name = nil;
         [anchors enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
-        {
-            if ([[[anchor identifier] UUIDString] isEqualToString:obj])
-            {
-                name = key;
-                *stop = YES;
-            }
-        }];
-         
+         {
+             if ([[[anchor identifier] UUIDString] isEqualToString:obj])
+             {
+                 name = key;
+                 *stop = YES;
+             }
+         }];
+        
         if (name)
         {
             [array addObject:[self anchorDictFromAnchor:anchor withName:name]];
@@ -316,7 +315,7 @@
     
     dict[WEB_AR_UUID_OPTION] = name;
     dict[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([anchor transform]);
-
+    
     return [dict copy];
 }
 
@@ -422,3 +421,4 @@
 }
 
 @end
+
