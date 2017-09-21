@@ -136,11 +136,6 @@
     return [data copy];
 }
 
-- (NSDictionary *)anchorsData
-{
-    return @{WEB_AR_3D_OBJECTS_OPTION : [self currentAnchorsArray]};
-}
-
 - (void)startSessionWithAppState:(AppState *)state
 {
     if ([state aRRequest] == nil)
@@ -306,7 +301,8 @@
         }
     }
     
-    return array;
+    //DDLogDebug(@"Anchors - %@", [array debugDescription]);
+    return [array copy];
 }
 
 - (NSDictionary *)anchorDictFromAnchor:(ARAnchor *)anchor withName:(NSString *)name

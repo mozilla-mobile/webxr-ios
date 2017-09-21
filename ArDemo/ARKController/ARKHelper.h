@@ -111,14 +111,28 @@ static inline NSDictionary * dictFromMatrix4x4(matrix_float4x4  matrix)
     return [dict copy];
 }
 
+static inline matrix_float4x4 matrixFromKeyedArrayDictionary(NSDictionary *dict);
+
 static inline matrix_float4x4 matrixFromDictionary(NSDictionary *dict)
 {
-    matrix_float4x4 matrix;
+    if (dict[@"33"] == nil)
+    {
+        return matrixFromKeyedArrayDictionary(dict);
+    }
     
-    matrix.columns[0][0] = [dict[@"00"] floatValue];
-    matrix.columns[0][1] = [dict[@"01"] floatValue];
-    matrix.columns[0][2] = [dict[@"02"] floatValue];
-    matrix.columns[0][3] = [dict[@"03"] floatValue];
+    matrix_float4x4 matrix;
+    NSString *stringValue = dict[@"00"] ? dict[@"00"] : dict[@"0"];
+    matrix.columns[0][0] = [stringValue floatValue];
+    
+    stringValue = dict[@"01"] ? dict[@"01"] : dict[@"1"];
+    matrix.columns[0][1] = [stringValue floatValue];
+    
+    stringValue = dict[@"02"] ? dict[@"02"] : dict[@"2"];
+    matrix.columns[0][2] = [stringValue floatValue];
+    
+    stringValue = dict[@"03"] ? dict[@"03"] : dict[@"3"];
+    matrix.columns[0][3] = [stringValue floatValue];
+    
     matrix.columns[1][0] = [dict[@"10"] floatValue];
     matrix.columns[1][1] = [dict[@"11"] floatValue];
     matrix.columns[1][2] = [dict[@"12"] floatValue];
@@ -131,6 +145,30 @@ static inline matrix_float4x4 matrixFromDictionary(NSDictionary *dict)
     matrix.columns[3][1] = [dict[@"31"] floatValue];
     matrix.columns[3][2] = [dict[@"32"] floatValue];
     matrix.columns[3][3] = [dict[@"33"] floatValue];
+    
+    return matrix;
+}
+
+static inline matrix_float4x4 matrixFromKeyedArrayDictionary(NSDictionary *dict)
+{
+    matrix_float4x4 matrix;
+    
+    matrix.columns[0][0] = [dict[@"0"] floatValue];
+    matrix.columns[0][1] = [dict[@"1"] floatValue];
+    matrix.columns[0][2] = [dict[@"2"] floatValue];
+    matrix.columns[0][3] = [dict[@"3"] floatValue];
+    matrix.columns[1][0] = [dict[@"4"] floatValue];
+    matrix.columns[1][1] = [dict[@"5"] floatValue];
+    matrix.columns[1][2] = [dict[@"6"] floatValue];
+    matrix.columns[1][3] = [dict[@"7"] floatValue];
+    matrix.columns[2][0] = [dict[@"8"] floatValue];
+    matrix.columns[2][1] = [dict[@"9"] floatValue];
+    matrix.columns[2][2] = [dict[@"10"] floatValue];
+    matrix.columns[2][3] = [dict[@"11"] floatValue];
+    matrix.columns[3][0] = [dict[@"12"] floatValue];
+    matrix.columns[3][1] = [dict[@"13"] floatValue];
+    matrix.columns[3][2] = [dict[@"14"] floatValue];
+    matrix.columns[3][3] = [dict[@"15"] floatValue];
     
     return matrix;
 }
