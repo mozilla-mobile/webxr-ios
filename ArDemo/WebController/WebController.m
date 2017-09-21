@@ -129,8 +129,13 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     dispatch_async(dispatch_get_main_queue(), ^
     {
-        CGRect rect = [[self webView] bounds];
-        rect.origin.y = webXR ? 0 : [[self barView] bounds].size.height;
+        CGRect rect = [[[self webView] superview] bounds];
+        
+        if (webXR == NO)
+        {
+            rect.origin.y += [[self barView] bounds].size.height;
+            rect.size.height -= [[self barView] bounds].size.height;
+        }
         
         [[self animator] animate:[self webView] toFrame:rect];
         
