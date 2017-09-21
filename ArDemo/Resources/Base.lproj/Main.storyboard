@@ -32,7 +32,7 @@
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="73L-9y-k0E" userLabel="SplashView" customClass="LayerView">
                                 <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="backgroundHorizontal" translatesAutoresizingMaskIntoConstraints="NO" id="0Zx-bn-O3A">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bgH" translatesAutoresizingMaskIntoConstraints="NO" id="0Zx-bn-O3A">
                                         <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
                                     </imageView>
                                     <activityIndicatorView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="NsR-hH-fKn">
@@ -97,6 +97,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="backgroundHorizontal" width="736" height="414"/>
+        <image name="bgH" width="1104" height="621"/>
     </resources>
 </document>

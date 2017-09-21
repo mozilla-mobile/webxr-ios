@@ -49,7 +49,7 @@
 		0401E04D1F612D910075D823 /* BarView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BarView.m; sourceTree = "<group>"; };
 		0401E0501F62E6150075D823 /* Animator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Animator.h; sourceTree = "<group>"; };
 		0401E0511F62E6150075D823 /* Animator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Animator.m; sourceTree = "<group>"; };
-		041503C11F28944F00887400 /* ArDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		041503C11F28944F00887400 /* XRDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XRDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		041503C41F28944F00887400 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		041503C51F28944F00887400 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		041503D11F28944F00887400 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -150,7 +150,7 @@
 		041503C21F28944F00887400 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				041503C11F28944F00887400 /* ArDemo.app */,
+				041503C11F28944F00887400 /* XRDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -359,9 +359,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		041503C01F28944F00887400 /* ArDemo */ = {
+		041503C01F28944F00887400 /* XRDemo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 041503DD1F28944F00887400 /* Build configuration list for PBXNativeTarget "ArDemo" */;
+			buildConfigurationList = 041503DD1F28944F00887400 /* Build configuration list for PBXNativeTarget "XRDemo" */;
 			buildPhases = (
 				20F4E46B4FFAE2848E06BE98 /* [CP] Check Pods Manifest.lock */,
 				041503BD1F28944F00887400 /* Sources */,
@@ -374,9 +374,9 @@
 			);
 			dependencies = (
 			);
-			name = ArDemo;
+			name = XRDemo;
 			productName = ArDemo;
-			productReference = 041503C11F28944F00887400 /* ArDemo.app */;
+			productReference = 041503C11F28944F00887400 /* XRDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -393,7 +393,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 041503BC1F28944F00887400 /* Build configuration list for PBXProject "ArDemo" */;
+			buildConfigurationList = 041503BC1F28944F00887400 /* Build configuration list for PBXProject "XRDemo" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -406,7 +406,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				041503C01F28944F00887400 /* ArDemo */,
+				041503C01F28944F00887400 /* XRDemo */,
 			);
 		};
 /* End PBXProject section */
@@ -671,7 +671,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		041503BC1F28944F00887400 /* Build configuration list for PBXProject "ArDemo" */ = {
+		041503BC1F28944F00887400 /* Build configuration list for PBXProject "XRDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				041503DB1F28944F00887400 /* Debug */,
@@ -680,7 +680,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		041503DD1F28944F00887400 /* Build configuration list for PBXNativeTarget "ArDemo" */ = {
+		041503DD1F28944F00887400 /* Build configuration list for PBXNativeTarget "XRDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				041503DE1F28944F00887400 /* Debug */,
