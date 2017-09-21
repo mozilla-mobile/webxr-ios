@@ -125,12 +125,28 @@ inline static WebCompletion debugCompletion(NSString *name)
     [self callWebMethod:message param:@"" webCompletion:debugCompletion(@"setRecordState")];
 }
 
-- (void)showBar:(BOOL)showBar
+- (void)setupForWebXR:(BOOL)webXR
 {
     dispatch_async(dispatch_get_main_queue(), ^
-                   {
-                       [[self animator] animateHidden:[self barView] onRootView:[self webView] withType:(showBar ? AnimationFromTop : AnimationToTop)];
-                   });
+    {
+        CGRect rect = [[self webView] bounds];
+        rect.origin.y = webXR ? 0 : [[self barView] bounds].size.height;
+        
+        [[self animator] animate:[self webView] toFrame:rect];
+        
+        UIColor *backColor = webXR ? [UIColor clearColor] : [UIColor whiteColor];
+        [[[self webView] superview] setBackgroundColor:backColor];
+        
+        [[self animator] animate:[[self webView] superview] toColor:backColor];
+    });
+}
+
+- (void)showBar:(BOOL)showBar
+{
+    CGRect rect = [[self barView] bounds];
+    rect.origin.y = showBar ? 0 : 0 - [[self barView] bounds].size.height;
+    
+    [[self animator] animate:[self barView] toFrame:rect];
 }
 
 - (void)showDebug:(BOOL)showDebug
@@ -189,10 +205,14 @@ inline static WebCompletion debugCompletion(NSString *name)
              if (error == nil)
              {
                  [blockSelf onInit]([message body][WEB_AR_REQUEST_OPTION][WEB_AR_UI_OPTION]);
+                 
+                // [blockSelf setWebXR:YES];
              }
              else
              {
                  [blockSelf onError](error);
+                 
+                 //[blockSelf setWebXR:NO];
              }
          }];
     }
@@ -288,6 +308,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
 {
     DDLogDebug(@"didStartProvisionalNavigation - %@", navigation);
+    //[self setWebXR:NO];
     
     [self onStartLoad]();
     
@@ -317,6 +338,8 @@ inline static WebCompletion debugCompletion(NSString *name)
         [self onError](error);
     }
     
+    //[self setWebXR:NO];
+    
     [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
     [[self barView] setBackEnabled:[[self webView] canGoBack]];
     [[self barView] setForwardEnabled:[[self webView] canGoForward]];
@@ -330,6 +353,8 @@ inline static WebCompletion debugCompletion(NSString *name)
     {
         [self onError](error);
     }
+    
+   // [self setWebXR:NO];
     
     [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
     [[self barView] setBackEnabled:[[self webView] canGoBack]];
@@ -380,7 +405,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [barView setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin |
      UIViewAutoresizingFlexibleLeftMargin |
      UIViewAutoresizingFlexibleWidth];
-    [[self webView] addSubview:barView];
+    [[[self webView] superview] addSubview:barView];
     [self setBarView:barView];
     
     __weak typeof (self) blockSelf = self;

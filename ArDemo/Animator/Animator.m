@@ -3,10 +3,9 @@
 
 #define TRANSLATION_KOEF 2
 
-#define ANIMATION_POSITION_KEY @"position"
-#define ANIMATION_TO_RIGHT_POSITION_KEY @"toRightPosition"
 #define ANIMATION_PULSE_KEY @"pulse"
 #define ANIMATION_FRAME_KEY @"frame"
+#define ANIMATION_COLOR_KEY @"color"
 
 @interface AnimationDelegate : NSObject<CAAnimationDelegate>
 @property(nonatomic, copy) Completion completion;
@@ -42,225 +41,6 @@
     [[[UIApplication sharedApplication] keyWindow] pop_removeAllAnimations];
     [[[[UIApplication sharedApplication] keyWindow] layer] pop_removeAllAnimations];
     [[[[UIApplication sharedApplication] keyWindow] layer] removeAllAnimations];
-}
-
-- (void)animateHidden:(UIView *)view onRootView:(UIView *)rootView withType:(AnimationType)type
-{
-    BOOL width;
-    
-    switch (type)
-    {
-        case AnimationFromTop:
-        case AnimationToTop:
-        case AnimationFromBottom:
-        case AnimationToBottom:
-            width = NO;
-            break;
-            
-        default:
-            width = YES;
-            break;
-    }
-    
-    [self animateHidden:view
-             onRootView:rootView
-               withType:type
-                 offset:[self offsetView:view forType:type]];
-}
-
-- (CGFloat)offsetView:(UIView *)view forType:(AnimationType)type
-{
-    BOOL width;
-    
-    switch (type)
-    {
-        case AnimationFromTop:
-        case AnimationToTop:
-        case AnimationFromBottom:
-        case AnimationToBottom:
-            width = NO;
-            break;
-            
-        default:
-            width = YES;
-            break;
-    }
-    
-    return width ? [view bounds].size.width * TRANSLATION_KOEF : [view bounds].size.height * TRANSLATION_KOEF;
-}
-
-- (void)animateHidden:(UIView *)view onRootView:(UIView *)rootView withType:(AnimationType)type identityOnCompletion:(BOOL)identity
-{
-    [self animateHidden:view
-             onRootView:rootView
-               withType:type
-                 offset:[self offsetView:view forType:type]
-   identityOnCompletion:identity];
-}
-
-- (void)animateHidden:(UIView *)view onRootView:(UIView *)rootView withType:(AnimationType)type offset:(CGFloat)offset
-{
-    [self animateHidden:view
-             onRootView:rootView
-               withType:type
-                 offset:offset
-   identityOnCompletion:YES];
-}
-
-- (void)animateHidden:(UIView *)view
-           onRootView:(UIView *)rootView
-             withType:(AnimationType)type
-               offset:(CGFloat)offset
- identityOnCompletion:(BOOL)identity
-{
-    [[view layer] removeAllAnimations];
-    [[view layer] pop_removeAllAnimations];
-    
-    CATransform3D completionTransform = identity ? CATransform3DIdentity : [[view layer] transform];
-    
-    POPSpringAnimation *anim;
-    
-    [[view layer] setTransform:completionTransform];
-    
-    switch (type)
-    {
-        case AnimationFromTop:
-        {
-            if ([view isHidden])
-            {
-                [view setHidden:NO];
-                
-                anim = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerTranslationY];
-                anim.fromValue = @(0 - offset);
-                anim.toValue = @(0);
-                [anim setCompletionBlock:^(POPAnimation *anim, BOOL finished)
-                 {
-                     [[view layer] setTransform:completionTransform];
-                 }];
-            }
-            break;
-        }
-        case AnimationToTop:
-        {
-            if ([view isHidden] == NO)
-            {
-                anim = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerTranslationY];
-                anim.toValue = @(0 - offset);
-                anim.fromValue = @(0);
-                [anim setCompletionBlock:^(POPAnimation *anim, BOOL finished)
-                 {
-                     [[view layer] setTransform:completionTransform];
-                     [view setHidden:YES];
-                 }];
-            }
-            break;
-        }
-        case AnimationFromBottom:
-        {
-            if ([view isHidden])
-            {
-                [view setHidden:NO];
-                
-                anim = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerTranslationY];
-                anim.fromValue = @(offset);
-                anim.toValue = @(0);
-                [anim setCompletionBlock:^(POPAnimation *anim, BOOL finished)
-                 {
-                     [[view layer] setTransform:completionTransform];
-                 }];
-            }
-            break;
-        }
-        case AnimationToBottom:
-        {
-            if ([view isHidden] == NO)
-            {
-                anim = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerTranslationY];
-                anim.toValue = @(offset);
-                anim.fromValue = @(0);
-                [anim setCompletionBlock:^(POPAnimation *anim, BOOL finished)
-                 {
-                     [view setHidden:YES];
-                     [[view layer] setTransform:completionTransform];
-                 }];
-            }
-            break;
-        }
-        case AnimationFromLeft:
-        {
-            if ([view isHidden])
-            {
-                [view setHidden:NO];
-                
-                anim = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerTranslationX];
-                anim.fromValue = @(0 - offset);
-                anim.toValue = @(0);
-                [anim setCompletionBlock:^(POPAnimation *anim, BOOL finished)
-                 {
-                     [[view layer] setTransform:completionTransform];
-                 }];
-            }
-            break;
-        }
-        case AnimationToLeft:
-        {
-            if ([view isHidden] == NO)
-            {
-                anim = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerTranslationX];
-                anim.toValue = @(offset);
-                anim.fromValue = @(0);
-                [anim setCompletionBlock:^(POPAnimation *anim, BOOL finished)
-                 {
-                     [view setHidden:YES];
-                     [[view layer] setTransform:completionTransform];
-                 }];
-            }
-            break;
-        }
-        case AnimationFromRight:
-        {
-            if ([view isHidden])
-            {
-                [view setHidden:NO];
-                
-                anim = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerTranslationX];
-                anim.fromValue = @(offset);
-                anim.toValue = @(0);
-                [anim setCompletionBlock:^(POPAnimation *anim, BOOL finished)
-                 {
-                     [[view layer] setTransform:completionTransform];
-                 }];
-            }
-            break;
-        }
-        case AnimationToRight:
-        {
-            if ([view isHidden] == NO)
-            {
-                anim = [POPSpringAnimation animationWithPropertyNamed:kPOPLayerTranslationXY];
-                anim.toValue = @(CGPointMake(offset, 0));
-                anim.fromValue = @(CGPointMake(0 , 0));
-                [anim setCompletionBlock:^(POPAnimation *anim, BOOL finished)
-                 {
-                     [view setHidden:YES];
-                     [[view layer] setTransform:completionTransform];
-                 }];
-                
-                anim.removedOnCompletion = YES;
-                [[view layer] pop_addAnimation:anim forKey:ANIMATION_TO_RIGHT_POSITION_KEY];
-                
-                return;
-            }
-            break;
-        }
-    }
-    anim.removedOnCompletion = YES;
-    [[view layer] pop_addAnimation:anim forKey:typeString(type)];
-}
-
-- (BOOL)isViewToRightAnimated:(UIView *)view
-{
-    return [[[view layer] pop_animationKeys] containsObject:ANIMATION_TO_RIGHT_POSITION_KEY];
 }
 
 - (void)startPulseAnimation:(UIView *)view
@@ -362,6 +142,24 @@
     [[self animationCompletions] addObject:ad];
     
     [[view layer] addAnimation:transition forKey:key];
+}
+
+- (void)animate:(UIView *)view toColor:(UIColor *)color
+{
+    if ( [view backgroundColor] == color )
+    {
+        return;
+    }
+    
+    POPSpringAnimation *anim = [POPSpringAnimation animationWithPropertyNamed:kPOPViewBackgroundColor];
+    anim.toValue = color;
+    anim.fromValue = [view backgroundColor];
+    [anim setCompletionBlock:^(POPAnimation *anim, BOOL finished)
+     {
+         [view setBackgroundColor:color];
+     }];
+    
+    [view pop_addAnimation:anim forKey:ANIMATION_COLOR_KEY];
 }
 
 @end
