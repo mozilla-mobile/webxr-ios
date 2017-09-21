@@ -32,8 +32,6 @@ typedef void (^DidChangeTrackingState)(NSString *state);
 
 - (NSDictionary *)arkData;
 
-- (NSDictionary *)anchorsData;
-
 - (void)setShowMode:(ShowMode)mode;
 - (void)setShowOptions:(ShowOptions)options;
 
