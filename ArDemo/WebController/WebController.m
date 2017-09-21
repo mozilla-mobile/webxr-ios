@@ -134,7 +134,6 @@ inline static WebCompletion debugCompletion(NSString *name)
         if (webXR == NO)
         {
             rect.origin.y += [[self barView] bounds].size.height;
-            rect.size.height -= [[self barView] bounds].size.height;
         }
         
         [[self animator] animate:[self webView] toFrame:rect];
@@ -394,6 +393,8 @@ inline static WebCompletion debugCompletion(NSString *name)
      UIViewAutoresizingFlexibleTopMargin |
      UIViewAutoresizingFlexibleWidth |
      UIViewAutoresizingFlexibleHeight];
+    
+    [[self webView] setAutoresizesSubviews:YES];
     
     [[self webView] setAllowsLinkPreview:NO];
     [[self webView] setOpaque:NO];
