@@ -209,14 +209,10 @@ inline static WebCompletion debugCompletion(NSString *name)
              if (error == nil)
              {
                  [blockSelf onInit]([message body][WEB_AR_REQUEST_OPTION][WEB_AR_UI_OPTION]);
-                 
-                // [blockSelf setWebXR:YES];
              }
              else
              {
                  [blockSelf onError](error);
-                 
-                 //[blockSelf setWebXR:NO];
              }
          }];
     }
@@ -312,7 +308,6 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
 {
     DDLogDebug(@"didStartProvisionalNavigation - %@", navigation);
-    //[self setWebXR:NO];
     
     [self onStartLoad]();
     
@@ -342,8 +337,6 @@ inline static WebCompletion debugCompletion(NSString *name)
         [self onError](error);
     }
     
-    //[self setWebXR:NO];
-    
     [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
     [[self barView] setBackEnabled:[[self webView] canGoBack]];
     [[self barView] setForwardEnabled:[[self webView] canGoForward]];
@@ -357,8 +350,6 @@ inline static WebCompletion debugCompletion(NSString *name)
     {
         [self onError](error);
     }
-    
-   // [self setWebXR:NO];
     
     [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
     [[self barView] setBackEnabled:[[self webView] canGoBack]];
