@@ -138,6 +138,8 @@ typedef void (^UICompletion)(void);
              
              [[blockSelf stateController] setShowMode:ShowNothing];
          }
+         
+         [[blockSelf webController] setupForWebXR:xr];
      }];
     
     [[self stateController] setOnReachable:^(NSString *url)

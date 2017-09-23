@@ -47,6 +47,8 @@ typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
 - (void)reload;
 - (void)clean;
 
+- (void)setupForWebXR:(BOOL)webXR;
+
 - (void)showBar:(BOOL)showBar;
 - (void)showDebug:(BOOL)showDebug;
 - (void)startRecording:(BOOL)start;
