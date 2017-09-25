@@ -1,4 +1,8 @@
 import Reality from '../Reality.js'
+import XRAnchor from '../XRAnchor.js'
+import XRCoordinates from '../XRCoordinates.js'
+import XRAnchorOffset from '../XRAnchorOffset.js'
+
 import ARKitWrapper from '../platform/ARKitWrapper.js'
 import ARCoreCameraRenderer from '../platform/ARCoreCameraRenderer.js'
 
@@ -80,7 +84,6 @@ export default class CameraReality extends Reality {
 			if(this._initialized === false){
 				this._initialized = true
 				this._arKitWrapper = ARKitWrapper.GetOrCreate()
-				this._arKitWrapper.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, this._handleARKitAddObject.bind(this))
 				this._arKitWrapper.addEventListener(ARKitWrapper.WATCH_EVENT, this._handleARKitWatch.bind(this))
 				this._arKitWrapper.waitForInit().then(() => {
 					this._arKitWrapper.watch()
@@ -128,15 +131,13 @@ export default class CameraReality extends Reality {
 	_handleARKitWatch(ev){
 		if(ev.detail && ev.detail.objects){
 			for(let anchorInfo of ev.detail.objects){
-				// The iOS app is handing up incomplete anchor transforms, so this is commented out for now.
-				// Bug is tracked here: https://github.com/mozilla/webxr-ios/issues/2
-				//this._updateAnchorFromARKitUpdate(anchorInfo.uuid, anchorInfo)
+				this._updateAnchorFromARKitUpdate(anchorInfo.uuid, anchorInfo)
 			}
 		}
 	}
 
-	_handleARKitAddObject(ev){
-		this._updateAnchorFromARKitUpdate(ev.detail.uuid, ev.detail)
+	_handleARKitAddObject(anchorInfo){
+		this._updateAnchorFromARKitUpdate(anchorInfo.uuid, anchorInfo)
 	}
 
 	_updateAnchorFromARKitUpdate(uuid, anchorInfo){
@@ -147,28 +148,49 @@ export default class CameraReality extends Reality {
 		}
 		// This assumes that the anchor's coordinates are in the stage coordinate system
 		anchor.coordinates.poseMatrix = anchorInfo.transform
-
 	}
 
 	_addAnchor(anchor, display){
 		// Convert coordinates to the stage coordinate system so that updating from ARKit transforms is simple
 		anchor.coordinates = anchor.coordinates.getTransformedCoordinates(display._stageCoordinateSystem)
 		if(this._arKitWrapper !== null){
-			this._arKitWrapper.addAnchor(anchor.uid, anchor.coordinates.poseMatrix)
-		} else if(this._vrDisplay){
-			// TODO talk to ARCore to create an anchor
+			this._arKitWrapper.addAnchor(anchor.uid, anchor.coordinates.poseMatrix).then(
+				detail => this._handleARKitAddObject(detail)
+			)
 		}
+		// ARCore as implemented in the browser does not offer anchors except on a surface, so we just use untracked anchors
 		this._anchors.set(anchor.uid, anchor)
 		return anchor.uid
 	}
 
 	/*
-	Creates an anchor attached to a surface, as found by a ray
+	Creates an anchor offset relative to a surface, as found by a ray
+	returns a Promise that resolves either to an AnchorOffset with the first hit result or null if the hit test failed
 	*/
-	_findAnchor(coordinates, display){
-		// XRAnchorOffset? findAnchor(XRCoordinates); // cast a ray to find or create an anchor at the first intersection in the Reality
-		// TODO talk to ARKit to create an anchor
-		throw new Error('Need to implement findAnchor in CameraReality')
+	_findAnchor(normalizedScreenX, normalizedScreenY, display){
+		return new Promise((resolve, reject) => {
+			if(this._arKitWrapper !== null){
+				this._arKitWrapper.hitTest(normalizedScreenX, normalizedScreenY).then(hits => {
+					// Waiting on https://github.com/mozilla/webxr-ios/issues/8 so that we can create an AnchorOffset
+					resolve(null)
+				})
+			} else if(this._vrDisplay !== null){
+				// Perform a hit test using the ARCore data
+				let hits = this._vrDisplay.hitTest(normalizedScreenX, normalizedScreenY)
+				if(hits.length == 0){
+					resolve(null)
+					return
+				}
+				let coordinates = new XRCoordinates(display, display._stageCoordinateSystem)
+				coordinates.poseMatrix = hits[0].modelMatrix // Use the first hit
+				// TODO fix whatever is wrong with this matrix
+				let anchor = new XRAnchor(coordinates)
+				this._anchors.set(anchor.uid, anchor)
+				resolve(new XRAnchorOffset(anchor.uid))
+			} else {
+				resolve(null) // No platform support for finding anchors
+			}
+		})
 	}
 
 	_removeAnchor(uid){
