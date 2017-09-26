@@ -218,6 +218,7 @@ static inline NSArray *hitTestResultArrayFromResult(NSArray *resultArray)
             ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)[result anchor];
             dict[WEB_AR_ANCHOR_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
             dict[WEB_AR_ANCHOR_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
+            dict[WEB_AR_ANCHOR_TRANSFORM_OPTION] = arrayFromMatrix4x4([planeAnchor transform]);
         }
         
         [results addObject:dict];
