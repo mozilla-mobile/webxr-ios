@@ -1,5 +1,6 @@
 import Reality from '../Reality.js'
 import XRAnchor from '../XRAnchor.js'
+import XRViewPose from '../XRViewPose.js'
 import XRCoordinates from '../XRCoordinates.js'
 import XRAnchorOffset from '../XRAnchorOffset.js'
 
@@ -140,7 +141,7 @@ export default class CameraReality extends Reality {
 		this._updateAnchorFromARKitUpdate(anchorInfo.uuid, anchorInfo)
 	}
 
-	_updateAnchorFromARKitUpdate(uuid, anchorInfo){
+	_updateAnchorFromARKitUpdate(uid, anchorInfo){
 		const anchor = this._anchors.get(uid) || null
 		if(anchor === null){
 			console.log('unknown anchor', anchor)
@@ -165,14 +166,33 @@ export default class CameraReality extends Reality {
 
 	/*
 	Creates an anchor offset relative to a surface, as found by a ray
+	normalized screen x and y are in range 0..1, with 0,0 at top left and 1,1 at bottom right
 	returns a Promise that resolves either to an AnchorOffset with the first hit result or null if the hit test failed
 	*/
 	_findAnchor(normalizedScreenX, normalizedScreenY, display){
 		return new Promise((resolve, reject) => {
 			if(this._arKitWrapper !== null){
-				this._arKitWrapper.hitTest(normalizedScreenX, normalizedScreenY).then(hits => {
-					// Waiting on https://github.com/mozilla/webxr-ios/issues/8 so that we can create an AnchorOffset
-					resolve(null)
+				// Perform a hit test using the ARKit integration
+				this._arKitWrapper.hitTest(normalizedScreenX, normalizedScreenY, ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANES).then(hits => {
+					if(hits.length === 0){
+						resolve(null)
+						return
+					}
+					let hit = this._pickARKitHit(hits)
+					// Use the first hit to create an XRAnchorOffset, creating the XRAnchor as necessary
+
+					// TODO this works for now, but it should set the anchor's transform and the use the offset transform
+
+					let anchor = this._getAnchor(hit.uuid)
+					if(anchor === null){
+						let anchorCoordinates = new XRCoordinates(display, display._stageCoordinateSystem)
+						anchor = new XRAnchor(anchorCoordinates, hit.uuid)
+						this._anchors.set(anchor.uid, anchor)
+					}
+					let anchorOffset = new XRAnchorOffset(anchor.uid)
+					hit.world_transform[13] += XRViewPose.SITTING_EYE_HEIGHT
+					anchorOffset.poseMatrix = hit.world_transform
+					resolve(anchorOffset)
 				})
 			} else if(this._vrDisplay !== null){
 				// Perform a hit test using the ARCore data
@@ -181,11 +201,15 @@ export default class CameraReality extends Reality {
 					resolve(null)
 					return
 				}
-				let coordinates = new XRCoordinates(display, display._stageCoordinateSystem)
-				coordinates.poseMatrix = hits[0].modelMatrix // Use the first hit
-				// TODO fix whatever is wrong with this matrix
-				let anchor = new XRAnchor(coordinates)
-				this._anchors.set(anchor.uid, anchor)
+				hits.sort((a, b) => a.distance - b.distance)
+				let anchor = this._getAnchor(hits[0].uuid)
+				if(anchor === null){
+					let coordinates = new XRCoordinates(display, display._stageCoordinateSystem)
+					coordinates.poseMatrix = hits[0].modelMatrix
+					coordinates._poseMatrix[13] += XRViewPose.SITTING_EYE_HEIGHT
+					anchor = new XRAnchor(coordinates)
+					this._anchors.set(anchor.uid, anchor)
+				}
 				resolve(new XRAnchorOffset(anchor.uid))
 			} else {
 				resolve(null) // No platform support for finding anchors
@@ -197,5 +221,38 @@ export default class CameraReality extends Reality {
 		// returns void
 		// TODO talk to ARKit to delete an anchor
 		this._anchors.delete(uid)
+	}
+
+	_pickARKitHit(data){
+		if(data.length === 0) return null
+		let info = null
+
+		let planeResults = data.filter(
+			hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT
+		)
+		let planeExistingUsingExtentResults = planeResults.filter(
+			hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
+		)
+		let planeExistingResults = planeResults.filter(
+			hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE
+		)
+
+		if (planeExistingUsingExtentResults.length) {
+			// existing planes using extent first
+			planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort((a, b) => a.distance - b.distance)
+			info = planeExistingUsingExtentResults[0]
+		} else if (planeExistingResults.length) {
+			// then other existing planes
+			planeExistingResults = planeExistingResults.sort((a, b) => a.distance - b.distance)
+			info = planeExistingResults[0]
+		} else if (planeResults.length) {
+			// other types except feature points
+			planeResults = planeResults.sort((a, b) => a.distance - b.distance)
+			info = planeResults[0]
+		} else {
+			// feature points if any
+			info = data[0]
+		}
+		return info
 	}
 }

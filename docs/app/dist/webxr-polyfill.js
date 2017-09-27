@@ -1036,6 +1036,7 @@ var Reality = function (_EventHandlerBase) {
 		/*
   Create an anchor attached to a surface, as found by a ray
   returns a Promise that resolves either to an AnchorOffset or null if the hit test failed
+  normalized screen x and y are in range 0..1, with 0,0 at top left and 1,1 at bottom right
   */
 
 	}, {
@@ -1317,7 +1318,7 @@ var _Quaternion = __webpack_require__(2);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
-var _XRCoordinateSystem = __webpack_require__(12);
+var _XRCoordinateSystem = __webpack_require__(13);
 
 var _XRCoordinateSystem2 = _interopRequireDefault(_XRCoordinateSystem);
 
@@ -1411,7 +1412,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _XRViewport = __webpack_require__(13);
+var _XRViewport = __webpack_require__(14);
 
 var _XRViewport2 = _interopRequireDefault(_XRViewport);
 
@@ -1494,6 +1495,106 @@ XRView.EYES = [XRView.LEFT, XRView.RIGHT];
 
 /***/ }),
 /* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _MatrixMath = __webpack_require__(1);
+
+var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
+
+var _Quaternion = __webpack_require__(2);
+
+var _Quaternion2 = _interopRequireDefault(_Quaternion);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+XRDevicePose describes the position and orientation of an XRDisplay relative to the query XRCoordinateSystem.
+It also describes the view and projection matrices that should be used by the application to render a frame of the XR scene.
+*/
+var XRViewPose = function () {
+	function XRViewPose() {
+		var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [0, 0, 0];
+		var orientation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0, 0, 1];
+
+		_classCallCheck(this, XRViewPose);
+
+		this._poseModelMatrix = new Float32Array(16);
+		_MatrixMath2.default.mat4_fromRotationTranslation(this._poseModelMatrix, orientation, position);
+	}
+
+	_createClass(XRViewPose, [{
+		key: '_setPoseModelMatrix',
+		value: function _setPoseModelMatrix(array16) {
+			for (var i = 0; i < 16; i++) {
+				this._poseModelMatrix[i] = array16[i];
+			}
+		}
+	}, {
+		key: '_translate',
+		value: function _translate(array3) {
+			this._poseModelMatrix[12] += array3[0];
+			this._poseModelMatrix[13] += array3[1];
+			this._poseModelMatrix[14] += array3[2];
+		}
+	}, {
+		key: 'getViewMatrix',
+		value: function getViewMatrix(view) {
+			var out = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+			if (out === null) {
+				out = new Float32Array(16);
+			}
+			_MatrixMath2.default.mat4_eyeView(out, this._poseModelMatrix); // TODO offsets
+			return out;
+		}
+	}, {
+		key: 'poseModelMatrix',
+		get: function get() {
+			return this._poseModelMatrix;
+		}
+	}, {
+		key: '_position',
+		get: function get() {
+			return [this._poseModelMatrix[12], this._poseModelMatrix[13], this._poseModelMatrix[14]];
+		},
+		set: function set(array3) {
+			this._poseModelMatrix[12] = array3[0];
+			this._poseModelMatrix[13] = array3[1];
+			this._poseModelMatrix[14] = array3[2];
+		}
+	}, {
+		key: '_orientation',
+		get: function get() {
+			var quat = new _Quaternion2.default();
+			quat.setFromRotationMatrix(this._poseModelMatrix);
+			return quat.toArray();
+		},
+		set: function set(array4) {
+			_MatrixMath2.default.mat4_fromRotationTranslation(this._poseModelMatrix, array4, this._position);
+		}
+	}]);
+
+	return XRViewPose;
+}();
+
+exports.default = XRViewPose;
+
+
+XRViewPose.SITTING_EYE_HEIGHT = 1.1; // meters
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1642,7 +1743,7 @@ var Vector3 = function () {
 exports.default = Vector3;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1824,17 +1925,22 @@ var ARKitWrapper = function (_EventHandlerBase) {
 
 		/*
   Sends a hitTest message to ARKit to get hit testing results
-  x, y - screen coordinates normalized to 0..1
+  x, y - screen coordinates normalized to 0..1 (0,0 is at top left and 1,1 is at bottom right)
   types - bit mask of hit testing types
   
   Returns a Promise that resolves to a (possibly empty) array of hit test data:
   [
   	{
   		type: 1,							// A packed mask of types ARKitWrapper.HIT_TEST_TYPE_*
-  		distance: 1.0216870307922363,		// The distance in meters from the camera to the hit
-  		world_transform: Float32Array(16)	// The pose of the anchor
-  		local_transform: Float32Array(16),	// The offset pose from the anchor
-  		anchor: {uuid, transform, ...}		// The anchor representing the detected surface, if any
+  		distance: 1.0216870307922363,		// The distance in meters from the camera to the detected anchor or feature point.
+  		world_transform:  [float x 16],		// The pose of the hit test result relative to the world coordinate system. 
+  		local_transform:  [float x 16],		// The pose of the hit test result relative to the nearest anchor or feature point
+  			// If the `type` is `HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE`, `HIT_TEST_TYPE_EXISTING_PLANE`, or `HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT` (2, 8, or 16) it will also have anchor data:
+  		anchor_center: { x:float, y:float, z:float },
+  		anchor_extent: { x:float, y:float },
+  		uuid: string,
+  			// If the `type` is `HIT_TEST_TYPE_EXISTING_PLANE` or `HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT` (8 or 16) it will also have an anchor transform:
+  		anchor_transform: [float x 16]
   	},
   	...
   ]
@@ -2171,8 +2277,10 @@ ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT = 16;
 
 ARKitWrapper.HIT_TEST_TYPE_ALL = ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT | ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE | ARKitWrapper.HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE | ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT;
 
+ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANES = ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE | ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT;
+
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2279,7 +2387,7 @@ var XRAnchorOffset = function () {
 exports.default = XRAnchorOffset;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2376,7 +2484,7 @@ XRCoordinateSystem.GEOSPATIAL = "geospatial";
 XRCoordinateSystem.TYPES = [XRCoordinateSystem.HEAD_MODEL, XRCoordinateSystem.EYE_LEVEL, XRCoordinateSystem.STAGE, XRCoordinateSystem.GEOSPATIAL];
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2443,106 +2551,6 @@ var XRViewport = function () {
 exports.default = XRViewport;
 
 /***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _MatrixMath = __webpack_require__(1);
-
-var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
-
-var _Quaternion = __webpack_require__(2);
-
-var _Quaternion2 = _interopRequireDefault(_Quaternion);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/*
-XRDevicePose describes the position and orientation of an XRDisplay relative to the query XRCoordinateSystem.
-It also describes the view and projection matrices that should be used by the application to render a frame of the XR scene.
-*/
-var XRViewPose = function () {
-	function XRViewPose() {
-		var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [0, 0, 0];
-		var orientation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0, 0, 1];
-
-		_classCallCheck(this, XRViewPose);
-
-		this._poseModelMatrix = new Float32Array(16);
-		_MatrixMath2.default.mat4_fromRotationTranslation(this._poseModelMatrix, orientation, position);
-	}
-
-	_createClass(XRViewPose, [{
-		key: '_setPoseModelMatrix',
-		value: function _setPoseModelMatrix(array16) {
-			for (var i = 0; i < 16; i++) {
-				this._poseModelMatrix[i] = array16[i];
-			}
-		}
-	}, {
-		key: '_translate',
-		value: function _translate(array3) {
-			this._poseModelMatrix[12] += array3[0];
-			this._poseModelMatrix[13] += array3[1];
-			this._poseModelMatrix[14] += array3[2];
-		}
-	}, {
-		key: 'getViewMatrix',
-		value: function getViewMatrix(view) {
-			var out = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-
-			if (out === null) {
-				out = new Float32Array(16);
-			}
-			_MatrixMath2.default.mat4_eyeView(out, this._poseModelMatrix); // TODO offsets
-			return out;
-		}
-	}, {
-		key: 'poseModelMatrix',
-		get: function get() {
-			return this._poseModelMatrix;
-		}
-	}, {
-		key: '_position',
-		get: function get() {
-			return [this._poseModelMatrix[12], this._poseModelMatrix[13], this._poseModelMatrix[14]];
-		},
-		set: function set(array3) {
-			this._poseModelMatrix[12] = array3[0];
-			this._poseModelMatrix[13] = array3[1];
-			this._poseModelMatrix[14] = array3[2];
-		}
-	}, {
-		key: '_orientation',
-		get: function get() {
-			var quat = new _Quaternion2.default();
-			quat.setFromRotationMatrix(this._poseModelMatrix);
-			return quat.toArray();
-		},
-		set: function set(array4) {
-			_MatrixMath2.default.mat4_fromRotationTranslation(this._poseModelMatrix, array4, this._position);
-		}
-	}]);
-
-	return XRViewPose;
-}();
-
-exports.default = XRViewPose;
-
-
-XRViewPose.SITTING_EYE_HEIGHT = 1.1; // meters
-
-/***/ }),
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2599,7 +2607,7 @@ var _EventHandlerBase2 = __webpack_require__(0);
 
 var _EventHandlerBase3 = _interopRequireDefault(_EventHandlerBase2);
 
-var _Vector = __webpack_require__(9);
+var _Vector = __webpack_require__(10);
 
 var _Vector2 = _interopRequireDefault(_Vector);
 
@@ -2722,7 +2730,7 @@ var _XRPlaneAnchor = __webpack_require__(23);
 
 var _XRPlaneAnchor2 = _interopRequireDefault(_XRPlaneAnchor);
 
-var _XRAnchorOffset = __webpack_require__(11);
+var _XRAnchorOffset = __webpack_require__(12);
 
 var _XRAnchorOffset2 = _interopRequireDefault(_XRAnchorOffset);
 
@@ -2742,7 +2750,7 @@ var _XRView = __webpack_require__(8);
 
 var _XRView2 = _interopRequireDefault(_XRView);
 
-var _XRViewport = __webpack_require__(13);
+var _XRViewport = __webpack_require__(14);
 
 var _XRViewport2 = _interopRequireDefault(_XRViewport);
 
@@ -2750,7 +2758,7 @@ var _XRCartographicCoordinates = __webpack_require__(27);
 
 var _XRCartographicCoordinates2 = _interopRequireDefault(_XRCartographicCoordinates);
 
-var _XRCoordinateSystem = __webpack_require__(12);
+var _XRCoordinateSystem = __webpack_require__(13);
 
 var _XRCoordinateSystem2 = _interopRequireDefault(_XRCoordinateSystem);
 
@@ -2758,7 +2766,7 @@ var _XRCoordinates = __webpack_require__(7);
 
 var _XRCoordinates2 = _interopRequireDefault(_XRCoordinates);
 
-var _XRViewPose = __webpack_require__(14);
+var _XRViewPose = __webpack_require__(9);
 
 var _XRViewPose2 = _interopRequireDefault(_XRViewPose);
 
@@ -3043,6 +3051,7 @@ var VirtualReality = function (_Reality) {
 
 		/*
   Create an anchor attached to a surface, as found by a ray
+  normalized screen x and y are in range 0..1, with 0,0 at top left and 1,1 at bottom right
   */
 
 	}, {
@@ -3365,6 +3374,9 @@ var XRPresentationFrame = function () {
 			//DOMString? addAnchor(XRAnchor anchor);
 			return this._session.reality._addAnchor(anchor, this._session.display);
 		}
+
+		// normalized screen x and y are in range 0..1, with 0,0 at top left and 1,1 at bottom right
+
 	}, {
 		key: 'findAnchor',
 		value: function findAnchor(normalizedScreenX, normalizedScreenY) {
@@ -3706,7 +3718,7 @@ var _Quaternion = __webpack_require__(2);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
-var _Vector = __webpack_require__(9);
+var _Vector = __webpack_require__(10);
 
 var _Vector2 = _interopRequireDefault(_Vector);
 
@@ -3714,7 +3726,7 @@ var _DeviceOrientationTracker = __webpack_require__(16);
 
 var _DeviceOrientationTracker2 = _interopRequireDefault(_DeviceOrientationTracker);
 
-var _ARKitWrapper = __webpack_require__(10);
+var _ARKitWrapper = __webpack_require__(11);
 
 var _ARKitWrapper2 = _interopRequireDefault(_ARKitWrapper);
 
@@ -3997,7 +4009,7 @@ var _XRSession = __webpack_require__(6);
 
 var _XRSession2 = _interopRequireDefault(_XRSession);
 
-var _XRViewPose = __webpack_require__(14);
+var _XRViewPose = __webpack_require__(9);
 
 var _XRViewPose2 = _interopRequireDefault(_XRViewPose);
 
@@ -4009,7 +4021,7 @@ var _Quaternion = __webpack_require__(2);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
-var _Vector = __webpack_require__(9);
+var _Vector = __webpack_require__(10);
 
 var _Vector2 = _interopRequireDefault(_Vector);
 
@@ -4017,7 +4029,7 @@ var _DeviceOrientationTracker = __webpack_require__(16);
 
 var _DeviceOrientationTracker2 = _interopRequireDefault(_DeviceOrientationTracker);
 
-var _ARKitWrapper = __webpack_require__(10);
+var _ARKitWrapper = __webpack_require__(11);
 
 var _ARKitWrapper2 = _interopRequireDefault(_ARKitWrapper);
 
@@ -4175,15 +4187,19 @@ var _XRAnchor = __webpack_require__(3);
 
 var _XRAnchor2 = _interopRequireDefault(_XRAnchor);
 
+var _XRViewPose = __webpack_require__(9);
+
+var _XRViewPose2 = _interopRequireDefault(_XRViewPose);
+
 var _XRCoordinates = __webpack_require__(7);
 
 var _XRCoordinates2 = _interopRequireDefault(_XRCoordinates);
 
-var _XRAnchorOffset = __webpack_require__(11);
+var _XRAnchorOffset = __webpack_require__(12);
 
 var _XRAnchorOffset2 = _interopRequireDefault(_XRAnchorOffset);
 
-var _ARKitWrapper = __webpack_require__(10);
+var _ARKitWrapper = __webpack_require__(11);
 
 var _ARKitWrapper2 = _interopRequireDefault(_ARKitWrapper);
 
@@ -4395,7 +4411,7 @@ var CameraReality = function (_Reality) {
 		}
 	}, {
 		key: '_updateAnchorFromARKitUpdate',
-		value: function _updateAnchorFromARKitUpdate(uuid, anchorInfo) {
+		value: function _updateAnchorFromARKitUpdate(uid, anchorInfo) {
 			var anchor = this._anchors.get(uid) || null;
 			if (anchor === null) {
 				console.log('unknown anchor', anchor);
@@ -4423,6 +4439,7 @@ var CameraReality = function (_Reality) {
 
 		/*
   Creates an anchor offset relative to a surface, as found by a ray
+  normalized screen x and y are in range 0..1, with 0,0 at top left and 1,1 at bottom right
   returns a Promise that resolves either to an AnchorOffset with the first hit result or null if the hit test failed
   */
 
@@ -4433,9 +4450,27 @@ var CameraReality = function (_Reality) {
 
 			return new Promise(function (resolve, reject) {
 				if (_this4._arKitWrapper !== null) {
-					_this4._arKitWrapper.hitTest(normalizedScreenX, normalizedScreenY).then(function (hits) {
-						// Waiting on https://github.com/mozilla/webxr-ios/issues/8 so that we can create an AnchorOffset
-						resolve(null);
+					// Perform a hit test using the ARKit integration
+					_this4._arKitWrapper.hitTest(normalizedScreenX, normalizedScreenY, _ARKitWrapper2.default.HIT_TEST_TYPE_EXISTING_PLANES).then(function (hits) {
+						if (hits.length === 0) {
+							resolve(null);
+							return;
+						}
+						var hit = _this4._pickARKitHit(hits);
+						// Use the first hit to create an XRAnchorOffset, creating the XRAnchor as necessary
+
+						// TODO this works for now, but it should set the anchor's transform and the use the offset transform
+
+						var anchor = _this4._getAnchor(hit.uuid);
+						if (anchor === null) {
+							var anchorCoordinates = new _XRCoordinates2.default(display, display._stageCoordinateSystem);
+							anchor = new _XRAnchor2.default(anchorCoordinates, hit.uuid);
+							_this4._anchors.set(anchor.uid, anchor);
+						}
+						var anchorOffset = new _XRAnchorOffset2.default(anchor.uid);
+						hit.world_transform[13] += _XRViewPose2.default.SITTING_EYE_HEIGHT;
+						anchorOffset.poseMatrix = hit.world_transform;
+						resolve(anchorOffset);
 					});
 				} else if (_this4._vrDisplay !== null) {
 					// Perform a hit test using the ARCore data
@@ -4444,11 +4479,17 @@ var CameraReality = function (_Reality) {
 						resolve(null);
 						return;
 					}
-					var coordinates = new _XRCoordinates2.default(display, display._stageCoordinateSystem);
-					coordinates.poseMatrix = hits[0].modelMatrix; // Use the first hit
-					// TODO fix whatever is wrong with this matrix
-					var anchor = new _XRAnchor2.default(coordinates);
-					_this4._anchors.set(anchor.uid, anchor);
+					hits.sort(function (a, b) {
+						return a.distance - b.distance;
+					});
+					var anchor = _this4._getAnchor(hits[0].uuid);
+					if (anchor === null) {
+						var coordinates = new _XRCoordinates2.default(display, display._stageCoordinateSystem);
+						coordinates.poseMatrix = hits[0].modelMatrix;
+						coordinates._poseMatrix[13] += _XRViewPose2.default.SITTING_EYE_HEIGHT;
+						anchor = new _XRAnchor2.default(coordinates);
+						_this4._anchors.set(anchor.uid, anchor);
+					}
 					resolve(new _XRAnchorOffset2.default(anchor.uid));
 				} else {
 					resolve(null); // No platform support for finding anchors
@@ -4461,6 +4502,46 @@ var CameraReality = function (_Reality) {
 			// returns void
 			// TODO talk to ARKit to delete an anchor
 			this._anchors.delete(uid);
+		}
+	}, {
+		key: '_pickARKitHit',
+		value: function _pickARKitHit(data) {
+			if (data.length === 0) return null;
+			var info = null;
+
+			var planeResults = data.filter(function (hitTestResult) {
+				return hitTestResult.type != _ARKitWrapper2.default.HIT_TEST_TYPE_FEATURE_POINT;
+			});
+			var planeExistingUsingExtentResults = planeResults.filter(function (hitTestResult) {
+				return hitTestResult.type == _ARKitWrapper2.default.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT;
+			});
+			var planeExistingResults = planeResults.filter(function (hitTestResult) {
+				return hitTestResult.type == _ARKitWrapper2.default.HIT_TEST_TYPE_EXISTING_PLANE;
+			});
+
+			if (planeExistingUsingExtentResults.length) {
+				// existing planes using extent first
+				planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort(function (a, b) {
+					return a.distance - b.distance;
+				});
+				info = planeExistingUsingExtentResults[0];
+			} else if (planeExistingResults.length) {
+				// then other existing planes
+				planeExistingResults = planeExistingResults.sort(function (a, b) {
+					return a.distance - b.distance;
+				});
+				info = planeExistingResults[0];
+			} else if (planeResults.length) {
+				// other types except feature points
+				planeResults = planeResults.sort(function (a, b) {
+					return a.distance - b.distance;
+				});
+				info = planeResults[0];
+			} else {
+				// feature points if any
+				info = data[0];
+			}
+			return info;
 		}
 	}]);
 
