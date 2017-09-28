@@ -484,6 +484,11 @@ inline static WebCompletion debugCompletion(NSString *name)
     [conf setPreferences:pref];
     
     [conf setProcessPool:[WKProcessPool new]];
+
+    [conf setAllowsInlineMediaPlayback: YES];
+    [conf setAllowsAirPlayForMediaPlayback: YES];
+    [conf setAllowsPictureInPictureMediaPlayback: YES];
+    [conf setMediaTypesRequiringUserActionForPlayback: WKAudiovisualMediaTypeNone];
     
     WKWebView *wv = [[WKWebView alloc] initWithFrame:[rootView bounds] configuration:conf];
     [rootView addSubview:wv];
