@@ -18,7 +18,7 @@ This application is *not* intended to replace a fully featured web browser. It i
 
 Building this app requires XCode 9 (beta 6 or newer) and an iPhone or iPad running at least iOS 11.
 
-You do not need to run `pod install` as the cocoapods are currently checked into the repo.
+Be sure to open the XRViewer.xcworkspace (not the project file) so that you get the cocoapods. You do not need to run `pod install` as the cocoapods are currently checked into the repo.
 
 The app will only build if your build target is an iOS 11 *device*, not the simulator. The symptom of this is a missing `CVMetalTextureRef` reference.
 
