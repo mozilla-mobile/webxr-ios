@@ -1770,7 +1770,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /*
-ARKitWrapper talks to Apple ARKit, as exposed by Mozilla's test ARDemo app.
+ARKitWrapper talks to Apple ARKit, as exposed by Mozilla's test XRViewer app.
 It won't function inside a browser like Firefox.
 
 ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance, then add event listeners like so:
@@ -1797,7 +1797,7 @@ var ARKitWrapper = function (_EventHandlerBase) {
 		var _this = _possibleConstructorReturn(this, (ARKitWrapper.__proto__ || Object.getPrototypeOf(ARKitWrapper)).call(this));
 
 		if (ARKitWrapper.HasARKit() === false) {
-			throw 'ARKitWrapper will only work in Mozilla\'s ARDemo test app';
+			throw 'ARKitWrapper will only work in Mozilla\'s XRViewer test app';
 		}
 		if (typeof ARKitWrapper.GLOBAL_INSTANCE !== 'undefined') {
 			throw 'ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the global instance.';

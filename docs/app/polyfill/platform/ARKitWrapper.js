@@ -1,7 +1,7 @@
 import EventHandlerBase from '../fill/EventHandlerBase.js'
 
 /*
-ARKitWrapper talks to Apple ARKit, as exposed by Mozilla's test ARDemo app.
+ARKitWrapper talks to Apple ARKit, as exposed by Mozilla's test XRViewer app.
 It won't function inside a browser like Firefox.
 
 ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance, then add event listeners like so:
@@ -23,7 +23,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	constructor(){
 		super()
 		if(ARKitWrapper.HasARKit() === false){
-			throw 'ARKitWrapper will only work in Mozilla\'s ARDemo test app'
+			throw 'ARKitWrapper will only work in Mozilla\'s XRViewer test app'
 		}
 		if(typeof ARKitWrapper.GLOBAL_INSTANCE !== 'undefined'){
 			throw 'ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the global instance.'
