@@ -76,93 +76,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/*
-EventHandlerBase is the base class that implements the EventHandler interface methods for dispatching and receiving events.
-*/
-var EventHandlerBase = function () {
-	function EventHandlerBase() {
-		_classCallCheck(this, EventHandlerBase);
-
-		this._listeners = new Map(); // string type -> [listener, ...]
-	}
-
-	_createClass(EventHandlerBase, [{
-		key: "addEventListener",
-		value: function addEventListener(type, listener) {
-			var listeners = this._listeners.get(type);
-			if (Array.isArray(listeners) === false) {
-				listeners = [];
-				this._listeners.set(type, listeners);
-			}
-			listeners.push(listener);
-		}
-	}, {
-		key: "removeEventListener",
-		value: function removeEventListener(type, listener) {
-			var listeners = this._listeners.get(type);
-			if (Array.isArray(listeners) === false) {
-				return;
-			}
-			for (var i = 0; i < listeners.length; i++) {
-				if (listeners[i] === listener) {
-					listeners.splice(i, 1);
-					return;
-				}
-			}
-		}
-	}, {
-		key: "dispatchEvent",
-		value: function dispatchEvent(event) {
-			var listeners = this._listeners.get(event.type);
-			if (Array.isArray(listeners) === false) return;
-			var _iteratorNormalCompletion = true;
-			var _didIteratorError = false;
-			var _iteratorError = undefined;
-
-			try {
-				for (var _iterator = listeners[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-					var listener = _step.value;
-
-					listener(event);
-				}
-			} catch (err) {
-				_didIteratorError = true;
-				_iteratorError = err;
-			} finally {
-				try {
-					if (!_iteratorNormalCompletion && _iterator.return) {
-						_iterator.return();
-					}
-				} finally {
-					if (_didIteratorError) {
-						throw _iteratorError;
-					}
-				}
-			}
-		}
-	}]);
-
-	return EventHandlerBase;
-}();
-
-exports.default = EventHandlerBase;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _Quaternion = __webpack_require__(2);
+var _Quaternion = __webpack_require__(1);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
@@ -460,7 +374,7 @@ exports.default = MatrixMath;
 MatrixMath.PI_OVER_180 = Math.PI / 180.0;
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -561,6 +475,7 @@ var Quaternion = function () {
 				this.y = (m23 + m32) / _s3;
 				this.z = 0.25 * _s3;
 			}
+			return this;
 		}
 	}, {
 		key: 'setFromEuler',
@@ -731,6 +646,92 @@ var Quaternion = function () {
 exports.default = Quaternion;
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+EventHandlerBase is the base class that implements the EventHandler interface methods for dispatching and receiving events.
+*/
+var EventHandlerBase = function () {
+	function EventHandlerBase() {
+		_classCallCheck(this, EventHandlerBase);
+
+		this._listeners = new Map(); // string type -> [listener, ...]
+	}
+
+	_createClass(EventHandlerBase, [{
+		key: "addEventListener",
+		value: function addEventListener(type, listener) {
+			var listeners = this._listeners.get(type);
+			if (Array.isArray(listeners) === false) {
+				listeners = [];
+				this._listeners.set(type, listeners);
+			}
+			listeners.push(listener);
+		}
+	}, {
+		key: "removeEventListener",
+		value: function removeEventListener(type, listener) {
+			var listeners = this._listeners.get(type);
+			if (Array.isArray(listeners) === false) {
+				return;
+			}
+			for (var i = 0; i < listeners.length; i++) {
+				if (listeners[i] === listener) {
+					listeners.splice(i, 1);
+					return;
+				}
+			}
+		}
+	}, {
+		key: "dispatchEvent",
+		value: function dispatchEvent(event) {
+			var listeners = this._listeners.get(event.type);
+			if (Array.isArray(listeners) === false) return;
+			var _iteratorNormalCompletion = true;
+			var _didIteratorError = false;
+			var _iteratorError = undefined;
+
+			try {
+				for (var _iterator = listeners[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					var listener = _step.value;
+
+					listener(event);
+				}
+			} catch (err) {
+				_didIteratorError = true;
+				_iteratorError = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion && _iterator.return) {
+						_iterator.return();
+					}
+				} finally {
+					if (_didIteratorError) {
+						throw _iteratorError;
+					}
+				}
+			}
+		}
+	}]);
+
+	return EventHandlerBase;
+}();
+
+exports.default = EventHandlerBase;
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -798,7 +799,109 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _EventHandlerBase2 = __webpack_require__(0);
+var _MatrixMath = __webpack_require__(0);
+
+var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
+
+var _Quaternion = __webpack_require__(1);
+
+var _Quaternion2 = _interopRequireDefault(_Quaternion);
+
+var _XRCoordinateSystem = __webpack_require__(13);
+
+var _XRCoordinateSystem2 = _interopRequireDefault(_XRCoordinateSystem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+XRCoordinates represent a pose (position and orientation) in relation to a XRCoordinateSystem.
+*/
+var XRCoordinates = function () {
+	function XRCoordinates(display, coordinateSystem) {
+		var position = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [0, 0, 0];
+		var orientation = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [0, 0, 0, 1];
+
+		_classCallCheck(this, XRCoordinates);
+
+		this._display = display;
+		this._coordinateSystem = coordinateSystem;
+		this._poseMatrix = new Float32Array(16);
+		_MatrixMath2.default.mat4_fromRotationTranslation(this._poseMatrix, orientation, position);
+	}
+
+	_createClass(XRCoordinates, [{
+		key: 'getTransformedCoordinates',
+
+
+		/*
+  Returns a new XRCoordinates that represents this XRCoordinates's pose in the otherCoordinateSystem
+  May return null if there is no transform between this.coordinateSystem and otherCoordinateSystem
+  */
+		value: function getTransformedCoordinates(otherCoordinateSystem) {
+			// XRCoordinates? getTransformedCoordinates(XRCoordinateSystem otherCoordinateSystem)
+			if (this._coordinateSystem.type === _XRCoordinateSystem2.default.GEOSPATIAL || otherCoordinateSystem.type === _XRCoordinateSystem2.default.GEOSPATIAL) {
+				console.error('This polyfill does not yet support geospatial coordinate systems');
+				return null;
+			}
+			var transform = this._coordinateSystem.getTransformTo(otherCoordinateSystem);
+			if (transform === null) {
+				console.error('Could not get a transform between', this._coordinateSystem, otherCoordinateSystem);
+				return null;
+			}
+			var out = new XRCoordinates(this._display, otherCoordinateSystem);
+			_MatrixMath2.default.mat4_multiply(out._poseMatrix, transform, this._poseMatrix);
+			return out;
+		}
+	}, {
+		key: 'coordinateSystem',
+		get: function get() {
+			return this._coordinateSystem;
+		}
+	}, {
+		key: 'poseMatrix',
+		get: function get() {
+			return this._poseMatrix;
+		},
+		set: function set(array16) {
+			for (var i = 0; i < 16; i++) {
+				this._poseMatrix[i] = array16[i];
+			}
+		}
+	}, {
+		key: 'position',
+		get: function get() {
+			return new Float32Array([this._poseMatrix[12], this._poseMatrix[13], this._poseMatrix[14]]);
+		}
+	}, {
+		key: 'orientation',
+		get: function get() {
+			var quat = new _Quaternion2.default();
+			quat.setFromRotationMatrix(this._poseMatrix);
+			return quat.toArray();
+		}
+	}]);
+
+	return XRCoordinates;
+}();
+
+exports.default = XRCoordinates;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _EventHandlerBase2 = __webpack_require__(2);
 
 var _EventHandlerBase3 = _interopRequireDefault(_EventHandlerBase2);
 
@@ -944,7 +1047,7 @@ var XRDisplay = function (_EventHandlerBase) {
 exports.default = XRDisplay;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -956,7 +1059,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _EventHandlerBase2 = __webpack_require__(0);
+var _EventHandlerBase2 = __webpack_require__(2);
 
 var _EventHandlerBase3 = _interopRequireDefault(_EventHandlerBase2);
 
@@ -1081,7 +1184,7 @@ var Reality = function (_EventHandlerBase) {
 exports.default = Reality;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1093,7 +1196,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _EventHandlerBase2 = __webpack_require__(0);
+var _EventHandlerBase2 = __webpack_require__(2);
 
 var _EventHandlerBase3 = _interopRequireDefault(_EventHandlerBase2);
 
@@ -1127,33 +1230,19 @@ var XRSession = function (_EventHandlerBase) {
 	}
 
 	_createClass(XRSession, [{
-		key: 'requestRealityChange',
-		value: function requestRealityChange(reality) {
-			var _this2 = this;
-
-			return new Promise(function (resolve, reject) {
-				if (reality instanceof Reality === false) {
-					reject();
-					return;
-				}
-				_this2._display._reality = reality;
-				resolve();
-			});
-		}
-	}, {
 		key: 'requestFrame',
 		value: function requestFrame(callback) {
-			var _this3 = this;
+			var _this2 = this;
 
 			if (typeof callback !== 'function') {
 				throw 'Invalid callback';
 			}
 			return this._display._requestAnimationFrame(function () {
-				var frame = _this3._createPresentationFrame();
-				_this3._display._reality._handleNewFrame(frame);
-				_this3._display._handleNewFrame(frame);
+				var frame = _this2._createPresentationFrame();
+				_this2._display._reality._handleNewFrame(frame);
+				_this2._display._handleNewFrame(frame);
 				callback(frame);
-				_this3._display._handleAfterFrame(frame);
+				_this2._display._handleAfterFrame(frame);
 			});
 		}
 	}, {
@@ -1298,108 +1387,6 @@ XRSession.AUGMENTATION = 'augmentation';
 XRSession.TYPES = [XRSession.REALITY, XRSession.AUGMENTATION];
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _MatrixMath = __webpack_require__(1);
-
-var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
-
-var _Quaternion = __webpack_require__(2);
-
-var _Quaternion2 = _interopRequireDefault(_Quaternion);
-
-var _XRCoordinateSystem = __webpack_require__(13);
-
-var _XRCoordinateSystem2 = _interopRequireDefault(_XRCoordinateSystem);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/*
-XRCoordinates represent a pose (position and orientation) in relation to a XRCoordinateSystem.
-*/
-var XRCoordinates = function () {
-	function XRCoordinates(display, coordinateSystem) {
-		var position = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [0, 0, 0];
-		var orientation = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [0, 0, 0, 1];
-
-		_classCallCheck(this, XRCoordinates);
-
-		this._display = display;
-		this._coordinateSystem = coordinateSystem;
-		this._poseMatrix = new Float32Array(16);
-		_MatrixMath2.default.mat4_fromRotationTranslation(this._poseMatrix, orientation, position);
-	}
-
-	_createClass(XRCoordinates, [{
-		key: 'getTransformedCoordinates',
-
-
-		/*
-  Returns a new XRCoordinates that represents this XRCoordinates's pose in the otherCoordinateSystem
-  May return null if there is no transform between this.coordinateSystem and otherCoordinateSystem
-  */
-		value: function getTransformedCoordinates(otherCoordinateSystem) {
-			// XRCoordinates? getTransformedCoordinates(XRCoordinateSystem otherCoordinateSystem)
-			if (this._coordinateSystem.type === _XRCoordinateSystem2.default.GEOSPATIAL || otherCoordinateSystem.type === _XRCoordinateSystem2.default.GEOSPATIAL) {
-				console.error('This polyfill does not yet support geospatial coordinate systems');
-				return null;
-			}
-			var transform = this._coordinateSystem.getTransformTo(otherCoordinateSystem);
-			if (transform === null) {
-				console.error('Could not get a transform between', this._coordinateSystem, otherCoordinateSystem);
-				return null;
-			}
-			var out = new XRCoordinates(this._display, otherCoordinateSystem);
-			_MatrixMath2.default.mat4_multiply(out._poseMatrix, transform, this._poseMatrix);
-			return out;
-		}
-	}, {
-		key: 'coordinateSystem',
-		get: function get() {
-			return this._coordinateSystem;
-		}
-	}, {
-		key: 'poseMatrix',
-		get: function get() {
-			return this._poseMatrix;
-		},
-		set: function set(array16) {
-			for (var i = 0; i < 16; i++) {
-				this._poseMatrix[i] = array16[i];
-			}
-		}
-	}, {
-		key: 'position',
-		get: function get() {
-			return new Float32Array([this._poseMatrix[12], this._poseMatrix[13], this._poseMatrix[14]]);
-		}
-	}, {
-		key: 'orientation',
-		get: function get() {
-			var quat = new _Quaternion2.default();
-			quat.setFromRotationMatrix(this._poseMatrix);
-			return quat.toArray();
-		}
-	}]);
-
-	return XRCoordinates;
-}();
-
-exports.default = XRCoordinates;
-
-/***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1416,7 +1403,7 @@ var _XRViewport = __webpack_require__(14);
 
 var _XRViewport2 = _interopRequireDefault(_XRViewport);
 
-var _MatrixMath = __webpack_require__(1);
+var _MatrixMath = __webpack_require__(0);
 
 var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
 
@@ -1506,11 +1493,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _MatrixMath = __webpack_require__(1);
+var _MatrixMath = __webpack_require__(0);
 
 var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
 
-var _Quaternion = __webpack_require__(2);
+var _Quaternion = __webpack_require__(1);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
@@ -1757,7 +1744,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _EventHandlerBase2 = __webpack_require__(0);
+var _EventHandlerBase2 = __webpack_require__(2);
 
 var _EventHandlerBase3 = _interopRequireDefault(_EventHandlerBase2);
 
@@ -1770,7 +1757,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /*
-ARKitWrapper talks to Apple ARKit, as exposed by Mozilla's test XRViewer app.
+ARKitWrapper talks to Apple ARKit, as exposed by Mozilla's test ARDemo app.
 It won't function inside a browser like Firefox.
 
 ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance, then add event listeners like so:
@@ -1797,7 +1784,7 @@ var ARKitWrapper = function (_EventHandlerBase) {
 		var _this = _possibleConstructorReturn(this, (ARKitWrapper.__proto__ || Object.getPrototypeOf(ARKitWrapper)).call(this));
 
 		if (ARKitWrapper.HasARKit() === false) {
-			throw 'ARKitWrapper will only work in Mozilla\'s XRViewer test app';
+			throw 'ARKitWrapper will only work in Mozilla\'s ARDemo test app';
 		}
 		if (typeof ARKitWrapper.GLOBAL_INSTANCE !== 'undefined') {
 			throw 'ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the global instance.';
@@ -2236,8 +2223,17 @@ var ARKitWrapper = function (_EventHandlerBase) {
 				options = options && (typeof options === 'undefined' ? 'undefined' : _typeof(options)) == 'object' ? options : {};
 				var defaultUIOptions = {
 					browser: true,
+					points: true,
+					focus: false,
 					rec: true,
-					warnings: true
+					rec_time: true,
+					mic: false,
+					build: false,
+					plane: true,
+					warnings: true,
+					anchors: false,
+					debug: true,
+					statistics: false
 				};
 				var uiOptions = _typeof(options.ui) == 'object' ? options.ui : {};
 				options.ui = Object.assign(defaultUIOptions, uiOptions);
@@ -2292,11 +2288,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _MatrixMath = __webpack_require__(1);
+var _MatrixMath = __webpack_require__(0);
 
 var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
 
-var _Quaternion = __webpack_require__(2);
+var _Quaternion = __webpack_require__(1);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
@@ -2304,7 +2300,7 @@ var _XRAnchor = __webpack_require__(3);
 
 var _XRAnchor2 = _interopRequireDefault(_XRAnchor);
 
-var _XRCoordinates = __webpack_require__(7);
+var _XRCoordinates = __webpack_require__(4);
 
 var _XRCoordinates2 = _interopRequireDefault(_XRCoordinates);
 
@@ -2399,9 +2395,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _MatrixMath = __webpack_require__(1);
+var _MatrixMath = __webpack_require__(0);
 
 var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
+
+var _XRCoordinates = __webpack_require__(4);
+
+var _XRCoordinates2 = _interopRequireDefault(_XRCoordinates);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2429,6 +2429,14 @@ var XRCoordinateSystem = function () {
 	}
 
 	_createClass(XRCoordinateSystem, [{
+		key: 'getCoordinates',
+		value: function getCoordinates() {
+			var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [0, 0, 0];
+			var orientation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [0, 0, 0, 1];
+
+			return new _XRCoordinates2.default(this._display, this, position, orientation);
+		}
+	}, {
 		key: 'getTransformTo',
 		value: function getTransformTo(otherCoordinateSystem) {
 			var out = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
@@ -2561,7 +2569,7 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _EventHandlerBase2 = __webpack_require__(0);
+var _EventHandlerBase2 = __webpack_require__(2);
 
 var _EventHandlerBase3 = _interopRequireDefault(_EventHandlerBase2);
 
@@ -2603,7 +2611,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _EventHandlerBase2 = __webpack_require__(0);
+var _EventHandlerBase2 = __webpack_require__(2);
 
 var _EventHandlerBase3 = _interopRequireDefault(_EventHandlerBase2);
 
@@ -2611,7 +2619,7 @@ var _Vector = __webpack_require__(10);
 
 var _Vector2 = _interopRequireDefault(_Vector);
 
-var _Quaternion = __webpack_require__(2);
+var _Quaternion = __webpack_require__(1);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
@@ -2698,11 +2706,11 @@ DeviceOrientationTracker.DEG_TO_RAD = Math.PI / 180;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _XRDisplay = __webpack_require__(4);
+var _XRDisplay = __webpack_require__(5);
 
 var _XRDisplay2 = _interopRequireDefault(_XRDisplay);
 
-var _XRSession = __webpack_require__(6);
+var _XRSession = __webpack_require__(7);
 
 var _XRSession2 = _interopRequireDefault(_XRSession);
 
@@ -2710,7 +2718,7 @@ var _XRSessionCreateParameters = __webpack_require__(20);
 
 var _XRSessionCreateParameters2 = _interopRequireDefault(_XRSessionCreateParameters);
 
-var _Reality = __webpack_require__(5);
+var _Reality = __webpack_require__(6);
 
 var _Reality2 = _interopRequireDefault(_Reality);
 
@@ -2762,7 +2770,7 @@ var _XRCoordinateSystem = __webpack_require__(13);
 
 var _XRCoordinateSystem2 = _interopRequireDefault(_XRCoordinateSystem);
 
-var _XRCoordinates = __webpack_require__(7);
+var _XRCoordinates = __webpack_require__(4);
 
 var _XRCoordinates2 = _interopRequireDefault(_XRCoordinates);
 
@@ -2778,7 +2786,7 @@ var _XRWebGLLayer = __webpack_require__(28);
 
 var _XRWebGLLayer2 = _interopRequireDefault(_XRWebGLLayer);
 
-var _EventHandlerBase2 = __webpack_require__(0);
+var _EventHandlerBase2 = __webpack_require__(2);
 
 var _EventHandlerBase3 = _interopRequireDefault(_EventHandlerBase2);
 
@@ -2989,7 +2997,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Reality2 = __webpack_require__(5);
+var _Reality2 = __webpack_require__(6);
 
 var _Reality3 = _interopRequireDefault(_Reality2);
 
@@ -3139,9 +3147,10 @@ var XRPointCloud = function () {
 	}
 
 	_createClass(XRPointCloud, [{
-		key: "points",
+		key: 'points',
 		get: function get() {
-			//readonly attribute Float32Array points;
+			//readonly attribute Float32Array points
+			throw new Error('Not implemented');
 		}
 	}]);
 
@@ -3174,14 +3183,16 @@ var XRLightEstimate = function () {
 	}
 
 	_createClass(XRLightEstimate, [{
-		key: "getAmbientColorTemperature",
+		key: 'getAmbientColorTemperature',
 		value: function getAmbientColorTemperature() {
 			//readonly attribute double ambientColorTemperature;
+			throw new Error('Not implemented');
 		}
 	}, {
-		key: "ambientIntensity",
+		key: 'ambientIntensity',
 		get: function get() {
 			//readonly attribute double ambientIntensity;
+			throw new Error('Not implemented');
 		}
 	}]);
 
@@ -3529,43 +3540,43 @@ var XRCartographicCoordinates = function () {
 		key: 'geodeticFrame',
 		get: function get() {
 			// attribute XRCartographicCoordinatesGeodeticFrame? geodeticFrame;
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}, {
 		key: 'latitude',
 		get: function get() {
 			// attribute double latitude;
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}, {
 		key: 'longitude',
 		get: function get() {
 			// attribute double longitude;
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}, {
 		key: 'positionAccuracy',
 		get: function get() {
 			// attribute double positionAccuracy;
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}, {
 		key: 'altitude',
 		get: function get() {
 			// attribute double altitude;
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}, {
 		key: 'altitudeAccuracy',
 		get: function get() {
 			// attribute double altitudeAccuracy;
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}, {
 		key: 'orientation',
 		get: function get() {
 			//attribute Float32Array orientation; // quaternion x,y,z,w from 0,0,0,1 of East/Up/South 
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}]);
 
@@ -3698,7 +3709,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _XRDisplay2 = __webpack_require__(4);
+var _XRDisplay2 = __webpack_require__(5);
 
 var _XRDisplay3 = _interopRequireDefault(_XRDisplay2);
 
@@ -3706,15 +3717,15 @@ var _XRView = __webpack_require__(8);
 
 var _XRView2 = _interopRequireDefault(_XRView);
 
-var _XRSession = __webpack_require__(6);
+var _XRSession = __webpack_require__(7);
 
 var _XRSession2 = _interopRequireDefault(_XRSession);
 
-var _MatrixMath = __webpack_require__(1);
+var _MatrixMath = __webpack_require__(0);
 
 var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
 
-var _Quaternion = __webpack_require__(2);
+var _Quaternion = __webpack_require__(1);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
@@ -3997,7 +4008,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _XRDisplay2 = __webpack_require__(4);
+var _XRDisplay2 = __webpack_require__(5);
 
 var _XRDisplay3 = _interopRequireDefault(_XRDisplay2);
 
@@ -4005,7 +4016,7 @@ var _XRView = __webpack_require__(8);
 
 var _XRView2 = _interopRequireDefault(_XRView);
 
-var _XRSession = __webpack_require__(6);
+var _XRSession = __webpack_require__(7);
 
 var _XRSession2 = _interopRequireDefault(_XRSession);
 
@@ -4013,11 +4024,11 @@ var _XRViewPose = __webpack_require__(9);
 
 var _XRViewPose2 = _interopRequireDefault(_XRViewPose);
 
-var _MatrixMath = __webpack_require__(1);
+var _MatrixMath = __webpack_require__(0);
 
 var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
 
-var _Quaternion = __webpack_require__(2);
+var _Quaternion = __webpack_require__(1);
 
 var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
@@ -4179,7 +4190,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Reality2 = __webpack_require__(5);
+var _Reality2 = __webpack_require__(6);
 
 var _Reality3 = _interopRequireDefault(_Reality2);
 
@@ -4191,13 +4202,21 @@ var _XRViewPose = __webpack_require__(9);
 
 var _XRViewPose2 = _interopRequireDefault(_XRViewPose);
 
-var _XRCoordinates = __webpack_require__(7);
+var _XRCoordinates = __webpack_require__(4);
 
 var _XRCoordinates2 = _interopRequireDefault(_XRCoordinates);
 
 var _XRAnchorOffset = __webpack_require__(12);
 
 var _XRAnchorOffset2 = _interopRequireDefault(_XRAnchorOffset);
+
+var _MatrixMath = __webpack_require__(0);
+
+var _MatrixMath2 = _interopRequireDefault(_MatrixMath);
+
+var _Quaternion = __webpack_require__(1);
+
+var _Quaternion2 = _interopRequireDefault(_Quaternion);
 
 var _ARKitWrapper = __webpack_require__(11);
 
@@ -4454,22 +4473,31 @@ var CameraReality = function (_Reality) {
 					_this4._arKitWrapper.hitTest(normalizedScreenX, normalizedScreenY, _ARKitWrapper2.default.HIT_TEST_TYPE_EXISTING_PLANES).then(function (hits) {
 						if (hits.length === 0) {
 							resolve(null);
+							console.log('miss');
 							return;
 						}
 						var hit = _this4._pickARKitHit(hits);
+						hit.anchor_transform[13] += _XRViewPose2.default.SITTING_EYE_HEIGHT;
+						hit.world_transform[13] += _XRViewPose2.default.SITTING_EYE_HEIGHT;
+
 						// Use the first hit to create an XRAnchorOffset, creating the XRAnchor as necessary
 
-						// TODO this works for now, but it should set the anchor's transform and the use the offset transform
+						// TODO use XRPlaneAnchor for anchors with extents
 
 						var anchor = _this4._getAnchor(hit.uuid);
 						if (anchor === null) {
 							var anchorCoordinates = new _XRCoordinates2.default(display, display._stageCoordinateSystem);
+							anchorCoordinates.poseMatrix = hit.anchor_transform;
 							anchor = new _XRAnchor2.default(anchorCoordinates, hit.uuid);
 							_this4._anchors.set(anchor.uid, anchor);
 						}
+
+						var offsetPosition = [hit.world_transform[12] - hit.anchor_transform[12], hit.world_transform[13] - hit.anchor_transform[13], hit.world_transform[14] - hit.anchor_transform[14]];
+						var worldRotation = new _Quaternion2.default().setFromRotationMatrix(hit.world_transform);
+						var inverseAnchorRotation = new _Quaternion2.default().setFromRotationMatrix(hit.anchor_transform).inverse();
+						var offsetRotation = new _Quaternion2.default().multiplyQuaternions(worldRotation, inverseAnchorRotation);
 						var anchorOffset = new _XRAnchorOffset2.default(anchor.uid);
-						hit.world_transform[13] += _XRViewPose2.default.SITTING_EYE_HEIGHT;
-						anchorOffset.poseMatrix = hit.world_transform;
+						anchorOffset.poseMatrix = _MatrixMath2.default.mat4_fromRotationTranslation(new Float32Array(16), offsetRotation.toArray(), offsetPosition);
 						resolve(anchorOffset);
 					});
 				} else if (_this4._vrDisplay !== null) {
