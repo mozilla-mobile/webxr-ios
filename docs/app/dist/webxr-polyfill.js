@@ -941,11 +941,11 @@ var XRDisplay = function (_EventHandlerBase) {
 
 		_this._headModelCoordinateSystem = new XRCoordinateSystem(_this, XRCoordinateSystem.HEAD_MODEL);
 		_this._eyeLevelCoordinateSystem = new XRCoordinateSystem(_this, XRCoordinateSystem.EYE_LEVEL);
-		_this._stageCoordinateSystem = new XRCoordinateSystem(_this, XRCoordinateSystem.STAGE);
+		_this._trackerCoordinateSystem = new XRCoordinateSystem(_this, XRCoordinateSystem.TRACKER);
 
 		_this._headPose = new XRViewPose([0, XRViewPose.SITTING_EYE_HEIGHT, 0]);
 		_this._eyeLevelPose = new XRViewPose([0, XRViewPose.SITTING_EYE_HEIGHT, 0]);
-		_this._stagePose = new XRViewPose([0, 0, 0]);
+		_this._trackerPoseModelMatrix = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 
 		var fov = 50 / 2;
 		_this._fov = new _XRFieldOfView2.default(fov, fov, fov, fov);
@@ -1147,6 +1147,32 @@ var Reality = function (_EventHandlerBase) {
 		value: function _findAnchor(normalizedScreenX, normalizedScreenY, display) {
 			throw new Error('Exending classes should implement _findAnchor');
 		}
+
+		/*
+  Find an XRAnchorOffset that is at floor level below the current head pose
+  returns a Promise that resolves either to an AnchorOffset or null if the floor level is unknown
+  */
+
+	}, {
+		key: '_findFloorAnchor',
+		value: function _findFloorAnchor(display) {
+			var _this2 = this;
+
+			var uid = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+			// Copy the head model matrix for the current pose so we have it in the promise below
+			var headModelMatrix = new Float32Array(display._headPose.poseModelMatrix);
+
+			return new Promise(function (resolve, reject) {
+				// For now, just create an anchor at origin level. Maybe in the future search for a surface?
+				var coordinates = new XRCoordinates(display, display._trackerCoordinateSystem);
+				headModelMatrix[13] = 0; // Set height to 0
+				coordinates.poseMatrix = headModelMatrix;
+				var anchor = new XRAnchor(coordinates, uid);
+				_this2._addAnchor(anchor, display);
+				resolve(new XRAnchorOffset(anchor.uid));
+			});
+		}
 	}, {
 		key: '_getAnchor',
 		value: function _getAnchor(uid) {
@@ -1281,8 +1307,8 @@ var XRSession = function (_EventHandlerBase) {
 							return this._display._headModelCoordinateSystem;
 						case XRCoordinateSystem.EYE_LEVEL:
 							return this._display._eyeLevelCoordinateSystem;
-						case XRCoordinateSystem.STAGE:
-							return this._display._stageCoordinateSystem;
+						case XRCoordinateSystem.TRACKER:
+							return this._display._trackerCoordinateSystem;
 						case XRCoordinateSystem.GEOSPATIAL:
 						// Not supported yet
 						default:
@@ -2413,7 +2439,7 @@ The XRCoordinateSystem is a string from XRCoordinateSystem.TYPES:
 
 - XRCoordinateSystem.HEAD_MODEL: origin is aligned with the pose of the head, as sensed by HMD or handset trackers
 - XRCoordinateSystem.EYE_LEVEL: origin is at a fixed distance above the ground
-- XRCoordinateSystem.STAGE: origin is at ground level
+- XRCoordinateSystem.TRACKER: The origin of this coordinate system is at floor level at or below the origin of the HMD or handset provided tracking system
 - XRCoordinateSystem.GEOSPATIAL: origin is at the East, Up, South plane tangent to the planet at the latitude, longitude, and altitude represented by the `XRCoordinateSystem.cartographicCoordinates`.
 
 */
@@ -2468,8 +2494,8 @@ var XRCoordinateSystem = function () {
 					return this._display._headPose.poseModelMatrix;
 				case XRCoordinateSystem.EYE_LEVEL:
 					return this._display._eyeLevelPose.poseModelMatrix;
-				case XRCoordinateSystem.STAGE:
-					return this._display._stagePose.poseModelMatrix;
+				case XRCoordinateSystem.TRACKER:
+					return this._display._trackerPoseModelMatrix;
 				case XRCoordinateSystem.GEOSPATIAL:
 					throw 'This polyfill does not yet handle geospatial coordinate systems';
 				default:
@@ -2484,12 +2510,12 @@ var XRCoordinateSystem = function () {
 exports.default = XRCoordinateSystem;
 
 
-XRCoordinateSystem.HEAD_MODEL = "headModel";
-XRCoordinateSystem.EYE_LEVEL = "eyeLevel";
-XRCoordinateSystem.STAGE = "stage";
-XRCoordinateSystem.GEOSPATIAL = "geospatial";
+XRCoordinateSystem.HEAD_MODEL = 'headModel';
+XRCoordinateSystem.EYE_LEVEL = 'eyeLevel';
+XRCoordinateSystem.TRACKER = 'tracker';
+XRCoordinateSystem.GEOSPATIAL = 'geospatial';
 
-XRCoordinateSystem.TYPES = [XRCoordinateSystem.HEAD_MODEL, XRCoordinateSystem.EYE_LEVEL, XRCoordinateSystem.STAGE, XRCoordinateSystem.GEOSPATIAL];
+XRCoordinateSystem.TYPES = [XRCoordinateSystem.HEAD_MODEL, XRCoordinateSystem.EYE_LEVEL, XRCoordinateSystem.TRACKER, XRCoordinateSystem.GEOSPATIAL];
 
 /***/ }),
 /* 14 */
@@ -3286,13 +3312,13 @@ var XRStageBounds = function () {
 		key: 'center',
 		get: function get() {
 			//readonly attribute XRCoordinates center;
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}, {
 		key: 'geometry',
 		get: function get() {
 			//readonly attribute FrozenArray<XRStageBoundsPoint>? geometry;
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}]);
 
@@ -3328,13 +3354,13 @@ var XRStageBoundsPoint = function () {
 		key: 'x',
 		get: function get() {
 			//readonly attribute double x;
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}, {
 		key: 'y',
 		get: function get() {
 			//readonly attribute double z;
-			throw 'Not implemented';
+			throw new Error('Not implemented');
 		}
 	}]);
 
@@ -3394,6 +3420,20 @@ var XRPresentationFrame = function () {
 			// Promise<XRAnchorOffset?> findAnchor(float32, float32); // cast a ray to find or create an anchor at the first intersection in the Reality
 			return this._session.reality._findAnchor(normalizedScreenX, normalizedScreenY, this._session.display);
 		}
+
+		/*
+  Find an XRAnchorOffset that is at floor level below the current head pose
+  uid will be the resulting anchor uid (if any), or if null one will be assigned
+  */
+
+	}, {
+		key: 'findFloorAnchor',
+		value: function findFloorAnchor() {
+			var uid = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+			// Promise<XRAnchorOffset?> findFloorAnchor();
+			return this._session.reality._findFloorAnchor(this._session.display, uid);
+		}
 	}, {
 		key: 'removeAnchor',
 		value: function removeAnchor(uid) {
@@ -3428,8 +3468,6 @@ var XRPresentationFrame = function () {
 					return this._session._display._headPose;
 				case XRCoordinateSystem.EYE_LEVEL:
 					return this._session._display._eyeLevelPose;
-				case XRCoordinateSystem.STAGE:
-					return this._session._display._stagePose;
 				default:
 					return null;
 			}
@@ -3873,7 +3911,6 @@ var FlatDisplay = function (_XRDisplay) {
 			_MatrixMath2.default.mat4_fromRotationTranslation(this._deviceWorldMatrix, this._deviceOrientation.toArray(), this._devicePosition.toArray());
 			this._headPose._setPoseModelMatrix(this._deviceWorldMatrix);
 			this._eyeLevelPose._position = this._devicePosition.toArray();
-			this._stagePose._position = [0, 0, 0];
 		}
 	}, {
 		key: '_updateFromDeviceOrientationTracker',
@@ -3885,7 +3922,6 @@ var FlatDisplay = function (_XRDisplay) {
 			_MatrixMath2.default.mat4_fromRotationTranslation(this._deviceWorldMatrix, this._deviceOrientation.toArray(), this._devicePosition.toArray());
 			this._headPose._setPoseModelMatrix(this._deviceWorldMatrix);
 			this._eyeLevelPose._position = this._devicePosition.toArray();
-			this._stagePose._position = [0, 0, 0];
 		}
 	}, {
 		key: '_handleARKitUpdate',
@@ -3895,7 +3931,6 @@ var FlatDisplay = function (_XRDisplay) {
 				this._headPose._setPoseModelMatrix(cameraTransformMatrix);
 				this._headPose._poseModelMatrix[13] += XRViewPose.SITTING_EYE_HEIGHT;
 				this._eyeLevelPose._position = this._headPose._position;
-				this._stagePose._position = [0, 0, 0];
 			} else {
 				console.log('no camera transform', this._arKitWrapper.rawARData);
 			}
@@ -4167,7 +4202,6 @@ var HeadMountedDisplay = function (_XRDisplay) {
 				}
 				this._headPose._setPoseModelMatrix(this._deviceWorldMatrix);
 				this._eyeLevelPose.position = this._devicePosition.toArray();
-				this._stagePose._position = [0, 0, 0];
 			}
 		}
 	}]);
@@ -4436,7 +4470,7 @@ var CameraReality = function (_Reality) {
 				console.log('unknown anchor', anchor);
 				return;
 			}
-			// This assumes that the anchor's coordinates are in the stage coordinate system
+			// This assumes that the anchor's coordinates are in the tracker coordinate system
 			anchor.coordinates.poseMatrix = anchorInfo.transform;
 		}
 	}, {
@@ -4444,8 +4478,8 @@ var CameraReality = function (_Reality) {
 		value: function _addAnchor(anchor, display) {
 			var _this3 = this;
 
-			// Convert coordinates to the stage coordinate system so that updating from ARKit transforms is simple
-			anchor.coordinates = anchor.coordinates.getTransformedCoordinates(display._stageCoordinateSystem);
+			// Convert coordinates to the tracker coordinate system so that updating from ARKit transforms is simple
+			anchor.coordinates = anchor.coordinates.getTransformedCoordinates(display._trackerCoordinateSystem);
 			if (this._arKitWrapper !== null) {
 				this._arKitWrapper.addAnchor(anchor.uid, anchor.coordinates.poseMatrix).then(function (detail) {
 					return _this3._handleARKitAddObject(detail);
@@ -4486,7 +4520,7 @@ var CameraReality = function (_Reality) {
 
 						var anchor = _this4._getAnchor(hit.uuid);
 						if (anchor === null) {
-							var anchorCoordinates = new _XRCoordinates2.default(display, display._stageCoordinateSystem);
+							var anchorCoordinates = new _XRCoordinates2.default(display, display._trackerCoordinateSystem);
 							anchorCoordinates.poseMatrix = hit.anchor_transform;
 							anchor = new _XRAnchor2.default(anchorCoordinates, hit.uuid);
 							_this4._anchors.set(anchor.uid, anchor);
@@ -4512,7 +4546,7 @@ var CameraReality = function (_Reality) {
 					});
 					var anchor = _this4._getAnchor(hits[0].uuid);
 					if (anchor === null) {
-						var coordinates = new _XRCoordinates2.default(display, display._stageCoordinateSystem);
+						var coordinates = new _XRCoordinates2.default(display, display._trackerCoordinateSystem);
 						coordinates.poseMatrix = hits[0].modelMatrix;
 						coordinates._poseMatrix[13] += _XRViewPose2.default.SITTING_EYE_HEIGHT;
 						anchor = new _XRAnchor2.default(coordinates);
