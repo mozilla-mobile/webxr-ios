@@ -58,15 +58,29 @@
 #define WEB_AR_ANCHOR_EXTENT_OPTION    @"anchor_extent"
 
 #define WEB_AR_TEST_OPTION             @"test"
-
+#define WEB_AR_ID_OPTION               @"id"
 #define WEB_AR_SHOW_UI_OPTION          @"show"
 #define WEB_AR_URL_OPTION              @"url"
 #define WEB_AR_JS_FRAME_RATE_OPTION    @"js_frame_rate" // bool
 
-#define WEB_AR_LOCATION_OPTION         @"location"
-#define WEB_AR_LOCATION_LON_OPTION     @"longitude"
-#define WEB_AR_LOCATION_LAT_OPTION     @"latitude"
-#define WEB_AR_LOCATION_ALT_OPTION     @"altitude"
+#define WEB_AR_LOCATION_OPTION            @"location"
+#define WEB_AR_LOCATION_LON_OPTION        @"longitude"
+#define WEB_AR_LOCATION_LAT_OPTION        @"latitude"
+#define WEB_AR_LOCATION_ALT_OPTION        @"altitude"
+#define WEB_AR_LOCATION_ACCURACY_OPTION   @"accuracy"
+#define WEB_AR_LOCATION_ACCURACY_BEST_NAV @"BestForNavigation"
+#define WEB_AR_LOCATION_ACCURACY_BEST     @"Best"
+#define WEB_AR_LOCATION_ACCURACY_TEN      @"NearestTenMeters"
+#define WEB_AR_LOCATION_ACCURACY_HUNDRED  @"HundredMeters"
+#define WEB_AR_LOCATION_ACCURACY_KILO     @"Kilometer"
+#define WEB_AR_LOCATION_ACCURACY_THREE    @"ThreeKilometers"
+
+#define WEB_AR_LOCATION_HEADING_OPTION          @"heading"
+#define WEB_AR_LOCATION_HEADING_MAGNETIC_OPTION @"magnetic"
+#define WEB_AR_LOCATION_HEADING_TRUE_OPTION     @"theTrue"
+#define WEB_AR_LOCATION_REGION_OPTION           @"region"
+#define WEB_AR_LOCATION_REGION_RADIUS_OPTION    @"radius"
+#define WEB_AR_LOCATION_REGION_CENTER_OPTION    @"center"
 
 #define WEB_IOS_SCREEN_SIZE_OPTION     @"screenSize"
 #define WEB_IOS_SCREEN_SCALE_OPTION    @"screenScale"

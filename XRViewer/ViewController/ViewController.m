@@ -596,11 +596,7 @@ typedef void (^UICompletion)(void);
 
 - (NSDictionary *)commonData
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:[[self locationManager] locationData]];
-    
-    [dictionary setValuesForKeysWithDictionary:[[self arkController] arkData]];
-    
-    return [dictionary copy];
+    return [[[self arkController] arkData] copy];
 }
 
 - (void)sendARKData

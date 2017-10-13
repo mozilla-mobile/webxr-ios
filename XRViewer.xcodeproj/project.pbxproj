@@ -641,7 +641,7 @@
 			baseConfigurationReference = 3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = YQ63ZZYZV7;
 				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -657,7 +657,7 @@
 			baseConfigurationReference = A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = YQ63ZZYZV7;
 				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

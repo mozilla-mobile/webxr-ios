@@ -1,22 +1,25 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
-typedef void (^DidUpdateLocation)(CLLocation *);
+typedef void (^Update)(NSDictionary *);
+typedef void (^Fail)(NSError *);
+
 typedef void (^DidRequestAuth)(BOOL);
 
 @interface LocationManager : NSObject
 
-@property(nonatomic, copy) DidUpdateLocation updateLocation;
+@property(nonatomic, copy) Update updateLocation;
+@property(nonatomic, copy) Update updateHeading;
+@property(nonatomic, copy) Update enterRegion;
+@property(nonatomic, copy) Update exitRegion;
+@property(nonatomic, copy) Fail fail;
 
-- (void)startUpdateLocation;
-- (void)stopUpdateLocation;
-
-- (CLLocationCoordinate2D)currentCoordinate;
-- (CLLocationDistance)currentAltitude;
+- (BOOL)addRegion:(NSDictionary *)req;
+- (BOOL)removeRegion:(NSDictionary *)req;
+- (BOOL)inRegion:(NSDictionary *)req;
 
 - (void)setupForRequest:(NSDictionary *)request;
-- (NSDictionary *)locationData;
-
+    
 - (void)requestAuthorizationWithCompletion:(DidRequestAuth)authBlock;
 
 @end
