@@ -6,7 +6,7 @@
 #define INTERNET_OFFLINE_CODE -1009
 
 // URL
-#define WEB_URL @"https://mozilla.github.io/webxr-ios/app/"
+#define WEB_URL @"https://mozilla-mobile.github.io/webxr-ios/app/"
 
 // MESSAGES
 #define WEB_AR_INIT_MESSAGE            @"initAR"
