@@ -6,10 +6,98 @@
 #import <MetalKit/MetalKit.h>
 #import <ARKit/ARKit.h>
 #import "WebARKHeader.h"
+#import "UserAnchor.h"
 
 #define BOX_SIZE 0.05
 
-static inline NSArray * arrayFromMatrix4x4(matrix_float4x4  matrix)
+static inline vector_float4 vectorWithDict(NSDictionary *dict)
+{
+    vector_float4 vector = 0;
+    
+    if(dict.count != 4)
+    {
+        return vector;
+    }
+    
+    vector.x = [dict[WEB_AR_TRANSFORM_X_OPTION] floatValue];
+    vector.y = [dict[WEB_AR_TRANSFORM_Y_OPTION] floatValue];
+    vector.z = [dict[WEB_AR_TRANSFORM_Z_OPTION] floatValue];
+    vector.w = [dict[WEB_AR_TRANSFORM_W_OPTION] floatValue];
+    
+    return vector;
+}
+
+static inline matrix_float4x4 matrixWithDict(NSDictionary *dict)
+{
+    matrix_float4x4 matrix = matrix_identity_float4x4;
+    
+    if(dict.allKeys.count != 4)
+    {
+        return matrix;
+    }
+    
+    for(NSString *vector in dict.allKeys)
+    {
+        if([vector isEqualToString:WEB_AR_TRANSFORM_COLUMN_V0_OPTION])
+        {
+            matrix.columns[0] = vectorWithDict(dict[vector]);
+        }
+        else if([vector isEqualToString:WEB_AR_TRANSFORM_COLUMN_V1_OPTION])
+        {
+            matrix.columns[1] = vectorWithDict(dict[vector]);
+        }
+        else if([vector isEqualToString:WEB_AR_TRANSFORM_COLUMN_V2_OPTION])
+        {
+            matrix.columns[2] = vectorWithDict(dict[vector]);
+        }
+        else if([vector isEqualToString:WEB_AR_TRANSFORM_COLUMN_V3_OPTION])
+        {
+            matrix.columns[3] = vectorWithDict(dict[vector]);
+        }
+    }
+    
+    return matrix;
+}
+
+static inline NSDictionary* dictWithVector4(vector_float4 vector)
+{
+    return @{
+             WEB_AR_TRANSFORM_X_OPTION : @(vector.x),
+             WEB_AR_TRANSFORM_Y_OPTION : @(vector.y),
+             WEB_AR_TRANSFORM_Z_OPTION : @(vector.z),
+             WEB_AR_TRANSFORM_W_OPTION : @(vector.w),
+             };
+}
+
+static inline NSDictionary* dictWithMatrix4(matrix_float4x4 matrix)
+{
+    return @{
+             WEB_AR_TRANSFORM_COLUMN_V0_OPTION : dictWithVector4(matrix.columns[0]),
+             WEB_AR_TRANSFORM_COLUMN_V1_OPTION : dictWithVector4(matrix.columns[1]),
+             WEB_AR_TRANSFORM_COLUMN_V2_OPTION : dictWithVector4(matrix.columns[2]),
+             WEB_AR_TRANSFORM_COLUMN_V3_OPTION : dictWithVector4(matrix.columns[3]),
+             };
+}
+
+static inline NSDictionary * userAnchorDictWith(UserAnchor *anchor)
+{
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:3];
+    
+    if([anchor name] != nil)
+    {
+        dict[WEB_AR_NAME_OPTION] = [anchor name];
+    }
+    
+    dict[WEB_AR_UUID_OPTION] = [[anchor identifier] UUIDString];
+    dict[WEB_AR_TRANSFORM_OPTION] = dictWithMatrix4([anchor transform]);
+    
+    return dict;
+}
+
+
+
+
+/*static inline NSArray * arrayFromMatrix4x4(matrix_float4x4  matrix)
 {
     return @[@(matrix.columns[0][0]),
              @(matrix.columns[0][1]),
@@ -51,7 +139,7 @@ static inline matrix_float4x4 matrixFromArray(NSArray *arr)
     matrix.columns[3][3] = [arr[15] floatValue];
     
     return matrix;
-}
+}*/
 
 static inline NSDictionary * dictFromVector3(vector_float3 vector)
 {
@@ -87,7 +175,7 @@ static inline ARHitTestResultType hitTypeFromString(NSString *string)
     return ARHitTestResultTypeExistingPlaneUsingExtent;
 }
 
-static inline NSDictionary * dictFromMatrix4x4(matrix_float4x4  matrix)
+/*static inline NSDictionary * dictFromMatrix4x4(matrix_float4x4  matrix)
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:16];
     
@@ -171,7 +259,7 @@ static inline matrix_float4x4 matrixFromKeyedArrayDictionary(NSDictionary *dict)
     matrix.columns[3][3] = [dict[@"15"] floatValue];
     
     return matrix;
-}
+}*/
 
 static inline NSString *trackingState(ARCamera *camera)
 {
@@ -208,8 +296,8 @@ static inline NSArray *hitTestResultArrayFromResult(NSArray *resultArray)
         NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
         
         dict[WEB_AR_TYPE_OPTION] = @([result type]);
-        dict[WEB_AR_W_TRANSFORM_OPTION] = arrayFromMatrix4x4([result worldTransform]);
-        dict[WEB_AR_L_TRANSFORM_OPTION] = arrayFromMatrix4x4([result localTransform]);
+        //dict[WEB_AR_W_TRANSFORM_OPTION] = arrayFromMatrix4x4([result worldTransform]);
+        //dict[WEB_AR_L_TRANSFORM_OPTION] = arrayFromMatrix4x4([result localTransform]);
         dict[WEB_AR_DISTANCE_OPTION] = @([result distance]);
         dict[WEB_AR_UUID_OPTION] = [[[result anchor] identifier] UUIDString];
         
@@ -218,7 +306,7 @@ static inline NSArray *hitTestResultArrayFromResult(NSArray *resultArray)
             ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)[result anchor];
             dict[WEB_AR_ANCHOR_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
             dict[WEB_AR_ANCHOR_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
-            dict[WEB_AR_ANCHOR_TRANSFORM_OPTION] = arrayFromMatrix4x4([planeAnchor transform]);
+            //dict[WEB_AR_ANCHOR_TRANSFORM_OPTION] = arrayFromMatrix4x4([planeAnchor transform]);
         }
         
         [results addObject:dict];

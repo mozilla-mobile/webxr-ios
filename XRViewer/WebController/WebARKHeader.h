@@ -102,7 +102,20 @@
 
 #define WEB_AR_3D_OBJECTS_OPTION       @"objects" // from IOS - [ {name , matrix} ]
 
+#define WEB_AR_ERROR_CODE  @"error"
+
+#define WEB_AR_TRANSFORM_COLUMN_V0_OPTION @"v0"
+#define WEB_AR_TRANSFORM_COLUMN_V1_OPTION @"v1"
+#define WEB_AR_TRANSFORM_COLUMN_V2_OPTION @"v2"
+#define WEB_AR_TRANSFORM_COLUMN_V3_OPTION @"v3"
+#define WEB_AR_TRANSFORM_X_OPTION @"x"
+#define WEB_AR_TRANSFORM_Y_OPTION @"y"
+#define WEB_AR_TRANSFORM_Z_OPTION @"z"
+#define WEB_AR_TRANSFORM_W_OPTION @"w"
+
 #define WEB_AR_TYPE_OPTION             @"type"
+#define WEB_AR_POINT_OPTION            @"point"
+
 #define WEB_AR_POSITION_OPTION         @"position"
 #define WEB_AR_X_POSITION_OPTION       @"x"
 #define WEB_AR_Y_POSITION_OPTION       @"y"
@@ -113,6 +126,7 @@
 #define WEB_AR_DISTANCE_OPTION         @"distance"
 #define WEB_AR_ELEMENTS_OPTION         @"elements"
 #define WEB_AR_UUID_OPTION             @"uuid"
+#define WEB_AR_NAME_OPTION             @"name"
 
 #define WEB_AR_LIGHT_INTENSITY_OPTION  @"light_intensity"
 
@@ -127,6 +141,15 @@
 #define WEB_AR_TRACKING_STATE_LIMITED_FEATURES     @"ar_tracking_limited_insufficient_features"
 #define WEB_AR_TRACKING_STATE_NOT_AVAILABLE        @"ar_tracking_not_available"
 
+typedef NS_ENUM(NSInteger, ErrorCodes)
+{
+    Unknown,
+    InvalidFormat,
+    InvalidURL,
+    InvalidAnchor,
+    InvalidHitTest,
+    InvalidRegion
+};
 
 static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
 {

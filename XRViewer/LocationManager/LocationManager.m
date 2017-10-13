@@ -1,5 +1,4 @@
 #import "LocationManager.h"
-#import <os/lock.h>
 #import "WebARKHeader.h"
 
 @interface LocationManager() <CLLocationManagerDelegate>
@@ -7,7 +6,7 @@
 @property (nonatomic, strong) CLLocationManager *manager;
 @property (nonatomic, copy) NSDictionary *request;
 @property (nonatomic, copy) DidRequestAuth authBlock;
-    @property (nonatomic, strong) NSMutableArray *regions;
+@property (nonatomic, strong) NSMutableArray *regions;
 @end
 
 @implementation LocationManager

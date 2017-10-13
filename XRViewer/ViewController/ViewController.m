@@ -406,24 +406,24 @@ typedef void (^UICompletion)(void);
     
     [[self webController] setOnHitTest:^(NSUInteger mask, CGFloat x, CGFloat y, ResultArrayBlock result)
      {
-         result([[blockSelf arkController] hitTestNormPoint:CGPointMake(x, y) types:mask]);
+         //result([[blockSelf arkController] hitTestNormPoint:CGPointMake(x, y) types:mask]);
      }];
     
     [[self webController] setOnAddAnchor:^(NSString *name, NSArray *transformArray, ResultBlock result)
      {
-         if ([[blockSelf arkController] addAnchor:name transform:transformArray])
+         /*if ([[blockSelf arkController] addAnchor:name transform:transformArray])
          {
              result(@{WEB_AR_UUID_OPTION : name, WEB_AR_TRANSFORM_OPTION : transformArray});
          }
          else
          {
              result(@{});
-         }
+         }*/
      }];
     
     [[self webController] setOnRemoveObjects:^(NSArray *objects)
      {
-         [[blockSelf arkController] removeAnchors:objects];
+         //[[blockSelf arkController] removeAnchors:objects];
      }];
     
     if ([[self stateController] wasMemoryWarning])
