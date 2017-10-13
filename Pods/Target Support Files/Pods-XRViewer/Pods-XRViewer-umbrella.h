@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_ArDemoVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_ArDemoVersionString[];
+FOUNDATION_EXPORT double Pods_XRViewerVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_XRViewerVersionString[];
 
