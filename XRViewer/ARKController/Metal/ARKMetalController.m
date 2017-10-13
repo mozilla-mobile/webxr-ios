@@ -19,7 +19,7 @@
 
 @implementation ARKMetalController
 
-- (instancetype)initWithSesion:(ARSession *)session
+- (instancetype)initWithSesion:(ARSession *)session size:(CGSize)size
 {
     self = [super init];
     
@@ -75,7 +75,11 @@
 - (void)updateSession:(ARSession *)session
 {
 }
-
+    
+- (void)setHitTestFocusPoint:(CGPoint)point
+{
+}
+    
 - (BOOL)setupARWithSession:(ARSession *)session
 {
     [self setRenderView:[[MTKView alloc] initWithFrame:[[UIScreen mainScreen] bounds] device:MTLCreateSystemDefaultDevice()]];
