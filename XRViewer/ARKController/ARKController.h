@@ -13,8 +13,8 @@ typedef void (^DidUpdate)(ARKController *);
 typedef void (^DidFailSession)(NSError *);
 typedef void (^DidInterupt)(BOOL);
 typedef void (^DidChangeTrackingState)(NSString *);
-typedef void (^DidUpdatePlanes)(NSDictionary *);
-typedef void (^DidUpdateAnchors)(NSDictionary *);
+typedef void (^DidUpdatePlanes)(NSArray *);
+typedef void (^DidUpdateAnchors)(NSArray *);
 
 @interface ARKController : NSObject
 
@@ -23,6 +23,7 @@ typedef void (^DidUpdateAnchors)(NSDictionary *);
 @property(copy) DidFailSession didFailSession;
 @property(copy) DidChangeTrackingState didChangeTrackingState;
 @property(copy) DidUpdatePlanes didAddPlanes;
+@property(copy) DidUpdatePlanes didUpdatePlanes;
 @property(copy) DidUpdatePlanes didRemovePlanes;
 @property(copy) DidUpdateAnchors didUpdateAnchors;
 

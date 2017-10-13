@@ -192,28 +192,33 @@
     
     CGPoint screenPoint = CGPointMake(point.x * renderSize.width, point.y * renderSize.height);
     
-    NSArray *result = [[self controller] hitTest:screenPoint withType:type];
+    NSArray *results = [[self controller] hitTest:screenPoint withType:type];
     
-    //return hitTestResultArrayFromResult(result);
+    NSMutableArray *points = [NSMutableArray new];
+    NSMutableArray *planes = [NSMutableArray new];
     
-    
-    return nil;
-}
-    
-static inline CGPoint pointWithDict(NSDictionary *dict)
-{
-    if (dict[WEB_AR_X_POSITION_OPTION] && dict[WEB_AR_Y_POSITION_OPTION])
+    for(ARHitTestResult *result in results)
     {
-        return CGPointMake([dict[WEB_AR_X_POSITION_OPTION] floatValue], [dict[WEB_AR_Y_POSITION_OPTION] floatValue]);
+        NSDictionary *pointDict = pointDictWithResult(result);
+        
+        if ([[result anchor] isKindOfClass:[ARPlaneAnchor class]])
+        {
+            NSMutableDictionary *planeDict = [NSMutableDictionary dictionaryWithCapacity:2];
+            planeDict[WEB_AR_PLANE_OPTION] = planeDictWithAnchor((ARPlaneAnchor *)result.anchor);
+            planeDict[WEB_AR_POINT_OPTION] = pointDict;
+            
+            [planes addObject:planeDict];
+        }
+        else
+        {
+            [points addObject:pointDict];
+        }
     }
     
-    return CGPointZero;
+    return @{ WEB_AR_PLANES_OPTION : [planes copy],
+              WEB_AR_POINT_OPTION : [points copy] };
 }
-    
-    
-    
 
-    
 - (UserAnchor *)anchorWithUUID:(NSString *)uuid
 {
     for(UserAnchor *anchor in anchors)
@@ -315,12 +320,14 @@ static inline CGPoint pointWithDict(NSDictionary *dict)
             
             if ([[self request][WEB_AR_LIGHT_INTENSITY_OPTION] boolValue])
             {
-                newData[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
+                newData[WEB_AR_LIGHT_OPTION] = dictWithLight([frame lightEstimate]);
             }
             if ([[self request][WEB_AR_CAMERA_OPTION] boolValue])
             {
-                newData[WEB_AR_PROJ_CAMERA_OPTION] = dictWithMatrix4([[self controller] cameraProjectionTransform]);
-                newData[WEB_AR_CAMERA_TRANSFORM_OPTION] = dictWithMatrix4([[frame camera] transform]);
+                newData[WEB_AR_CAMERA_OPTION] = @{
+                    WEB_AR_PROJ_CAMERA_OPTION : dictWithMatrix4([[self controller] cameraProjectionTransform]),
+                    WEB_AR_CAMERA_TRANSFORM_OPTION : dictWithMatrix4([[frame camera] transform])
+                };
             }
             
             os_unfair_lock_lock(&(lock));
@@ -329,79 +336,7 @@ static inline CGPoint pointWithDict(NSDictionary *dict)
         }
     }
 }
-
-    /*
-     if ([[self request][WEB_AR_3D_OBJECTS_OPTION] boolValue])
-     {
-     newData[WEB_AR_3D_OBJECTS_OPTION] = [self currentAnchorsArray];
-     }
-    */
-- (NSArray *)currentAnchorsArray
-{
-    ARFrame *currentFrame = [[self session] currentFrame];
-    
-    NSMutableArray *array = [NSMutableArray array];
-    
-    for (ARAnchor *anchor in [currentFrame anchors])
-    {
-        __block NSString *name = nil;
-        /*[anchors enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
-         {
-             if ([[[anchor identifier] UUIDString] isEqualToString:obj])
-             {
-                 name = key;
-                 *stop = YES;
-             }
-         }];
-        
-        if (name)
-        {
-            [array addObject:[self anchorDictFromAnchor:anchor withName:name]];
-        }*/
-    }
-    
-    //DDLogDebug(@"Anchors - %@", [array debugDescription]);
-    return [array copy];
-}
-
-- (NSDictionary *)anchorDictFromAnchor:(ARAnchor *)anchor withName:(NSString *)name
-{
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
-    
-    dict[WEB_AR_UUID_OPTION] = name;
-    //dict[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([anchor transform]);
-    
-    return [dict copy];
-}
-
-- (NSArray *)currentPlanesArray
-{
-    ARFrame *currentFrame = [[self session] currentFrame];
-    
-    NSMutableArray *array = [NSMutableArray array];
-    
-    for (ARAnchor *anchor in [currentFrame anchors])
-    {
-        if ([anchor isKindOfClass:[ARPlaneAnchor class]])
-        {
-            [array addObject:[self planeDictFromPlaneAnchor:(ARPlaneAnchor *)anchor]];
-        }
-    }
-    
-    return [array copy];
-}
-
-- (NSDictionary *)planeDictFromPlaneAnchor:(ARPlaneAnchor *)planeAnchor
-{
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
-    
-    dict[WEB_AR_H_PLANE_ID_OPTION] = [[planeAnchor identifier] UUIDString];
-    dict[WEB_AR_H_PLANE_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
-    dict[WEB_AR_H_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
-    
-    return [dict copy];
-}
-
+   
 #pragma mark - ARSessionDelegate
 
 - (void)session:(ARSession *)session didUpdateFrame:(ARFrame *)frame
@@ -414,16 +349,81 @@ static inline CGPoint pointWithDict(NSDictionary *dict)
 - (void)session:(ARSession *)session didAddAnchors:(NSArray<ARAnchor*>*)anchors
 {
     DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
+    
+    if (self.isHoldMode == NO)
+    {
+        if ([[self request][WEB_AR_PLANES_OPTION] boolValue] == NO)
+        {
+            return;
+        }
+    }
+    
+    NSMutableArray *planes = [NSMutableArray new];
+    
+    for( ARPlaneAnchor *anchor in anchors)
+    {
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]])
+        {
+            [planes addObject:planeDictWithAnchor(anchor)];
+        }
+    }
+    
+    if ([self didAddPlanes])
+    {
+        [self didAddPlanes]([planes copy]);
+    }
 }
 
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
 {
-    //DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
+    DDLogDebug(@"Uopdate Anchors - %@", [anchors debugDescription]);
+    
+    if (self.isHoldMode == NO)
+    {
+        if (([[self request][WEB_AR_PLANES_OPTION] boolValue] == NO) &&
+            ([[self request][WEB_AR_ANCHORS_OPTION] boolValue] == NO))
+        {
+            return;
+        }
+    }
+    
+    if ([self didUpdatePlanes])
+    {
+        [self didUpdatePlanes](@[]);
+    }
+    
+    if ([self didUpdateAnchors])
+    {
+        [self didUpdateAnchors](@[]);
+    }
 }
 
 - (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors
 {
     DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
+    
+    if (self.isHoldMode == NO)
+    {
+        if ([[self request][WEB_AR_PLANES_OPTION] boolValue] == NO)
+        {
+            return;
+        }
+    }
+    
+    NSMutableArray *planes = [NSMutableArray new];
+    
+    for( ARPlaneAnchor *anchor in anchors)
+    {
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]])
+        {
+            [planes addObject:planeDictWithAnchor(anchor)];
+        }
+    }
+    
+    if ([self didRemovePlanes])
+    {
+        [self didRemovePlanes](@[]);
+    }
 }
 
 #pragma mark ARSessionObserver

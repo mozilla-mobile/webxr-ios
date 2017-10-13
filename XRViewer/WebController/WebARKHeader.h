@@ -88,19 +88,8 @@
 #define WEB_IOS_IS_IPAD_OPTION         @"isIpad"
 #define WEB_IOS_DEVICE_UUID_OPTION     @"deviceUUID"
 
-#define WEB_AR_H_PLANE_OPTION          @"h_plane"
-#define WEB_AR_H_PLANE_CENTER_OPTION   @"h_plane_center"
-#define WEB_AR_H_PLANE_EXTENT_OPTION   @"h_plane_extent"
-#define WEB_AR_H_PLANE_ID_OPTION       @"h_plane_id"
-#define WEB_AR_SHOW_H_PLANE_OPTION     @"show_h_plane"
 
-#define WEB_AR_HIT_TEST_RESULT_OPTION  @"hit_test_result"
-#define WEB_AR_HIT_TEST_PLANE_OPTION   @"hit_test_plane"
-#define WEB_AR_HIT_TEST_POINTS_OPTION  @"hit_test_points"
-#define WEB_AR_HIT_TEST_ALL_OPTION     @"hit_test_all"
-
-
-#define WEB_AR_3D_OBJECTS_OPTION       @"objects" // from IOS - [ {name , matrix} ]
+#define WEB_AR_ANCHORS_OPTION       @"anchors"
 
 #define WEB_AR_ERROR_CODE  @"error"
 
@@ -115,31 +104,37 @@
 
 #define WEB_AR_TYPE_OPTION             @"type"
 #define WEB_AR_POINT_OPTION            @"point"
+#define WEB_AR_PLANE_OPTION @"plane"
+#define WEB_AR_PLANES_OPTION @"planes"
+#define WEB_AR_POINTS_OPTION @"points"
+
 
 #define WEB_AR_POSITION_OPTION         @"position"
 #define WEB_AR_X_POSITION_OPTION       @"x"
 #define WEB_AR_Y_POSITION_OPTION       @"y"
 #define WEB_AR_Z_POSITION_OPTION       @"z"
 #define WEB_AR_TRANSFORM_OPTION        @"transform"
-#define WEB_AR_W_TRANSFORM_OPTION      @"world_transform"
-#define WEB_AR_L_TRANSFORM_OPTION      @"local_transform"
+#define WEB_AR_W_TRANSFORM_OPTION      @"worldTransform"
+#define WEB_AR_L_TRANSFORM_OPTION      @"localTransform"
 #define WEB_AR_DISTANCE_OPTION         @"distance"
 #define WEB_AR_ELEMENTS_OPTION         @"elements"
 #define WEB_AR_UUID_OPTION             @"uuid"
 #define WEB_AR_NAME_OPTION             @"name"
 
-#define WEB_AR_LIGHT_INTENSITY_OPTION  @"light_intensity"
+#define WEB_AR_LIGHT_OPTION            @"light"
+#define WEB_AR_LIGHT_INTENSITY_OPTION  @"ambientIntensity"
+#define WEB_AR_LIGHT_COLOR_OPTION      @"ambientColorTemperature"
 
 #define WEB_AR_CAMERA_OPTION           @"camera"
-#define WEB_AR_PROJ_CAMERA_OPTION      @"projection_camera"
-#define WEB_AR_CAMERA_TRANSFORM_OPTION @"camera_transform"
+#define WEB_AR_PROJ_CAMERA_OPTION      @"projectionCamera"
+#define WEB_AR_CAMERA_TRANSFORM_OPTION @"cameraTransform"
 
-#define WEB_AR_TRACKING_STATE_NORMAL               @"ar_tracking_normal"
-#define WEB_AR_TRACKING_STATE_LIMITED              @"ar_tracking_limited"
-#define WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING @"ar_tracking_limited_initializing"
-#define WEB_AR_TRACKING_STATE_LIMITED_MOTION       @"ar_tracking_limited_excessive_motion"
-#define WEB_AR_TRACKING_STATE_LIMITED_FEATURES     @"ar_tracking_limited_insufficient_features"
-#define WEB_AR_TRACKING_STATE_NOT_AVAILABLE        @"ar_tracking_not_available"
+#define WEB_AR_TRACKING_STATE_NORMAL               @"arTrackingNormal"
+#define WEB_AR_TRACKING_STATE_LIMITED              @"arTrackingLimited"
+#define WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING @"arTrackingLimitedInitializing"
+#define WEB_AR_TRACKING_STATE_LIMITED_MOTION       @"arTrackingLimitedExcessiveMotion"
+#define WEB_AR_TRACKING_STATE_LIMITED_FEATURES     @"arTrackingLimitedInsufficientFeatures"
+#define WEB_AR_TRACKING_STATE_NOT_AVAILABLE        @"arTrackingNotAvailable"
 
 typedef NS_ENUM(NSInteger, ErrorCodes)
 {
