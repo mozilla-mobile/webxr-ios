@@ -294,6 +294,33 @@ typedef void (^UICompletion)(void);
 {
     [self setLocationManager:[[LocationManager alloc] init]];
     [[self locationManager] setupForRequest:[[[self stateController] state] aRRequest]];
+    
+    __weak typeof (self) blockSelf = self;
+    
+    [[self locationManager] setEnterRegion:^(NSDictionary *dict)
+     {
+         [[blockSelf webController] didRegion:dict enter:YES];
+    }];
+    
+    [[self locationManager] setExitRegion:^(NSDictionary *dict)
+    {
+        [[blockSelf webController] didRegion:dict enter:NO];
+    }];
+    
+    [[self locationManager] setUpdateHeading:^(NSDictionary *dict)
+    {
+        [[blockSelf webController] didUpdateHeading:dict];
+    }];
+    
+    [[self locationManager] setUpdateLocation:^(NSDictionary *dict)
+    {
+        [[blockSelf webController] didUpdateLocation:dict];
+    }];
+    
+    [[self locationManager] setFail:^(NSError *error)
+    {
+        DDLogDebug(@"Location error - %@", error);
+    }];
 }
 
 - (void)setupARKController
@@ -316,6 +343,8 @@ typedef void (^UICompletion)(void);
      {
          if ([error code] != CAMERA_ACCESS_NOT_AUTORIZED_CODE)
          {
+             [[blockSelf webController] didSessionFails];
+             
              dispatch_async(dispatch_get_main_queue(), ^
                             {
                                 [[blockSelf messageController] showMessageAboutFailSessionWithCompletion:^
@@ -338,6 +367,21 @@ typedef void (^UICompletion)(void);
      {
          [[blockSelf webController] didChangeARTrackingState:state];
          [[blockSelf overlayController] setTrackingState:state];
+     }];
+    
+    [[self arkController] setDidAddPlanes:^(NSDictionary *dict)
+     {
+         [[blockSelf webController] didAddPlanes:dict];
+    }];
+    
+    [[self arkController] setDidRemovePlanes:^(NSDictionary *dict)
+     {
+         [[blockSelf webController] didRemovePlanes:dict];
+     }];
+    
+    [[self arkController] setDidUpdateAnchors:^(NSDictionary *dict)
+     {
+         [[blockSelf webController] didUpdateAnchors:dict];
      }];
     
     [[self animator] animate:[self arkLayerView] toFade:NO];

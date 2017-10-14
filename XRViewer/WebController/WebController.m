@@ -153,19 +153,19 @@ inline static WebCompletion debugCompletion(NSString *name)
           webCompletion:debugCompletion(WEB_AR_TRANSITION_TO_SIZE_MESSAGE)];
 }
     
-- (void)didRegion:(NSDictionary *)param action:(BOOL)enter;
+- (void)didRegion:(NSDictionary *)param enter:(BOOL)enter;
 {
     NSString *message = enter ? WEB_AR_ENTER_REGION_MESSAGE : WEB_AR_EXIT_REGION_MESSAGE;
     
     [self callWebMethod:message paramJSON:param webCompletion:debugCompletion(message)];
 }
     
-- (void)updateHeading:(NSDictionary *)dict
+- (void)didUpdateHeading:(NSDictionary *)dict
 {
     [self callWebMethod:WEB_AR_UPDATE_HEADING_MESSAGE paramJSON:dict webCompletion:debugCompletion(WEB_AR_UPDATE_HEADING_MESSAGE)];
 }
     
-- (void)updateLocation:(NSDictionary *)dict
+- (void)didUpdateLocation:(NSDictionary *)dict
 {
     [self callWebMethod:WEB_AR_UPDATE_LOCATION_MESSAGE paramJSON:dict webCompletion:debugCompletion(WEB_AR_UPDATE_LOCATION_MESSAGE)];
 }

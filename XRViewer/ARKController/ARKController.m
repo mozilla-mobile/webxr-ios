@@ -348,8 +348,6 @@
 
 - (void)session:(ARSession *)session didAddAnchors:(NSArray<ARAnchor*>*)anchors
 {
-    DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
-    
     if (self.isHoldMode == NO)
     {
         if ([[self request][WEB_AR_PLANES_OPTION] boolValue] == NO)
@@ -357,6 +355,8 @@
             return;
         }
     }
+    
+    DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
     
     NSMutableArray *planes = [NSMutableArray new];
     
@@ -376,8 +376,6 @@
 
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
 {
-    DDLogDebug(@"Uopdate Anchors - %@", [anchors debugDescription]);
-    
     if (self.isHoldMode == NO)
     {
         if (([[self request][WEB_AR_PLANES_OPTION] boolValue] == NO) &&
@@ -386,6 +384,8 @@
             return;
         }
     }
+    
+    DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
     
     NSMutableArray *planesArr = [NSMutableArray new];
     NSMutableArray *anchorsArr = [NSMutableArray new];
@@ -419,8 +419,6 @@
 
 - (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors
 {
-    DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
-    
     if (self.isHoldMode == NO)
     {
         if ([[self request][WEB_AR_PLANES_OPTION] boolValue] == NO)
@@ -428,6 +426,8 @@
             return;
         }
     }
+    
+    DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
     
     NSMutableArray *planes = [NSMutableArray new];
     

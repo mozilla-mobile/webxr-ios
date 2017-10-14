@@ -69,6 +69,8 @@ static inline NSArray * jsMessages()
 
 // ##############################  OPTIONS
 
+#define WEB_AR_UI_CUSTOM_OPTION        @"custom"
+#define WEB_AR_UI_ARKIT_OPTION         @"arkit"
 #define WEB_AR_CALLBACK_OPTION         @"callback"
 #define WEB_AR_REQUEST_OPTION          @"options"
 #define WEB_AR_UI_OPTION               @"ui"
@@ -121,7 +123,6 @@ static inline NSArray * jsMessages()
 #define WEB_IOS_SYSTEM_VERSION_OPTION  @"systemVersion"
 #define WEB_IOS_IS_IPAD_OPTION         @"isIpad"
 #define WEB_IOS_DEVICE_UUID_OPTION     @"deviceUUID"
-
 
 #define WEB_AR_ERROR_CODE  @"error"
 
@@ -185,64 +186,67 @@ static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
         return Browser;
     }
     
+    NSMutableDictionary *common = [NSMutableDictionary dictionaryWithDictionary: dict[WEB_AR_UI_CUSTOM_OPTION]];
+    [common addEntriesFromDictionary:dict[WEB_AR_UI_ARKIT_OPTION]];
+    
     ShowOptions options = None;
     
-    if ([dict[WEB_AR_UI_BROWSER_OPTION] boolValue])
+    if ([common[WEB_AR_UI_BROWSER_OPTION] boolValue])
     {
         options = options | Browser;
     }
     
-    if ([dict[WEB_AR_UI_POINTS_OPTION] boolValue])
+    if ([common[WEB_AR_UI_POINTS_OPTION] boolValue])
     {
         options = options | ARPoints;
     }
     
-    if ([dict[WEB_AR_UI_DEBUG_OPTION] boolValue])
+    if ([common[WEB_AR_UI_DEBUG_OPTION] boolValue])
     {
         options = options | Debug;
     }
     
-    if ([dict[WEB_AR_UI_STATISTICS_OPTION] boolValue])
+    if ([common[WEB_AR_UI_STATISTICS_OPTION] boolValue])
     {
         options = options | ARStatistics;
     }
     
-    if ([dict[WEB_AR_UI_FOCUS_OPTION] boolValue])
+    if ([common[WEB_AR_UI_FOCUS_OPTION] boolValue])
     {
         options = options | ARFocus;
     }
     
-    if ([dict[WEB_AR_UI_CAMERA_OPTION] boolValue])
+    if ([common[WEB_AR_UI_CAMERA_OPTION] boolValue])
     {
         options = options | Capture;
     }
     
-    if ([dict[WEB_AR_UI_MIC_OPTION] boolValue])
+    if ([common[WEB_AR_UI_MIC_OPTION] boolValue])
     {
         options = options | Mic;
     }
     
-    if ([dict[WEB_AR_UI_CAMERA_TIME_OPTION] boolValue])
+    if ([common[WEB_AR_UI_CAMERA_TIME_OPTION] boolValue])
     {
         options = options | CaptureTime;
     }
     
-    if ([dict[WEB_AR_UI_BUILD_OPTION] boolValue])
+    if ([common[WEB_AR_UI_BUILD_OPTION] boolValue])
     {
         options = options | BuildNumber;
     }
     
-    if ([dict[WEB_AR_UI_PLANE_OPTION] boolValue])
+    if ([common[WEB_AR_UI_PLANE_OPTION] boolValue])
     {
         options = options | ARPlanes;
     }
     
-    if ([dict[WEB_AR_UI_WARNINIGS_OPTION] boolValue])
+    if ([common[WEB_AR_UI_WARNINIGS_OPTION] boolValue])
     {
         options = options | ARWarnings;
     }
     
-    if ([dict[WEB_AR_UI_ANCHORS_OPTION] boolValue])
+    if ([common[WEB_AR_UI_ANCHORS_OPTION] boolValue])
     {
         options = options | ARObject;
     }
