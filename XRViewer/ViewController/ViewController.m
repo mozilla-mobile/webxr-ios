@@ -364,6 +364,12 @@ typedef void (^UICompletion)(void);
           { }];
      }];
     
+    [[self webController] setOnError:^(NSError *error)
+     {
+         [blockSelf showWebError:error];
+     }];
+    
+    // xr
     [[self webController] setOnInit:^(NSDictionary *uiOptionsDict)
      {
          [[blockSelf stateController] setWebXR:YES];
@@ -374,29 +380,14 @@ typedef void (^UICompletion)(void);
          [[blockSelf stateController] applyOnDidReceiveMemoryAction];
      }];
     
-    [[self webController] setOnError:^(NSError *error)
-     {
-         [blockSelf showWebError:error];
-     }];
+    [[self webController] setOnLoadURL:^(NSString *url)
+    {
+        [[blockSelf webController] loadURL:url];
+    }];
     
-    [[self webController] setOnIOSUpdate:^( NSDictionary * _Nullable request)
+    [[self webController] setOnWatch:^( NSDictionary * _Nullable request)
      {
          [[blockSelf stateController] setARRequest:request];
-     }];
-    
-    [[self webController] setOnJSUpdate:^( NSDictionary * _Nullable request)
-     {
-         [[blockSelf stateController] setARRequest:request];
-     }];
-    
-    [[self webController] setOnJSUpdateData:^NSDictionary *
-     {
-         return [blockSelf commonData];
-     }];
-    
-    [[self webController] setLoadURL:^(NSString *url)
-     {
-         [[blockSelf webController] loadURL:url];
      }];
     
     [[self webController] setOnSetUI:^(NSDictionary *uiOptionsDict)
@@ -404,28 +395,52 @@ typedef void (^UICompletion)(void);
          [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
      }];
     
-    [[self webController] setOnHitTest:^(NSUInteger mask, CGFloat x, CGFloat y, ResultArrayBlock result)
+    [[self webController] setOnHitTest:^(NSDictionary *dict, OnAction result)
      {
-         //result([[blockSelf arkController] hitTestNormPoint:CGPointMake(x, y) types:mask]);
+         result([[blockSelf arkController] hitTest:dict]);
      }];
     
-    [[self webController] setOnAddAnchor:^(NSString *name, NSArray *transformArray, ResultBlock result)
+    [[self webController] setOnAddAnchor:^(NSDictionary *dict, OnAction result)
      {
-         /*if ([[blockSelf arkController] addAnchor:name transform:transformArray])
-         {
-             result(@{WEB_AR_UUID_OPTION : name, WEB_AR_TRANSFORM_OPTION : transformArray});
-         }
-         else
-         {
-             result(@{});
-         }*/
+         result([[blockSelf arkController] addAnchor:dict]);
      }];
     
-    [[self webController] setOnRemoveObjects:^(NSArray *objects)
+    [[self webController] setOnRemoveAnchor:^(NSDictionary *dict, OnAction result)
      {
-         //[[blockSelf arkController] removeAnchors:objects];
+         result([[blockSelf arkController] removeAnchor:dict]);
      }];
     
+    [[self webController] setOnUpdateAnchor:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf arkController] updateAnchor:dict]);
+     }];
+    
+    [[self webController] setOnStartHold:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf arkController] startHoldAnchor:dict]);
+     }];
+    
+    [[self webController] setOnStopHold:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf arkController] stopHoldAnchor:dict]);
+     }];
+    
+    [[self webController] setOnAddRegion:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf locationManager] addRegion:dict]);
+     }];
+    
+    [[self webController] setOnRemoveRegion:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf locationManager] removeRegion:dict]);
+     }];
+    
+    [[self webController] setOnInRegion:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf locationManager] inRegion:dict]);
+     }];
+    
+    // start
     if ([[self stateController] wasMemoryWarning])
     {
         [[self stateController] applyOnDidReceiveMemoryAction];

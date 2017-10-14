@@ -126,11 +126,11 @@
     }
 }
     
-- (BOOL)addRegion:(NSDictionary *)req
+- (NSDictionary *)addRegion:(NSDictionary *)req
 {
     NSDictionary *regionDict = req[WEB_AR_LOCATION_REGION_OPTION];
     
-    if (regionDict == nil) {return NO;}
+    if (regionDict == nil) {return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };}
 
     NSDictionary *centerDict = regionDict[WEB_AR_LOCATION_REGION_CENTER_OPTION];
     CLLocationCoordinate2D center;
@@ -146,16 +146,17 @@
         [_regions addObject:region];
         [_manager startMonitoringForRegion:region];
         
-        return YES;
+        return @{ WEB_AR_LOCATION_REGION_OPTION : identifier };
     }
     
-    return NO;
+    return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };
 }
-- (BOOL)removeRegion:(NSDictionary *)req
+    
+- (NSDictionary *)removeRegion:(NSDictionary *)req
 {
     NSDictionary *regionDict = req[WEB_AR_LOCATION_REGION_OPTION];
     
-    if (regionDict == nil) {return NO;}
+    if (regionDict == nil) {return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };}
     
     NSString *identifier = (req[WEB_AR_LOCATION_REGION_OPTION])[WEB_AR_ID_OPTION];
     
@@ -168,11 +169,11 @@
             [_manager stopMonitoringForRegion:region];
             [_regions removeObject:region];
             
-            return YES;
+            return @{ WEB_AR_LOCATION_REGION_OPTION : identifier };
         }
     }
     
-    return NO;
+    return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };
 }
 
 - (CLCircularRegion *)regionByID:(NSString *)identifier
@@ -188,11 +189,11 @@
     return  nil;
 }
     
-- (BOOL)inRegion:(NSDictionary *)req
+- (NSDictionary *)inRegion:(NSDictionary *)req
 {
     NSDictionary *regionDict = req[WEB_AR_LOCATION_REGION_OPTION];
     
-    if (regionDict == nil) {return NO;}
+    if (regionDict == nil) {return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };}
     
     NSString *identifier = (req[WEB_AR_LOCATION_REGION_OPTION])[WEB_AR_ID_OPTION];
     
@@ -204,11 +205,15 @@
         
         if ([region containsCoordinate:coord])
         {
-            return YES;
+            return @{ WEB_AR_LOCATION_REGION_OPTION : identifier };
+        }
+        else
+        {
+            return @{ WEB_AR_LOCATION_REGION_OPTION : @"" };//?
         }
     }
     
-    return  NO;
+    return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };
 }
 
 #pragma mark Location Manager

@@ -3,62 +3,65 @@
 #import "Animator.h"
 #import "AppState.h"
 
-typedef void (^OnLoad)(void);
-typedef void (^OnInit)(NSDictionary *);
+typedef void (^OnURL)(NSString *);
+typedef void (^OnAction)(NSDictionary *);
+typedef void (^OnActionWithResult)(NSDictionary *, OnAction);
+
+typedef void (^OnWebAction)(void);
 typedef void (^OnWebError)(NSError *);
-typedef void (^OnUpdateTransfer)(NSDictionary * );
-
-typedef void (^ResultBlock)(NSDictionary *);
-typedef void (^ResultArrayBlock)(NSArray *);
-
-typedef void (^OnRemoveObjects)(NSArray * );
-typedef NSDictionary * (^OnJSUpdateData)(void);
-typedef void (^OnLoadURL)(NSString *);
-typedef void (^OnSetUI)(NSDictionary *);
-
-typedef void (^OnHitTest)(NSUInteger, CGFloat, CGFloat, ResultArrayBlock);
-typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
-
 
 @interface WebController : NSObject
 
-@property(nonatomic, copy) OnInit onInit;
+// xr handler
+@property(nonatomic, copy) OnAction onInit;
+@property(nonatomic, copy) OnURL onLoadURL;
+@property(nonatomic, copy) OnAction onWatch;
+@property(nonatomic, copy) OnAction onSetUI;
+@property(nonatomic, copy) OnActionWithResult onHitTest;
+@property(nonatomic, copy) OnActionWithResult onAddAnchor;
+@property(nonatomic, copy) OnActionWithResult onRemoveAnchor;
+@property(nonatomic, copy) OnActionWithResult onUpdateAnchor;
+@property(nonatomic, copy) OnActionWithResult onStartHold;
+@property(nonatomic, copy) OnActionWithResult onStopHold;
+@property(nonatomic, copy) OnActionWithResult onAddRegion;
+@property(nonatomic, copy) OnActionWithResult onRemoveRegion;
+@property(nonatomic, copy) OnActionWithResult onInRegion;
+    
+// webview handler
 @property(nonatomic, copy) OnWebError onError;
-@property(nonatomic, copy) OnUpdateTransfer onIOSUpdate;
-@property(nonatomic, copy) OnLoadURL loadURL;
-@property(nonatomic, copy) OnUpdateTransfer onJSUpdate;
-@property(nonatomic, copy) OnJSUpdateData onJSUpdateData;
-@property(nonatomic, copy) OnRemoveObjects onRemoveObjects;
-@property(nonatomic, copy) OnSetUI onSetUI;
-@property(nonatomic, copy) OnHitTest onHitTest;
-@property(nonatomic, copy) OnAddAnchor onAddAnchor;
-@property(nonatomic, copy) OnLoad onStartLoad;
-@property(nonatomic, copy) OnLoad onFinishLoad;
+@property(nonatomic, copy) OnWebAction onStartLoad;
+@property(nonatomic, copy) OnWebAction onFinishLoad;
 
 @property (nonatomic, strong) Animator *animator;
 
 - (instancetype)initWithRootView:(UIView *)rootView;
-- (void)viewWillTransitionToSize:(CGSize)size;
-
+- (WKWebView *)webView;
 - (void)loadURL:(NSString *)url;
-
 - (NSString *)lastURL;
 
 - (void)reload;
 - (void)clean;
-
-- (void)setupForWebXR:(BOOL)webXR;
-
+    
 - (void)showBar:(BOOL)showBar;
+    
+- (void)setupForWebXR:(BOOL)webXR;
+    
+// xr
 - (void)showDebug:(BOOL)showDebug;
-- (void)startRecording:(BOOL)start;
-- (void)wasARInterruption:(BOOL)interruption;
 - (void)didBackgroundAction:(BOOL)background;
-- (void)didChangeARTrackingState:(NSString *)state;
 - (void)didReceiveMemoryWarning;
-
-- (WKWebView *)webView;
-
+- (void)viewWillTransitionToSize:(CGSize)size;
+- (void)didRegion:(NSDictionary *)param action:(BOOL)enter;
+- (void)updateHeading:(NSDictionary *)dict;
+- (void)updateLocation:(NSDictionary *)dict;
+- (void)wasARInterruption:(BOOL)interruption;
+- (void)didChangeARTrackingState:(NSString *)state;
+- (void)didSessionFails;
+- (void)didUpdateAnchors:(NSDictionary *)dict;
+- (void)didAddPlanes:(NSDictionary *)dict;
+- (void)didRemovePlanes:(NSDictionary *)dict;
+- (void)startRecording:(BOOL)start;
+  
 - (BOOL)sendARData:(NSDictionary *)data;
 
 @end

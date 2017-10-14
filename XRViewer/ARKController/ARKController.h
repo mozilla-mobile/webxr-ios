@@ -13,8 +13,7 @@ typedef void (^DidUpdate)(ARKController *);
 typedef void (^DidFailSession)(NSError *);
 typedef void (^DidInterupt)(BOOL);
 typedef void (^DidChangeTrackingState)(NSString *);
-typedef void (^DidUpdatePlanes)(NSArray *);
-typedef void (^DidUpdateAnchors)(NSArray *);
+typedef void (^DidUpdateAnchors)(NSDictionary *);
 
 @interface ARKController : NSObject
 
@@ -22,9 +21,8 @@ typedef void (^DidUpdateAnchors)(NSArray *);
 @property(copy) DidInterupt didInterupt;
 @property(copy) DidFailSession didFailSession;
 @property(copy) DidChangeTrackingState didChangeTrackingState;
-@property(copy) DidUpdatePlanes didAddPlanes;
-@property(copy) DidUpdatePlanes didUpdatePlanes;
-@property(copy) DidUpdatePlanes didRemovePlanes;
+@property(copy) DidUpdateAnchors didAddPlanes;
+@property(copy) DidUpdateAnchors didRemovePlanes;
 @property(copy) DidUpdateAnchors didUpdateAnchors;
 
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
@@ -44,9 +42,6 @@ typedef void (^DidUpdateAnchors)(NSArray *);
 - (NSDictionary *)updateAnchor:(NSDictionary *)dict;
 - (NSDictionary *)startHoldAnchor:(NSDictionary *)dict;
 - (NSDictionary *)stopHoldAnchor:(NSDictionary *)dict;
-
-//- (NSArray *)hitTestNormPoint:(CGPoint)point types:(NSUInteger)type;
-//- (NSDictionary *)addAnchor:(NSString *)name transform:(NSArray *)transform;
     
 @end
 

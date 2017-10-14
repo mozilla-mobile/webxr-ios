@@ -370,7 +370,7 @@
     
     if ([self didAddPlanes])
     {
-        [self didAddPlanes]([planes copy]);
+        [self didAddPlanes](@{WEB_AR_PLANES_OPTION : [planes copy]});
     }
 }
 
@@ -387,14 +387,33 @@
         }
     }
     
-    if ([self didUpdatePlanes])
+    NSMutableArray *planesArr = [NSMutableArray new];
+    NSMutableArray *anchorsArr = [NSMutableArray new];
+    
+    for( ARAnchor *anchor in anchors)
     {
-        [self didUpdatePlanes](@[]);
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]])
+        {
+            if (self.isHoldMode || [[self request][WEB_AR_PLANES_OPTION] boolValue])
+            {
+                [planesArr addObject:planeDictWithAnchor((ARPlaneAnchor *)anchor)];
+            }
+        }
+        else if ([anchor isKindOfClass:[UserAnchor class]])
+        {
+            if (self.isHoldMode || [[self request][WEB_AR_ANCHORS_OPTION] boolValue])
+            {
+                [anchorsArr addObject:userAnchorDictWith((UserAnchor *)anchor)];
+            }
+        }
     }
     
     if ([self didUpdateAnchors])
     {
-        [self didUpdateAnchors](@[]);
+        [self didUpdateAnchors](@{
+                                  WEB_AR_ANCHORS_OPTION : anchorsArr,
+                                  WEB_AR_PLANES_OPTION : planesArr
+                                  });
     }
 }
 
@@ -422,7 +441,7 @@
     
     if ([self didRemovePlanes])
     {
-        [self didRemovePlanes](@[]);
+        [self didRemovePlanes](@{WEB_AR_PLANES_OPTION : [planes copy]});
     }
 }
 

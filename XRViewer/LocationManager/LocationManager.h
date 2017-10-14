@@ -14,9 +14,9 @@ typedef void (^DidRequestAuth)(BOOL);
 @property(nonatomic, copy) Update exitRegion;
 @property(nonatomic, copy) Fail fail;
 
-- (BOOL)addRegion:(NSDictionary *)req;
-- (BOOL)removeRegion:(NSDictionary *)req;
-- (BOOL)inRegion:(NSDictionary *)req;
+- (NSDictionary *)addRegion:(NSDictionary *)req;
+- (NSDictionary *)removeRegion:(NSDictionary *)req;
+- (NSDictionary *)inRegion:(NSDictionary *)req;
 
 - (void)setupForRequest:(NSDictionary *)request;
     
