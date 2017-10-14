@@ -222,9 +222,6 @@ inline static WebCompletion debugCompletion(NSString *name)
     return NO;
 }
 
-
-
-
 #pragma mark WKScriptMessageHandler
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
@@ -272,7 +269,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     {
         [self setTransferCallback:[[message body] objectForKey:WEB_AR_CALLBACK_OPTION]];
         
-        [self onWatch]([[message body] objectForKey:WEB_AR_REQUEST_OPTION]);        
+        [self onWatch]([[message body] objectForKey:WEB_AR_REQUEST_OPTION]);
     }
     else if ([[message name] isEqualToString:WEB_JS_STOP_WATCH_MESSAGE])
     {
@@ -286,12 +283,12 @@ inline static WebCompletion debugCompletion(NSString *name)
     }
     else if ([[message name] isEqualToString:WEB_JS_SET_UI_MESSAGE])
     {
-        [self onSetUI]([message body]);
+        [self onSetUI]([[message body] objectForKey:WEB_AR_REQUEST_OPTION]);
     }
     else if ([[message name] isEqualToString:WEB_JS_HIT_TEST_MESSAGE])
     {
         NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        [self onHitTest]([message body], ^(NSDictionary *results)
+        [self onHitTest]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                          {
                              [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_HIT_TEST_MESSAGE)];
                          });
@@ -299,7 +296,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     else if ([[message name] isEqualToString:WEB_JS_ADD_ANCHOR_MESSAGE])
     {
         NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        [self onAddAnchor]([message body], ^(NSDictionary *results)
+        [self onAddAnchor]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                          {
                              [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_ADD_ANCHOR_MESSAGE)];
                          });
@@ -307,7 +304,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     else if ([[message name] isEqualToString:WEB_JS_REMOVE_ANCHOR_MESSAGE])
     {
         NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        [self onRemoveAnchor]([message body], ^(NSDictionary *results)
+        [self onRemoveAnchor]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                            {
                                [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_REMOVE_ANCHOR_MESSAGE)];
                            });
@@ -315,7 +312,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     else if ([[message name] isEqualToString:WEB_JS_UPDATE_ANCHOR_MESSAGE])
     {
         NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        [self onUpdateAnchor]([message body], ^(NSDictionary *results)
+        [self onUpdateAnchor]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                               {
                                   [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_UPDATE_ANCHOR_MESSAGE)];
                               });
@@ -323,7 +320,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     else if ([[message name] isEqualToString:WEB_JS_START_HOLD_ANCHOR_MESSAGE])
     {
         NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        [self onStartHold]([message body], ^(NSDictionary *results)
+        [self onStartHold]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                               {
                                   [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_START_HOLD_ANCHOR_MESSAGE)];
                               });
@@ -331,7 +328,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     else if ([[message name] isEqualToString:WEB_JS_STOP_HOLD_ANCHOR_MESSAGE])
     {
         NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        [self onStopHold]([message body], ^(NSDictionary *results)
+        [self onStopHold]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                            {
                                [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_STOP_HOLD_ANCHOR_MESSAGE)];
                            });
@@ -339,7 +336,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     else if ([[message name] isEqualToString:WEB_JS_ADD_REGION_MESSAGE])
     {
         NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        [self onAddRegion]([message body], ^(NSDictionary *results)
+        [self onAddRegion]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                           {
                               [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_ADD_REGION_MESSAGE)];
                           });
@@ -347,7 +344,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     else if ([[message name] isEqualToString:WEB_JS_REMOVE_REGION_MESSAGE])
     {
         NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        [self onRemoveRegion]([message body], ^(NSDictionary *results)
+        [self onRemoveRegion]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                            {
                                [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_REMOVE_REGION_MESSAGE)];
                            });
@@ -355,7 +352,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     else if ([[message name] isEqualToString:WEB_JS_IN_REGION_MESSAGE])
     {
         NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        [self onInRegion]([message body], ^(NSDictionary *results)
+        [self onInRegion]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                               {
                                   [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_IN_REGION_MESSAGE)];
                               });

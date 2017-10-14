@@ -6,7 +6,7 @@
 #define INTERNET_OFFLINE_CODE -1009
 
 // URL
-#define WEB_URL @"https://andyps.github.io/demo/camapp/webxr/"//@"https://mozilla.github.io/webxr-ios/app/"
+#define WEB_URL @"https://andyps.github.io/demo/camapp/camapp/test.html"//*/@"https://andyps.github.io/demo/camapp/webxr/"//@"https://mozilla.github.io/webxr-ios/app/"
 
 // ##############################  MESSAGES
 
@@ -87,9 +87,9 @@ static inline NSArray * jsMessages()
 #define WEB_AR_UI_WARNINIGS_OPTION     @"warnings"
 #define WEB_AR_UI_ANCHORS_OPTION       @"anchors"
 
-#define WEB_AR_ANCHOR_TRANSFORM_OPTION @"anchor_transform"
-#define WEB_AR_ANCHOR_CENTER_OPTION    @"anchor_center"
-#define WEB_AR_ANCHOR_EXTENT_OPTION    @"anchor_extent"
+#define WEB_AR_ANCHOR_TRANSFORM_OPTION @"anchorTransform"
+#define WEB_AR_ANCHOR_CENTER_OPTION    @"anchorCenter"
+#define WEB_AR_ANCHOR_EXTENT_OPTION    @"anchorExtent"
 
 #define WEB_AR_TEST_OPTION             @"test"
 #define WEB_AR_ID_OPTION               @"id"
@@ -122,7 +122,7 @@ static inline NSArray * jsMessages()
 #define WEB_IOS_SCREEN_SCALE_OPTION    @"screenScale"
 #define WEB_IOS_SYSTEM_VERSION_OPTION  @"systemVersion"
 #define WEB_IOS_IS_IPAD_OPTION         @"isIpad"
-#define WEB_IOS_DEVICE_UUID_OPTION     @"deviceUUID"
+#define WEB_IOS_DEVICE_UUID_OPTION     @"uuid"
 
 #define WEB_AR_ERROR_CODE  @"error"
 

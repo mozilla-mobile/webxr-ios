@@ -82,7 +82,6 @@
     }
     
     NSError *outError;
-    [[self device] lockForConfiguration:&outError];
     
     if ([[self device] lockForConfiguration:&outError])
     {
@@ -183,7 +182,7 @@
 
 - (NSDictionary *)hitTest:(NSDictionary *)dict
 {
-    if(dict[WEB_AR_POINT_OPTION]) { return @{ WEB_AR_ERROR_CODE : @( InvalidHitTest ) }; }
+    if(dict[WEB_AR_POINT_OPTION] == nil) { return @{ WEB_AR_ERROR_CODE : @( InvalidHitTest ) }; }
     
     CGPoint point = pointWithDict(dict[WEB_AR_POINT_OPTION]);
     ARHitTestResultType type = [dict[WEB_AR_TYPE_OPTION] integerValue];
