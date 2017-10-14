@@ -328,16 +328,6 @@ typedef void (^UICompletion)(void);
     CLEAN_VIEW([self arkLayerView]);
     __weak typeof (self) blockSelf = self;
     
-    /*if ([self arkController] != nil)
-    {
-        [self setArkController:nil];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [blockSelf setupARKController];
-        });
-        return;
-    }*/
-    
     [self setArkController:[[ARKController alloc] initWithType:ARKSceneKit rootView:[self arkLayerView]]];
     
     [[self arkController] setDidUpdate:^(ARKController *c)

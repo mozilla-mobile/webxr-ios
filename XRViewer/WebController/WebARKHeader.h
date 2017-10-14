@@ -6,7 +6,7 @@
 #define INTERNET_OFFLINE_CODE -1009
 
 // URL
-#define WEB_URL @"https://andyps.github.io/demo/camapp/camapp/test.html"//*/@"https://andyps.github.io/demo/camapp/webxr/"//@"https://mozilla.github.io/webxr-ios/app/"
+#define WEB_URL /*@"https://andyps.github.io/demo/camapp/camapp/test.html"//*/@"https://andyps.github.io/demo/camapp/webxr/"//@"https://mozilla.github.io/webxr-ios/app/"
 
 // ##############################  MESSAGES
 
