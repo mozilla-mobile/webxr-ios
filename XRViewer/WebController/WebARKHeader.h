@@ -4,9 +4,11 @@
 #import "AppState.h"
 
 #define INTERNET_OFFLINE_CODE -1009
+#define CANCELLED_CODE -999
+#define SERVER_START_CODE 200
+#define SERVER_STOP_CODE 600
 
-// URL
-#define WEB_URL /*@"https://andyps.github.io/demo/camapp/camapp/test.html"//*/@"https://andyps.github.io/demo/camapp/webxr/"//@"https://mozilla.github.io/webxr-ios/app/"
+#define WEB_URL @"https://andyps.github.io/demo/camapp/webxr/"
 
 // ##############################  MESSAGES
 

@@ -447,7 +447,9 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (BOOL)shouldShowError:(NSError *)error
 {
-    return (([error code] > 600) || ([error code] < 200));
+    return
+    (([error code] > SERVER_STOP_CODE) || ([error code] < SERVER_START_CODE)) &&
+    ([error code] != CANCELLED_CODE);
 }
 
 - (void)layout
