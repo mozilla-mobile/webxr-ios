@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>27</string>
+	<string>28</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -29,8 +29,6 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>This application will use the camera for Augmented Reality.</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>This application will use FaceID for Augmented Reality.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This application will use location for Augmented Reality.</string>
 	<key>NSMicrophoneUsageDescription</key>

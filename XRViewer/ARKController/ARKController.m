@@ -215,7 +215,7 @@
     }
     
     return @{ WEB_AR_PLANES_OPTION : [planes copy],
-              WEB_AR_POINT_OPTION : [points copy] };
+              WEB_AR_POINTS_OPTION : [points copy] };
 }
 
 - (UserAnchor *)anchorWithUUID:(NSString *)uuid
