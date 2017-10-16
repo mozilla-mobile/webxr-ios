@@ -8,7 +8,8 @@
 #define SERVER_START_CODE 200
 #define SERVER_STOP_CODE 600
 
-#define WEB_URL @"https://andyps.github.io/demo/camapp/webxr/"
+// Start URL
+#define WEB_URL @"https://mozilla-mobile.github.io/webxr-ios/app/"
 
 // ##############################  MESSAGES
 

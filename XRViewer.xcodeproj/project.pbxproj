@@ -18,7 +18,6 @@
 		045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */; };
 		045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */; };
 		045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2EA21F28EE6C0005FF96 /* TouchView.m */; };
-		0460981D1F90F05F003B2BF6 /* UserAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = 0460981C1F90F05F003B2BF6 /* UserAnchor.m */; };
 		04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */; };
 		04A806771F3D9ED900B8732C /* PlaneNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806761F3D9ED900B8732C /* PlaneNode.m */; };
 		04A8067A1F3DCAA200B8732C /* AnchorNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806791F3DCAA200B8732C /* AnchorNode.m */; };
@@ -67,8 +66,6 @@
 		045B2EA11F28EE6C0005FF96 /* TouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TouchView.h; sourceTree = "<group>"; };
 		045B2EA21F28EE6C0005FF96 /* TouchView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TouchView.m; sourceTree = "<group>"; };
 		045B2EA81F2A02710005FF96 /* OverlayHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayHeader.h; sourceTree = "<group>"; };
-		0460981B1F90F05F003B2BF6 /* UserAnchor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserAnchor.h; sourceTree = "<group>"; };
-		0460981C1F90F05F003B2BF6 /* UserAnchor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserAnchor.m; sourceTree = "<group>"; };
 		04A712C21F46EF48005D91E2 /* ARSCNView+HitTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ARSCNView+HitTest.h"; sourceTree = "<group>"; };
 		04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ARSCNView+HitTest.m"; sourceTree = "<group>"; };
 		04A806751F3D9ED900B8732C /* PlaneNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaneNode.h; sourceTree = "<group>"; };
@@ -225,12 +222,10 @@
 		04A983631F32216800120CF8 /* ARKController */ = {
 			isa = PBXGroup;
 			children = (
+				04BB9D641F39BE40004328A2 /* ARKHelper.h */,
 				04A983661F32268900120CF8 /* ARKController.h */,
 				04A983651F32268900120CF8 /* ARKController.m */,
-				04BB9D641F39BE40004328A2 /* ARKHelper.h */,
 				04B1E12A1F3C660300F96C5A /* ARKControllerProtocol.h */,
-				0460981B1F90F05F003B2BF6 /* UserAnchor.h */,
-				0460981C1F90F05F003B2BF6 /* UserAnchor.m */,
 				04A8156B1F41BA660082D31D /* HitAnchor.h */,
 				04A8156C1F41BA660082D31D /* HitAnchor.m */,
 				04A82BED1F58566000F64A5D /* HitTestResult.h */,
@@ -494,7 +489,6 @@
 				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
 				041503DA1F28944F00887400 /* main.m in Sources */,
 				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
-				0460981D1F90F05F003B2BF6 /* UserAnchor.m in Sources */,
 				0401E0521F62E6150075D823 /* Animator.m in Sources */,
 				041503C61F28944F00887400 /* AppDelegate.m in Sources */,
 				04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */,
@@ -647,12 +641,12 @@
 			baseConfigurationReference = 3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = RJRT2UUKDY;
+				DEVELOPMENT_TEAM = 43AQ936H96;
 				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.exalt.xrdemo;
+				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.XRViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -663,12 +657,12 @@
 			baseConfigurationReference = A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = RJRT2UUKDY;
+				DEVELOPMENT_TEAM = 43AQ936H96;
 				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.exalt.xrdemo;
+				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.XRViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
