@@ -8,7 +8,7 @@ Browse to websites written using [WebXR](https://github.com/mozilla/webxr-polyfi
 
 Record and share videos taken of your web content in the real world.
 
-To learn more about Project WebXR Viewer and other ways Mozilla is working to bring augmented reality, virtual reality, and mixed reality to the web, visit our website at [mixedreality.mozilla.com](https://mixedreality.mozilla.com/).
+To learn more about Project WebXR Viewer and other ways Mozilla is working to bring augmented reality, virtual reality, and mixed reality to the web, visit our website at [mixedreality.mozilla.org](https://mixedreality.mozilla.org/).
 
 ## WARNING
 
