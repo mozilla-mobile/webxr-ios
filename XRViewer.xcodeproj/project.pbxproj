@@ -40,6 +40,7 @@
 		04C64BCE1F71094500ACFB8B /* AppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCC1F71016A00ACFB8B /* AppState.m */; };
 		04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCA1F71016A00ACFB8B /* AppStateController.m */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
+		A67A14871F9503CD0011C00C /* UserAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = A67A14851F9503CC0011C00C /* UserAnchor.m */; };
 		A8AFA84387C4A5B97A8E5814 /* Pods_ArDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7ED42568C04611107BF5582D /* Pods_ArDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -113,6 +114,8 @@
 		7ED42568C04611107BF5582D /* Pods_ArDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ArDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		A67A14851F9503CC0011C00C /* UserAnchor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserAnchor.m; sourceTree = "<group>"; };
+		A67A14861F9503CD0011C00C /* UserAnchor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAnchor.h; sourceTree = "<group>"; };
 		A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -222,6 +225,8 @@
 		04A983631F32216800120CF8 /* ARKController */ = {
 			isa = PBXGroup;
 			children = (
+				A67A14861F9503CD0011C00C /* UserAnchor.h */,
+				A67A14851F9503CC0011C00C /* UserAnchor.m */,
 				04BB9D641F39BE40004328A2 /* ARKHelper.h */,
 				04A983661F32268900120CF8 /* ARKController.h */,
 				04A983651F32268900120CF8 /* ARKController.m */,
