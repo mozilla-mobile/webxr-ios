@@ -18,6 +18,7 @@
 		045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */; };
 		045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */; };
 		045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2EA21F28EE6C0005FF96 /* TouchView.m */; };
+		046098211F960082003B2BF6 /* UserAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = A67A14851F9503CC0011C00C /* UserAnchor.m */; };
 		04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */; };
 		04A806771F3D9ED900B8732C /* PlaneNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806761F3D9ED900B8732C /* PlaneNode.m */; };
 		04A8067A1F3DCAA200B8732C /* AnchorNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806791F3DCAA200B8732C /* AnchorNode.m */; };
@@ -40,7 +41,6 @@
 		04C64BCE1F71094500ACFB8B /* AppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCC1F71016A00ACFB8B /* AppState.m */; };
 		04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCA1F71016A00ACFB8B /* AppStateController.m */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
-		A67A14871F9503CD0011C00C /* UserAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = A67A14851F9503CC0011C00C /* UserAnchor.m */; };
 		A8AFA84387C4A5B97A8E5814 /* Pods_ArDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7ED42568C04611107BF5582D /* Pods_ArDemo.framework */; };
 /* End PBXBuildFile section */
 
@@ -494,6 +494,7 @@
 				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
 				041503DA1F28944F00887400 /* main.m in Sources */,
 				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
+				046098211F960082003B2BF6 /* UserAnchor.m in Sources */,
 				0401E0521F62E6150075D823 /* Animator.m in Sources */,
 				041503C61F28944F00887400 /* AppDelegate.m in Sources */,
 				04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */,
