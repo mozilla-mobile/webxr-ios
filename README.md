@@ -28,7 +28,7 @@ For your development build, go to the project settings by clicking the project n
 
 We have started a [WebXR polyfill](https://github.com/mozilla/webxr-polyfill/) that can use the ARKit to Javascript bridge exposed in this application. You can include that in any web page and use the example code in the same repository to get started building your own XR web applications. 
 
-While your iOS device is cabled to your development machine, you can use Safari 11 or newer to connect developer tools via Safari's `Develop` menu.
+While your iOS device is cabled to your development machine, you can use Safari 11 or newer to connect developer tools via Safari's `Develop` menu. Note: This type of debugging is only possible when you build the app yourself. Due to a limitation of iOS, it is not possible with builds of the application that you receive through TestFlight or the Apple App Store.
 
 It can be handy to change the default URL loaded by the app by changing the `WEB_URL` string in WebARKHeader.h to the URL of your local web server. 
 
