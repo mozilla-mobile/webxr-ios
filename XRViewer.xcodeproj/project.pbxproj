@@ -39,9 +39,9 @@
 		04C64BC81F71011700ACFB8B /* LayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BC71F71011700ACFB8B /* LayerView.m */; };
 		04C64BCE1F71094500ACFB8B /* AppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCC1F71016A00ACFB8B /* AppState.m */; };
 		04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCA1F71016A00ACFB8B /* AppStateController.m */; };
+		153296BC1F95EE09008DA4D1 /* UserAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = A67A14851F9503CC0011C00C /* UserAnchor.m */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
-		A67A14871F9503CD0011C00C /* UserAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = A67A14851F9503CC0011C00C /* UserAnchor.m */; };
-		A8AFA84387C4A5B97A8E5814 /* Pods_ArDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7ED42568C04611107BF5582D /* Pods_ArDemo.framework */; };
+		C7FAD42D3739EB0D91163A09 /* Pods_XRViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9B34911AA342A39FC05ED2 /* Pods_XRViewer.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -111,12 +111,15 @@
 		04C64BCC1F71016A00ACFB8B /* AppState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppState.m; sourceTree = "<group>"; };
 		04C64BCD1F71016B00ACFB8B /* AppState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppState.h; sourceTree = "<group>"; };
 		3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		4728098F8CE4B115F45011A2 /* Pods-XRViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.debug.xcconfig"; sourceTree = "<group>"; };
 		7ED42568C04611107BF5582D /* Pods_ArDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ArDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A955D97483A67AB0CFF9AA6 /* Pods-XRViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.release.xcconfig"; sourceTree = "<group>"; };
 		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		A67A14851F9503CC0011C00C /* UserAnchor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserAnchor.m; sourceTree = "<group>"; };
 		A67A14861F9503CD0011C00C /* UserAnchor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAnchor.h; sourceTree = "<group>"; };
 		A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo.release.xcconfig"; sourceTree = "<group>"; };
+		EC9B34911AA342A39FC05ED2 /* Pods_XRViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_XRViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,7 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A8AFA84387C4A5B97A8E5814 /* Pods_ArDemo.framework in Frameworks */,
+				C7FAD42D3739EB0D91163A09 /* Pods_XRViewer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +343,8 @@
 			children = (
 				3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */,
 				A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */,
+				4728098F8CE4B115F45011A2 /* Pods-XRViewer.debug.xcconfig */,
+				9A955D97483A67AB0CFF9AA6 /* Pods-XRViewer.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -348,6 +353,7 @@
 			isa = PBXGroup;
 			children = (
 				7ED42568C04611107BF5582D /* Pods_ArDemo.framework */,
+				EC9B34911AA342A39FC05ED2 /* Pods_XRViewer.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -444,7 +450,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		20F4E46B4FFAE2848E06BE98 /* [CP] Check Pods Manifest.lock */ = {
@@ -453,13 +459,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-XRViewer-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8837850E75F84273D6039AFF /* [CP] Embed Pods Frameworks */ = {
@@ -468,13 +477,20 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
+				"${BUILT_PRODUCTS_DIR}/PopupDialog/PopupDialog.framework",
+				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PopupDialog.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -494,6 +510,7 @@
 				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
 				041503DA1F28944F00887400 /* main.m in Sources */,
 				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
+				153296BC1F95EE09008DA4D1 /* UserAnchor.m in Sources */,
 				0401E0521F62E6150075D823 /* Animator.m in Sources */,
 				041503C61F28944F00887400 /* AppDelegate.m in Sources */,
 				04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */,
@@ -643,7 +660,7 @@
 		};
 		041503DE1F28944F00887400 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */;
+			baseConfigurationReference = 4728098F8CE4B115F45011A2 /* Pods-XRViewer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 43AQ936H96;
@@ -659,7 +676,7 @@
 		};
 		041503DF1F28944F00887400 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */;
+			baseConfigurationReference = 9A955D97483A67AB0CFF9AA6 /* Pods-XRViewer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 43AQ936H96;
