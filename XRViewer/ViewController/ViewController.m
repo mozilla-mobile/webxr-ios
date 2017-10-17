@@ -337,7 +337,9 @@ typedef void (^UICompletion)(void);
              [blockSelf sendARKData];
          }
      }];
+
 #define CAMERA_ACCESS_NOT_AUTORIZED_CODE 103
+
     [[self arkController] setDidFailSession:^(NSError *error)
      {
          if ([error code] != CAMERA_ACCESS_NOT_AUTORIZED_CODE)
