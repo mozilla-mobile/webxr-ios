@@ -82,6 +82,8 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 
 - (void)setWebXR:(BOOL)webXR
 {
+    if ([[self state] webXR] == webXR) {return;}
+    
     [self setState:[[self state] updatedWebXR:webXR]];
     
     RUN_ACTION_ASYNC_MAIN([self onXRUpdate], [[self state] webXR]);

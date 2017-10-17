@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>27</string>
+	<string>29</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -33,12 +33,12 @@
 	<string>This application will use location for Augmented Reality.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This application will use the microphone for Augmented Reality.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This application will use Motion for Augmented Reality.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This application will use Photo Library for Augmented Reality.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This application will use Photo Library for Augmented Reality.</string>
-	<key>NSSupportsSuddenTermination</key>
-	<false/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
