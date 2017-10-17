@@ -81,6 +81,8 @@
     
     [[self urlField] setClearButtonMode:UITextFieldViewModeWhileEditing];
     [[self urlField] setReturnKeyType:UIReturnKeyGo];
+    [[self urlField] setKeyboardType:UIKeyboardTypeURL];
+    [[self urlField] setAutocorrectionType:UITextAutocorrectionTypeNo];
     
     [[self urlField] setTextContentType:UITextContentTypeURL];
     [[self urlField] setPlaceholder:@"Search or enter website name"];
