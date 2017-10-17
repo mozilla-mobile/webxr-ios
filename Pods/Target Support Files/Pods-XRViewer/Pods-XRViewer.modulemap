@@ -1,0 +1,6 @@
+framework module Pods_XRViewer {
+  umbrella header "Pods-XRViewer-umbrella.h"
+
+  export *
+  module * { export * }
+}
