@@ -332,12 +332,12 @@
     
     if ([[self recorder] isRecording])
     {
-        AudioServicesPlaySystemSound(END_RECORDING_SOUND_ID);
-        
         [[self recorder] stopRecordingWithHandler:^(RPPreviewViewController * _Nullable previewViewController, NSError * _Nullable error)
          {
              dispatch_async(dispatch_get_main_queue(), ^
                             {
+                                AudioServicesPlaySystemSound(END_RECORDING_SOUND_ID);
+                                
                                 if (error || !previewViewController)
                                 {
                                     DDLogError(@"Error/preview - %@", error);
