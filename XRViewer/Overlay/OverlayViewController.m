@@ -2,6 +2,118 @@
 #import "WebARKHeader.h"
 
 
+
+@interface RecordButton: UIButton
+
+@end
+
+@implementation RecordButton
+
+#define FULL_SIZE       126.0/2
+#define NORMAL_SIZE     99.0/2
+#define SELECTED_SIZE   54.0/2
+#define SELECTED_RADIUS 10.0/2
+#define RING_WIDTH      10.0/2
+#define ANIMATION_DURATION 0.5
+
++ (instancetype)new
+{
+    RecordButton *btn = [super buttonWithType:UIButtonTypeCustom];
+    [[btn shapeLayer] setFillColor:[UIColor whiteColor].CGColor];
+    [btn setFrame:CGRectMake(0, 0, FULL_SIZE, FULL_SIZE)];
+    [[btn layer] addSublayer:[self ringShape]];
+    
+    return btn;
+}
+
++ (Class)layerClass
+{
+    return [CAShapeLayer class];
+}
+
+- (CAShapeLayer *)shapeLayer
+{
+    return (CAShapeLayer *)[self layer];
+}
+
+- (CAShapeLayer *)ringLayer
+{
+    return (CAShapeLayer *)[[[self layer] sublayers] firstObject];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    return [super initWithCoder:aDecoder];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    return [super initWithFrame:frame];
+}
+
+- (void)setSelected:(BOOL)selected
+{
+    [super setSelected:selected];
+    
+    [[self shapeLayer] setPath:selected ? [self selectedPath] : [self normalPath]];
+    
+    [self animate];
+}
+
++ (CAShapeLayer *)ringShape
+{
+    CAShapeLayer *ring = [CAShapeLayer layer];
+    CGRect rect = CGRectMake(0, 0, FULL_SIZE, FULL_SIZE);
+    ring.frame = rect;
+    ring.geometryFlipped = YES;
+    ring.path = CGPathCreateWithRoundedRect(rect, FULL_SIZE / 2, FULL_SIZE / 2, nil);
+    ring.strokeColor = [[UIColor whiteColor] CGColor];
+    ring.fillColor = nil;
+    ring.lineWidth = RING_WIDTH;
+    ring.opacity = .5;
+    ring.lineJoin = kCALineJoinBevel;
+    
+    return ring;
+}
+
+- (CGPathRef)selectedPath
+{
+    CGFloat padding = (FULL_SIZE - SELECTED_SIZE) / 2;
+    CGRect selectedRect = CGRectMake(padding, padding, SELECTED_SIZE, SELECTED_SIZE);
+    return CGPathCreateWithRoundedRect(selectedRect, SELECTED_RADIUS, SELECTED_RADIUS, nil);
+}
+
+- (CGPathRef)normalPath
+{
+    CGFloat padding = (FULL_SIZE - NORMAL_SIZE) / 2;
+    CGRect normalRect = CGRectMake(padding, padding, NORMAL_SIZE, NORMAL_SIZE);
+    return CGPathCreateWithRoundedRect(normalRect, normalRect.size.width / 2, normalRect.size.height / 2, nil);
+}
+
+- (void)setImage:(UIImage *)image forState:(UIControlState)state
+{
+    // stub
+}
+
+- (void)animate
+{
+    [[self shapeLayer] removeAllAnimations];
+    
+    CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"path"];
+    pathAnimation.duration = ANIMATION_DURATION;
+    pathAnimation.fromValue = (id)([self isSelected] ? [self normalPath] : [self selectedPath]);
+    pathAnimation.toValue = (id)([self isSelected] ? [self selectedPath] : [self normalPath]);
+    [[self shapeLayer] addAnimation:pathAnimation forKey:@"pathAnimation"];
+    
+    CABasicAnimation *ringAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+    ringAnimation.duration = ANIMATION_DURATION / 2;
+    ringAnimation.fromValue = [NSNumber numberWithFloat:0.0f];
+    ringAnimation.toValue = [NSNumber numberWithFloat:1.0f];
+    [[self ringLayer] addAnimation:ringAnimation forKey:@"ringAnimation"];
+}
+
+@end
+
 @interface OverlayViewController ()
 
 @property (nonatomic) RecordState recordState;
@@ -9,7 +121,7 @@
 @property (nonatomic) ShowOptions showOptions;
 @property (nonatomic) BOOL microphoneEnabled;
 
-@property (nonatomic, strong) UIButton *recordButton;
+@property (nonatomic, strong) RecordButton *recordButton;
 @property (nonatomic, strong) UIButton *trackingStateButton;
 @property (nonatomic, strong) UIButton *micButton;
 @property (nonatomic, strong) UIButton *showButton;
@@ -271,7 +383,11 @@
             [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
+            // -> animation
             [[self recordButton] setSelected:NO];
+            // -> animation
+            
+            
             [[self micButton] setSelected:_microphoneEnabled];
             
             [[self helperLabel] setText:HELP_TEXT];
@@ -290,8 +406,11 @@
             [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
+            // -> animation
             [[self recordButton] setImage:[UIImage imageNamed:@"camTap"] forState:UIControlStateSelected];
             [[self recordButton] setSelected:YES];
+            // -> animation
+            
             [[self micButton] setSelected:_microphoneEnabled];
             
             [[self helperLabel] setText:HELP_TEXT];
@@ -312,10 +431,16 @@
             [[self animator] animate:[self recordDot] toFade:([self showOptions] & CaptureTime) ? NO : YES];
             [[self animator] animate:[self recordTimingLabel] toFade:([self showOptions] & CaptureTime) ? NO : YES];
             
+            
+            // -> animation
             [[self recordButton] setImage:[UIImage animatedImageWithImages:@[[UIImage imageNamed:@"cam"], [UIImage imageNamed:@"camPress"]]
                                                                   duration:[[self animator] animationDuration] * 2] forState:UIControlStateSelected];
-            [[self animator] startPulseAnimation:[self recordButton]];
+            //[[self animator] startPulseAnimation:[self recordButton]];
             [[self recordButton] setSelected:YES];
+            // -> animation
+            
+            
+            
             [[self micButton] setSelected:_microphoneEnabled];
             
             [[self helperLabel] setText:HELP_TEXT];
@@ -514,7 +639,7 @@
 
 - (void)setup
 {
-    [self setRecordButton:[UIButton buttonWithType:UIButtonTypeCustom]];
+    [self setRecordButton:[RecordButton new]];
     
     [[self view] addSubview:[self recordButton]];
     
