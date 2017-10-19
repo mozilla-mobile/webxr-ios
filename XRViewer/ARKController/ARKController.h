@@ -28,7 +28,7 @@ typedef void (^DidUpdateAnchors)(NSDictionary *);
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 - (UIView *)arkView;
 
-- (void)viewWillTransitionToSize:(CGSize)size;
+- (void)viewWillTransitionToSize:(CGSize)size rotation:(CGFloat)rotation;
 - (void)setShowMode:(ShowMode)mode;
 - (void)setShowOptions:(ShowOptions)options;
     

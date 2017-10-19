@@ -60,6 +60,7 @@
          */
         [self setConfiguration:[ARWorldTrackingConfiguration new]];
         [[self configuration] setPlaneDetection:ARPlaneDetectionHorizontal];
+        [[self configuration] setWorldAlignment:ARWorldAlignmentGravityAndHeading];
         
         Class cls = (type == ARKMetal) ? [ARKMetalController class] : [ARKSceneKitController class];
         id<ARKControllerProtocol> controller = [[cls alloc] initWithSesion:[self session] size:[rootView bounds].size];
@@ -111,7 +112,7 @@
     }
 }
 
-- (void)viewWillTransitionToSize:(CGSize)size
+- (void)viewWillTransitionToSize:(CGSize)size rotation:(CGFloat)rotation
 {
     [[self controller] setHitTestFocusPoint:CGPointMake(size.width / 2, size.height / 2)];
 }
@@ -335,7 +336,7 @@
         }
     }
 }
-   
+
 #pragma mark - ARSessionDelegate
 
 - (void)session:(ARSession *)session didUpdateFrame:(ARFrame *)frame

@@ -18,7 +18,6 @@
 		045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */; };
 		045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */; };
 		045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2EA21F28EE6C0005FF96 /* TouchView.m */; };
-		046098211F960082003B2BF6 /* UserAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = A67A14851F9503CC0011C00C /* UserAnchor.m */; };
 		04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */; };
 		04A806771F3D9ED900B8732C /* PlaneNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806761F3D9ED900B8732C /* PlaneNode.m */; };
 		04A8067A1F3DCAA200B8732C /* AnchorNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806791F3DCAA200B8732C /* AnchorNode.m */; };
@@ -664,12 +663,12 @@
 			baseConfigurationReference = 4728098F8CE4B115F45011A2 /* Pods-XRViewer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 43AQ936H96;
+				DEVELOPMENT_TEAM = RJRT2UUKDY;
 				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.XRViewer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exalt.XRViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -680,12 +679,12 @@
 			baseConfigurationReference = 9A955D97483A67AB0CFF9AA6 /* Pods-XRViewer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 43AQ936H96;
+				DEVELOPMENT_TEAM = RJRT2UUKDY;
 				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.XRViewer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.exalt.XRViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
