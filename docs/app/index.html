@@ -16,17 +16,22 @@
 				line-height: 1.3em;
 			}
 
-			body > section {
-				padding: 1em;
+			section {
+				margin: 0.5rem;
+			}
+			section > * {
+				margin: 0.5rem;
 			}
 
 			h1, h2, h3 {
-				border: 1px solid #221E1D;
+				border: 1px solid #ccc;
 				border-width: 0 0 1px 0;
-				padding-bottom: 0.3em;
+				padding-bottom: 0.2rem;
+				padding-top: 0.5rem;
 				color: #221E1D;
 				font-weight: normal;
 			}
+
 
 
 			/* grid code */
@@ -36,18 +41,19 @@
 				padding:0;
 				margin:0;
 				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
+				flex-flow: wrap row;
+				justify-content: flex-start;
 			}
-			ul > li {
-				max-width: 20em;
+			ul li {
+				max-width: 15em;
 				border: 1px solid #ccc;
 				background-color: #FFFFFF;
 				padding: 0.5em;
-				margin: 0.5em 0;
+				margin: 0.5em;
 			}
-			ul > li img {
+			ul li img {
 				width: 100%;
+				height: auto;
 				margin:0;
 				padding:0;
 			}
@@ -55,10 +61,11 @@
 			/* example item contents */
 			.intro {
 				max-width: 40em;
+				padding: 0.5rem 0;
 			}
 
 			.source {
-				font-size: 0.8em;
+				font-size: 0.8rem;
 			}
 			
 			a {
@@ -67,11 +74,11 @@
 			}
 
 			li a {
-				font-size: 1.3em;
+				font-size: 1.3rem;
 			}
 
 			li p {
-				margin-top: 0.5em;
+				margin-top: 0.5rem;
 			}
 		</style>
 	</head>
@@ -86,7 +93,8 @@
 			<p class="intro">
 				Below you will find examples of WebXR experiences. If you are a developer, click the source code links to see how to use the <a href="https://github.com/mozilla/webxr-polyfill">WebXR polyfill</a> to create your own AR or VR experiences.
 			</p>
-
+		</section>
+		<section>
 			<h2>Examples</h2>
 
 			<ul>
