@@ -1,118 +1,7 @@
 #import "OverlayViewController.h"
 #import "WebARKHeader.h"
-
-
-
-@interface RecordButton: UIButton
-
-@end
-
-@implementation RecordButton
-
-#define FULL_SIZE       126.0/2
-#define NORMAL_SIZE     99.0/2
-#define SELECTED_SIZE   54.0/2
-#define SELECTED_RADIUS 10.0/2
-#define RING_WIDTH      10.0/2
-#define ANIMATION_DURATION 0.5
-
-+ (instancetype)new
-{
-    RecordButton *btn = [super buttonWithType:UIButtonTypeCustom];
-    [[btn shapeLayer] setFillColor:[UIColor whiteColor].CGColor];
-    [btn setFrame:CGRectMake(0, 0, FULL_SIZE, FULL_SIZE)];
-    [[btn layer] addSublayer:[self ringShape]];
-    
-    return btn;
-}
-
-+ (Class)layerClass
-{
-    return [CAShapeLayer class];
-}
-
-- (CAShapeLayer *)shapeLayer
-{
-    return (CAShapeLayer *)[self layer];
-}
-
-- (CAShapeLayer *)ringLayer
-{
-    return (CAShapeLayer *)[[[self layer] sublayers] firstObject];
-}
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
-{
-    return [super initWithCoder:aDecoder];
-}
-
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    return [super initWithFrame:frame];
-}
-
-- (void)setSelected:(BOOL)selected
-{
-    [super setSelected:selected];
-    
-    [[self shapeLayer] setPath:selected ? [self selectedPath] : [self normalPath]];
-    
-    [self animate];
-}
-
-+ (CAShapeLayer *)ringShape
-{
-    CAShapeLayer *ring = [CAShapeLayer layer];
-    CGRect rect = CGRectMake(0, 0, FULL_SIZE, FULL_SIZE);
-    ring.frame = rect;
-    ring.geometryFlipped = YES;
-    ring.path = CGPathCreateWithRoundedRect(rect, FULL_SIZE / 2, FULL_SIZE / 2, nil);
-    ring.strokeColor = [[UIColor whiteColor] CGColor];
-    ring.fillColor = nil;
-    ring.lineWidth = RING_WIDTH;
-    ring.opacity = .5;
-    ring.lineJoin = kCALineJoinBevel;
-    
-    return ring;
-}
-
-- (CGPathRef)selectedPath
-{
-    CGFloat padding = (FULL_SIZE - SELECTED_SIZE) / 2;
-    CGRect selectedRect = CGRectMake(padding, padding, SELECTED_SIZE, SELECTED_SIZE);
-    return CGPathCreateWithRoundedRect(selectedRect, SELECTED_RADIUS, SELECTED_RADIUS, nil);
-}
-
-- (CGPathRef)normalPath
-{
-    CGFloat padding = (FULL_SIZE - NORMAL_SIZE) / 2;
-    CGRect normalRect = CGRectMake(padding, padding, NORMAL_SIZE, NORMAL_SIZE);
-    return CGPathCreateWithRoundedRect(normalRect, normalRect.size.width / 2, normalRect.size.height / 2, nil);
-}
-
-- (void)setImage:(UIImage *)image forState:(UIControlState)state
-{
-    // stub
-}
-
-- (void)animate
-{
-    [[self shapeLayer] removeAllAnimations];
-    
-    CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"path"];
-    pathAnimation.duration = ANIMATION_DURATION;
-    pathAnimation.fromValue = (id)([self isSelected] ? [self normalPath] : [self selectedPath]);
-    pathAnimation.toValue = (id)([self isSelected] ? [self selectedPath] : [self normalPath]);
-    [[self shapeLayer] addAnimation:pathAnimation forKey:@"pathAnimation"];
-    
-    CABasicAnimation *ringAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-    ringAnimation.duration = ANIMATION_DURATION / 2;
-    ringAnimation.fromValue = [NSNumber numberWithFloat:0.0f];
-    ringAnimation.toValue = [NSNumber numberWithFloat:1.0f];
-    [[self ringLayer] addAnimation:ringAnimation forKey:@"ringAnimation"];
-}
-
-@end
+#import "RecordButton.h"
+#import "MicButton.h"
 
 @interface OverlayViewController ()
 
@@ -122,10 +11,11 @@
 @property (nonatomic) BOOL microphoneEnabled;
 
 @property (nonatomic, strong) RecordButton *recordButton;
-@property (nonatomic, strong) UIButton *trackingStateButton;
-@property (nonatomic, strong) UIButton *micButton;
+@property (nonatomic, strong) MicButton *micButton;
+
 @property (nonatomic, strong) UIButton *showButton;
 @property (nonatomic, strong) UIButton *debugButton;
+@property (nonatomic, strong) UIButton *trackingStateButton;
 
 @property (nonatomic, strong) UILabel *recordTimingLabel;
 @property (nonatomic, strong) UIView *recordDot;
@@ -173,7 +63,10 @@
 
 - (void)setShowOptions:(ShowOptions)showOptions withAnimationCompletion:(Completion)completion
 {
-    [self setShowOptions:showOptions];
+#warning Graffiti Design Test
+    showOptions = Full;
+    
+    [self setShowOptions:(showOptions)];
     
     [self updateWithCompletion:completion];
 }
@@ -375,7 +268,7 @@
     {
         case RecordStateIsReady:
             [[self showButton] setEnabled:YES];
-            [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
+             [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self micButton] toFade:([self showOptions] & Mic) ? NO : YES];
             [[self animator] animate:[self helperLabel] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
@@ -454,7 +347,7 @@
                                 NSDate *timerDate = [NSDate dateWithTimeIntervalSince1970:timeInterval];
                                 
                                 NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                                [dateFormatter setDateFormat:@"mm:ss:SS"];
+                                [dateFormatter setDateFormat:@"HH:mm:ss"];
                                 [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0.0]];
                                 
                                 NSString *timeString = [dateFormatter stringFromDate:timerDate];
@@ -485,6 +378,7 @@
         }
         case RecordStateDisabled:
             [[self showButton] setEnabled:YES];
+            
             [[self animator] animate:[self recordButton] toFade:YES];
             [[self animator] animate:[self micButton] toFade:YES];
             [[self animator] animate:[self helperLabel] toFade:NO];
@@ -640,12 +534,9 @@
 - (void)setup
 {
     [self setRecordButton:[RecordButton new]];
-    
     [[self view] addSubview:[self recordButton]];
     
-    [self setMicButton:[UIButton buttonWithType:UIButtonTypeCustom]];
-    [[self micButton] setImage:[UIImage imageNamed:@"micOff"] forState:UIControlStateNormal];
-    [[self micButton] setImage:[UIImage imageNamed:@"mic"] forState:UIControlStateSelected];
+    [self setMicButton:[MicButton new]];
     [[self view] addSubview:[self micButton]];
     
     [self setTrackingStateButton:[UIButton buttonWithType:UIButtonTypeCustom]];
@@ -657,20 +548,21 @@
     [[self showButton] setImage:[UIImage imageNamed:@"3DShow"] forState:UIControlStateSelected];
     [[self view] addSubview:[self showButton]];
     
-    [self setDebugButton:[UIButton buttonWithType:UIButtonTypeCustom]];
+   /* [self setDebugButton:[UIButton buttonWithType:UIButtonTypeCustom]];
     [[self debugButton] setImage:[UIImage imageNamed:@"settings"] forState:UIControlStateNormal];
-    [[self view] addSubview:[self debugButton]];
+    [[self view] addSubview:[self debugButton]];*/
     
-    [self setRecordDot:[[UIView alloc] initWithFrame:dotFrameIn([[self view] bounds])]];
+    /*[self setRecordDot:[[UIView alloc] initWithFrame:dotFrameIn([[self view] bounds])]];
     [[[self recordDot] layer] setCornerRadius:(DOT_SIZE / 2.0)];
     [[self recordDot] setBackgroundColor:[UIColor redColor]];
-    [[self view] addSubview:[self recordDot]];
+    [[self view] addSubview:[self recordDot]];*/
     
     [self setRecordTimingLabel:[[UILabel alloc] initWithFrame:recordLabelFrameIn([[self view] bounds])]];
-    [[self recordTimingLabel] setFont:[UIFont systemFontOfSize:12]];
-    [[self recordTimingLabel] setTextAlignment:NSTextAlignmentLeft];
-    [[self recordTimingLabel] setTextColor:[UIColor whiteColor]];
-    [[self recordTimingLabel] setBackgroundColor:[UIColor clearColor]];
+    [[self recordTimingLabel] setFont:[UIFont boldSystemFontOfSize:15]];
+    [[self recordTimingLabel] setTextAlignment:NSTextAlignmentCenter];
+    [[self recordTimingLabel] setTextColor:[UIColor blackColor]];
+    [[self recordTimingLabel] setBackgroundColor:[UIColor colorWithWhite:1 alpha:0.5]];
+    [[[self recordTimingLabel] layer] setCornerRadius:5];
     [[self recordTimingLabel] setClipsToBounds:YES];
     [[self view] addSubview:[self recordTimingLabel]];
     
@@ -682,13 +574,13 @@
     [[self helperLabel] setClipsToBounds:YES];
     [[self view] addSubview:[self helperLabel]];
     
-    [self setBuildLabel:[[UILabel alloc] initWithFrame:buildFrameIn([[self view] bounds])]];
+    /*[self setBuildLabel:[[UILabel alloc] initWithFrame:buildFrameIn([[self view] bounds])]];
     [[self buildLabel] setFont:[UIFont boldSystemFontOfSize:12]];
     [[self buildLabel] setTextAlignment:NSTextAlignmentCenter];
     [[self buildLabel] setTextColor:[UIColor whiteColor]];
     [[self buildLabel] setBackgroundColor:[UIColor colorWithWhite:0 alpha:.0]];
     [[self buildLabel] setText:[self versionBuild]];
-    [[self view] addSubview:[self buildLabel]];
+    [[self view] addSubview:[self buildLabel]];*/
     
     [self viewWillTransitionToSize:[[self view] bounds].size];
 }

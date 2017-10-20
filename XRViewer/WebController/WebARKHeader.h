@@ -9,7 +9,7 @@
 #define SERVER_STOP_CODE 600
 
 // Start URL
-#define WEB_URL @"https://mozilla-mobile.github.io/webxr-ios/app/"
+#define WEB_URL @"https://andyps.github.io/demo/camapp/webxr/"
 
 // ##############################  MESSAGES
 
