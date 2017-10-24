@@ -13,6 +13,8 @@
 #define CAMERA_SHUTTER_SOUND_ID  1108
 #define BEGIN_RECORDING_SOUND_ID 1113
 #define END_RECORDING_SOUND_ID   1114
+#define MIC_ENABLE  1100
+#define MIC_DISABLE 1100
 
 @interface RecordController() <RPPreviewViewControllerDelegate, RPScreenRecorderDelegate, UIPopoverPresentationControllerDelegate>
 {
@@ -243,6 +245,8 @@
         [self requestAuthorizationWithCompletion:NULL];
         return;
     }
+    
+    AudioServicesPlaySystemSound(enabled? MIC_ENABLE : MIC_DISABLE);
     
     [self setMicrophoneEnabled:enabled];
 }
