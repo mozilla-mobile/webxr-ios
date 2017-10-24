@@ -5,6 +5,7 @@
 
 @interface OverlayViewController ()
 
+@property (nonatomic) Application application;
 @property (nonatomic) RecordState recordState;
 @property (nonatomic) ShowMode showMode;
 @property (nonatomic) ShowOptions showOptions;
@@ -18,7 +19,6 @@
 @property (nonatomic, strong) UIButton *trackingStateButton;
 
 @property (nonatomic, strong) UILabel *recordTimingLabel;
-@property (nonatomic, strong) UIView *recordDot;
 @property (nonatomic, strong) UILabel *helperLabel;
 @property (nonatomic, strong) UILabel *buildLabel;
 @property (nonatomic, strong) NSDate *startRecordDate;
@@ -63,9 +63,6 @@
 
 - (void)setShowOptions:(ShowOptions)showOptions withAnimationCompletion:(Completion)completion
 {
-#warning Graffiti Design Test
-    showOptions = Full;
-    
     [self setShowOptions:(showOptions)];
     
     [self updateWithCompletion:completion];
@@ -94,7 +91,7 @@
 {
     CGRect updRect = CGRectMake(0, 0, size.width, size.height);
     
-    if ([self showMode] >= ShowMulti)
+    if (([self showMode] >= ShowMulti) && ([self application] == WebXR))
     {
         if ([self showOptions] & Browser)
         {
@@ -108,8 +105,8 @@
     }
     
     __weak typeof (self) blockSelf = self;
-    [[self animator] animate:[self micButton] toFrame:micFrameIn(updRect)];
-    [[self animator] animate:[self recordButton] toFrame:recordFrameIn(updRect) completion:^(BOOL f)
+    [[self animator] animate:[self micButton] toFrame:micFrameIn(updRect, [self application])];
+    [[self animator] animate:[self recordButton] toFrame:recordFrameIn(updRect, [self application]) completion:^(BOOL f)
      {
          if ([blockSelf recordState] == RecordStatePhoto)
          {
@@ -133,15 +130,14 @@
                        });
     }
     
-    [[self helperLabel] setFrame:helperLabelFrameIn(updRect)];
+    [[self helperLabel] setFrame:helperLabelFrameIn(updRect, [self application])];
     [[self helperLabel] setTransform:CGAffineTransformMakeRotation(-M_PI/2)];
     
-    [[self trackingStateButton] setFrame:trackFrameIn(updRect)];
-    [[self showButton] setFrame:showFrameIn(updRect)];
-    [[self debugButton] setFrame:debugFrameIn(updRect)];
-    [[self recordDot] setFrame:dotFrameIn(updRect)];
-    [[self recordTimingLabel] setFrame:recordLabelFrameIn(updRect)];
-    [[self buildLabel] setFrame:buildFrameIn(updRect)];
+    [[self trackingStateButton] setFrame:trackFrameIn(updRect, [self application])];
+    [[self showButton] setFrame:showFrameIn(updRect, [self application])];
+    [[self debugButton] setFrame:debugFrameIn(updRect, [self application])];
+    [[self recordTimingLabel] setFrame:recordLabelFrameIn(updRect, [self application])];
+    [[self buildLabel] setFrame:buildFrameIn(updRect, [self application])];
     
     if ([self recordState] == RecordStateAuthDisabled)
     {
@@ -149,15 +145,6 @@
         [[self recordButton] setImage:[UIImage imageNamed:@"camDisabled"] forState:UIControlStateSelected];
         [[self micButton] setImage:[UIImage imageNamed:@"micDisabled"] forState:UIControlStateNormal];
         [[self micButton] setImage:[UIImage imageNamed:@"micDisabled"] forState:UIControlStateSelected];
-    }
-    else
-    {
-        [[self recordButton] setImage:[UIImage imageNamed:@"cam"] forState:UIControlStateNormal];
-        [[self recordButton] setImage:[UIImage animatedImageWithImages:@[[UIImage imageNamed:@"cam"], [UIImage imageNamed:@"camPress"]]
-                                                              duration:[[self animator] animationDuration] ]
-                             forState:UIControlStateSelected];
-        [[self micButton] setImage:[UIImage imageNamed:@"micOff"] forState:UIControlStateNormal];
-        [[self micButton] setImage:[UIImage imageNamed:@"mic"] forState:UIControlStateSelected];
     }
 }
 
@@ -189,7 +176,7 @@
             [[self animator] animate:[self helperLabel] toFade:YES];
             
             [[self animator] animate:[self buildLabel] toFade:YES];
-            [[self animator] animate:[self recordDot] toFade:YES];
+            [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
             [[self timer] invalidate];
             break;
@@ -212,7 +199,6 @@
             [[self animator] animate:[self helperLabel] toFade:YES];
             [[self animator] animate:[self debugButton] toFade:YES];
             [[self animator] animate:[self buildLabel] toFade:YES];
-            [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
             [[self timer] invalidate];
@@ -220,17 +206,32 @@
         }
         case ShowMulti:
         {
-            [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
-             {
-                 dispatch_async(dispatch_get_main_queue(), ^
-                                {
-                                    if (completion)
+            if ([self application] == WebXR)
+            {
+                [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
+                 {
+                     dispatch_async(dispatch_get_main_queue(), ^
                                     {
-                                        completion(f);
-                                    }
-                                });
-             }];
-            [[self showButton] setSelected:YES];
+                                        if (completion)
+                                        {
+                                            completion(f);
+                                        }
+                                    });
+                 }];
+                [[self showButton] setSelected:YES];
+            }
+            else
+            {
+                [[self showButton] setHidden:YES];
+                dispatch_async(dispatch_get_main_queue(), ^
+                               {
+                                   if (completion)
+                                   {
+                                       completion(YES);
+                                   }
+                               });
+            }
+            
             [self updateWithRecordStateInDebug:NO];
             break;
         }
@@ -268,22 +269,18 @@
     {
         case RecordStateIsReady:
             [[self showButton] setEnabled:YES];
-             [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
+            [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self micButton] toFade:([self showOptions] & Mic) ? NO : YES];
             [[self animator] animate:[self helperLabel] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
             [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
-            [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
-            // -> animation
             [[self recordButton] setSelected:NO];
-            // -> animation
-            
             
             [[self micButton] setSelected:_microphoneEnabled];
             
-            [[self helperLabel] setText:HELP_TEXT];
+            [[self helperLabel] setText:HELP_TEXT([self application])];
             [[self helperLabel] setTextColor:[UIColor whiteColor]];
             [[self timer] invalidate];
             [[self animator] stopPulseAnimation:[self recordButton]];
@@ -296,17 +293,14 @@
             [[self animator] animate:[self helperLabel] toFade:YES];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
             [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
-            [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
-            // -> animation
             [[self recordButton] setImage:[UIImage imageNamed:@"camTap"] forState:UIControlStateSelected];
             [[self recordButton] setSelected:YES];
-            // -> animation
             
             [[self micButton] setSelected:_microphoneEnabled];
             
-            [[self helperLabel] setText:HELP_TEXT];
+            [[self helperLabel] setText:HELP_TEXT([self application])];
             [[self helperLabel] setTextColor:[UIColor whiteColor]];
             [[self timer] invalidate];
             break;
@@ -321,22 +315,13 @@
             [[self animator] animate:[self helperLabel] toFade:YES];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
             [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
-            [[self animator] animate:[self recordDot] toFade:([self showOptions] & CaptureTime) ? NO : YES];
             [[self animator] animate:[self recordTimingLabel] toFade:([self showOptions] & CaptureTime) ? NO : YES];
             
-            
-            // -> animation
-            [[self recordButton] setImage:[UIImage animatedImageWithImages:@[[UIImage imageNamed:@"cam"], [UIImage imageNamed:@"camPress"]]
-                                                                  duration:[[self animator] animationDuration] * 2] forState:UIControlStateSelected];
-            //[[self animator] startPulseAnimation:[self recordButton]];
             [[self recordButton] setSelected:YES];
-            // -> animation
-            
-            
             
             [[self micButton] setSelected:_microphoneEnabled];
             
-            [[self helperLabel] setText:HELP_TEXT];
+            [[self helperLabel] setText:HELP_TEXT([self application])];
             [[self helperLabel] setTextColor:[UIColor whiteColor]];
             
             [self setStartRecordDate:[NSDate date]];
@@ -366,7 +351,6 @@
             [[self animator] animate:[self helperLabel] toFade:isIpad && ([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self buildLabel] toFade:isIpad && (debug && ([self showOptions] & BuildNumber)) ? NO : YES];
             [[self animator] animate:[self debugButton] toFade:isIpad && ([self showOptions] & Debug) ? NO : YES];
-            [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
             [[self recordButton] setSelected:NO];
@@ -384,7 +368,6 @@
             [[self animator] animate:[self helperLabel] toFade:NO];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
             [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
-            [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
             [[self helperLabel] setText:DISABLED_TEXT];
@@ -400,7 +383,6 @@
             [[self animator] animate:[self helperLabel] toFade:NO];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
             [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
-            [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
             [[self helperLabel] setText:GRANT_TEXT];
@@ -417,7 +399,6 @@
             [[self animator] animate:[self helperLabel] toFade:NO];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
             [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
-            [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
             [[self recordButton] setSelected:NO];
@@ -540,7 +521,7 @@
     [[self view] addSubview:[self micButton]];
     
     [self setTrackingStateButton:[UIButton buttonWithType:UIButtonTypeCustom]];
-    [[self trackingStateButton] setFrame:trackFrameIn([[self view] bounds])];
+    [[self trackingStateButton] setFrame:trackFrameIn([[self view] bounds], WebXR)];
     [[self view] addSubview:[self trackingStateButton]];
     
     [self setShowButton:[UIButton buttonWithType:UIButtonTypeCustom]];
@@ -548,16 +529,11 @@
     [[self showButton] setImage:[UIImage imageNamed:@"3DShow"] forState:UIControlStateSelected];
     [[self view] addSubview:[self showButton]];
     
-   /* [self setDebugButton:[UIButton buttonWithType:UIButtonTypeCustom]];
+    [self setDebugButton:[UIButton buttonWithType:UIButtonTypeCustom]];
     [[self debugButton] setImage:[UIImage imageNamed:@"settings"] forState:UIControlStateNormal];
-    [[self view] addSubview:[self debugButton]];*/
+    [[self view] addSubview:[self debugButton]];
     
-    /*[self setRecordDot:[[UIView alloc] initWithFrame:dotFrameIn([[self view] bounds])]];
-    [[[self recordDot] layer] setCornerRadius:(DOT_SIZE / 2.0)];
-    [[self recordDot] setBackgroundColor:[UIColor redColor]];
-    [[self view] addSubview:[self recordDot]];*/
-    
-    [self setRecordTimingLabel:[[UILabel alloc] initWithFrame:recordLabelFrameIn([[self view] bounds])]];
+    [self setRecordTimingLabel:[[UILabel alloc] initWithFrame:recordLabelFrameIn([[self view] bounds], WebXR)]];
     [[self recordTimingLabel] setFont:[UIFont boldSystemFontOfSize:15]];
     [[self recordTimingLabel] setTextAlignment:NSTextAlignmentCenter];
     [[self recordTimingLabel] setTextColor:[UIColor blackColor]];
@@ -566,7 +542,7 @@
     [[self recordTimingLabel] setClipsToBounds:YES];
     [[self view] addSubview:[self recordTimingLabel]];
     
-    [self setHelperLabel:[[UILabel alloc] initWithFrame:helperLabelFrameIn([[self view] bounds])]];
+    [self setHelperLabel:[[UILabel alloc] initWithFrame:helperLabelFrameIn([[self view] bounds], WebXR)]];
     [[self helperLabel] setFont:[UIFont systemFontOfSize:12]];
     [[self helperLabel] setTextAlignment:NSTextAlignmentCenter];
     [[self helperLabel] setTextColor:[UIColor whiteColor]];
@@ -574,13 +550,13 @@
     [[self helperLabel] setClipsToBounds:YES];
     [[self view] addSubview:[self helperLabel]];
     
-    /*[self setBuildLabel:[[UILabel alloc] initWithFrame:buildFrameIn([[self view] bounds])]];
+    [self setBuildLabel:[[UILabel alloc] initWithFrame:buildFrameIn([[self view] bounds], WebXR)]];
     [[self buildLabel] setFont:[UIFont boldSystemFontOfSize:12]];
     [[self buildLabel] setTextAlignment:NSTextAlignmentCenter];
     [[self buildLabel] setTextColor:[UIColor whiteColor]];
     [[self buildLabel] setBackgroundColor:[UIColor colorWithWhite:0 alpha:.0]];
     [[self buildLabel] setText:[self versionBuild]];
-    [[self view] addSubview:[self buildLabel]];*/
+    [[self view] addSubview:[self buildLabel]];
     
     [self viewWillTransitionToSize:[[self view] bounds].size];
 }

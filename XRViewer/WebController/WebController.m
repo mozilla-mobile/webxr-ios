@@ -106,20 +106,26 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
-- (void)setupForWebXR:(BOOL)webXR
+- (void)setupForApp:(Application)app
 {
     dispatch_async(dispatch_get_main_queue(), ^
        {
            CGRect rect = [[[self webView] superview] bounds];
            
-           if (webXR == NO)
+           UIColor *backColor;
+           
+           if (app == Trivial)
            {
                rect.origin.y += [[self barView] bounds].size.height;
+               backColor = [UIColor whiteColor];
+           }
+           else
+           {
+               backColor = [UIColor clearColor];
            }
            
            [[self animator] animate:[self webView] toFrame:rect];
            
-           UIColor *backColor = webXR ? [UIColor clearColor] : [UIColor whiteColor];
            [[[self webView] superview] setBackgroundColor:backColor];
            
            [[self animator] animate:[[self webView] superview] toColor:backColor];

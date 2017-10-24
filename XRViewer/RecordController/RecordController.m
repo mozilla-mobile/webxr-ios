@@ -276,7 +276,8 @@
          {
              DDLogDebug(@"SHOT");
              
-             UIImage *image = [blockSelf imageTFromSampleBuffer:sampleBuffer];
+             UIImage *image = [blockSelf imageFromSampleBuffer:sampleBuffer];
+             
              [[blockSelf recorder] stopCaptureWithHandler:^(NSError * _Nullable error)
               {
                   dispatch_async(dispatch_get_main_queue(), ^
@@ -355,7 +356,7 @@
                                         
                                         [pc setDelegate:self];
                                         [pc setSourceView:[previewViewController view]];
-                                        CGRect rect = recordFrameIn([[UIScreen mainScreen] bounds]);
+                                        CGRect rect = recordFrameIn([[UIScreen mainScreen] bounds], WebXR);
                                         CGFloat statusBarInfluence = 20;
                                         rect.origin.x -= statusBarInfluence / 2;
                                         rect.origin.y -= statusBarInfluence / 2;
@@ -460,79 +461,17 @@
     DDLogDebug(@"prepareForPopoverPresentation");
 }
 
-// https://stackoverflow.com/questions/13201084/how-to-convert-a-kcvpixelformattype-420ypcbcr8biplanarfullrange-buffer-to-uiimag
-- (UIImage *)imageTFromSampleBuffer:(CMSampleBufferRef) sampleBuffer
+- (UIImage *)imageFromSampleBuffer:(CMSampleBufferRef)buffer
 {
-    CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(buffer);
+    CIImage *ciimage = [CIImage imageWithCVPixelBuffer:pixelBuffer];
+    CIContext *context = [[CIContext alloc] initWithOptions:nil];
     
-    CVPixelBufferLockBaseAddress(imageBuffer,0);
+    CGImageRef cgImage = [context createCGImage:ciimage fromRect:ciimage.extent];
+    UIImage *uiimage = [UIImage imageWithCGImage:cgImage];
+    CGImageRelease(cgImage);
     
-    uint8_t *baseAddress = (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer);
-    
-    size_t width = CVPixelBufferGetWidth(imageBuffer);
-    size_t height = CVPixelBufferGetHeight(imageBuffer);
-    size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
-    
-    CVPlanarPixelBufferInfo_YCbCrBiPlanar *bufferInfo = (CVPlanarPixelBufferInfo_YCbCrBiPlanar *)baseAddress;
-    uint8_t* cbrBuff = (uint8_t *)CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1);
-    baseAddress = (uint8_t *)CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0);
-    
-    UIImage *image = [self makeUIImage:baseAddress cBCrBuffer:cbrBuff bufferInfo:bufferInfo width:width height:height bytesPerRow:bytesPerRow];
-    
-    CVPixelBufferUnlockBaseAddress(imageBuffer,0);
-    
-    return image;
-}
-
-- (UIImage *)makeUIImage:(uint8_t *)inBaseAddress cBCrBuffer:(uint8_t*)cbCrBuffer bufferInfo:(CVPlanarPixelBufferInfo_YCbCrBiPlanar *)inBufferInfo width:(size_t)inWidth height:(size_t)inHeight bytesPerRow:(size_t)inBytesPerRow
-{
-    NSUInteger yPitch = EndianU32_BtoN(inBufferInfo->componentInfoY.rowBytes);
-    uint8_t *rgbBuffer = (uint8_t *)malloc(inWidth * inHeight * 4);
-    NSUInteger cbCrPitch = EndianU32_BtoN(inBufferInfo->componentInfoCbCr.rowBytes);
-    uint8_t *yBuffer = (uint8_t *)inBaseAddress;
-    int bytesPerPixel = 4;
-    
-    for(int y = 0; y < inHeight; y++)
-    {
-        uint8_t *rgbBufferLine = &rgbBuffer[y * inWidth * bytesPerPixel];
-        uint8_t *yBufferLine = &yBuffer[y * yPitch];
-        uint8_t *cbCrBufferLine = &cbCrBuffer[(y >> 1) * cbCrPitch];
-        
-        for(int x = 0; x < inWidth; x++)
-        {
-            int16_t y = yBufferLine[x];
-            int16_t cb = cbCrBufferLine[x & ~1] - 128;
-            int16_t cr = cbCrBufferLine[x | 1] - 128;
-            
-            uint8_t *rgbOutput = &rgbBufferLine[x*bytesPerPixel];
-            
-            int16_t r = (int16_t)roundf( y + cr *  1.4 );
-            int16_t g = (int16_t)roundf( y + cb * -0.343 + cr * -0.711 );
-            int16_t b = (int16_t)roundf( y + cb *  1.765);
-            
-            //ABGR
-            rgbOutput[0] = 0xff;
-            rgbOutput[1] = clamp(b);
-            rgbOutput[2] = clamp(g);
-            rgbOutput[3] = clamp(r);
-        }
-    }
-    
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef context = CGBitmapContextCreate(rgbBuffer, inWidth, inHeight, 8,
-                                                 inWidth*bytesPerPixel, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedLast);
-    
-    CGImageRef quartzImage = CGBitmapContextCreateImage(context);
-    
-    CGContextRelease(context);
-    CGColorSpaceRelease(colorSpace);
-    
-    UIImage *image = [UIImage imageWithCGImage:quartzImage];
-    
-    CGImageRelease(quartzImage);
-    free(rgbBuffer);
-    
-    return  image;
+    return uiimage;
 }
 
 @end

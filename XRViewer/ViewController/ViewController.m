@@ -123,14 +123,14 @@ typedef void (^UICompletion)(void);
          [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
      }];
     
-    [[self stateController] setOnXRUpdate:^(BOOL xr)
+    [[self stateController] setOnAppUpdate:^(Application app)
      {
-         if (xr)
+         if (app > Trivial)
          {
              [blockSelf setupARKController];
              [blockSelf setupLocationController];
              
-             [[blockSelf stateController] setShowMode:ShowSingle];
+             [[blockSelf stateController] setShowMode:(app == WebXR ? ShowSingle : ShowMulti)];
          }
          else
          {
@@ -139,7 +139,8 @@ typedef void (^UICompletion)(void);
              [[blockSelf stateController] setShowMode:ShowNothing];
          }
          
-         [[blockSelf webController] setupForWebXR:xr];
+         [[blockSelf webController] setupForApp:app];
+         [[blockSelf overlayController] setApplication:app];
      }];
     
     [[self stateController] setOnReachable:^(NSString *url)
@@ -417,8 +418,8 @@ typedef void (^UICompletion)(void);
     // xr
     [[self webController] setOnInit:^(NSDictionary *uiOptionsDict)
      {
-         [[blockSelf stateController] setWebXR:YES];
-         [[blockSelf stateController] setShowMode:ShowSingle];
+         [[blockSelf stateController] setApplication:applicationFormDict(uiOptionsDict)];
+         //[[blockSelf stateController] setShowMode:ShowSingle];
          [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
          
          [[blockSelf stateController] applyOnEnterForegroundAction];
@@ -493,6 +494,7 @@ typedef void (^UICompletion)(void);
     else
     {
         [[self webController] loadURL:WEB_URL];
+        [[self webController] setupForApp:[[[self stateController] state] app]];
     }
 }
 
@@ -566,6 +568,7 @@ typedef void (^UICompletion)(void);
     
     [[self overlayController] setAnimator:[self animator]];
     
+    [[self overlayController] setApplication:[[[self stateController] state] app]];
     [[self overlayController] setMode:[[[self stateController] state] showMode]];
     [[self overlayController] setOptions:[[[self stateController] state] showOptions]];
     [[self overlayController] setMicEnabled:[[[self stateController] state] micEnabled]];

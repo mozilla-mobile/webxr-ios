@@ -84,9 +84,10 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 {
     if ([[self state] app] == app) {return;}
     
+    [self setShowMode:(app == WebXR ? ShowSingle : ShowMulti)];
     [self setState:[[self state] updatedApplication:app]];
     
-    RUN_ACTION_ASYNC_MAIN([self onXRUpdate], [[self state] app]);
+    RUN_ACTION_ASYNC_MAIN([self onAppUpdate], [[self state] app]);
 }
 
 - (void)setARRequest:(NSDictionary *)dict
@@ -128,7 +129,7 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 
 - (BOOL)shouldSendARKData
 {
-    return ([[self state] app] > Unknown) && [[self state] aRRequest];
+    return ([[self state] app] > Trivial) && [[self state] aRRequest];
 }
 
 - (void)invertMic

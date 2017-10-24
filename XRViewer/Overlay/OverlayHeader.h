@@ -32,10 +32,6 @@ typedef void (^HotAction)(BOOL); // long
 #define RECORD_LABEL_HEIGHT 45/screenKoef
 
 
-
-
-
-
 #define RECORD_OFFSET_Y 25.5
 
 #define TRACK_SIZE_W 78
@@ -49,7 +45,7 @@ typedef void (^HotAction)(BOOL); // long
 #define URL_BAR_HEIGHT 49
 
 #warning LOCALIZATION
-#define HELP_TEXT     nil//@"Tap for photo, hold for video"
+#define HELP_TEXT(application) (application == Graffiti ? nil : @"Tap for photo, hold for video")
 #define ERROR_TEXT    @"Some error has occurred while capturing"
 #define DISABLED_TEXT @"Сapturing is disabled now"
 #define GRANT_TEXT    @"Provide access to camera to make photos / videos"
@@ -59,23 +55,39 @@ typedef void (^HotAction)(BOOL); // long
 
 
 
-static inline CGRect recordFrameIn(CGRect viewRect)
+static inline CGRect recordFrameIn(CGRect viewRect, Application app)
 {
+    if (app == Graffiti)
+    {
+        return CGRectMake(viewRect.size.width - RECORD_SIZE - RECORD_OFFSET,
+                          viewRect.size.height / 2 - RECORD_SIZE / 2,
+                          RECORD_SIZE,
+                          RECORD_SIZE);
+    }
+    
     return CGRectMake(viewRect.size.width - RECORD_SIZE - RECORD_OFFSET,
-                      viewRect.size.height / 2 - RECORD_SIZE / 2,
+                      viewRect.origin.y + (viewRect.size.height - viewRect.origin.y) / 2 - RECORD_SIZE / 2,
                       RECORD_SIZE,
                       RECORD_SIZE);
 }
 
-static inline CGRect micFrameIn(CGRect viewRect)
+static inline CGRect micFrameIn(CGRect viewRect, Application app)
 {
-    return CGRectMake(MIC_OFFSET,
-                      viewRect.size.height - MIC_OFFSET - MIC_SIZE,
+    if (app == Graffiti)
+    {
+        return CGRectMake(MIC_OFFSET,
+                          viewRect.size.height - MIC_OFFSET - MIC_SIZE,
+                          MIC_SIZE,
+                          MIC_SIZE);
+    }
+    
+    return CGRectMake(viewRect.size.width - RECORD_SIZE - RECORD_OFFSET + (RECORD_SIZE - MIC_SIZE) / 2,
+                      viewRect.origin.y + RECORD_OFFSET_Y,
                       MIC_SIZE,
                       MIC_SIZE);
 }
 
-static inline CGRect recordLabelFrameIn(CGRect viewRect)
+static inline CGRect recordLabelFrameIn(CGRect viewRect, Application app)
 {
     return CGRectMake(viewRect.size.width / 2 - RECORD_LABEL_WIDTH / 2,
                       RECORD_LABEL_OFFSET,
@@ -83,52 +95,60 @@ static inline CGRect recordLabelFrameIn(CGRect viewRect)
                       RECORD_LABEL_HEIGHT);
 }
 
-static inline CGRect helperLabelFrameIn(CGRect viewRect)
+static inline CGRect helperLabelFrameIn(CGRect viewRect, Application app)
 {
-    return CGRectMake(viewRect.size.width - HELP_LABEL_HEIGHT - 5, // rotate
+    return CGRectMake(viewRect.size.width - HELP_LABEL_HEIGHT - 2, // rotate
                       viewRect.origin.y, // rotate
                       HELP_LABEL_HEIGHT, // rotate
                       viewRect.size.height - viewRect.origin.y); // rotate
 }
 
-
-
-
-
-static inline CGRect debugFrameIn(CGRect viewRect)
+static inline CGRect debugFrameIn(CGRect viewRect, Application app)
 {
+    if (app == Graffiti)
+    {
+        return CGRectZero;
+    }
+    
     return CGRectMake(RECORD_OFFSET,
                       viewRect.size.height - RECORD_OFFSET_Y - MIC_SIZE,
                       MIC_SIZE,
                       MIC_SIZE);
 }
 
-static inline CGRect showFrameIn(CGRect viewRect)
+static inline CGRect showFrameIn(CGRect viewRect, Application app)
 {
+    if (app == Graffiti)
+    {
+        return CGRectZero;
+    }
+    
     return CGRectMake(viewRect.size.width - RECORD_OFFSET - MIC_SIZE,
                       viewRect.size.height - RECORD_OFFSET_Y - MIC_SIZE,
                       MIC_SIZE,
                       MIC_SIZE);
 }
 
-static inline CGRect trackFrameIn(CGRect viewRect)
+static inline CGRect trackFrameIn(CGRect viewRect, Application app)
 {
+    if (app == Graffiti)
+    {
+        return CGRectZero;
+    }
+    
     return CGRectMake(viewRect.size.width / 2 - TRACK_SIZE_W / 2,
                       viewRect.size.height - RECORD_OFFSET_Y - MIC_SIZE / 2 - TRACK_SIZE_H / 2,
                       TRACK_SIZE_W,
                       TRACK_SIZE_H);
 }
 
-static inline CGRect dotFrameIn(CGRect viewRect)
+static inline CGRect buildFrameIn(CGRect viewRect, Application app)
 {
-    return CGRectMake(viewRect.size.width / 2 - DOT_SIZE / 2,
-                      viewRect.origin.y + DOT_OFFSET_Y,
-                      DOT_SIZE,
-                      DOT_SIZE);
-}
-
-static inline CGRect buildFrameIn(CGRect viewRect)
-{
+    if (app == Graffiti)
+    {
+        return CGRectZero;
+    }
+    
     return CGRectMake(viewRect.size.width / 2 - RECORD_LABEL_WIDTH / 2,
                       viewRect.size.height - RECORD_LABEL_HEIGHT - 4,
                       RECORD_LABEL_WIDTH,

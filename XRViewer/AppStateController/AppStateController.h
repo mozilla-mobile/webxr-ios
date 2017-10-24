@@ -3,6 +3,7 @@
 
 typedef void (^ASValueChangedAction)(NSUInteger);
 typedef void (^ASBoolChangedAction)(BOOL);
+typedef void (^ASAppChangedAction)(Application);
 typedef void (^ASOnRequestAction)(NSDictionary *);
 typedef void (^ASURLAction)(NSString *);
 
@@ -14,7 +15,7 @@ typedef void (^ASURLAction)(NSString *);
 @property(nonatomic, copy) ASValueChangedAction onOptionsUpdate;
 @property(nonatomic, copy) ASValueChangedAction onRecordUpdate;
 
-@property(nonatomic, copy) ASBoolChangedAction onXRUpdate;
+@property(nonatomic, copy) ASAppChangedAction  onAppUpdate;
 @property(nonatomic, copy) ASBoolChangedAction onMicUpdate;
 @property(nonatomic, copy) ASBoolChangedAction onDebug;
 @property(nonatomic, copy) ASBoolChangedAction onInterruption;

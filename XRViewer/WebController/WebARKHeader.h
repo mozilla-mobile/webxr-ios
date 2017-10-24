@@ -9,7 +9,7 @@
 #define SERVER_STOP_CODE 600
 
 // Start URL
-#define WEB_URL @"https://andyps.github.io/demo/camapp/webxr/"
+#define WEB_URL @"https://exaltcg.github.io/webxr-polyfill/" //*/@"https://andyps.github.io/demo/camapp/webxr/"
 
 // ##############################  MESSAGES
 
@@ -138,6 +138,8 @@ static inline NSArray * jsMessages()
 #define WEB_AR_TRANSFORM_Z_OPTION @"z"
 #define WEB_AR_TRANSFORM_W_OPTION @"w"
 
+#define WEB_AR_APPLICATION_OPTION @"application"
+
 #define WEB_AR_TYPE_OPTION      @"type"
 #define WEB_AR_POINT_OPTION     @"point"
 #define WEB_AR_PLANE_OPTION     @"plane"
@@ -182,6 +184,24 @@ typedef NS_ENUM(NSInteger, ErrorCodes)
     InvalidRegion
 };
 
+#define WEB_AR_GRAFFITI_APPLICATION @"Graffiti"
+
+static inline Application applicationFormDict(NSDictionary *dict)
+{
+    NSDictionary *customDict = dict[WEB_AR_UI_CUSTOM_OPTION];
+    
+    if (customDict == nil)
+    {
+        return Trivial;
+    }
+    else if ([customDict[WEB_AR_APPLICATION_OPTION] isEqualToString:WEB_AR_GRAFFITI_APPLICATION])
+    {
+        return Graffiti;
+    }
+    
+    return WebXR;
+}
+    
 static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
 {
     if (dict == nil)
@@ -223,7 +243,7 @@ static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
     {
         options = options | Capture;
     }
-    
+//#warning TEMP APPLICATION!
     if ([common[WEB_AR_UI_MIC_OPTION] boolValue])
     {
         options = options | Mic;

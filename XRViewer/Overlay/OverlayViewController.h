@@ -7,6 +7,7 @@
 
 @property (nonatomic, strong) Animator *animator;
 
+- (void)setApplication:(Application)app;
 - (void)setShowMode:(ShowMode)showMode withAnimationCompletion:(Completion)completion;
 - (void)setShowOptions:(ShowOptions)showOptions withAnimationCompletion:(Completion)completion;
 - (void)setRecordState:(RecordState)recordState withAnimationCompletion:(Completion)completion;

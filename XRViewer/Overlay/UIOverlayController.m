@@ -14,9 +14,10 @@
 @property (nonatomic, copy) HotAction showAction;
 @property (nonatomic, copy) HotAction debugAction;
 
-@property(nonatomic) ShowMode showMode;
-@property(nonatomic) ShowOptions showOptions;
-@property(nonatomic) RecordState recordState;
+@property (nonatomic) Application application;
+@property (nonatomic) ShowMode showMode;
+@property (nonatomic) ShowOptions showOptions;
+@property (nonatomic) RecordState recordState;
 
 @end
 
@@ -71,8 +72,20 @@
     [[self overlayVC] setAnimator:animator];
 }
 
+- (void)setApplication:(Application)app
+{
+    _application = app;
+    
+    [[self overlayVC] setApplication:app];
+}
+
 - (void)setMode:(ShowMode)mode
 {
+    if (_application == Graffiti)
+    {
+        mode = ShowMulti;
+    }
+    
     _showMode = mode;
     
     [[self overlayWindow] setAlpha:mode == ShowNothing? 0 : 1];
@@ -141,7 +154,7 @@
 {
     CGRect updRect = CGRectMake(0, 0, size.width, size.height);
     
-    if ([self showMode] >= ShowMulti)
+    if (([self showMode] >= ShowMulti) && ([self application] == WebXR))
     {
         if ([self showOptions] & Browser)
         {
@@ -154,10 +167,10 @@
         }
     }
     
-    [[self touchView] setCameraRect:recordFrameIn(updRect)
-                            micRect:micFrameIn(updRect)
-                           showRect:showFrameIn(updRect)
-                          debugRect:debugFrameIn(updRect)];
+    [[self touchView] setCameraRect:recordFrameIn(updRect, [self application])
+                            micRect:micFrameIn(updRect, [self application])
+                           showRect:([self application] == Graffiti) ? CGRectZero : showFrameIn(updRect, [self application])
+                          debugRect:([self application] == Graffiti) ? CGRectZero : debugFrameIn(updRect, [self application])];
 }
 
 #pragma mark Private

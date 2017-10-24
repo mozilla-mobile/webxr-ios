@@ -42,10 +42,10 @@
 
 - (void)setSelected:(BOOL)selected
 {
-    //if ([super isSelected] == selected) return;
-    DDLogDebug(@"Mic selected - %d", selected);
-#warning TEMP DESIGN !
-    [super setSelected:![self isSelected]];
+    if ([super isSelected] == selected) return;
+//    DDLogDebug(@"Mic selected - %d", selected);
+//#warning TEMP DESIGN !
+    [super setSelected:selected];
     
     [self animate];
 }
