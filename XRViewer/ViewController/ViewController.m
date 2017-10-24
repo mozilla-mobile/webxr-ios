@@ -83,9 +83,12 @@ typedef void (^UICompletion)(void);
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
-    [[self arkController] viewWillTransitionToSize:size];
+    CGAffineTransform transform = [coordinator targetTransform];
+    CGFloat rotation = atan2(transform.b, transform.a);
+    
+    [[self arkController] viewWillTransitionToSize:size rotation:rotation];
     [[self overlayController] viewWillTransitionToSize:size];
-    [[self webController] viewWillTransitionToSize:size];
+    [[self webController] viewWillTransitionToSize:size rotation:rotation];
 }
 
 #pragma mark Setups
@@ -237,6 +240,12 @@ typedef void (^UICompletion)(void);
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
      {
          [[blockSelf stateController] applyOnEnterForegroundAction];
+     }];
+    
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIDeviceOrientationDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
+     {
+         [[blockSelf webController] didChangeOrientation:[[UIApplication sharedApplication] statusBarOrientation]
+                                                withSize:[[blockSelf view] frame].size];
      }];
 }
 

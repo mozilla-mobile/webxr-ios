@@ -150,13 +150,31 @@ inline static WebCompletion debugCompletion(NSString *name)
     [self callWebMethod:WEB_AR_MEMORY_WARNING_MESSAGE param:@"" webCompletion:debugCompletion(WEB_AR_TRACKING_CHANGED_MESSAGE)];
 }
     
-- (void)viewWillTransitionToSize:(CGSize)size
+- (void)viewWillTransitionToSize:(CGSize)size rotation:(CGFloat)rotation
 {
     [self layout];
     
+    NSInteger angleInt = rotationWith(rotation);
+    DDLogDebug(@"viewWillTransitionToSize rotation - %ld", angleInt);
+    
     [self callWebMethod:WEB_AR_TRANSITION_TO_SIZE_MESSAGE
-                  param:NSStringFromCGSize(size)
+              paramJSON:@{WEB_IOS_SIZE_OPTION : @{WEB_IOS_WIDTH_OPTION: @(size.width), WEB_IOS_HEIGHT_OPTION: @(size.height)},
+                          WEB_IOS_ANGLE_OPTION: @(angleInt)
+                          }
           webCompletion:debugCompletion(WEB_AR_TRANSITION_TO_SIZE_MESSAGE)];
+}
+
+- (void)didChangeOrientation:(UIInterfaceOrientation)orientation withSize:(CGSize)size
+{
+    [self layout];
+    
+    NSString *orientationString = orientationFrom(orientation);
+    DDLogDebug(@"didChangeOrientation - %@", orientationString);
+               
+    [self callWebMethod:WEB_AR_CHANGE_ORIENTATION_MESSAGE
+              paramJSON:@{WEB_IOS_ORIENTATIOIN_OPTION : orientationString,
+                          WEB_IOS_SIZE_OPTION: @{WEB_IOS_WIDTH_OPTION: @(size.width), WEB_IOS_HEIGHT_OPTION: @(size.height)}}
+          webCompletion:debugCompletion(WEB_AR_CHANGE_ORIENTATION_MESSAGE)];
 }
     
 - (void)didRegion:(NSDictionary *)param enter:(BOOL)enter;
@@ -185,7 +203,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)didChangeARTrackingState:(NSString *)state
 {
-    [self callWebMethod:WEB_AR_TRACKING_CHANGED_MESSAGE param:state webCompletion:debugCompletion(WEB_AR_TRACKING_CHANGED_MESSAGE)];
+        [self callWebMethod:WEB_AR_TRACKING_CHANGED_MESSAGE paramJSON:@{WEB_AR_TRACKING_STATE_OPTION : state} webCompletion:debugCompletion(WEB_AR_TRACKING_CHANGED_MESSAGE)];
 }
     
 - (void)didSessionFails
@@ -246,6 +264,7 @@ inline static WebCompletion debugCompletion(NSString *name)
                                   WEB_IOS_SCREEN_SCALE_OPTION : @([[UIScreen mainScreen] nativeScale]),
                                   WEB_IOS_VIEWPORT_SIZE_OPTION : @{ WEB_IOS_WIDTH_OPTION : @(viewportSize.width),
                                                                   WEB_IOS_HEIGHT_OPTION : @(viewportSize.height) },
+                                  WEB_IOS_ORIENTATIOIN_OPTION : orientationFrom([[UIApplication sharedApplication] statusBarOrientation]),
                                   WEB_IOS_SCREEN_SIZE_OPTION : @{ WEB_IOS_WIDTH_OPTION : @(screenSize.width),
                                                                 WEB_IOS_HEIGHT_OPTION : @(screenSize.height)}};
         
