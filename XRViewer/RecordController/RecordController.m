@@ -356,7 +356,7 @@
                                         
                                         [pc setDelegate:self];
                                         [pc setSourceView:[previewViewController view]];
-                                        CGRect rect = recordFrameIn([[UIScreen mainScreen] bounds], WebXR);
+                                        CGRect rect = recordFrameIn([[UIScreen mainScreen] bounds]);
                                         CGFloat statusBarInfluence = 20;
                                         rect.origin.x -= statusBarInfluence / 2;
                                         rect.origin.y -= statusBarInfluence / 2;

@@ -106,7 +106,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
-- (void)setupForApp:(Application)app
+- (void)setupForApp:(UIStyle)app
 {
     dispatch_async(dispatch_get_main_queue(), ^
        {
@@ -114,7 +114,7 @@ inline static WebCompletion debugCompletion(NSString *name)
            
            UIColor *backColor;
            
-           if (app == Trivial)
+           if (app == Web)
            {
                rect.origin.y += [[self barView] bounds].size.height;
                backColor = [UIColor whiteColor];

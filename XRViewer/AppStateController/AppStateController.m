@@ -80,14 +80,14 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
     }
 }
 
-- (void)setApplication:(Application)app
+- (void)setUIStyle:(UIStyle)app
 {
-    if ([[self state] app] == app) {return;}
+    if ([[self state] style] == app) {return;}
     
-    [self setShowMode:(app == WebXR ? ShowSingle : ShowMulti)];
+    [self setShowMode:(app == WebXRControlUI ? ShowSingle : ShowMulti)];
     [self setState:[[self state] updatedApplication:app]];
     
-    RUN_ACTION_ASYNC_MAIN([self onAppUpdate], [[self state] app]);
+    RUN_ACTION_ASYNC_MAIN([self onAppUpdate], [[self state] style]);
 }
 
 - (void)setARRequest:(NSDictionary *)dict
@@ -106,11 +106,7 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 
 - (BOOL)shouldShowURLBar
 {
-    if ([[self state] app] == Graffiti)
-    {
-        return NO;
-    }
-    else if ([[self state] app] == Trivial)
+    if ([[self state] style] == Web)
     {
         return YES;
     }
@@ -129,7 +125,7 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 
 - (BOOL)shouldSendARKData
 {
-    return ([[self state] app] > Trivial) && [[self state] aRRequest];
+    return ([[self state] style] > Web) && [[self state] aRRequest];
 }
 
 - (void)invertMic

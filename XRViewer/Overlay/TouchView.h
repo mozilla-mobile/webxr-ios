@@ -16,7 +16,6 @@
              showRect:(CGRect)showRect
             debugRect:(CGRect)debugRect;
 
-- (void)setApplication:(Application)app;
 - (void)setShowMode:(ShowMode)mode;
 - (void)setShowOptions:(ShowOptions)options;
 - (void)setRecordState:(RecordState)state;

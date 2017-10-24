@@ -123,14 +123,14 @@ typedef void (^UICompletion)(void);
          [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
      }];
     
-    [[self stateController] setOnAppUpdate:^(Application app)
+    [[self stateController] setOnAppUpdate:^(UIStyle app)
      {
-         if (app > Trivial)
+         if (app > Web)
          {
              [blockSelf setupARKController];
              [blockSelf setupLocationController];
              
-             [[blockSelf stateController] setShowMode:(app == WebXR ? ShowSingle : ShowMulti)];
+             [[blockSelf stateController] setShowMode:(app == WebXRControlUI ? ShowSingle : ShowMulti)];
          }
          else
          {
@@ -140,7 +140,7 @@ typedef void (^UICompletion)(void);
          }
          
          [[blockSelf webController] setupForApp:app];
-         [[blockSelf overlayController] setApplication:app];
+         [[blockSelf overlayController] setUIStyle:app];
      }];
     
     [[self stateController] setOnReachable:^(NSString *url)
@@ -401,7 +401,7 @@ typedef void (^UICompletion)(void);
     [[self webController] setAnimator:[self animator]];
     [[self webController] setOnStartLoad:^
      {
-         [[blockSelf stateController] setApplication:Trivial];
+         [[blockSelf stateController] setUIStyle:Web];
      }];
     
     [[self webController] setOnFinishLoad:^
@@ -418,8 +418,8 @@ typedef void (^UICompletion)(void);
     // xr
     [[self webController] setOnInit:^(NSDictionary *uiOptionsDict)
      {
-         [[blockSelf stateController] setApplication:applicationFormDict(uiOptionsDict)];
-         //[[blockSelf stateController] setShowMode:ShowSingle];
+         [[blockSelf stateController] setUIStyle:applicationFormDict(uiOptionsDict)];
+         [[blockSelf stateController] setShowMode:([[[blockSelf stateController] state] style] == WebXRAtOnceUI ? ShowMulti : ShowSingle)];
          [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
          
          [[blockSelf stateController] applyOnEnterForegroundAction];
@@ -494,7 +494,7 @@ typedef void (^UICompletion)(void);
     else
     {
         [[self webController] loadURL:WEB_URL];
-        [[self webController] setupForApp:[[[self stateController] state] app]];
+        [[self webController] setupForApp:[[[self stateController] state] style]];
     }
 }
 
@@ -568,7 +568,7 @@ typedef void (^UICompletion)(void);
     
     [[self overlayController] setAnimator:[self animator]];
     
-    [[self overlayController] setApplication:[[[self stateController] state] app]];
+    [[self overlayController] setUIStyle:[[[self stateController] state] style]];
     [[self overlayController] setMode:[[[self stateController] state] showMode]];
     [[self overlayController] setOptions:[[[self stateController] state] showOptions]];
     [[self overlayController] setMicEnabled:[[[self stateController] state] micEnabled]];
@@ -710,7 +710,7 @@ typedef void (^UICompletion)(void);
         [[self webController] loadURL:url];
     }
     
-    [[self stateController] setApplication:Trivial];
+    [[self stateController] setUIStyle:Web];
 }
 
 @end

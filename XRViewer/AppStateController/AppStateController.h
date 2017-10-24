@@ -3,7 +3,7 @@
 
 typedef void (^ASValueChangedAction)(NSUInteger);
 typedef void (^ASBoolChangedAction)(BOOL);
-typedef void (^ASAppChangedAction)(Application);
+typedef void (^ASAppChangedAction)(UIStyle);
 typedef void (^ASOnRequestAction)(NSDictionary *);
 typedef void (^ASURLAction)(NSString *);
 
@@ -31,7 +31,7 @@ typedef void (^ASURLAction)(NSString *);
 - (void)setShowMode:(ShowMode)mode;
 - (void)setShowOptions:(ShowOptions)options;
 - (void)setRecordState:(RecordState)state;
-- (void)setApplication:(Application)app;
+- (void)setUIStyle:(UIStyle)app;
 - (void)setARRequest:(NSDictionary *)dict;
 - (void)setARInterruption:(BOOL)interruption;
 

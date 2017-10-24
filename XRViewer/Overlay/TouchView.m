@@ -21,7 +21,6 @@
 @property (nonatomic, strong) NSDate *startTouchDate;
 @property (nonatomic, strong) NSTimer *touchTimer;
 
-@property (nonatomic) Application application;
 @property (nonatomic) ShowMode showMode;
 @property (nonatomic) ShowOptions showOptions;
 @property (nonatomic) RecordState recordState;

@@ -77,6 +77,7 @@ static inline NSArray * jsMessages()
 #define WEB_AR_CALLBACK_OPTION         @"callback"
 #define WEB_AR_REQUEST_OPTION          @"options"
 #define WEB_AR_UI_OPTION               @"ui"
+#define WEB_AR_UI_SHOW_AT_ONCE_OPTION  @"showUIAtOnce"
 #define WEB_AR_UI_BROWSER_OPTION       @"browser"
 #define WEB_AR_UI_POINTS_OPTION        @"points"
 #define WEB_AR_UI_DEBUG_OPTION         @"debug"
@@ -184,26 +185,24 @@ typedef NS_ENUM(NSInteger, ErrorCodes)
     InvalidRegion
 };
 
-#define WEB_AR_GRAFFITI_APPLICATION @"Graffiti"
-
-static inline Application applicationFormDict(NSDictionary *dict)
-{
-    NSDictionary *customDict = dict[WEB_AR_UI_CUSTOM_OPTION];
+static inline UIStyle applicationFormDict(NSDictionary *dict)
+{return WebXRAtOnceUI;
+    NSDictionary *arDict = dict[WEB_AR_UI_ARKIT_OPTION];
     
-    if (customDict == nil)
+    if (arDict == nil)
     {
-        return Trivial;
+        return Web;
     }
-    else if ([customDict[WEB_AR_APPLICATION_OPTION] isEqualToString:WEB_AR_GRAFFITI_APPLICATION])
+    else if ([arDict[WEB_AR_UI_SHOW_AT_ONCE_OPTION] boolValue])
     {
-        return Graffiti;
+        return WebXRAtOnceUI;
     }
     
-    return WebXR;
+    return WebXRControlUI;
 }
     
 static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
-{
+{return Full;
     if (dict == nil)
     {
         return Browser;
@@ -243,7 +242,7 @@ static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
     {
         options = options | Capture;
     }
-//#warning TEMP APPLICATION!
+    
     if ([common[WEB_AR_UI_MIC_OPTION] boolValue])
     {
         options = options | Mic;

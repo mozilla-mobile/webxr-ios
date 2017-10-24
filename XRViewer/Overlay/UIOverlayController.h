@@ -19,7 +19,7 @@ typedef NS_ENUM(NSUInteger, RecordState);
 - (void)viewWillTransitionToSize:(CGSize)size;
 - (UIView *)hotView;
 
-- (void)setApplication:(Application)app;
+- (void)setUIStyle:(UIStyle)app;
 - (void)setMode:(ShowMode)mode;
 - (void)setOptions:(ShowOptions)options;
 - (void)setRecordState:(RecordState)state;

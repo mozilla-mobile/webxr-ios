@@ -5,7 +5,7 @@
 
 @interface OverlayViewController ()
 
-@property (nonatomic) Application application;
+@property (nonatomic) UIStyle uIStyle;
 @property (nonatomic) RecordState recordState;
 @property (nonatomic) ShowMode showMode;
 @property (nonatomic) ShowOptions showOptions;
@@ -91,7 +91,7 @@
 {
     CGRect updRect = CGRectMake(0, 0, size.width, size.height);
     
-    if (([self showMode] >= ShowMulti) && ([self application] == WebXR))
+    if ([self showMode] >= ShowMulti)
     {
         if ([self showOptions] & Browser)
         {
@@ -105,8 +105,8 @@
     }
     
     __weak typeof (self) blockSelf = self;
-    [[self animator] animate:[self micButton] toFrame:micFrameIn(updRect, [self application])];
-    [[self animator] animate:[self recordButton] toFrame:recordFrameIn(updRect, [self application]) completion:^(BOOL f)
+    [[self animator] animate:[self micButton] toFrame:micFrameIn(updRect)];
+    [[self animator] animate:[self recordButton] toFrame:recordFrameIn(updRect) completion:^(BOOL f)
      {
          if ([blockSelf recordState] == RecordStatePhoto)
          {
@@ -130,14 +130,14 @@
                        });
     }
     
-    [[self helperLabel] setFrame:helperLabelFrameIn(updRect, [self application])];
+    [[self helperLabel] setFrame:helperLabelFrameIn(updRect)];
     [[self helperLabel] setTransform:CGAffineTransformMakeRotation(-M_PI/2)];
     
-    [[self trackingStateButton] setFrame:trackFrameIn(updRect, [self application])];
-    [[self showButton] setFrame:showFrameIn(updRect, [self application])];
-    [[self debugButton] setFrame:debugFrameIn(updRect, [self application])];
-    [[self recordTimingLabel] setFrame:recordLabelFrameIn(updRect, [self application])];
-    [[self buildLabel] setFrame:buildFrameIn(updRect, [self application])];
+    [[self trackingStateButton] setFrame:trackFrameIn(updRect)];
+    [[self showButton] setFrame:showFrameIn(updRect)];
+    [[self debugButton] setFrame:debugFrameIn(updRect)];
+    [[self recordTimingLabel] setFrame:recordLabelFrameIn(updRect)];
+    [[self buildLabel] setFrame:buildFrameIn(updRect)];
     
     if ([self recordState] == RecordStateAuthDisabled)
     {
@@ -206,7 +206,7 @@
         }
         case ShowMulti:
         {
-            if ([self application] == WebXR)
+            if ([self uIStyle] == WebXRControlUI)
             {
                 [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
                  {
@@ -237,17 +237,32 @@
         }
         case ShowMultiDebug:
         {
-            [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
-             {
-                 dispatch_async(dispatch_get_main_queue(), ^
-                                {
-                                    if (completion)
+            if ([self uIStyle] == WebXRControlUI)
+            {
+                [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
+                 {
+                     dispatch_async(dispatch_get_main_queue(), ^
                                     {
-                                        completion(f);
-                                    }
-                                });
-             }];
-            [[self showButton] setSelected:YES];
+                                        if (completion)
+                                        {
+                                            completion(f);
+                                        }
+                                    });
+                 }];
+                [[self showButton] setSelected:YES];
+            }
+            else
+            {
+                [[self showButton] setHidden:YES];
+                dispatch_async(dispatch_get_main_queue(), ^
+                               {
+                                   if (completion)
+                                   {
+                                       completion(YES);
+                                   }
+                               });
+            }
+            
             [self updateWithRecordStateInDebug:YES];
             break;
         }
@@ -280,8 +295,7 @@
             
             [[self micButton] setSelected:_microphoneEnabled];
             
-            [[self helperLabel] setText:HELP_TEXT([self application])];
-            [[self helperLabel] setTextColor:[UIColor whiteColor]];
+            [[self helperLabel] setText:nil];
             [[self timer] invalidate];
             [[self animator] stopPulseAnimation:[self recordButton]];
             
@@ -300,8 +314,7 @@
             
             [[self micButton] setSelected:_microphoneEnabled];
             
-            [[self helperLabel] setText:HELP_TEXT([self application])];
-            [[self helperLabel] setTextColor:[UIColor whiteColor]];
+            [[self helperLabel] setText:nil];
             [[self timer] invalidate];
             break;
         }
@@ -321,8 +334,7 @@
             
             [[self micButton] setSelected:_microphoneEnabled];
             
-            [[self helperLabel] setText:HELP_TEXT([self application])];
-            [[self helperLabel] setTextColor:[UIColor whiteColor]];
+            [[self helperLabel] setText:nil];
             
             [self setStartRecordDate:[NSDate date]];
             [self setTimer:[NSTimer scheduledTimerWithTimeInterval:.01 repeats:YES block:^(NSTimer * _Nonnull timer)
@@ -521,7 +533,7 @@
     [[self view] addSubview:[self micButton]];
     
     [self setTrackingStateButton:[UIButton buttonWithType:UIButtonTypeCustom]];
-    [[self trackingStateButton] setFrame:trackFrameIn([[self view] bounds], WebXR)];
+    [[self trackingStateButton] setFrame:trackFrameIn([[self view] bounds])];
     [[self view] addSubview:[self trackingStateButton]];
     
     [self setShowButton:[UIButton buttonWithType:UIButtonTypeCustom]];
@@ -533,7 +545,7 @@
     [[self debugButton] setImage:[UIImage imageNamed:@"settings"] forState:UIControlStateNormal];
     [[self view] addSubview:[self debugButton]];
     
-    [self setRecordTimingLabel:[[UILabel alloc] initWithFrame:recordLabelFrameIn([[self view] bounds], WebXR)]];
+    [self setRecordTimingLabel:[[UILabel alloc] initWithFrame:recordLabelFrameIn([[self view] bounds])]];
     [[self recordTimingLabel] setFont:[UIFont boldSystemFontOfSize:15]];
     [[self recordTimingLabel] setTextAlignment:NSTextAlignmentCenter];
     [[self recordTimingLabel] setTextColor:[UIColor blackColor]];
@@ -542,7 +554,7 @@
     [[self recordTimingLabel] setClipsToBounds:YES];
     [[self view] addSubview:[self recordTimingLabel]];
     
-    [self setHelperLabel:[[UILabel alloc] initWithFrame:helperLabelFrameIn([[self view] bounds], WebXR)]];
+    [self setHelperLabel:[[UILabel alloc] initWithFrame:helperLabelFrameIn([[self view] bounds])]];
     [[self helperLabel] setFont:[UIFont systemFontOfSize:12]];
     [[self helperLabel] setTextAlignment:NSTextAlignmentCenter];
     [[self helperLabel] setTextColor:[UIColor whiteColor]];
@@ -550,7 +562,7 @@
     [[self helperLabel] setClipsToBounds:YES];
     [[self view] addSubview:[self helperLabel]];
     
-    [self setBuildLabel:[[UILabel alloc] initWithFrame:buildFrameIn([[self view] bounds], WebXR)]];
+    [self setBuildLabel:[[UILabel alloc] initWithFrame:buildFrameIn([[self view] bounds])]];
     [[self buildLabel] setFont:[UIFont boldSystemFontOfSize:12]];
     [[self buildLabel] setTextAlignment:NSTextAlignmentCenter];
     [[self buildLabel] setTextColor:[UIColor whiteColor]];

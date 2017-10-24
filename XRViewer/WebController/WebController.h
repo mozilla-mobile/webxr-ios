@@ -44,7 +44,7 @@ typedef void (^OnWebError)(NSError *);
     
 - (void)showBar:(BOOL)showBar;
     
-- (void)setupForApp:(Application)app;
+- (void)setupForApp:(UIStyle)app;
     
 // xr
 - (void)showDebug:(BOOL)showDebug;
