@@ -186,7 +186,7 @@ typedef NS_ENUM(NSInteger, ErrorCodes)
 };
 
 static inline UIStyle applicationFormDict(NSDictionary *dict)
-{return WebXRAtOnceUI;
+{
     NSDictionary *arDict = dict[WEB_AR_UI_ARKIT_OPTION];
     
     if (arDict == nil)
@@ -202,7 +202,7 @@ static inline UIStyle applicationFormDict(NSDictionary *dict)
 }
     
 static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
-{return Full;
+{
     if (dict == nil)
     {
         return Browser;

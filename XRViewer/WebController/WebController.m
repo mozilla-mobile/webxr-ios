@@ -462,7 +462,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     [[self webView] layoutIfNeeded];
     
-    [[self barView] layoutIfNeeded];
+    [[self barView] layout];
 }
 
 - (void)setupWebUI

@@ -17,7 +17,7 @@
     return copy;
 }
 
-- (BOOL)isEqual:(id)theObject
+- (BOOL)isEqual:(AppState *)theObject
 {
     if (theObject == self)
     {

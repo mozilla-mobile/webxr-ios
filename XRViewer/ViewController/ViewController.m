@@ -69,6 +69,16 @@ typedef void (^UICompletion)(void);
     [self processMemoryWarning];
 }
 
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{    
+    return UIInterfaceOrientationMaskAll;
+}
+
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
@@ -714,4 +724,3 @@ typedef void (^UICompletion)(void);
 }
 
 @end
-
