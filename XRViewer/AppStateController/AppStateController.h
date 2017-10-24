@@ -30,7 +30,7 @@ typedef void (^ASURLAction)(NSString *);
 - (void)setShowMode:(ShowMode)mode;
 - (void)setShowOptions:(ShowOptions)options;
 - (void)setRecordState:(RecordState)state;
-- (void)setWebXR:(BOOL)webXR;
+- (void)setApplication:(Application)app;
 - (void)setARRequest:(NSDictionary *)dict;
 - (void)setARInterruption:(BOOL)interruption;
 

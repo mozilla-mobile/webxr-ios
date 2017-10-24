@@ -49,6 +49,13 @@ typedef NS_ENUM(NSUInteger, RecordState)
     RecordStateError
 };
 
+typedef NS_ENUM(NSUInteger, Application)
+{
+    Trivial,
+    WebXR,
+    Graffiti
+};
+
 @interface AppState : NSObject <NSCopying>
 
 @property(nonatomic, copy) NSDictionary *aRRequest;
@@ -56,7 +63,7 @@ typedef NS_ENUM(NSUInteger, RecordState)
 @property(nonatomic) ShowMode showMode;
 @property(nonatomic) ShowOptions showOptions;
 @property(nonatomic) RecordState recordState;
-@property(nonatomic) BOOL webXR;
+@property(nonatomic) Application app;
 @property(nonatomic) BOOL micEnabled;
 @property(nonatomic) BOOL interruption;
 
@@ -65,7 +72,7 @@ typedef NS_ENUM(NSUInteger, RecordState)
 - (instancetype)updatedShowMode:(ShowMode)showMode;
 - (instancetype)updatedShowOptions:(ShowOptions)showOptions;
 - (instancetype)updatedRecordState:(RecordState)state;
-- (instancetype)updatedWebXR:(BOOL)webXR;
+- (instancetype)updatedApplication:(Application)app;
 - (instancetype)updatedWithARRequest:(NSDictionary *)dict;
 - (instancetype)updatedWithMicEnabled:(BOOL)enabled;
 - (instancetype)updatedWithTrackingState:(NSString *)state;

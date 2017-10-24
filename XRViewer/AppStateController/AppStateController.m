@@ -80,13 +80,13 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
     }
 }
 
-- (void)setWebXR:(BOOL)webXR
+- (void)setApplication:(Application)app
 {
-    if ([[self state] webXR] == webXR) {return;}
+    if ([[self state] app] == app) {return;}
     
-    [self setState:[[self state] updatedWebXR:webXR]];
+    [self setState:[[self state] updatedApplication:app]];
     
-    RUN_ACTION_ASYNC_MAIN([self onXRUpdate], [[self state] webXR]);
+    RUN_ACTION_ASYNC_MAIN([self onXRUpdate], [[self state] app]);
 }
 
 - (void)setARRequest:(NSDictionary *)dict
@@ -105,6 +105,15 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 
 - (BOOL)shouldShowURLBar
 {
+    if ([[self state] app] == Graffiti)
+    {
+        return NO;
+    }
+    else if ([[self state] app] == Trivial)
+    {
+        return YES;
+    }
+    
     if ([[self state] recordState] == RecordStatePhoto ||
         [[self state] recordState] == RecordStateRecording ||
         [[self state] recordState] == RecordStateRecordingWithMicrophone ||
@@ -114,12 +123,12 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
         return NO;
     }
     
-    return ([[self state] webXR] == NO) ? YES : (([[self state] showMode] >= ShowMulti) && ([[self state] showOptions] & Browser));
+    return (([[self state] showMode] >= ShowMulti) && ([[self state] showOptions] & Browser));
 }
 
 - (BOOL)shouldSendARKData
 {
-    return [[self state] webXR] && [[self state] aRRequest];
+    return ([[self state] app] > Unknown) && [[self state] aRRequest];
 }
 
 - (void)invertMic

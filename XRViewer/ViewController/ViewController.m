@@ -400,7 +400,7 @@ typedef void (^UICompletion)(void);
     [[self webController] setAnimator:[self animator]];
     [[self webController] setOnStartLoad:^
      {
-         [[blockSelf stateController] setWebXR:NO];
+         [[blockSelf stateController] setApplication:Trivial];
      }];
     
     [[self webController] setOnFinishLoad:^
@@ -707,7 +707,7 @@ typedef void (^UICompletion)(void);
         [[self webController] loadURL:url];
     }
     
-    [[self stateController] setWebXR:NO];
+    [[self stateController] setApplication:Trivial];
 }
 
 @end
