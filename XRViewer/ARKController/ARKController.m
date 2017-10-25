@@ -66,6 +66,13 @@
         id<ARKControllerProtocol> controller = [[cls alloc] initWithSesion:[self session] size:[rootView bounds].size];
         [self setController:controller];
         [rootView addSubview:[controller renderView]];
+        
+        [[controller renderView]setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [[[[controller renderView] topAnchor] constraintEqualToAnchor:[rootView topAnchor] constant:0] setActive:YES];
+        [[[[controller renderView] bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor] constant:0] setActive:YES];
+        [[[[controller renderView] leftAnchor] constraintEqualToAnchor:[rootView leftAnchor] constant:0] setActive:YES];
+        [[[[controller renderView] rightAnchor] constraintEqualToAnchor:[rootView rightAnchor] constant:0] setActive:YES];
+        
         [[self controller] setHitTestFocusPoint:[[[self controller] renderView] center]];
     }
     

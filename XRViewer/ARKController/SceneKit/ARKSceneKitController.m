@@ -151,14 +151,6 @@
     
     [[[[self renderView] scene] lightingEnvironment] setContents:[UIColor whiteColor]];
     [[[[self renderView] scene] lightingEnvironment] setIntensity:50];
-    
-    [[self renderView] setAutoresizingMask:
-     UIViewAutoresizingFlexibleRightMargin |
-     UIViewAutoresizingFlexibleLeftMargin |
-     UIViewAutoresizingFlexibleBottomMargin |
-     UIViewAutoresizingFlexibleTopMargin |
-     UIViewAutoresizingFlexibleWidth |
-     UIViewAutoresizingFlexibleHeight];
 }
 
 #pragma mark Focus

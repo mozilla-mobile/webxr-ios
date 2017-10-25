@@ -640,14 +640,18 @@ typedef void (^UICompletion)(void);
 
 - (void)showSplashWithCompletion:(UICompletion)completion
 {
-    [[self splashLayerView] setAlpha:1];
+    [UIView animateWithDuration:.25 animations:^{
+        [[self splashLayerView] setAlpha:1];
+    }];
     
     RUN_UI_COMPLETION_ASYNC_MAIN(completion);
 }
 
 - (void)hideSplashWithCompletion:(UICompletion)completion
 {
-    [[self splashLayerView] setAlpha:0];
+    [UIView animateWithDuration:.25 animations:^{
+        [[self splashLayerView] setAlpha:0];
+    }];
     
     RUN_UI_COMPLETION_ASYNC_MAIN(completion);
 }

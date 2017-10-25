@@ -199,13 +199,13 @@ typedef NS_ENUM(NSInteger, ErrorCodes)
 
 static inline UIStyle applicationFormDict(NSDictionary *dict)
 {
-    NSDictionary *arDict = dict[WEB_AR_UI_ARKIT_OPTION];
+    NSDictionary *customDict = dict[WEB_AR_UI_CUSTOM_OPTION];
     
-    if (arDict == nil)
+    if (customDict == nil)
     {
         return Web;
     }
-    else if ([arDict[WEB_AR_UI_SHOW_AT_ONCE_OPTION] boolValue])
+    else if ([customDict[WEB_AR_UI_SHOW_AT_ONCE_OPTION] boolValue])
     {
         return WebXRAtOnceUI;
     }

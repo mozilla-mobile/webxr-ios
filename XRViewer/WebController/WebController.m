@@ -13,6 +13,9 @@
 @property (nonatomic, copy) NSString *transferCallback;
 @property (nonatomic, copy) NSString *lastURL;
 
+@property (nonatomic, strong) NSLayoutConstraint *topWebViewConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *topBarViewConstraint;
+
 @property (nonatomic, weak) BarView *barView;
 
 @end
@@ -84,10 +87,11 @@ inline static WebCompletion debugCompletion(NSString *name)
     
 - (void)showBar:(BOOL)showBar
 {
-    CGRect rect = [[self barView] bounds];
-    rect.origin.y = showBar ? 0 : 0 - [[self barView] bounds].size.height;
-    
-    [[self animator] animate:[self barView] toFrame:rect];
+    [_topBarViewConstraint setConstant:(showBar ? 0 : -URL_BAR_HEIGHT)];
+    [UIView animateWithDuration:.35 animations:^
+     {
+         [[[self webView] superview] layoutSubviews];
+     }];
 }
 
 - (void)reload
@@ -110,13 +114,13 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     dispatch_async(dispatch_get_main_queue(), ^
        {
-           CGRect rect = [[[self webView] superview] bounds];
+           CGFloat top = 0;
            
            UIColor *backColor;
            
            if (app == Web)
            {
-               rect.origin.y += [[self barView] bounds].size.height;
+               top = URL_BAR_HEIGHT;
                backColor = [UIColor whiteColor];
            }
            else
@@ -124,7 +128,11 @@ inline static WebCompletion debugCompletion(NSString *name)
                backColor = [UIColor clearColor];
            }
            
-           [[self animator] animate:[self webView] toFrame:rect];
+           [_topWebViewConstraint setConstant:top];
+           [UIView animateWithDuration:.35 animations:^
+           {
+               [[[self webView] superview] layoutSubviews];
+           }];
            
            [[[self webView] superview] setBackgroundColor:backColor];
            
@@ -415,7 +423,6 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
 {
     DDLogDebug(@"didStartProvisionalNavigation - %@", navigation);
-    
     [self onStartLoad]();
     
     [[self barView] startLoading:[[[self webView] URL] absoluteString]];
@@ -486,15 +493,12 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)setupWebUI
 {
-    [[self webView] setAutoresizingMask:
-     UIViewAutoresizingFlexibleRightMargin |
-     UIViewAutoresizingFlexibleLeftMargin |
-     UIViewAutoresizingFlexibleBottomMargin |
-     UIViewAutoresizingFlexibleTopMargin |
-     UIViewAutoresizingFlexibleWidth |
-     UIViewAutoresizingFlexibleHeight];
-    
-    [[self webView] setAutoresizesSubviews:YES];
+    [[self webView] setTranslatesAutoresizingMaskIntoConstraints:NO];
+    _topWebViewConstraint = [[[self webView] topAnchor] constraintEqualToAnchor:[[[self webView] superview] topAnchor] constant:0];
+    [_topWebViewConstraint setActive:YES];
+    [[[[self webView] bottomAnchor] constraintEqualToAnchor:[[[self webView] superview] bottomAnchor] constant:0] setActive:YES];
+    [[[[self webView] leftAnchor] constraintEqualToAnchor:[[[self webView] superview] leftAnchor] constant:0] setActive:YES];
+    [[[[self webView] rightAnchor] constraintEqualToAnchor:[[[self webView] superview] rightAnchor] constant:0] setActive:YES];
     
     [[self webView] setAllowsLinkPreview:NO];
     [[self webView] setOpaque:NO];
@@ -507,12 +511,15 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)setupBarView
 {
     BarView *barView = [[[NSBundle mainBundle] loadNibNamed:@"BarView" owner:self options:nil] firstObject];
-    [barView setFrame:CGRectMake(0, 0, [[self webView] bounds].size.width, URL_BAR_HEIGHT)];
-    [barView setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin |
-     UIViewAutoresizingFlexibleLeftMargin |
-     UIViewAutoresizingFlexibleWidth];
     [[[self webView] superview] addSubview:barView];
     [self setBarView:barView];
+    
+    [barView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[[barView heightAnchor] constraintEqualToConstant:URL_BAR_HEIGHT] setActive:YES];
+    _topBarViewConstraint = [[barView topAnchor] constraintEqualToAnchor:[[[self webView] superview] topAnchor] constant:0];
+    [_topBarViewConstraint setActive:YES];
+    [[[barView leftAnchor] constraintEqualToAnchor:[[[self webView] superview] leftAnchor] constant:0] setActive:YES];
+    [[[barView rightAnchor] constraintEqualToAnchor:[[[self webView] superview] rightAnchor] constant:0] setActive:YES];
     
     __weak typeof (self) blockSelf = self;
     __weak typeof (BarView *) blockBar = barView;

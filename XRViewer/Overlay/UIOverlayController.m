@@ -184,13 +184,11 @@
     
     [[self touchView] setBackgroundColor:[UIColor clearColor]];
     
-    [[self touchView] setAutoresizingMask:
-     UIViewAutoresizingFlexibleRightMargin |
-     UIViewAutoresizingFlexibleLeftMargin |
-     UIViewAutoresizingFlexibleBottomMargin |
-     UIViewAutoresizingFlexibleTopMargin |
-     UIViewAutoresizingFlexibleWidth |
-     UIViewAutoresizingFlexibleHeight];
+    [[self touchView] setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[[[self touchView] topAnchor] constraintEqualToAnchor:[[[self rootView] superview] topAnchor] constant:0] setActive:YES];
+    [[[[self touchView] bottomAnchor] constraintEqualToAnchor:[[[self rootView] superview] bottomAnchor] constant:0] setActive:YES];
+    [[[[self touchView] leftAnchor] constraintEqualToAnchor:[[[self rootView] superview] leftAnchor] constant:0] setActive:YES];
+    [[[[self touchView] rightAnchor] constraintEqualToAnchor:[[[self rootView] superview] rightAnchor] constant:0] setActive:YES];
 }
 
 - (void)setupOverlayWindow

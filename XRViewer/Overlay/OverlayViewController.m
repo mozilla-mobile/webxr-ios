@@ -194,8 +194,10 @@
                                 });
              }];
             
+            [[self showButton] setHidden:NO];
             [[self showButton] setSelected:NO];
             [[self showButton] setEnabled:YES];
+            
             [[self animator] animate:[self helperLabel] toFade:YES];
             [[self animator] animate:[self debugButton] toFade:YES];
             [[self animator] animate:[self buildLabel] toFade:YES];
