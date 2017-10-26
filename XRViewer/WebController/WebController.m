@@ -129,10 +129,16 @@ inline static WebCompletion debugCompletion(NSString *name)
            }
            
            [_topWebViewConstraint setConstant:top];
-           [UIView animateWithDuration:.35 animations:^
-           {
-               [[[self webView] superview] layoutSubviews];
-           }];
+           
+           [UIView animateWithDuration:.35 
+                            animations:^
+                            {
+                                [[[self webView] superview] layoutSubviews];
+                            } 
+                            completion:^(BOOL finished) 
+                            {
+                                [self callTranslationToSizeWebMethodWithSize:[[self webView] bounds].size angle:0];
+                            }];
            
            [[[self webView] superview] setBackgroundColor:backColor];
            
@@ -165,11 +171,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     NSInteger angleInt = rotationWith(rotation);
     DDLogDebug(@"viewWillTransitionToSize rotation - %ld", angleInt);
     
-    [self callWebMethod:WEB_AR_TRANSITION_TO_SIZE_MESSAGE
-              paramJSON:@{WEB_IOS_SIZE_OPTION : @{WEB_IOS_WIDTH_OPTION: @(size.width), WEB_IOS_HEIGHT_OPTION: @(size.height)},
-                          WEB_IOS_ANGLE_OPTION: @(angleInt)
-                          }
-          webCompletion:debugCompletion(WEB_AR_TRANSITION_TO_SIZE_MESSAGE)];
+    [self callTranslationToSizeWebMethodWithSize:size angle:angleInt];
 }
 
 - (void)didChangeOrientation:(UIInterfaceOrientation)orientation withSize:(CGSize)size
@@ -603,6 +605,16 @@ inline static WebCompletion debugCompletion(NSString *name)
     [wv setNavigationDelegate:self];
     [wv setUIDelegate:self];
     [self setWebView:wv];
+}
+
+- (void)callTranslationToSizeWebMethodWithSize:(CGSize)size angle:(NSInteger)angle 
+{
+    [self callWebMethod:WEB_AR_TRANSITION_TO_SIZE_MESSAGE
+              paramJSON:@{WEB_IOS_SIZE_OPTION : @{WEB_IOS_WIDTH_OPTION: @(size.width), 
+                                                  WEB_IOS_HEIGHT_OPTION: @(size.height)},
+                          WEB_IOS_ANGLE_OPTION: @(angle)
+                          }
+          webCompletion:debugCompletion(WEB_AR_TRANSITION_TO_SIZE_MESSAGE)];
 }
 
 @end
