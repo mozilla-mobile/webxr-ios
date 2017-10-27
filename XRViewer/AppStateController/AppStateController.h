@@ -3,6 +3,7 @@
 
 typedef void (^ASValueChangedAction)(NSUInteger);
 typedef void (^ASBoolChangedAction)(BOOL);
+typedef void (^ASAppChangedAction)(UIStyle);
 typedef void (^ASOnRequestAction)(NSDictionary *);
 typedef void (^ASURLAction)(NSString *);
 
@@ -14,7 +15,7 @@ typedef void (^ASURLAction)(NSString *);
 @property(nonatomic, copy) ASValueChangedAction onOptionsUpdate;
 @property(nonatomic, copy) ASValueChangedAction onRecordUpdate;
 
-@property(nonatomic, copy) ASBoolChangedAction onXRUpdate;
+@property(nonatomic, copy) ASAppChangedAction  onAppUpdate;
 @property(nonatomic, copy) ASBoolChangedAction onMicUpdate;
 @property(nonatomic, copy) ASBoolChangedAction onDebug;
 @property(nonatomic, copy) ASBoolChangedAction onInterruption;
@@ -30,7 +31,7 @@ typedef void (^ASURLAction)(NSString *);
 - (void)setShowMode:(ShowMode)mode;
 - (void)setShowOptions:(ShowOptions)options;
 - (void)setRecordState:(RecordState)state;
-- (void)setWebXR:(BOOL)webXR;
+- (void)setUIStyle:(UIStyle)app;
 - (void)setARRequest:(NSDictionary *)dict;
 - (void)setARInterruption:(BOOL)interruption;
 

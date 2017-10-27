@@ -18,12 +18,12 @@
 @property BOOL showEvent;
 @property BOOL debugEvent;
 
-@property(nonatomic, strong) NSDate *startTouchDate;
-@property(nonatomic, strong) NSTimer *touchTimer;
+@property (nonatomic, strong) NSDate *startTouchDate;
+@property (nonatomic, strong) NSTimer *touchTimer;
 
-@property(nonatomic) ShowMode showMode;
-@property(nonatomic) ShowOptions showOptions;
-@property(nonatomic) RecordState recordState;
+@property (nonatomic) ShowMode showMode;
+@property (nonatomic) ShowOptions showOptions;
+@property (nonatomic) RecordState recordState;
 
 #define MAX_INCREASE_ZONE_SIZE 10
 @property(nonatomic) CGFloat increaseHotZoneValue;

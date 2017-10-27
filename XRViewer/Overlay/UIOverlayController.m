@@ -14,9 +14,10 @@
 @property (nonatomic, copy) HotAction showAction;
 @property (nonatomic, copy) HotAction debugAction;
 
-@property(nonatomic) ShowMode showMode;
-@property(nonatomic) ShowOptions showOptions;
-@property(nonatomic) RecordState recordState;
+@property (nonatomic) UIStyle style;
+@property (nonatomic) ShowMode showMode;
+@property (nonatomic) ShowOptions showOptions;
+@property (nonatomic) RecordState recordState;
 
 @end
 
@@ -69,6 +70,13 @@
     _animator = animator;
     
     [[self overlayVC] setAnimator:animator];
+}
+
+- (void)setUIStyle:(UIStyle)style
+{
+    _style = style;
+    
+    [[self overlayVC] setUIStyle:style];
 }
 
 - (void)setMode:(ShowMode)mode
@@ -176,13 +184,11 @@
     
     [[self touchView] setBackgroundColor:[UIColor clearColor]];
     
-    [[self touchView] setAutoresizingMask:
-     UIViewAutoresizingFlexibleRightMargin |
-     UIViewAutoresizingFlexibleLeftMargin |
-     UIViewAutoresizingFlexibleBottomMargin |
-     UIViewAutoresizingFlexibleTopMargin |
-     UIViewAutoresizingFlexibleWidth |
-     UIViewAutoresizingFlexibleHeight];
+    [[self touchView] setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[[[self touchView] topAnchor] constraintEqualToAnchor:[[[self rootView] superview] topAnchor] constant:0] setActive:YES];
+    [[[[self touchView] bottomAnchor] constraintEqualToAnchor:[[[self rootView] superview] bottomAnchor] constant:0] setActive:YES];
+    [[[[self touchView] leftAnchor] constraintEqualToAnchor:[[[self rootView] superview] leftAnchor] constant:0] setActive:YES];
+    [[[[self touchView] rightAnchor] constraintEqualToAnchor:[[[self rootView] superview] rightAnchor] constant:0] setActive:YES];
 }
 
 - (void)setupOverlayWindow

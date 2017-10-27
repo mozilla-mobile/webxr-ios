@@ -8,7 +8,7 @@
     [copy setRecordState:[self recordState]];
     [copy setShowOptions:[self showOptions]];
     [copy setShowMode:[self showMode]];
-    [copy setWebXR:[self webXR]];
+    [copy setStyle:[self style]];
     [copy setARRequest:[self aRRequest]];
     [copy setMicEnabled:[self micEnabled]];
     [copy setTrackingState:[self trackingState]];
@@ -17,7 +17,7 @@
     return copy;
 }
 
-- (BOOL)isEqual:(id)theObject
+- (BOOL)isEqual:(AppState *)theObject
 {
     if (theObject == self)
     {
@@ -44,7 +44,7 @@
         return NO;
     }
     
-    if ([self webXR] != [theObject webXR])
+    if ([self style] != [theObject style])
     {
         return NO;
     }
@@ -74,7 +74,7 @@
 
 - (NSUInteger)hash
 {
-    return [self showOptions] ^ [self showMode] ^ [self recordState] ^ [self webXR] ^ [self micEnabled] ^ [[self trackingState] hash] ^ [[self aRRequest] hash] ^ [self interruption];
+    return [self showOptions] ^ [self showMode] ^ [self recordState] ^ [self style] ^ [self micEnabled] ^ [[self trackingState] hash] ^ [[self aRRequest] hash] ^ [self interruption];
 }
 
 + (instancetype)defaultState
@@ -85,7 +85,7 @@
     [state setShowOptions:SHOW_OPTIONS_BY_DEFAULT];
     [state setRecordState:RECORD_STATE_BY_DEFAULT];
     [state setMicEnabled:MICROPHONE_ENABLED_BY_DEFAULT];
-    
+    [state setStyle:Web];
     // trackingstate default is nil ?
     
     return state;
@@ -109,9 +109,9 @@
     return self;
 }
 
-- (instancetype)updatedWebXR:(BOOL)webXR
+- (instancetype)updatedApplication:(UIStyle)theApp
 {
-    [self setWebXR:webXR];
+    [self setStyle:theApp];
     return self;
 }
 

@@ -25,4 +25,6 @@ typedef void (^GoAction)(NSString *url);
 - (void)setBackEnabled:(BOOL)enabled;
 - (void)setForwardEnabled:(BOOL)enabled;
 
+- (void)layout;
+
 @end

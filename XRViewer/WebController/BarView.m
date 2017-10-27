@@ -12,7 +12,7 @@
 @property (nonatomic, weak) UIButton *reloadBtn;
 @property (nonatomic, weak) UIButton *cancelBtn;
 @property (nonatomic, weak) UIActivityIndicatorView *ai;
-
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *rightConstraint;
 @end
 
 @implementation URLTextField
@@ -64,6 +64,13 @@
     [[self forwardBtn] setEnabled:enabled];
 }
 
+- (void)layout
+{
+    [self setupBarConstraint];
+    
+    [self layoutIfNeeded];
+}
+
 - (void)setup
 {
     [[self backBtn] setImage:[UIImage imageNamed:@"back"] forState:UIControlStateDisabled];
@@ -109,6 +116,16 @@
     
     [[self urlField] setRightView:rightView];
     [[self urlField] setRightViewMode:UITextFieldViewModeUnlessEditing];
+    
+    [self setupBarConstraint];
+}
+
+- (void)setupBarConstraint
+{
+    BOOL isPortrait = UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation]);
+    BOOL isntIpad = [[UIDevice currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPad;
+    
+    [[self rightConstraint] setConstant:(isPortrait && isntIpad ? 27.5 : 127.5)];
 }
 
 - (IBAction)backAction:(id)sender

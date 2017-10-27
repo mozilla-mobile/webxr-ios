@@ -69,13 +69,26 @@ typedef void (^UICompletion)(void);
     [self processMemoryWarning];
 }
 
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{    
+    return UIInterfaceOrientationMaskAll;
+}
+
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
-    [[self arkController] viewWillTransitionToSize:size];
+    CGAffineTransform transform = [coordinator targetTransform];
+    CGFloat rotation = atan2(transform.b, transform.a);
+    
+    [[self arkController] viewWillTransitionToSize:size rotation:rotation];
     [[self overlayController] viewWillTransitionToSize:size];
-    [[self webController] viewWillTransitionToSize:size];
+    [[self webController] viewWillTransitionToSize:size rotation:rotation];
 }
 
 #pragma mark Setups
@@ -123,14 +136,14 @@ typedef void (^UICompletion)(void);
          [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
      }];
     
-    [[self stateController] setOnXRUpdate:^(BOOL xr)
+    [[self stateController] setOnAppUpdate:^(UIStyle app)
      {
-         if (xr)
+         if (app > Web)
          {
              [blockSelf setupARKController];
              [blockSelf setupLocationController];
              
-             [[blockSelf stateController] setShowMode:ShowSingle];
+             [[blockSelf stateController] setShowMode:(app == WebXRControlUI ? ShowSingle : ShowMulti)];
          }
          else
          {
@@ -139,7 +152,8 @@ typedef void (^UICompletion)(void);
              [[blockSelf stateController] setShowMode:ShowNothing];
          }
          
-         [[blockSelf webController] setupForWebXR:xr];
+         [[blockSelf webController] setupForApp:app];
+         [[blockSelf overlayController] setUIStyle:app];
      }];
     
     [[self stateController] setOnReachable:^(NSString *url)
@@ -226,6 +240,12 @@ typedef void (^UICompletion)(void);
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
      {
          [[blockSelf stateController] applyOnEnterForegroundAction];
+     }];
+    
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIDeviceOrientationDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
+     {
+         [[blockSelf webController] didChangeOrientation:[[UIApplication sharedApplication] statusBarOrientation]
+                                                withSize:[[blockSelf view] frame].size];
      }];
 }
 
@@ -400,7 +420,7 @@ typedef void (^UICompletion)(void);
     [[self webController] setAnimator:[self animator]];
     [[self webController] setOnStartLoad:^
      {
-         [[blockSelf stateController] setWebXR:NO];
+         [[blockSelf stateController] setUIStyle:Web];
      }];
     
     [[self webController] setOnFinishLoad:^
@@ -417,8 +437,8 @@ typedef void (^UICompletion)(void);
     // xr
     [[self webController] setOnInit:^(NSDictionary *uiOptionsDict)
      {
-         [[blockSelf stateController] setWebXR:YES];
-         [[blockSelf stateController] setShowMode:ShowSingle];
+         [[blockSelf stateController] setUIStyle:applicationFormDict(uiOptionsDict)];
+         [[blockSelf stateController] setShowMode:([[[blockSelf stateController] state] style] == WebXRAtOnceUI ? ShowMulti : ShowSingle)];
          [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
          
          [[blockSelf stateController] applyOnEnterForegroundAction];
@@ -493,6 +513,7 @@ typedef void (^UICompletion)(void);
     else
     {
         [[self webController] loadURL:WEB_URL];
+        [[self webController] setupForApp:[[[self stateController] state] style]];
     }
 }
 
@@ -566,6 +587,7 @@ typedef void (^UICompletion)(void);
     
     [[self overlayController] setAnimator:[self animator]];
     
+    [[self overlayController] setUIStyle:[[[self stateController] state] style]];
     [[self overlayController] setMode:[[[self stateController] state] showMode]];
     [[self overlayController] setOptions:[[[self stateController] state] showOptions]];
     [[self overlayController] setMicEnabled:[[[self stateController] state] micEnabled]];
@@ -618,14 +640,18 @@ typedef void (^UICompletion)(void);
 
 - (void)showSplashWithCompletion:(UICompletion)completion
 {
-    [[self splashLayerView] setAlpha:1];
+    [UIView animateWithDuration:.25 animations:^{
+        [[self splashLayerView] setAlpha:1];
+    }];
     
     RUN_UI_COMPLETION_ASYNC_MAIN(completion);
 }
 
 - (void)hideSplashWithCompletion:(UICompletion)completion
 {
-    [[self splashLayerView] setAlpha:0];
+    [UIView animateWithDuration:.25 animations:^{
+        [[self splashLayerView] setAlpha:0];
+    }];
     
     RUN_UI_COMPLETION_ASYNC_MAIN(completion);
 }
@@ -707,8 +733,7 @@ typedef void (^UICompletion)(void);
         [[self webController] loadURL:url];
     }
     
-    [[self stateController] setWebXR:NO];
+    [[self stateController] setUIStyle:Web];
 }
 
 @end
-

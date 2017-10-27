@@ -1,6 +1,7 @@
 #ifndef WebARKHeader_h
 #define WebARKHeader_h
 
+#import <UIKit/UIKit.h>
 #import "AppState.h"
 
 #define INTERNET_OFFLINE_CODE -1009
@@ -9,7 +10,7 @@
 #define SERVER_STOP_CODE 600
 
 // Start URL
-#define WEB_URL @"https://mozilla-mobile.github.io/webxr-ios/app/"
+#define WEB_URL @"http://develop.examples.webxrexperiments.com"
 
 // ##############################  MESSAGES
 
@@ -53,6 +54,7 @@ static inline NSArray * jsMessages()
 #define WEB_AR_MOVE_BACKGROUND_MESSAGE @"arDidMoveBackground"
 #define WEB_AR_ENTER_FOREGROUND_MESSAGE @"arWillEnterForeground"
 #define WEB_AR_MEMORY_WARNING_MESSAGE @"arReceiveMemoryWarning"
+#define WEB_AR_CHANGE_ORIENTATION_MESSAGE @"arOrientationChanged"
 #define WEB_AR_TRANSITION_TO_SIZE_MESSAGE @"arTransitionToSize"
 #define WEB_AR_ENTER_REGION_MESSAGE @"arEnterRegion"
 #define WEB_AR_EXIT_REGION_MESSAGE @"arExitRegion"
@@ -77,6 +79,7 @@ static inline NSArray * jsMessages()
 #define WEB_AR_CALLBACK_OPTION         @"callback"
 #define WEB_AR_REQUEST_OPTION          @"options"
 #define WEB_AR_UI_OPTION               @"ui"
+#define WEB_AR_UI_SHOW_AT_ONCE_OPTION  @"showUIAtOnce"
 #define WEB_AR_UI_BROWSER_OPTION       @"browser"
 #define WEB_AR_UI_POINTS_OPTION        @"points"
 #define WEB_AR_UI_DEBUG_OPTION         @"debug"
@@ -118,8 +121,17 @@ static inline NSArray * jsMessages()
 #define WEB_AR_LOCATION_REGION_RADIUS_OPTION    @"radius"
 #define WEB_AR_LOCATION_REGION_CENTER_OPTION    @"center"
 
+#define WEB_IOS_SIZE_OPTION  @"size"
 #define WEB_IOS_WIDTH_OPTION  @"width"
 #define WEB_IOS_HEIGHT_OPTION @"height"
+#define WEB_IOS_ANGLE_OPTION @"angle"
+#define WEB_IOS_ORIENTATIOIN_OPTION   @"orientation"
+#define WEB_IOS_PORTRAIT_ORIENT_VALUE @"Portrait"
+#define WEB_IOS_DOWN_ORIENT_VALUE     @"UpsideDown"
+#define WEB_IOS_LEFT_ORIENT_VALUE     @"LandscapeLeft"
+#define WEB_IOS_RIGHT_ORIENT_VALUE    @"LandscapeRight"
+#define WEB_IOS_UNKNOWN_ORIENT_VALUE  @"Unknown"
+
 #define WEB_IOS_VIEWPORT_SIZE_OPTION   @"viewportSize"
 #define WEB_IOS_SCREEN_SIZE_OPTION     @"screenSize"
 #define WEB_IOS_SCREEN_SCALE_OPTION    @"screenScale"
@@ -137,6 +149,8 @@ static inline NSArray * jsMessages()
 #define WEB_AR_TRANSFORM_Y_OPTION @"y"
 #define WEB_AR_TRANSFORM_Z_OPTION @"z"
 #define WEB_AR_TRANSFORM_W_OPTION @"w"
+
+#define WEB_AR_APPLICATION_OPTION @"application"
 
 #define WEB_AR_TYPE_OPTION      @"type"
 #define WEB_AR_POINT_OPTION     @"point"
@@ -165,6 +179,7 @@ static inline NSArray * jsMessages()
 #define WEB_AR_PROJ_CAMERA_OPTION      @"projectionCamera"
 #define WEB_AR_CAMERA_TRANSFORM_OPTION @"cameraTransform"
 
+#define WEB_AR_TRACKING_STATE_OPTION               @"state"
 #define WEB_AR_TRACKING_STATE_NORMAL               @"arTrackingNormal"
 #define WEB_AR_TRACKING_STATE_LIMITED              @"arTrackingLimited"
 #define WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING @"arTrackingLimitedInitializing"
@@ -182,6 +197,22 @@ typedef NS_ENUM(NSInteger, ErrorCodes)
     InvalidRegion
 };
 
+static inline UIStyle applicationFormDict(NSDictionary *dict)
+{
+    NSDictionary *customDict = dict[WEB_AR_UI_CUSTOM_OPTION];
+    
+    if (customDict == nil)
+    {
+        return Web;
+    }
+    else if ([customDict[WEB_AR_UI_SHOW_AT_ONCE_OPTION] boolValue])
+    {
+        return WebXRAtOnceUI;
+    }
+    
+    return WebXRControlUI;
+}
+    
 static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
 {
     if (dict == nil)
@@ -255,6 +286,44 @@ static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
     }
     
     return options;
+}
+
+static inline NSString * orientationFrom(UIInterfaceOrientation orientation)
+{
+    switch (orientation) {
+        case UIInterfaceOrientationPortrait:
+            return WEB_IOS_PORTRAIT_ORIENT_VALUE;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            return WEB_IOS_DOWN_ORIENT_VALUE;
+        case UIInterfaceOrientationLandscapeLeft:
+            return WEB_IOS_LEFT_ORIENT_VALUE;
+        case UIInterfaceOrientationLandscapeRight:
+            return WEB_IOS_RIGHT_ORIENT_VALUE;
+        default:
+            return WEB_IOS_UNKNOWN_ORIENT_VALUE;
+    }
+}
+
+static inline NSInteger rotationWith(CGFloat angle)
+{
+    CGFloat degrees = angle * (180.0 / M_PI);
+    
+    if ((degrees < 45) && (degrees > -45))
+    {
+        return 0;
+    }
+    else if ((degrees < 135) && (degrees > 45))
+    {
+        return 90;
+    }
+    else if ((degrees < -45) && (degrees > -135))
+    {
+        return -90;
+    }
+    else
+    {
+        return 180;
+    }
 }
 
 #endif /* WebARKHeader_h */
