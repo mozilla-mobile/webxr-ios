@@ -10,7 +10,7 @@
 #define SERVER_STOP_CODE 600
 
 // Start URL
-#define WEB_URL @"https://exaltcg.github.io/webxr-polyfill/" //*/@"https://andyps.github.io/demo/camapp/webxr/"
+#define WEB_URL @"http://develop.examples.webxrexperiments.com"
 
 // ##############################  MESSAGES
 
