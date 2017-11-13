@@ -51,6 +51,12 @@ inline static WebCompletion debugCompletion(NSString *name)
     return self;
 }
     
+- (void) goHome
+{
+    NSString *url = WEB_URL;
+    [self loadURL: url];
+}
+
 - (void)loadURL:(NSString *)theUrl
 {
     NSURL *url;
@@ -520,6 +526,10 @@ inline static WebCompletion debugCompletion(NSString *name)
              [blockBar setForwardEnabled:NO];
          }
      }];
+    [barView setHomeActionBlock:^(id sender) {
+        NSLog(@"going home\n");
+        [blockSelf goHome];
+    }];
     
     [barView setCancelActionBlock:^(id sender)
      {
