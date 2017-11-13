@@ -8,8 +8,8 @@
 #define SERVER_START_CODE 200
 #define SERVER_STOP_CODE 600
 
-// Start URL
-#define WEB_URL @"https://mozilla-mobile.github.io/webxr-ios/app/"
+// URL
+#define WEB_URL @"http://ios-viewer.webxrexperiments.com/viewer.html"
 
 // ##############################  MESSAGES
 
