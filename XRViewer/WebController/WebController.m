@@ -53,7 +53,12 @@ inline static WebCompletion debugCompletion(NSString *name)
     
 - (void)loadURL:(NSString *)theUrl
 {
-    NSURL *url = [NSURL URLWithString:theUrl];
+    NSURL *url;
+    if([theUrl hasPrefix:@"http://"] || [theUrl hasPrefix:@"https://"]) {
+        url = [NSURL URLWithString:theUrl];
+    } else {
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", theUrl]];
+    }
     
     if (url)
     {
