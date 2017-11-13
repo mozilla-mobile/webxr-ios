@@ -675,7 +675,7 @@
 			baseConfigurationReference = 4728098F8CE4B115F45011A2 /* Pods-XRViewer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = RJRT2UUKDY;
+				DEVELOPMENT_TEAM = 6PBG234246;
 				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -691,7 +691,7 @@
 			baseConfigurationReference = 9A955D97483A67AB0CFF9AA6 /* Pods-XRViewer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = RJRT2UUKDY;
+				DEVELOPMENT_TEAM = 6PBG234246;
 				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
