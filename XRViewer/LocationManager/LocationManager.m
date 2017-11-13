@@ -1,16 +1,12 @@
 #import "LocationManager.h"
-#import <os/lock.h>
 #import "WebARKHeader.h"
 
 @interface LocationManager() <CLLocationManagerDelegate>
-{
-    os_unfair_lock _lock;
-}
 
 @property (nonatomic, strong) CLLocationManager *manager;
-@property (nonatomic, strong) CLLocation *currentLocation;
 @property (nonatomic, copy) NSDictionary *request;
 @property (nonatomic, copy) DidRequestAuth authBlock;
+@property (nonatomic, strong) NSMutableArray *regions;
 @end
 
 @implementation LocationManager
@@ -26,10 +22,9 @@
     
     if (self)
     {
-        _lock = OS_UNFAIR_LOCK_INIT;
-        
         _manager = [[CLLocationManager alloc] init];
         [_manager setDelegate:self];
+        _regions = [NSMutableArray new];
         
         [self requestAuthorization];
     }
@@ -76,10 +71,14 @@
         return;
     }
     
-#warning LOCATION TEMP SOLUTION ( waiting for geofencing )
     [_manager requestLocation];
     
-    //[_manager startUpdatingLocation];
+    [_manager startUpdatingLocation];
+}
+    
+- (void)startUpdateHeading
+{
+    [_manager startUpdatingHeading];
 }
 
 - (void)stopUpdateLocation
@@ -90,62 +89,131 @@
         return;
     }
     
-#warning LOCATION TEMP SOLUTION ( waiting for geofencing )
-    //[_manager stopUpdatingLocation];
+    [_manager stopUpdatingLocation];
 }
-
-- (CLLocationCoordinate2D)currentCoordinate
+    
+- (void)stopUpdateHeading
 {
-    CLLocationCoordinate2D coordinate;
-    
-    os_unfair_lock_lock(&(_lock));
-    coordinate = [_currentLocation coordinate];
-    os_unfair_lock_unlock(&(_lock));
-    
-    return coordinate;
+    [_manager stopUpdatingHeading];
 }
-
-- (CLLocationDistance)currentAltitude
-{
-    CLLocationDistance altitude;
     
-    os_unfair_lock_lock(&(_lock));
-    altitude = [_currentLocation altitude];
-    os_unfair_lock_unlock(&(_lock));
-    
-    return altitude;
-}
-
-- (NSDictionary *)currentCoordinateDict
-{
-    CLLocationCoordinate2D coord = [self currentCoordinate];
-    CLLocationDistance altitude = [self currentAltitude];
-    
-    return @{WEB_AR_LOCATION_LON_OPTION : @(coord.longitude), WEB_AR_LOCATION_LAT_OPTION : @(coord.latitude), WEB_AR_LOCATION_ALT_OPTION : @(altitude)};
-}
-
 - (void)setupForRequest:(NSDictionary *)request
 {
-    [self setRequest:request];
+    [self setRequest:request[WEB_AR_LOCATION_OPTION]];
     
-    if ([request[WEB_AR_LOCATION_OPTION] boolValue])
+    if ([self request] != nil)
     {
-        [self startUpdateLocation];
+        NSString *accuracyString = [self request][WEB_AR_LOCATION_ACCURACY_OPTION];
+        if (accuracyString != nil)
+        {
+            [[self manager] setDesiredAccuracy:accuracyFrom(accuracyString)];
+            [[self manager] setDistanceFilter:accuracyFrom(accuracyString)];
+            [self startUpdateLocation];
+         }
+        
+        NSDictionary *heading = [self request][WEB_AR_LOCATION_HEADING_OPTION];
+        if (heading != nil)
+        {
+            NSString *headingAccuracy = heading[WEB_AR_LOCATION_ACCURACY_OPTION];
+            [[self manager] setHeadingFilter:[headingAccuracy floatValue]];
+            [self startUpdateHeading];
+        }
     }
     else
     {
         [self stopUpdateLocation];
+        [self stopUpdateHeading];
     }
 }
-
-- (NSDictionary *)locationData
+    
+- (NSDictionary *)addRegion:(NSDictionary *)req
 {
-    if ([[self request][WEB_AR_LOCATION_OPTION] boolValue])
+    NSDictionary *regionDict = req[WEB_AR_LOCATION_REGION_OPTION];
+    
+    if (regionDict == nil) {return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };}
+
+    NSDictionary *centerDict = regionDict[WEB_AR_LOCATION_REGION_CENTER_OPTION];
+    CLLocationCoordinate2D center;
+    center.longitude = [centerDict[WEB_AR_LOCATION_LON_OPTION] longLongValue];
+    center.latitude = [centerDict[WEB_AR_LOCATION_LAT_OPTION] longLongValue];
+    
+    CLLocationDistance radius = [regionDict[WEB_AR_LOCATION_REGION_RADIUS_OPTION] longLongValue];
+    NSString *identifier = regionDict[WEB_AR_ID_OPTION];
+    
+    if (identifier != nil && radius > 0)
     {
-        return @{WEB_AR_LOCATION_OPTION : [self currentCoordinateDict]};
+        CLCircularRegion *region = [[CLCircularRegion alloc] initWithCenter:center radius:radius identifier:identifier];
+        [_regions addObject:region];
+        [_manager startMonitoringForRegion:region];
+        
+        return @{ WEB_AR_LOCATION_REGION_OPTION : identifier };
     }
     
-    return @{};
+    return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };
+}
+    
+- (NSDictionary *)removeRegion:(NSDictionary *)req
+{
+    NSDictionary *regionDict = req[WEB_AR_LOCATION_REGION_OPTION];
+    
+    if (regionDict == nil) {return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };}
+    
+    NSString *identifier = (req[WEB_AR_LOCATION_REGION_OPTION])[WEB_AR_ID_OPTION];
+    
+    if (identifier != nil)
+    {
+        CLCircularRegion *region = [self regionByID:identifier];
+        
+        if (region != nil)
+        {
+            [_manager stopMonitoringForRegion:region];
+            [_regions removeObject:region];
+            
+            return @{ WEB_AR_LOCATION_REGION_OPTION : identifier };
+        }
+    }
+    
+    return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };
+}
+
+- (CLCircularRegion *)regionByID:(NSString *)identifier
+{
+    for (CLCircularRegion *region in _regions)
+    {
+        if ([region.identifier isEqualToString:identifier])
+        {
+            return region;
+        }
+    }
+    
+    return  nil;
+}
+    
+- (NSDictionary *)inRegion:(NSDictionary *)req
+{
+    NSDictionary *regionDict = req[WEB_AR_LOCATION_REGION_OPTION];
+    
+    if (regionDict == nil) {return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };}
+    
+    NSString *identifier = (req[WEB_AR_LOCATION_REGION_OPTION])[WEB_AR_ID_OPTION];
+    
+    if (identifier != nil)
+    {
+        CLCircularRegion *region = [self regionByID:identifier];
+        
+        CLLocationCoordinate2D coord = [[_manager location] coordinate];
+        
+        if ([region containsCoordinate:coord])
+        {
+            return @{ WEB_AR_LOCATION_REGION_OPTION : identifier };
+        }
+        else
+        {
+            return @{ WEB_AR_LOCATION_REGION_OPTION : @"" };//?
+        }
+    }
+    
+    return @{ WEB_AR_ERROR_CODE : @( InvalidRegion ) };
 }
 
 #pragma mark Location Manager
@@ -153,22 +221,34 @@
 - (void)locationManager:(CLLocationManager *)manager
      didUpdateLocations:(NSArray<CLLocation *> *)locations
 {
-    os_unfair_lock_lock(&(_lock));
-    _currentLocation = [[locations lastObject] copy];
-    os_unfair_lock_unlock(&(_lock));
-    
-    if ([self updateLocation])
-    {
-        [self updateLocation]([locations lastObject]);
-    }
+    [self updateLocation](dictFromLocation([locations lastObject]));
 }
-
+    
+- (void)locationManager:(CLLocationManager *)manager
+    didUpdateHeading:(nonnull CLHeading *)newHeading
+{
+    [self updateHeading](dictFromHeading(newHeading));
+}
+    
 - (void)locationManager:(CLLocationManager *)manager
        didFailWithError:(NSError *)error
 {
     DDLogError(@"Location error - %@", error);
+    [self fail](error);
 }
 
+- (void)locationManager:(CLLocationManager *)manager
+    didEnterRegion:(nonnull CLRegion *)region
+{
+    [self enterRegion](dictFromRegion((CLCircularRegion *)region));
+}
+    
+- (void)locationManager:(CLLocationManager *)manager
+    didExitRegion:(nonnull CLRegion *)region
+{
+    [self exitRegion](dictFromRegion((CLCircularRegion *)region));
+}
+    
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
     DDLogDebug(@"locationManager didChangeAuthorizationStatus - %d", status);
@@ -192,5 +272,54 @@
     }
 }
 
+static NSDictionary * dictFromLocation(CLLocation *location)
+{
+    NSDictionary *locOption = @{WEB_AR_LOCATION_LON_OPTION : @(location.coordinate.longitude), WEB_AR_LOCATION_LAT_OPTION : @(location.coordinate.latitude), WEB_AR_LOCATION_ALT_OPTION : @(location.altitude)};
+    
+    return @{WEB_AR_LOCATION_OPTION: locOption};
+}
+
+static NSDictionary * dictFromHeading(CLHeading *heading)
+{
+    NSDictionary *headOption = @{WEB_AR_LOCATION_HEADING_TRUE_OPTION : @(heading.trueHeading), WEB_AR_LOCATION_HEADING_MAGNETIC_OPTION : @(heading.magneticHeading)};
+    
+    return @{WEB_AR_LOCATION_HEADING_OPTION: headOption};
+}
+
+static NSDictionary * dictFromRegion(CLCircularRegion *region)
+{
+    NSDictionary *center = @{WEB_AR_LOCATION_LON_OPTION : @(region.center.longitude), WEB_AR_LOCATION_LAT_OPTION : @(region.center.latitude)};
+    
+    NSDictionary *regionOption = @{WEB_AR_LOCATION_REGION_RADIUS_OPTION : @(region.radius),
+                                   WEB_AR_LOCATION_REGION_CENTER_OPTION : center,
+                                   WEB_AR_ID_OPTION : region.identifier};
+    
+    return @{WEB_AR_LOCATION_REGION_OPTION: regionOption};
+}
+
+static CLLocationAccuracy accuracyFrom(NSString *string)
+{
+    if ([string isEqualToString:WEB_AR_LOCATION_ACCURACY_BEST_NAV]) {
+        return kCLLocationAccuracyBestForNavigation;
+    }
+    else if ([string isEqualToString:WEB_AR_LOCATION_ACCURACY_BEST]) {
+        return kCLLocationAccuracyBest;
+    }
+    else if ([string isEqualToString:WEB_AR_LOCATION_ACCURACY_TEN]) {
+        return kCLLocationAccuracyNearestTenMeters;
+    }
+    else if ([string isEqualToString:WEB_AR_LOCATION_ACCURACY_HUNDRED]) {
+        return kCLLocationAccuracyHundredMeters;
+    }
+    else if ([string isEqualToString:WEB_AR_LOCATION_ACCURACY_KILO]) {
+        return kCLLocationAccuracyKilometer;
+    }
+    else if ([string isEqualToString:WEB_AR_LOCATION_ACCURACY_THREE]) {
+        return kCLLocationAccuracyThreeKilometers;
+    }
+    
+    return -1;
+}
+    
 @end
 

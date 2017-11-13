@@ -9,6 +9,7 @@
 @property (weak, nonatomic) IBOutlet URLTextField *urlField;
 @property (weak, nonatomic) IBOutlet UIButton *backBtn;
 @property (weak, nonatomic) IBOutlet UIButton *forwardBtn;
+@property (weak, nonatomic) IBOutlet UIButton *homeBtn;
 @property (nonatomic, weak) UIButton *reloadBtn;
 @property (nonatomic, weak) UIButton *cancelBtn;
 @property (nonatomic, weak) UIActivityIndicatorView *ai;
@@ -81,6 +82,8 @@
     
     [[self urlField] setClearButtonMode:UITextFieldViewModeWhileEditing];
     [[self urlField] setReturnKeyType:UIReturnKeyGo];
+    [[self urlField] setKeyboardType:UIKeyboardTypeURL];
+    [[self urlField] setAutocorrectionType:UITextAutocorrectionTypeNo];
     
     [[self urlField] setTextContentType:UITextContentTypeURL];
     [[self urlField] setPlaceholder:@"Search or enter website name"];
@@ -130,6 +133,13 @@
     if ([self forwardActionBlock])
     {
         [self forwardActionBlock](self);
+    }
+}
+- (IBAction)homeAction:(id)sender {
+    DDLogDebug(@"homeAction");
+    if([self homeActionBlock])
+    {
+        [self homeActionBlock](self);
     }
 }
 

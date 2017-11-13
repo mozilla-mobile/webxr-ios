@@ -294,12 +294,38 @@ typedef void (^UICompletion)(void);
 {
     [self setLocationManager:[[LocationManager alloc] init]];
     [[self locationManager] setupForRequest:[[[self stateController] state] aRRequest]];
+    
+    __weak typeof (self) blockSelf = self;
+    
+    [[self locationManager] setEnterRegion:^(NSDictionary *dict)
+     {
+         [[blockSelf webController] didRegion:dict enter:YES];
+    }];
+    
+    [[self locationManager] setExitRegion:^(NSDictionary *dict)
+    {
+        [[blockSelf webController] didRegion:dict enter:NO];
+    }];
+    
+    [[self locationManager] setUpdateHeading:^(NSDictionary *dict)
+    {
+        [[blockSelf webController] didUpdateHeading:dict];
+    }];
+    
+    [[self locationManager] setUpdateLocation:^(NSDictionary *dict)
+    {
+        [[blockSelf webController] didUpdateLocation:dict];
+    }];
+    
+    [[self locationManager] setFail:^(NSError *error)
+    {
+        DDLogDebug(@"Location error - %@", error);
+    }];
 }
 
 - (void)setupARKController
 {
     CLEAN_VIEW([self arkLayerView]);
-    
     __weak typeof (self) blockSelf = self;
     
     [self setArkController:[[ARKController alloc] initWithType:ARKSceneKit rootView:[self arkLayerView]]];
@@ -311,11 +337,15 @@ typedef void (^UICompletion)(void);
              [blockSelf sendARKData];
          }
      }];
+
 #define CAMERA_ACCESS_NOT_AUTORIZED_CODE 103
+
     [[self arkController] setDidFailSession:^(NSError *error)
      {
          if ([error code] != CAMERA_ACCESS_NOT_AUTORIZED_CODE)
          {
+             [[blockSelf webController] didSessionFails];
+             
              dispatch_async(dispatch_get_main_queue(), ^
                             {
                                 [[blockSelf messageController] showMessageAboutFailSessionWithCompletion:^
@@ -338,6 +368,21 @@ typedef void (^UICompletion)(void);
      {
          [[blockSelf webController] didChangeARTrackingState:state];
          [[blockSelf overlayController] setTrackingState:state];
+     }];
+    
+    [[self arkController] setDidAddPlanes:^(NSDictionary *dict)
+     {
+         [[blockSelf webController] didAddPlanes:dict];
+    }];
+    
+    [[self arkController] setDidRemovePlanes:^(NSDictionary *dict)
+     {
+         [[blockSelf webController] didRemovePlanes:dict];
+     }];
+    
+    [[self arkController] setDidUpdateAnchors:^(NSDictionary *dict)
+     {
+         [[blockSelf webController] didUpdateAnchors:dict];
      }];
     
     [[self animator] animate:[self arkLayerView] toFade:NO];
@@ -364,6 +409,12 @@ typedef void (^UICompletion)(void);
           { }];
      }];
     
+    [[self webController] setOnError:^(NSError *error)
+     {
+         [blockSelf showWebError:error];
+     }];
+    
+    // xr
     [[self webController] setOnInit:^(NSDictionary *uiOptionsDict)
      {
          [[blockSelf stateController] setWebXR:YES];
@@ -374,29 +425,14 @@ typedef void (^UICompletion)(void);
          [[blockSelf stateController] applyOnDidReceiveMemoryAction];
      }];
     
-    [[self webController] setOnError:^(NSError *error)
-     {
-         [blockSelf showWebError:error];
-     }];
+    [[self webController] setOnLoadURL:^(NSString *url)
+    {
+        [[blockSelf webController] loadURL:url];
+    }];
     
-    [[self webController] setOnIOSUpdate:^( NSDictionary * _Nullable request)
+    [[self webController] setOnWatch:^( NSDictionary * _Nullable request)
      {
          [[blockSelf stateController] setARRequest:request];
-     }];
-    
-    [[self webController] setOnJSUpdate:^( NSDictionary * _Nullable request)
-     {
-         [[blockSelf stateController] setARRequest:request];
-     }];
-    
-    [[self webController] setOnJSUpdateData:^NSDictionary *
-     {
-         return [blockSelf commonData];
-     }];
-    
-    [[self webController] setLoadURL:^(NSString *url)
-     {
-         [[blockSelf webController] loadURL:url];
      }];
     
     [[self webController] setOnSetUI:^(NSDictionary *uiOptionsDict)
@@ -404,28 +440,52 @@ typedef void (^UICompletion)(void);
          [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
      }];
     
-    [[self webController] setOnHitTest:^(NSUInteger mask, CGFloat x, CGFloat y, ResultArrayBlock result)
+    [[self webController] setOnHitTest:^(NSDictionary *dict, OnAction result)
      {
-         result([[blockSelf arkController] hitTestNormPoint:CGPointMake(x, y) types:mask]);
+         result([[blockSelf arkController] hitTest:dict]);
      }];
     
-    [[self webController] setOnAddAnchor:^(NSString *name, NSArray *transformArray, ResultBlock result)
+    [[self webController] setOnAddAnchor:^(NSDictionary *dict, OnAction result)
      {
-         if ([[blockSelf arkController] addAnchor:name transform:transformArray])
-         {
-             result(@{WEB_AR_UUID_OPTION : name, WEB_AR_TRANSFORM_OPTION : transformArray});
-         }
-         else
-         {
-             result(@{});
-         }
+         result([[blockSelf arkController] addAnchor:dict]);
      }];
     
-    [[self webController] setOnRemoveObjects:^(NSArray *objects)
+    [[self webController] setOnRemoveAnchor:^(NSDictionary *dict, OnAction result)
      {
-         [[blockSelf arkController] removeAnchors:objects];
+         result([[blockSelf arkController] removeAnchor:dict]);
      }];
     
+    [[self webController] setOnUpdateAnchor:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf arkController] updateAnchor:dict]);
+     }];
+    
+    [[self webController] setOnStartHold:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf arkController] startHoldAnchor:dict]);
+     }];
+    
+    [[self webController] setOnStopHold:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf arkController] stopHoldAnchor:dict]);
+     }];
+    
+    [[self webController] setOnAddRegion:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf locationManager] addRegion:dict]);
+     }];
+    
+    [[self webController] setOnRemoveRegion:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf locationManager] removeRegion:dict]);
+     }];
+    
+    [[self webController] setOnInRegion:^(NSDictionary *dict, OnAction result)
+     {
+         result([[blockSelf locationManager] inRegion:dict]);
+     }];
+    
+    // start
     if ([[self stateController] wasMemoryWarning])
     {
         [[self stateController] applyOnDidReceiveMemoryAction];
@@ -596,11 +656,7 @@ typedef void (^UICompletion)(void);
 
 - (NSDictionary *)commonData
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:[[self locationManager] locationData]];
-    
-    [dictionary setValuesForKeysWithDictionary:[[self arkController] arkData]];
-    
-    return [dictionary copy];
+    return [[[self arkController] arkData] copy];
 }
 
 - (void)sendARKData

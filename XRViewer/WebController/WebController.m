@@ -50,46 +50,21 @@ inline static WebCompletion debugCompletion(NSString *name)
     
     return self;
 }
-
-- (void)viewWillTransitionToSize:(CGSize)size
-{
-    [self layout];
     
-    [self callWebMethod:WEB_AR_IOS_WIEW_WILL_TRANSITION_TO_SIZE_MESSAGE param:NSStringFromCGSize(size) webCompletion:debugCompletion(@"viewWillTransitionToSize")];
-}
-
-- (void)clean
+- (void) goHome
 {
-    [self cleanWebContent];
-    
-    [[self webView] stopLoading];
-    
-    [[[self webView] configuration] setProcessPool:[WKProcessPool new]];
-    [[NSURLCache sharedURLCache] removeAllCachedResponses];
-}
-
-- (BOOL)sendARData:(NSDictionary *)data
-{
-#define CHECK_UPDATE_CALL NO
-    if ([self transferCallback] && data)
-    {
-        [self callWebMethod:[self transferCallback] paramJSON:data webCompletion:CHECK_UPDATE_CALL ? debugCompletion(@"sendARData") : NULL];
-        
-        return YES;
-    }
-    
-    return NO;
-}
-
-- (void)reload
-{
-    NSString *url = [[[self barView] urlFieldText] length] > 0 ? [[self barView] urlFieldText] : [self lastURL];
-    [self loadURL:url];
+    NSString *url = WEB_URL;
+    [self loadURL: url];
 }
 
 - (void)loadURL:(NSString *)theUrl
 {
-    NSURL *url = [NSURL URLWithString:theUrl];
+    NSURL *url;
+    if([theUrl hasPrefix:@"http://"] || [theUrl hasPrefix:@"https://"]) {
+        url = [NSURL URLWithString:theUrl];
+    } else {
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@", theUrl]];
+    }
     
     if (url)
     {
@@ -117,34 +92,7 @@ inline static WebCompletion debugCompletion(NSString *name)
         [self onError](nil);
     }
 }
-
-- (void)startRecording:(BOOL)start
-{
-    NSString *message = start ? WEB_AR_IOS_START_RECORDING_MESSAGE : WEB_AR_IOS_STOP_RECORDING_MESSAGE;
     
-    [self callWebMethod:message param:@"" webCompletion:debugCompletion(@"setRecordState")];
-}
-
-- (void)setupForWebXR:(BOOL)webXR
-{
-    dispatch_async(dispatch_get_main_queue(), ^
-    {
-        CGRect rect = [[[self webView] superview] bounds];
-        
-        if (webXR == NO)
-        {
-            rect.origin.y += [[self barView] bounds].size.height;
-        }
-        
-        [[self animator] animate:[self webView] toFrame:rect];
-        
-        UIColor *backColor = webXR ? [UIColor clearColor] : [UIColor whiteColor];
-        [[[self webView] superview] setBackgroundColor:backColor];
-        
-        [[self animator] animate:[[self webView] superview] toColor:backColor];
-    });
-}
-
 - (void)showBar:(BOOL)showBar
 {
     CGRect rect = [[self barView] bounds];
@@ -153,33 +101,136 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self animator] animate:[self barView] toFrame:rect];
 }
 
+- (void)reload
+{
+    NSString *url = [[[self barView] urlFieldText] length] > 0 ? [[self barView] urlFieldText] : [self lastURL];
+    [self loadURL:url];
+}
+    
+- (void)clean
+{
+    [self cleanWebContent];
+    
+    [[self webView] stopLoading];
+    
+    [[[self webView] configuration] setProcessPool:[WKProcessPool new]];
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+}
+
+- (void)setupForWebXR:(BOOL)webXR
+{
+    dispatch_async(dispatch_get_main_queue(), ^
+       {
+           CGRect rect = [[[self webView] superview] bounds];
+           
+           if (webXR == NO)
+           {
+               rect.origin.y += [[self barView] bounds].size.height;
+           }
+           
+           [[self animator] animate:[self webView] toFrame:rect];
+           
+           UIColor *backColor = webXR ? [UIColor clearColor] : [UIColor whiteColor];
+           [[[self webView] superview] setBackgroundColor:backColor];
+           
+           [[self animator] animate:[[self webView] superview] toColor:backColor];
+       });
+}
+    
+// xr
 - (void)showDebug:(BOOL)showDebug
 {
-    [self callWebMethod:WEB_AR_IOS_SHOW_DEBUG paramJSON:@{WEB_AR_UI_DEBUG_OPTION : (showDebug ? @YES : @NO)} webCompletion:debugCompletion(@"showDebug")];
+    [self callWebMethod:WEB_AR_SHOW_DEBUG_MESSAGE paramJSON:@{WEB_AR_UI_DEBUG_OPTION : (showDebug ? @YES : @NO)} webCompletion:debugCompletion(WEB_AR_SHOW_DEBUG_MESSAGE)];
 }
-
-- (void)wasARInterruption:(BOOL)interruption
-{
-    NSString *message = interruption ? WEB_AR_IOS_START_RECORDING_MESSAGE : WEB_AR_IOS_INTERRUPTION_ENDED_MESSAGE;
     
-    [self callWebMethod:message param:@"" webCompletion:debugCompletion(@"ARinterruption")];
-}
-
 - (void)didBackgroundAction:(BOOL)background
 {
-    NSString *message = background ? WEB_AR_IOS_DID_MOVE_BACK_MESSAGE : WEB_AR_IOS_WILL_ENTER_FOR_MESSAGE;
+    NSString *message = background ? WEB_AR_MOVE_BACKGROUND_MESSAGE : WEB_AR_ENTER_FOREGROUND_MESSAGE;
     
-    [self callWebMethod:message param:@"" webCompletion:debugCompletion(@"backgroundAction")];
+    [self callWebMethod:message param:@"" webCompletion:debugCompletion(message)];
 }
-
+    
 - (void)didReceiveMemoryWarning
 {
-    [self callWebMethod:WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE param:@"" webCompletion:debugCompletion(@"iosDidReceiveMemoryWarning")];
+    [self callWebMethod:WEB_AR_MEMORY_WARNING_MESSAGE param:@"" webCompletion:debugCompletion(WEB_AR_TRACKING_CHANGED_MESSAGE)];
+}
+    
+- (void)viewWillTransitionToSize:(CGSize)size
+{
+    [self layout];
+    
+    [self callWebMethod:WEB_AR_TRANSITION_TO_SIZE_MESSAGE
+                  param:NSStringFromCGSize(size)
+          webCompletion:debugCompletion(WEB_AR_TRANSITION_TO_SIZE_MESSAGE)];
+}
+    
+- (void)didRegion:(NSDictionary *)param enter:(BOOL)enter;
+{
+    NSString *message = enter ? WEB_AR_ENTER_REGION_MESSAGE : WEB_AR_EXIT_REGION_MESSAGE;
+    
+    [self callWebMethod:message paramJSON:param webCompletion:debugCompletion(message)];
+}
+    
+- (void)didUpdateHeading:(NSDictionary *)dict
+{
+    [self callWebMethod:WEB_AR_UPDATE_HEADING_MESSAGE paramJSON:dict webCompletion:debugCompletion(WEB_AR_UPDATE_HEADING_MESSAGE)];
+}
+    
+- (void)didUpdateLocation:(NSDictionary *)dict
+{
+    [self callWebMethod:WEB_AR_UPDATE_LOCATION_MESSAGE paramJSON:dict webCompletion:debugCompletion(WEB_AR_UPDATE_LOCATION_MESSAGE)];
+}
+    
+- (void)wasARInterruption:(BOOL)interruption
+{
+    NSString *message = interruption ? WEB_AR_INTERRUPTION_MESSAGE : WEB_AR_INTERRUPTION_ENDED_MESSAGE;
+    
+    [self callWebMethod:message param:@"" webCompletion:debugCompletion(message)];
 }
 
 - (void)didChangeARTrackingState:(NSString *)state
 {
-    [self callWebMethod:WEB_AR_IOS_TRACKING_STATE_MESSAGE param:state webCompletion:debugCompletion(@"arkitDidChangeTrackingState")];
+    [self callWebMethod:WEB_AR_TRACKING_CHANGED_MESSAGE param:state webCompletion:debugCompletion(WEB_AR_TRACKING_CHANGED_MESSAGE)];
+}
+    
+- (void)didSessionFails
+{
+    [self callWebMethod:WEB_AR_SESSION_FAILS_MESSAGE param:@"" webCompletion:debugCompletion(WEB_AR_SESSION_FAILS_MESSAGE)];
+}
+    
+- (void)didUpdateAnchors:(NSDictionary *)dict
+{
+    [self callWebMethod:WEB_AR_UPDATED_ANCHORS_MESSAGE paramJSON:dict webCompletion:debugCompletion(WEB_AR_UPDATED_ANCHORS_MESSAGE)];
+}
+    
+- (void)didAddPlanes:(NSDictionary *)dict
+{
+    [self callWebMethod:WEB_AR_ADD_PLANES_MESSAGE paramJSON:dict webCompletion:debugCompletion(WEB_AR_ADD_PLANES_MESSAGE)];
+}
+    
+- (void)didRemovePlanes:(NSDictionary *)dict
+{
+    [self callWebMethod:WEB_AR_REMOVE_PLANES_MESSAGE paramJSON:dict webCompletion:debugCompletion(WEB_AR_REMOVE_PLANES_MESSAGE)];
+}
+    
+- (void)startRecording:(BOOL)start
+{
+    NSString *message = start ? WEB_AR_START_RECORDING_MESSAGE : WEB_AR_STOP_RECORDING_MESSAGE;
+    
+    [self callWebMethod:message param:@"" webCompletion:debugCompletion(message)];
+}
+    
+- (BOOL)sendARData:(NSDictionary *)data
+{
+#define CHECK_UPDATE_CALL NO
+    if ([self transferCallback] && data)
+    {
+        [self callWebMethod:[self transferCallback] paramJSON:data webCompletion:CHECK_UPDATE_CALL ? debugCompletion(@"sendARData") : NULL];
+        
+        return YES;
+    }
+    
+    return NO;
 }
 
 #pragma mark WKScriptMessageHandler
@@ -190,13 +241,18 @@ inline static WebCompletion debugCompletion(NSString *name)
     
     __weak typeof (self) blockSelf = self;
     
-    if ([[message name] isEqualToString:WEB_AR_INIT_MESSAGE])
+    if ([[message name] isEqualToString:WEB_JS_INIT_MESSAGE])
     {
+        CGSize screenSize = [[UIScreen mainScreen] bounds].size;
+        CGSize viewportSize = self.webView.frame.size;
         NSDictionary *params = @{ WEB_IOS_DEVICE_UUID_OPTION : [[[UIDevice currentDevice] identifierForVendor] UUIDString],
                                   WEB_IOS_IS_IPAD_OPTION : @([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad),
                                   WEB_IOS_SYSTEM_VERSION_OPTION : [[UIDevice currentDevice] systemVersion],
                                   WEB_IOS_SCREEN_SCALE_OPTION : @([[UIScreen mainScreen] nativeScale]),
-                                  WEB_IOS_SCREEN_SIZE_OPTION : NSStringFromCGSize([[UIScreen mainScreen] nativeBounds].size)};
+                                  WEB_IOS_VIEWPORT_SIZE_OPTION : @{ WEB_IOS_WIDTH_OPTION : @(viewportSize.width),
+                                                                  WEB_IOS_HEIGHT_OPTION : @(viewportSize.height) },
+                                  WEB_IOS_SCREEN_SIZE_OPTION : @{ WEB_IOS_WIDTH_OPTION : @(screenSize.width),
+                                                                WEB_IOS_HEIGHT_OPTION : @(screenSize.height)}};
         
         DDLogDebug(@"Init AR send - %@", [params debugDescription]);
         
@@ -216,64 +272,101 @@ inline static WebCompletion debugCompletion(NSString *name)
              }
          }];
     }
-    else if ([[message name] isEqualToString:WEB_AR_LOAD_URL_MESSAGE])
+    else if ([[message name] isEqualToString:WEB_JS_LOAD_URL_MESSAGE])
     {
-        [self loadURL]([[message body] objectForKey:WEB_AR_URL_OPTION]);
+        [self onLoadURL]([[message body] objectForKey:WEB_AR_URL_OPTION]);
     }
-    else if ([[message name] isEqualToString:WEB_AR_START_WATCH_MESSAGE])
+    else if ([[message name] isEqualToString:WEB_JS_START_WATCH_MESSAGE])
     {
         [self setTransferCallback:[[message body] objectForKey:WEB_AR_CALLBACK_OPTION]];
         
-        if ([[[message body] objectForKey:WEB_AR_JS_FRAME_RATE_OPTION] boolValue])
-        {
-            [self onJSUpdate]([[message body] objectForKey:WEB_AR_REQUEST_OPTION]);
-        }
-        else
-        {
-            [self onIOSUpdate]([[message body] objectForKey:WEB_AR_REQUEST_OPTION]);
-        }
+        [self onWatch]([[message body] objectForKey:WEB_AR_REQUEST_OPTION]);
     }
-    else if ([[message name] isEqualToString:WEB_AR_ON_JS_UPDATE_MESSAGE])
+    else if ([[message name] isEqualToString:WEB_JS_STOP_WATCH_MESSAGE])
     {
-        [self sendARData:[blockSelf onJSUpdateData]()];
-    }
-    else if ([[message name] isEqualToString:WEB_AR_STOP_WATCH_MESSAGE])
-    {
+        NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        
         [self setTransferCallback:nil];
         
-        [self onIOSUpdate](nil);
-        
-        [self onJSUpdate](nil);
-        
-        [self callWebMethod:[[message body] objectForKey:WEB_AR_CALLBACK_OPTION] param:@"" webCompletion:NULL];
+        [self onWatch](nil);
+                
+        [self callWebMethod:callback param:@"" webCompletion:NULL];
     }
-    else if ([[message name] isEqualToString:WEB_AR_SET_UI_MESSAGE])
+    else if ([[message name] isEqualToString:WEB_JS_SET_UI_MESSAGE])
     {
-        [self onSetUI]([message body]);
+        [self onSetUI]([[message body] objectForKey:WEB_AR_REQUEST_OPTION]);
     }
-    else if ([[message name] isEqualToString:WEB_AR_HIT_TEST_MESSAGE])
+    else if ([[message name] isEqualToString:WEB_JS_HIT_TEST_MESSAGE])
     {
-        NSString *hitCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        NSUInteger type = [[[message body] objectForKey:WEB_AR_TYPE_OPTION] integerValue];
-        CGFloat x = [[[message body] objectForKey:WEB_AR_X_POSITION_OPTION] floatValue];
-        CGFloat y = [[[message body] objectForKey:WEB_AR_Y_POSITION_OPTION] floatValue];
-        
-        [self onHitTest](type, x, y, ^(NSArray *results)
+        NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        [self onHitTest]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                          {
-                             DDLogDebug(@"Hit test - %@", [results debugDescription]);
-                             [blockSelf callWebMethod:hitCallback paramJSON:results webCompletion:debugCompletion(@"onHitTest")];
+                             [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_HIT_TEST_MESSAGE)];
                          });
     }
-    else if ([[message name] isEqualToString:WEB_AR_ADD_ANCHOR_MESSAGE])
+    else if ([[message name] isEqualToString:WEB_JS_ADD_ANCHOR_MESSAGE])
     {
-        NSString *hitCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
-        NSString *name = [[message body] objectForKey:WEB_AR_UUID_OPTION];
-        NSArray *transform = [[message body] objectForKey:WEB_AR_TRANSFORM_OPTION];
-        
-        [self onAddAnchor](name, transform,^(NSDictionary *results)
+        NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        [self onAddAnchor]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
+                         {
+                             [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_ADD_ANCHOR_MESSAGE)];
+                         });
+    }
+    else if ([[message name] isEqualToString:WEB_JS_REMOVE_ANCHOR_MESSAGE])
+    {
+        NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        [self onRemoveAnchor]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
                            {
-                               [blockSelf callWebMethod:hitCallback paramJSON:results webCompletion:debugCompletion(@"onAddAnchor")];
+                               [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_REMOVE_ANCHOR_MESSAGE)];
                            });
+    }
+    else if ([[message name] isEqualToString:WEB_JS_UPDATE_ANCHOR_MESSAGE])
+    {
+        NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        [self onUpdateAnchor]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
+                              {
+                                  [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_UPDATE_ANCHOR_MESSAGE)];
+                              });
+    }
+    else if ([[message name] isEqualToString:WEB_JS_START_HOLD_ANCHOR_MESSAGE])
+    {
+        NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        [self onStartHold]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
+                              {
+                                  [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_START_HOLD_ANCHOR_MESSAGE)];
+                              });
+    }
+    else if ([[message name] isEqualToString:WEB_JS_STOP_HOLD_ANCHOR_MESSAGE])
+    {
+        NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        [self onStopHold]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
+                           {
+                               [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_STOP_HOLD_ANCHOR_MESSAGE)];
+                           });
+    }
+    else if ([[message name] isEqualToString:WEB_JS_ADD_REGION_MESSAGE])
+    {
+        NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        [self onAddRegion]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
+                          {
+                              [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_ADD_REGION_MESSAGE)];
+                          });
+    }
+    else if ([[message name] isEqualToString:WEB_JS_REMOVE_REGION_MESSAGE])
+    {
+        NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        [self onRemoveRegion]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
+                           {
+                               [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_REMOVE_REGION_MESSAGE)];
+                           });
+    }
+    else if ([[message name] isEqualToString:WEB_JS_IN_REGION_MESSAGE])
+    {
+        NSString *callback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        [self onInRegion]([[message body] objectForKey:WEB_AR_REQUEST_OPTION], ^(NSDictionary *results)
+                              {
+                                  [blockSelf callWebMethod:callback paramJSON:results webCompletion:debugCompletion(WEB_JS_IN_REGION_MESSAGE)];
+                              });
     }
     else
     {
@@ -365,7 +458,9 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (BOOL)shouldShowError:(NSError *)error
 {
-    return (([error code] > 600) || ([error code] < 200));
+    return
+    (([error code] > SERVER_STOP_CODE) || ([error code] < SERVER_START_CODE)) &&
+    ([error code] != CANCELLED_CODE);
 }
 
 - (void)layout
@@ -431,6 +526,10 @@ inline static WebCompletion debugCompletion(NSString *name)
              [blockBar setForwardEnabled:NO];
          }
      }];
+    [barView setHomeActionBlock:^(id sender) {
+        NSLog(@"going home\n");
+        [blockSelf goHome];
+    }];
     
     [barView setCancelActionBlock:^(id sender)
      {
@@ -450,26 +549,18 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)setupWebContent
 {
-    [[self contentController] addScriptMessageHandler:self name:WEB_AR_INIT_MESSAGE];
-    [[self contentController] addScriptMessageHandler:self name:WEB_AR_START_WATCH_MESSAGE];
-    [[self contentController] addScriptMessageHandler:self name:WEB_AR_STOP_WATCH_MESSAGE];
-    [[self contentController] addScriptMessageHandler:self name:WEB_AR_ON_JS_UPDATE_MESSAGE];
-    [[self contentController] addScriptMessageHandler:self name:WEB_AR_LOAD_URL_MESSAGE];
-    [[self contentController] addScriptMessageHandler:self name:WEB_AR_SET_UI_MESSAGE];
-    [[self contentController] addScriptMessageHandler:self name:WEB_AR_HIT_TEST_MESSAGE];
-    [[self contentController] addScriptMessageHandler:self name:WEB_AR_ADD_ANCHOR_MESSAGE];
+    for(NSString *message in jsMessages())
+    {
+        [[self contentController] addScriptMessageHandler:self name:message];
+    }
 }
 
 - (void)cleanWebContent
 {
-    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_INIT_MESSAGE];
-    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_START_WATCH_MESSAGE];
-    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_STOP_WATCH_MESSAGE];
-    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ON_JS_UPDATE_MESSAGE];
-    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_LOAD_URL_MESSAGE];
-    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_SET_UI_MESSAGE];
-    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_HIT_TEST_MESSAGE];
-    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ADD_ANCHOR_MESSAGE];
+    for(NSString *message in jsMessages())
+    {
+        [[self contentController] removeScriptMessageHandlerForName:message];
+    }
 }
 
 - (void)setupWebViewWithRootView:(__autoreleasing UIView*)rootView
