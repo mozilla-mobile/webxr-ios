@@ -87,9 +87,19 @@ inline static WebCompletion debugCompletion(NSString *name)
     [self loadURL:url];
 }
 
+- (void) goHome
+{
+    NSString *url = WEB_URL;
+    [self loadURL: url];
+}
 - (void)loadURL:(NSString *)theUrl
 {
-    NSURL *url = [NSURL URLWithString:theUrl];
+    NSURL *url;
+    if([theUrl hasPrefix:@"http://"] || [theUrl hasPrefix:@"https://"]) {
+        url = [NSURL URLWithString:theUrl];
+    } else {
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", theUrl]];
+    }
     
     if (url)
     {
@@ -431,6 +441,10 @@ inline static WebCompletion debugCompletion(NSString *name)
              [blockBar setForwardEnabled:NO];
          }
      }];
+    [barView setHomeActionBlock:^(id sender) {
+        NSLog(@"going home\n");
+        [blockSelf goHome];
+    }];
     
     [barView setCancelActionBlock:^(id sender)
      {
