@@ -12,6 +12,7 @@
 // Start URL
 #define WEB_URL @"https://ios-viewer.webxrexperiments.com/viewer.html"
 #define LAST_URL_KEY @"lastURL"
+#define HOME_URL_KEY @"homeURL"
 
 
 // ##############################  MESSAGES
