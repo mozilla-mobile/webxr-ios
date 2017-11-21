@@ -436,7 +436,12 @@ typedef void (^UICompletion)(void);
         if (lastURL) {
             [[self webController] loadURL:lastURL];
         } else {
-            [[self webController] loadURL:WEB_URL];
+            NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:HOME_URL_KEY];
+            if (homeURL && ![homeURL isEqualToString:@""]) {
+                [[self webController] loadURL:homeURL];
+            } else {
+                [[self webController] loadURL:WEB_URL];
+            }
         }
     }
 }

@@ -90,7 +90,12 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void) goHome
 {
     NSLog(@"going home");
-    [self loadURL: WEB_URL];
+    NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:HOME_URL_KEY];
+    if (homeURL && ![homeURL isEqualToString:@""]) {
+        [self loadURL: homeURL];
+    } else {
+        [self loadURL:WEB_URL];
+    }
 }
 - (void)loadURL:(NSString *)theUrl
 {
