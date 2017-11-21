@@ -329,7 +329,10 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
 {
     DDLogDebug(@"didFinishNavigation - %@", navigation);
-    [self setLastURL:[[[self webView] URL] absoluteString]];
+    NSString* loadedURL = [[[self webView] URL] absoluteString];
+    [self setLastURL:loadedURL];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:loadedURL forKey:LAST_URL_KEY];
     
     [self onFinishLoad]();
     

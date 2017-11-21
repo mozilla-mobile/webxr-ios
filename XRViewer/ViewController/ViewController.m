@@ -432,7 +432,12 @@ typedef void (^UICompletion)(void);
     }
     else
     {
-        [[self webController] loadURL:WEB_URL];
+        NSString* lastURL = [[NSUserDefaults standardUserDefaults] stringForKey:LAST_URL_KEY];
+        if (lastURL) {
+            [[self webController] loadURL:lastURL];
+        } else {
+            [[self webController] loadURL:WEB_URL];
+        }
     }
 }
 

@@ -7,6 +7,7 @@
 
 // URL
 #define WEB_URL @"http://ios-viewer.webxrexperiments.com/viewer.html"
+#define LAST_URL_KEY @"lastURL"
 
 // MESSAGES
 #define WEB_AR_INIT_MESSAGE            @"initAR"
