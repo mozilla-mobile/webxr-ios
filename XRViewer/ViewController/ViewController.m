@@ -164,7 +164,13 @@ typedef void (^UICompletion)(void);
     [[self stateController] setOnEnterForeground:^(NSString *url)
      {
          [[blockSelf messageController] clean];
-         [blockSelf loadURL:url];
+         NSString* requestedURL = [[NSUserDefaults standardUserDefaults] stringForKey:REQUESTED_URL_KEY];
+         if (requestedURL) {
+             [[NSUserDefaults standardUserDefaults] setObject:nil forKey:REQUESTED_URL_KEY];
+             [blockSelf loadURL:requestedURL];
+         } else {
+             [blockSelf loadURL:url];
+         }
      }];
     
     [[self stateController] setOnMemoryWarning:^(NSString *url)
