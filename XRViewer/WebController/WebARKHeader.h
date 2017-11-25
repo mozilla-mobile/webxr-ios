@@ -6,7 +6,7 @@
 #define INTERNET_OFFLINE_CODE -1009
 
 // URL
-#define WEB_URL @"http://ios-viewer.webxrexperiments.com/viewer.html"
+#define WEB_URL @"https://ios-viewer.webxrexperiments.com/viewer.html"
 #define LAST_URL_KEY @"lastURL"
 #define HOME_URL_KEY @"homeURL"
 

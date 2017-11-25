@@ -27,12 +27,12 @@
 			<string>org.mozilla.ios.XRViewer</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>webxr</string>
+				<string>mozxr</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>29</string>
+	<string>30</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

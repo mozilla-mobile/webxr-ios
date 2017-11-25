@@ -13,7 +13,7 @@
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    //Be ready to open URLs like "webxr://ios-viewer.webxrexperiments.com/viewer.html"
+    //Be ready to open URLs like "mozxr://ios-viewer.webxrexperiments.com/viewer.html"
     if ([[url scheme] isEqualToString:@"webxr"]) {
         // Extract the scheme part of the URL
         NSString* urlString = [[url absoluteString] substringFromIndex:8];
