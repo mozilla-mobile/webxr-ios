@@ -13,10 +13,10 @@
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    //Be ready to open URLs like "webxr://ios-viewer.webxrexperiments.com/viewer.html"
-    if ([[url scheme] isEqualToString:@"webxr"]) {
+    //Be ready to open URLs like "wxrv://ios-viewer.webxrexperiments.com/viewer.html"
+    if ([[url scheme] isEqualToString:@"wxrv"]) {
         // Extract the scheme part of the URL
-        NSString* urlString = [[url absoluteString] substringFromIndex:8];
+        NSString* urlString = [[url absoluteString] substringFromIndex:7];
         urlString = [NSString stringWithFormat:@"https://%@", urlString];
         
         DDLogDebug(@"WebXR-iOS viewer opened with URL: %@", urlString);
