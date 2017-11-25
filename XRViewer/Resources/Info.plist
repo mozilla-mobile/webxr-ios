@@ -24,15 +24,15 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>org.mozilla.ios.XRViewer</string>
+			<string>org.mozilla.ios.XRViewer2</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>mozxr</string>
+				<string>wxrv</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>30</string>
+	<string>31</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
