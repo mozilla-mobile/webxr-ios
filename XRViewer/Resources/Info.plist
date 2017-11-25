@@ -24,7 +24,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>org.mozilla.ios.XRViewer2</string>
+			<string>org.mozilla.ios.XRViewer</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>wxrv</string>
