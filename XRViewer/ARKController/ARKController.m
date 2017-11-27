@@ -58,6 +58,7 @@
          */
         [self setConfiguration:[ARWorldTrackingConfiguration new]];
         [[self configuration] setPlaneDetection:ARPlaneDetectionHorizontal];
+        [[self configuration] setWorldAlignment:ARWorldAlignmentGravityAndHeading];
         
         Class cls = (type == ARKMetal) ? [ARKMetalController class] : [ARKSceneKitController class];
         id<ARKControllerProtocol> controller = [[cls alloc] initWithSesion:[self session] size:[rootView bounds].size];
