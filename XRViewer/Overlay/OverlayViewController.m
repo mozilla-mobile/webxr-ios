@@ -480,7 +480,7 @@
                      completion(finish);
                  }];
                 
-                [[self trackingStateButton] setImage:[UIImage imageNamed:@"warning"] forState:UIControlStateNormal];
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"ARKitNotInitialized"] forState:UIControlStateNormal];
             }
             else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING])
             {
@@ -489,7 +489,7 @@
                      completion(finish);
                  }];
                 
-                [[self trackingStateButton] setImage:[UIImage imageNamed:@"warning"] forState:UIControlStateNormal];
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"ARKitNotInitialized"] forState:UIControlStateNormal];
             }
             else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED_FEATURES])
             {
@@ -498,7 +498,7 @@
                      completion(finish);
                  }];
                 
-                [[self trackingStateButton] setImage:[UIImage imageNamed:@"warning"] forState:UIControlStateNormal];
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"NotEnoughVisualFeatures"] forState:UIControlStateNormal];
             }
             else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED_MOTION])
             {
@@ -507,7 +507,7 @@
                      completion(finish);
                  }];
                 
-                [[self trackingStateButton] setImage:[UIImage imageNamed:@"warning"] forState:UIControlStateNormal];
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"MoovingTooFast"] forState:UIControlStateNormal];
             }
             else if ([state isEqualToString:WEB_AR_TRACKING_STATE_NOT_AVAILABLE])
             {
@@ -526,6 +526,102 @@
     [[self trackingStateButton] setImage:nil forState:UIControlStateNormal];
 }
 
+- (void)setTrackingState:(NSString *)state withAnimationCompletion:(Completion)completion sceneHasPlanes:(BOOL)hasPlanes {
+    if ([self recordState] == RecordStatePreviewing)
+    {
+        if ((([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) && ([self showOptions] & ARWarnings)))
+        {
+            [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+            {
+                completion(finish);
+            }];
+        }
+        else
+        {
+            [[self animator] animate:[self trackingStateButton] toFade:YES completion:^(BOOL finish)
+            {
+                completion(finish);
+            }];
+        }
+
+        return;
+    }
+
+    if ([self showMode] >= ShowNothing)
+    {
+        if ([self showOptions] & ARWarnings)
+        {
+            if ([state isEqualToString:WEB_AR_TRACKING_STATE_NORMAL])
+            {
+                if (hasPlanes) {
+                    [[self animator] animate:[self trackingStateButton] toFade:YES completion:^(BOOL finish)
+                    {
+                        [[self trackingStateButton] setImage:nil forState:UIControlStateNormal];
+                        completion(finish);
+                    }];
+                } else {
+                    [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                    {
+                        completion(finish);
+                    }];
+
+                    [[self trackingStateButton] setImage:[UIImage imageNamed:@"NoPlanesDetectedYet"] forState:UIControlStateNormal];
+                }
+            }
+            else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED])
+            {
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                {
+                    completion(finish);
+                }];
+
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"ARKitNotInitialized"] forState:UIControlStateNormal];
+            }
+            else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING])
+            {
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                {
+                    completion(finish);
+                }];
+
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"ARKitNotInitialized"] forState:UIControlStateNormal];
+            }
+            else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED_FEATURES])
+            {
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                {
+                    completion(finish);
+                }];
+
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"NotEnoughVisualFeatures"] forState:UIControlStateNormal];
+            }
+            else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED_MOTION])
+            {
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                {
+                    completion(finish);
+                }];
+
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"MovingTooFast"] forState:UIControlStateNormal];
+            }
+            else if ([state isEqualToString:WEB_AR_TRACKING_STATE_NOT_AVAILABLE])
+            {
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                {
+                    completion(finish);
+                }];
+
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"disabled"] forState:UIControlStateNormal];
+            }
+
+            return;
+        }
+    }
+
+    [[self trackingStateButton] setImage:nil forState:UIControlStateNormal];
+}
+
+
 - (void)setup
 {
     [self setRecordButton:[RecordButton new]];
@@ -536,6 +632,8 @@
     
     [self setTrackingStateButton:[UIButton buttonWithType:UIButtonTypeCustom]];
     [[self trackingStateButton] setFrame:trackFrameIn([[self view] bounds])];
+    [[self trackingStateButton] setContentVerticalAlignment:UIControlContentVerticalAlignmentFill];
+    [[self trackingStateButton] setContentHorizontalAlignment:UIControlContentHorizontalAlignmentFill];
     [[self view] addSubview:[self trackingStateButton]];
     
     [self setShowButton:[UIButton buttonWithType:UIButtonTypeCustom]];
