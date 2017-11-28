@@ -42,6 +42,7 @@
 		04CDFF271F9A3CFA00BF5F51 /* RecordButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 04CDFF261F9A3CFA00BF5F51 /* RecordButton.m */; };
 		620D24A11FC48994002127FD /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 620D24A01FC48994002127FD /* Settings.bundle */; };
 		04CDFF2A1F9A3D5100BF5F51 /* MicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 04CDFF291F9A3D5100BF5F51 /* MicButton.m */; };
+		625051091FCDBDBE00EEAC0A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */; };
 		153296BC1F95EE09008DA4D1 /* UserAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = A67A14851F9503CC0011C00C /* UserAnchor.m */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
 		C7FAD42D3739EB0D91163A09 /* Pods_XRViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9B34911AA342A39FC05ED2 /* Pods_XRViewer.framework */; };
@@ -120,6 +121,7 @@
 		3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		4728098F8CE4B115F45011A2 /* Pods-XRViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.debug.xcconfig"; sourceTree = "<group>"; };
 		620D24A01FC48994002127FD /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7ED42568C04611107BF5582D /* Pods_ArDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ArDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A955D97483A67AB0CFF9AA6 /* Pods-XRViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.release.xcconfig"; sourceTree = "<group>"; };
 		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
@@ -291,6 +293,7 @@
 			isa = PBXGroup;
 			children = (
 				041503D81F28944F00887400 /* Info.plist */,
+				625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */,
 				041503D91F28944F00887400 /* main.m */,
 				041503D31F28944F00887400 /* Assets.xcassets */,
 				041503D01F28944F00887400 /* Main.storyboard */,
@@ -446,6 +449,7 @@
 				04A8156A1F419F840082D31D /* Assets.xcassets in Resources */,
 				620D24A11FC48994002127FD /* Settings.bundle in Resources */,
 				04A815681F419EB60082D31D /* Models.scnassets in Resources */,
+				625051091FCDBDBE00EEAC0A /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
