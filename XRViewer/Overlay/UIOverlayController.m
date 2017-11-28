@@ -131,10 +131,9 @@
     [[self overlayWindow] setAlpha:interruption? 1 : 0];
 }
 
-- (void)setTrackingState:(NSString *)state
-{
-    [[self overlayVC] setTrackingState:state withAnimationCompletion:^(BOOL finish)
-     {}];
+- (void)setTrackingState:(NSString *)state sceneHasPlanes:(BOOL)hasPlanes {
+
+    [[self overlayVC] setTrackingState:state withAnimationCompletion:^(BOOL finish) {} sceneHasPlanes:hasPlanes];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size

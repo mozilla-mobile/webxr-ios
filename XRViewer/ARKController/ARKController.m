@@ -333,6 +333,11 @@
     return [array copy];
 }
 
+- (NSString *)trackingState {
+    return trackingState([[[self session] currentFrame] camera]);
+}
+
+
 - (NSDictionary *)planeDictFromPlaneAnchor:(ARPlaneAnchor *)planeAnchor
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
@@ -356,6 +361,12 @@
 - (void)session:(ARSession *)session didAddAnchors:(NSArray<ARAnchor*>*)anchors
 {
     DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
+    // Inform up in the calling hierarchy when we have plane anchors added to the scene
+    if ([self didAddPlaneAnchors]) {
+        if ([self anyPlaneAnchor:anchors]) {
+            [self didAddPlaneAnchors]();
+        }
+    }
 }
 
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
@@ -366,6 +377,23 @@
 - (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors
 {
     DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
+    // Inform up in the calling hierarchy when we have plane anchors removed from the scene
+    if ([self didRemovePlaneAnchors]) {
+        if ([self anyPlaneAnchor:anchors]) {
+            [self didRemovePlaneAnchors]();
+        }
+    }
+}
+
+- (BOOL)anyPlaneAnchor:(NSArray<ARAnchor *> *)anchorArray {
+    BOOL anyPlaneAnchor = NO;
+    for (ARAnchor *anchor in anchorArray) {
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
+            anyPlaneAnchor = YES;
+            break;
+        }
+    }
+    return anyPlaneAnchor;
 }
 
 #pragma mark ARSessionObserver

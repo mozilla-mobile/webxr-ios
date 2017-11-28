@@ -24,7 +24,12 @@ typedef NS_ENUM(NSUInteger, RecordState);
 - (void)setRecordState:(RecordState)state;
 - (void)setMicEnabled:(BOOL)microphoneEnabled;
 
-- (void)setTrackingState:(NSString *)state;
+/***
+ * Informs the overlay view controller about a tracking state change
+ * @param state The AR tracking state string
+ * @param hasPlanes A boolean indicating whether there are any planes in the scene
+ */
+- (void)setTrackingState:(NSString *)state sceneHasPlanes:(BOOL)planes;
 - (void)setARKitInterruption:(BOOL)interruption;
 
 @end

@@ -14,7 +14,7 @@
 			<key>Key</key>
 			<string>homeURL</string>
 			<key>DefaultValue</key>
-			<string>http://ios-viewer.webxrexperiments.com/viewer.html</string>
+			<string>https://ios-viewer.webxrexperiments.com/viewer.html</string>
 			<key>IsSecure</key>
 			<false/>
 			<key>KeyboardType</key>

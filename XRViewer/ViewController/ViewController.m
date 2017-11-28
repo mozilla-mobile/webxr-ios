@@ -343,9 +343,28 @@ typedef void (^UICompletion)(void);
     [[self arkController] setDidChangeTrackingState:^(NSString *state)
      {
          [[blockSelf webController] didChangeARTrackingState:state];
-         [[blockSelf overlayController] setTrackingState:state];
+
+         // When the tracking state changes, we let the overlay controller know about that,
+         // providing the tracking state string, and also a boolean indicating if the scene has any plane anchor.
+         // The overlay controller will decide on the warning message to show
+         [[blockSelf overlayController] setTrackingState:state
+                                          sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
      }];
-    
+
+    [[self arkController] setDidAddPlaneAnchors:^{
+        // When a new plane is added, we pass the tracking state and whether the scene has planes or not to the
+        // overlay controller. He will decide on the warning message to show
+        [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
+                                         sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
+    }];
+
+    [[self arkController] setDidRemovePlaneAnchors:^{
+        // When a new plane is removed, we pass the tracking state and whether the scene has planes or not to the
+        // overlay controller. He will decide on the warning message to show
+        [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
+                                         sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
+    }];
+
     [[self animator] animate:[self arkLayerView] toFade:NO];
     
     [[self arkController] startSessionWithAppState:[[self stateController] state]];

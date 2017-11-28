@@ -13,4 +13,12 @@
 - (void)setMicrophoneEnabled:(BOOL)microphoneEnabled withAnimationCompletion:(Completion)completion;;
 - (void)setTrackingState:(NSString *)state withAnimationCompletion:(Completion)completion;
 
+/***
+ * Shows the warning message based on the tracking state, and whether the scene has planes or not
+ * @param state The current AR tracking state string
+ * @param completion
+ * @param hasPlanes A boolean indicating whether there is any ARPlaneAnchor in the scene
+ */
+- (void)setTrackingState:(NSString *)state withAnimationCompletion:(Completion)completion sceneHasPlanes:(BOOL)hasPlanes;
+
 @end
