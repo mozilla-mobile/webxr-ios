@@ -7,9 +7,10 @@ target 'XRViewer' do
 
   # Pods for XRViewer
   # https://github.com/CocoaLumberjack/CocoaLumberjack/issues/882
-    pod 'CocoaLumberjack', :git => 'https://github.com/CocoaLumberjack/CocoaLumberjack.git', :branch => 'master'
-    pod 'PopupDialog', '~> 0.5'
-    pod 'pop', '~> 1.0'
+    pod 'CocoaLumberjack'
+    pod 'PopupDialog'
+    pod 'pop'
+    pod 'Google/Analytics'
 end
 
 post_install do |installer|
