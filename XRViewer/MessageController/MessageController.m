@@ -56,8 +56,11 @@
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:200.0
                                            gestureDismissal:NO
-                                                 completion:^{ }];
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+                          ];
     
     DestructiveButton *cancel = [[DestructiveButton alloc] initWithTitle:@"Ok" height:40 dismissOnTap:YES action:^
                                  {
@@ -89,8 +92,11 @@
                                                           image:nil
                                                 buttonAlignment:UILayoutConstraintAxisHorizontal
                                                 transitionStyle:PopupDialogTransitionStyleBounceUp
+                                                 preferredWidth:200.0
                                                gestureDismissal:NO
-                                                     completion:^{ }];
+                                                  hideStatusBar:TRUE
+                                                     completion:^{}
+                              ];
         
         [self setArPopup:popup];
         
@@ -115,8 +121,11 @@
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:200.0
                                            gestureDismissal:NO
-                                                 completion:^{ }];
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+                          ];
     
     DefaultButton *ok = [[DefaultButton alloc] initWithTitle:@"Ok" height:40 dismissOnTap:YES action:^
                          {
@@ -142,8 +151,11 @@
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:200.0
                                            gestureDismissal:NO
-                                                 completion:^{ }];
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+                          ];
     
     DefaultButton *ok = [[DefaultButton alloc] initWithTitle:@"Ok" height:40 dismissOnTap:YES action:^
                          {
@@ -171,8 +183,11 @@
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:200.0
                                            gestureDismissal:NO
-                                                 completion:^{ }];
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+                          ];
     
     DefaultButton *ok = [[DefaultButton alloc] initWithTitle:@"Ok" height:40 dismissOnTap:YES action:^
                          {
