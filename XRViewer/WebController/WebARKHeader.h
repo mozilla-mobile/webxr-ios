@@ -10,7 +10,7 @@
 #define SERVER_STOP_CODE 600
 
 // Start URL
-#define WEB_URL @"http://develop.examples.webxrexperiments.com"
+#define WEB_URL @"https://ios-viewer.webxrexperiments.com/viewer.html"
 
 // ##############################  MESSAGES
 
