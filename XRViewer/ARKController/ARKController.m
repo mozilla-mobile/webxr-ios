@@ -313,6 +313,23 @@
 - (NSString *)trackingState {
     return trackingState([[[self session] currentFrame] camera]);
 }
+
+- (NSArray *)currentPlanesArray
+{
+    ARFrame *currentFrame = [[self session] currentFrame];
+    
+    NSMutableArray *array = [NSMutableArray array];
+    
+    for (ARAnchor *anchor in [currentFrame anchors])
+    {
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]])
+        {
+            [array addObject: anchor];
+        }
+    }
+    
+    return [array copy];
+}
     
 #pragma mark Private
 
