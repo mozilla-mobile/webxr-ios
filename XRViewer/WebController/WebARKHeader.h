@@ -66,7 +66,7 @@ static inline NSArray * jsMessages()
 //arkit
 #define WEB_AR_INTERRUPTION_MESSAGE @"arInterruption"
 #define WEB_AR_INTERRUPTION_ENDED_MESSAGE @"arInterruptionEnded"
-#define WEB_AR_TRACKING_CHANGED_MESSAGE @"arTrackingChange"
+#define WEB_AR_TRACKING_CHANGED_MESSAGE @"arTrackingChanged"
 #define WEB_AR_SESSION_FAILS_MESSAGE @"arSessionFails"
 #define WEB_AR_UPDATED_ANCHORS_MESSAGE @"arUpdatedAnchors"
 #define WEB_AR_ADD_PLANES_MESSAGE @"arAddPlanes"
