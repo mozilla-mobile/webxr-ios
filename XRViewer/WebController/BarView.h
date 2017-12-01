@@ -4,6 +4,7 @@
 
 typedef void (^BackAction)(id sender);
 typedef void (^ForwardAction)(id sender);
+typedef void (^HomeAction)(id sender);
 typedef void (^ReloadAction)(id sender);
 typedef void (^CancelAction)(id sender);
 typedef void (^GoAction)(NSString *url);
@@ -13,6 +14,7 @@ typedef void (^GoAction)(NSString *url);
 
 @property (nonatomic, copy) BackAction backActionBlock;
 @property (nonatomic, copy) ForwardAction forwardActionBlock;
+@property (nonatomic, copy) HomeAction homeActionBlock;
 @property (nonatomic, copy) ReloadAction reloadActionBlock;
 @property (nonatomic, copy) CancelAction cancelActionBlock;
 @property (nonatomic, copy) GoAction goActionBlock;

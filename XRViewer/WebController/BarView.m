@@ -9,6 +9,7 @@
 @property (weak, nonatomic) IBOutlet URLTextField *urlField;
 @property (weak, nonatomic) IBOutlet UIButton *backBtn;
 @property (weak, nonatomic) IBOutlet UIButton *forwardBtn;
+@property (weak, nonatomic) IBOutlet UIButton *homeBtn;
 @property (nonatomic, weak) UIButton *reloadBtn;
 @property (nonatomic, weak) UIButton *cancelBtn;
 @property (nonatomic, weak) UIActivityIndicatorView *ai;
@@ -149,6 +150,15 @@
     if ([self forwardActionBlock])
     {
         [self forwardActionBlock](self);
+    }
+}
+- (IBAction)homeAction:(id)sender
+{
+    DDLogDebug(@"homeAction");
+    
+    if ([self homeActionBlock])
+    {
+        [self homeActionBlock](self);
     }
 }
 

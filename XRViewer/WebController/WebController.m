@@ -53,11 +53,33 @@ inline static WebCompletion debugCompletion(NSString *name)
     
     return self;
 }
-    
+ 
+- (void)reload
+{
+    NSString *url = [[[self barView] urlFieldText] length] > 0 ? [[self barView] urlFieldText] : [self lastURL];
+    [self loadURL:url];
+}
+
+- (void) goHome
+{
+    NSLog(@"going home");
+    NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:HOME_URL_KEY];
+    if (homeURL && ![homeURL isEqualToString:@""]) {
+        [self loadURL: homeURL];
+    } else {
+        [self loadURL:WEB_URL];
+    }
+}
+   
 - (void)loadURL:(NSString *)theUrl
 {
-    NSURL *url = [NSURL URLWithString:theUrl];
-    
+    NSURL *url;
+    if([theUrl hasPrefix:@"http://"] || [theUrl hasPrefix:@"https://"]) {
+        url = [NSURL URLWithString:theUrl];
+    } else {
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"https://%@", theUrl]];
+    }
+
     if (url)
     {
         NSString *scheme = [url scheme];
@@ -92,12 +114,6 @@ inline static WebCompletion debugCompletion(NSString *name)
      {
          [[[self webView] superview] layoutSubviews];
      }];
-}
-
-- (void)reload
-{
-    NSString *url = [[[self barView] urlFieldText] length] > 0 ? [[self barView] urlFieldText] : [self lastURL];
-    [self loadURL:url];
 }
     
 - (void)clean
@@ -435,7 +451,10 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
 {
     DDLogDebug(@"didFinishNavigation - %@", navigation);
-    [self setLastURL:[[[self webView] URL] absoluteString]];
+    NSString* loadedURL = [[[self webView] URL] absoluteString];
+    [self setLastURL:loadedURL];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:loadedURL forKey:LAST_URL_KEY];
     
     [self onFinishLoad]();
     
@@ -549,6 +568,10 @@ inline static WebCompletion debugCompletion(NSString *name)
              [blockBar setForwardEnabled:NO];
          }
      }];
+    
+    [barView setHomeActionBlock:^(id sender) {
+        [self goHome];
+    }];
     
     [barView setCancelActionBlock:^(id sender)
      {

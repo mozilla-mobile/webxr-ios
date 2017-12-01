@@ -42,6 +42,9 @@
 		04CDFF271F9A3CFA00BF5F51 /* RecordButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 04CDFF261F9A3CFA00BF5F51 /* RecordButton.m */; };
 		04CDFF2A1F9A3D5100BF5F51 /* MicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 04CDFF291F9A3D5100BF5F51 /* MicButton.m */; };
 		153296BC1F95EE09008DA4D1 /* UserAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = A67A14851F9503CC0011C00C /* UserAnchor.m */; };
+		591A8C502FA83D70E8F5B5B4 /* Pods_XRViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */; };
+		620D24A11FC48994002127FD /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 620D24A01FC48994002127FD /* Settings.bundle */; };
+		625051091FCDBDBE00EEAC0A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
 		C7FAD42D3739EB0D91163A09 /* Pods_XRViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9B34911AA342A39FC05ED2 /* Pods_XRViewer.framework */; };
 /* End PBXBuildFile section */
@@ -113,18 +116,23 @@
 		04C64BCC1F71016A00ACFB8B /* AppState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppState.m; sourceTree = "<group>"; };
 		04C64BCD1F71016B00ACFB8B /* AppState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppState.h; sourceTree = "<group>"; };
 		04CDFF251F9A3CFA00BF5F51 /* RecordButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordButton.h; sourceTree = "<group>"; };
+		23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.release.xcconfig"; sourceTree = "<group>"; };
 		04CDFF261F9A3CFA00BF5F51 /* RecordButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordButton.m; sourceTree = "<group>"; };
 		04CDFF281F9A3D5100BF5F51 /* MicButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MicButton.h; sourceTree = "<group>"; };
 		04CDFF291F9A3D5100BF5F51 /* MicButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MicButton.m; sourceTree = "<group>"; };
 		3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		4728098F8CE4B115F45011A2 /* Pods-XRViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.debug.xcconfig"; sourceTree = "<group>"; };
 		7ED42568C04611107BF5582D /* Pods_ArDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ArDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		620D24A01FC48994002127FD /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		62414B161FCEFAEA00D1CDC8 /* AnalyticsEvents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnalyticsEvents.h; sourceTree = "<group>"; };
+		625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_XRViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A955D97483A67AB0CFF9AA6 /* Pods-XRViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.release.xcconfig"; sourceTree = "<group>"; };
 		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		A67A14851F9503CC0011C00C /* UserAnchor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserAnchor.m; sourceTree = "<group>"; };
 		A67A14861F9503CD0011C00C /* UserAnchor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAnchor.h; sourceTree = "<group>"; };
-		A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-ArDemo/Pods-ArDemo.release.xcconfig"; sourceTree = "<group>"; };
+		C99925CDAC21EAF144F18C57 /* Pods-XRViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.debug.xcconfig"; sourceTree = "<group>"; };
 		EC9B34911AA342A39FC05ED2 /* Pods_XRViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_XRViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -154,8 +162,8 @@
 			children = (
 				041503C31F28944F00887400 /* XRViewer */,
 				041503C21F28944F00887400 /* Products */,
-				7D7C33BA317D85DB2BCA41A4 /* Pods */,
-				9EE6424F03FF3C89B7FDD2EB /* Frameworks */,
+				07E2D54B7DC6F30BCB750F7D /* Pods */,
+				8C9E99F056CB67F28E2A9647 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -170,6 +178,7 @@
 		041503C31F28944F00887400 /* XRViewer */ = {
 			isa = PBXGroup;
 			children = (
+				62414B151FCEFACC00D1CDC8 /* Analytics */,
 				04A983771F32280000120CF8 /* AppDelegate */,
 				04A983731F32276600120CF8 /* ViewController */,
 				04C64BC91F71014800ACFB8B /* AppStateController */,
@@ -289,11 +298,13 @@
 			isa = PBXGroup;
 			children = (
 				041503D81F28944F00887400 /* Info.plist */,
+				625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */,
 				041503D91F28944F00887400 /* main.m */,
 				041503D31F28944F00887400 /* Assets.xcassets */,
 				041503D01F28944F00887400 /* Main.storyboard */,
 				041503D51F28944F00887400 /* LaunchScreen.storyboard */,
 				04C296D31F331FC700D6909D /* Prefix.h */,
+				620D24A01FC48994002127FD /* Settings.bundle */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -348,21 +359,26 @@
 			path = AppStateController;
 			sourceTree = "<group>";
 		};
-		7D7C33BA317D85DB2BCA41A4 /* Pods */ = {
+		07E2D54B7DC6F30BCB750F7D /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3181BECA0F8BB1FD5B218F65 /* Pods-ArDemo.debug.xcconfig */,
-				A782F083B92C6537CC79A970 /* Pods-ArDemo.release.xcconfig */,
 				4728098F8CE4B115F45011A2 /* Pods-XRViewer.debug.xcconfig */,
 				9A955D97483A67AB0CFF9AA6 /* Pods-XRViewer.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		9EE6424F03FF3C89B7FDD2EB /* Frameworks */ = {
+		62414B151FCEFACC00D1CDC8 /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
-				7ED42568C04611107BF5582D /* Pods_ArDemo.framework */,
+				62414B161FCEFAEA00D1CDC8 /* AnalyticsEvents.h */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
+		8C9E99F056CB67F28E2A9647 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
 				EC9B34911AA342A39FC05ED2 /* Pods_XRViewer.framework */,
 			);
 			name = Frameworks;
@@ -384,12 +400,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 041503DD1F28944F00887400 /* Build configuration list for PBXNativeTarget "XRViewer" */;
 			buildPhases = (
-				20F4E46B4FFAE2848E06BE98 /* [CP] Check Pods Manifest.lock */,
+				1BA705D2C5562BD74353D184 /* [CP] Check Pods Manifest.lock */,
 				041503BD1F28944F00887400 /* Sources */,
 				041503BE1F28944F00887400 /* Frameworks */,
 				041503BF1F28944F00887400 /* Resources */,
-				8837850E75F84273D6039AFF /* [CP] Embed Pods Frameworks */,
-				0D0870D7ABB063D15C544816 /* [CP] Copy Pods Resources */,
+				221606BE81C9D422A4D5F9C6 /* [CP] Embed Pods Frameworks */,
+				7D108A1273770BEA75062EFF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -441,7 +457,9 @@
 				0401E04B1F612C240075D823 /* BarView.xib in Resources */,
 				041503D21F28944F00887400 /* Main.storyboard in Resources */,
 				04A8156A1F419F840082D31D /* Assets.xcassets in Resources */,
+				620D24A11FC48994002127FD /* Settings.bundle in Resources */,
 				04A815681F419EB60082D31D /* Models.scnassets in Resources */,
+				625051091FCDBDBE00EEAC0A /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,7 +481,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		20F4E46B4FFAE2848E06BE98 /* [CP] Check Pods Manifest.lock */ = {
+		1BA705D2C5562BD74353D184 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -481,7 +499,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8837850E75F84273D6039AFF /* [CP] Embed Pods Frameworks */ = {
+		221606BE81C9D422A4D5F9C6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -489,18 +507,35 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/PopupDialog/PopupDialog.framework",
 				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PopupDialog.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7D108A1273770BEA75062EFF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -675,7 +710,7 @@
 			baseConfigurationReference = 4728098F8CE4B115F45011A2 /* Pods-XRViewer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = RJRT2UUKDY;
+				DEVELOPMENT_TEAM = 6PBG234246;
 				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -688,10 +723,10 @@
 		};
 		041503DF1F28944F00887400 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9A955D97483A67AB0CFF9AA6 /* Pods-XRViewer.release.xcconfig */;
+			baseConfigurationReference = 23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = RJRT2UUKDY;
+				DEVELOPMENT_TEAM = 6PBG234246;
 				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

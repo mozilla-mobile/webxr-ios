@@ -11,3 +11,4 @@ duplication.xml
 coverage*.xml
 *.gcno
 test-results
+Pods/

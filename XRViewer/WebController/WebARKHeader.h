@@ -5,13 +5,29 @@
 #import "AppState.h"
 
 #define INTERNET_OFFLINE_CODE -1009
+
+// URL
 #define CANCELLED_CODE -999
+#define WEB_URL @"https://ios-viewer.webxrexperiments.com/viewer.html"
+#define LAST_URL_KEY @"lastURL"
+#define HOME_URL_KEY @"homeURL"
+
+// MESSAGES
+#define WEB_AR_INIT_MESSAGE            @"initAR"
+#define WEB_AR_START_WATCH_MESSAGE     @"watchAR"
+#define WEB_AR_STOP_WATCH_MESSAGE      @"stopAR"
+#define WEB_AR_LOAD_URL_MESSAGE        @"loadUrl"
+#define WEB_AR_SET_UI_MESSAGE          @"setUIOptions"
+#define WEB_AR_HIT_TEST_MESSAGE        @"hitTest"
+#define WEB_AR_ADD_ANCHOR_MESSAGE      @"addAnchor"
+
 #define SERVER_START_CODE 200
 #define SERVER_STOP_CODE 600
 
 // Start URL
 #define WEB_URL @"http://develop.examples.webxrexperiments.com"
 
+#define WEB_AR_IOS_DID_MOVE_BACK_MESSAGE   @"arkitDidMoveBackground"
 // ##############################  MESSAGES
 
 // JS
@@ -63,7 +79,7 @@ static inline NSArray * jsMessages()
 //arkit
 #define WEB_AR_INTERRUPTION_MESSAGE @"arInterruption"
 #define WEB_AR_INTERRUPTION_ENDED_MESSAGE @"arInterruptionEnded"
-#define WEB_AR_TRACKING_CHANGED_MESSAGE @"arTrackingChange"
+#define WEB_AR_TRACKING_CHANGED_MESSAGE @"arTrackingChanged"
 #define WEB_AR_SESSION_FAILS_MESSAGE @"arSessionFails"
 #define WEB_AR_UPDATED_ANCHORS_MESSAGE @"arUpdatedAnchors"
 #define WEB_AR_ADD_PLANES_MESSAGE @"arAddPlanes"
@@ -101,6 +117,7 @@ static inline NSArray * jsMessages()
 #define WEB_AR_ID_OPTION               @"id"
 #define WEB_AR_SHOW_UI_OPTION          @"show"
 #define WEB_AR_URL_OPTION              @"url"
+#define WEB_AR_JS_FRAME_RATE_OPTION    @"js_frame_rate" // bool
 
 #define WEB_AR_LOCATION_OPTION            @"location"
 #define WEB_AR_LOCATION_LON_OPTION        @"longitude"

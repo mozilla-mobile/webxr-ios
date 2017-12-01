@@ -381,6 +381,23 @@
     }
 }
 
+- (NSArray *)currentPlanesArray
+{
+    ARFrame *currentFrame = [[self session] currentFrame];
+    
+    NSMutableArray *array = [NSMutableArray array];
+    
+    for (ARAnchor *anchor in [currentFrame anchors])
+    {
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]])
+        {
+            [array addObject: anchor];
+        }
+    }
+    
+    return [array copy];
+}
+
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
 {
     if (self.isHoldMode == NO)
@@ -445,7 +462,7 @@
             [planes addObject:planeDictWithAnchor(anchor)];
         }
     }
-    
+
     if ([self didRemovePlanes])
     {
         [self didRemovePlanes](@{WEB_AR_PLANES_OPTION : [planes copy]});

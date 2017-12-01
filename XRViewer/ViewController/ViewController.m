@@ -10,6 +10,8 @@
 #import "Reachability.h"
 #import "AppStateController.h"
 #import "LayerView.h"
+#import "AnalyticsEvents.h"
+#import <Google/Analytics.h>
 
 #define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
@@ -134,8 +136,8 @@ typedef void (^UICompletion)(void);
          [[blockSelf overlayController] setRecordState:state];
          [[blockSelf webController] startRecording:[[blockSelf stateController] isRecording]];
          [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
-     }];
-    
+     }];   
+
     [[self stateController] setOnAppUpdate:^(UIStyle app)
      {
          if (app > Web)
@@ -164,7 +166,13 @@ typedef void (^UICompletion)(void);
     [[self stateController] setOnEnterForeground:^(NSString *url)
      {
          [[blockSelf messageController] clean];
-         [blockSelf loadURL:url];
+         NSString* requestedURL = [[NSUserDefaults standardUserDefaults] stringForKey:REQUESTED_URL_KEY];
+         if (requestedURL) {
+             [[NSUserDefaults standardUserDefaults] setObject:nil forKey:REQUESTED_URL_KEY];
+             [blockSelf loadURL:requestedURL];
+         } else {
+             [blockSelf loadURL:url];
+         }
      }];
     
     [[self stateController] setOnMemoryWarning:^(NSString *url)
@@ -387,12 +395,31 @@ typedef void (^UICompletion)(void);
     [[self arkController] setDidChangeTrackingState:^(NSString *state)
      {
          [[blockSelf webController] didChangeARTrackingState:state];
-         [[blockSelf overlayController] setTrackingState:state];
+
+         // When the tracking state changes, we let the overlay controller know about that,
+         // providing the tracking state string, and also a boolean indicating if the scene has any plane anchor.
+         // The overlay controller will decide on the warning message to show
+         [[blockSelf overlayController] setTrackingState:state
+                                          sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
      }];
-    
+
+    [[self arkController] setDidAddPlaneAnchors:^{
+        // When a new plane is added, we pass the tracking state and whether the scene has planes or not to the
+        // overlay controller. He will decide on the warning message to show
+        [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
+                                         sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
+    }];
+
     [[self arkController] setDidAddPlanes:^(NSDictionary *dict)
      {
          [[blockSelf webController] didAddPlanes:dict];
+    }];
+
+    [[self arkController] setDidRemovePlaneAnchors:^{
+        // When a new plane is removed, we pass the tracking state and whether the scene has planes or not to the
+        // overlay controller. He will decide on the warning message to show
+        [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
+                                         sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
     }];
     
     [[self arkController] setDidRemovePlanes:^(NSDictionary *dict)
@@ -408,6 +435,12 @@ typedef void (^UICompletion)(void);
     [[self animator] animate:[self arkLayerView] toFade:NO];
     
     [[self arkController] startSessionWithAppState:[[self stateController] state]];
+    
+    // Log event when we start an AR session
+    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory: CATEGORY
+                                                                                        action: ACTION_AR_SESSION_STARTED
+                                                                                         label: nil
+                                                                                         value: nil] build]];
 }
 
 - (void)setupWebController
@@ -512,7 +545,17 @@ typedef void (^UICompletion)(void);
     }
     else
     {
-        [[self webController] loadURL:WEB_URL];
+        NSString* lastURL = [[NSUserDefaults standardUserDefaults] stringForKey:LAST_URL_KEY];
+        if (lastURL) {
+            [[self webController] loadURL:lastURL];
+        } else {
+            NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:HOME_URL_KEY];
+            if (homeURL && ![homeURL isEqualToString:@""]) {
+                [[self webController] loadURL:homeURL];
+            } else {
+                [[self webController] loadURL:WEB_URL];
+            }
+        }
         [[self webController] setupForApp:[[[self stateController] state] style]];
     }
 }
