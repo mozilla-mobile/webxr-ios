@@ -611,7 +611,7 @@
                     completion(finish);
                 }];
 
-                [[self trackingStateButton] setImage:[UIImage imageNamed:@"disabled"] forState:UIControlStateNormal];
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"ARKitNotAvailable"] forState:UIControlStateNormal];
             }
 
             return;
