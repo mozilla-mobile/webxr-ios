@@ -402,27 +402,21 @@ typedef void (^UICompletion)(void);
                                           sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
      }];
     
-    [[self arkController] setDidAddPlaneAnchors:^{
-        // When a new plane is added, we pass the tracking state and whether the scene has planes or not to the
-        // overlay controller. He will decide on the warning message to show
-        [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
-                                         sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
-    }];
-    
-    [[self arkController] setDidRemovePlaneAnchors:^{
-        // When a new plane is removed, we pass the tracking state and whether the scene has planes or not to the
-        // overlay controller. He will decide on the warning message to show
-        [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
-                                         sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
-    }];
-    
     [[self arkController] setDidAddPlanes:^(NSDictionary *dict)
      {
+         // When a new plane is added, we pass the tracking state and whether the scene has planes or not to the
+         // overlay controller. He will decide on the warning message to show
+         [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
+                                          sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
          [[blockSelf webController] didAddPlanes:dict];
     }];
     
     [[self arkController] setDidRemovePlanes:^(NSDictionary *dict)
      {
+         // When a new plane is removed, we pass the tracking state and whether the scene has planes or not to the
+         // overlay controller. He will decide on the warning message to show
+         [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
+                                          sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
          [[blockSelf webController] didRemovePlanes:dict];
      }];
     

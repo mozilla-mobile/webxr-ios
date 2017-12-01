@@ -443,13 +443,6 @@
                                   WEB_AR_PLANES_OPTION : planesArr
                                   });
     }
-    
-    // Inform up in the calling hierarchy when we have plane anchors added to the scene
-    if ([self didAddPlaneAnchors]) {
-        if ([self anyPlaneAnchor:anchors]) {
-            [self didAddPlaneAnchors]();
-        }
-    }
 }
 
 - (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors
@@ -478,26 +471,7 @@
     {
         [self didRemovePlanes](@{WEB_AR_PLANES_OPTION : [planes copy]});
     }
-    
-    // Inform up in the calling hierarchy when we have plane anchors removed from the scene
-    if ([self didRemovePlaneAnchors]) {
-        if ([self anyPlaneAnchor:anchors]) {
-            [self didRemovePlaneAnchors]();
-        }
-    }
 }
-
-- (BOOL)anyPlaneAnchor:(NSArray<ARAnchor *> *)anchorArray {
-    BOOL anyPlaneAnchor = NO;
-    for (ARAnchor *anchor in anchorArray) {
-        if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
-            anyPlaneAnchor = YES;
-            break;
-        }
-    }
-    return anyPlaneAnchor;
-}
-
 
 #pragma mark ARSessionObserver
 
