@@ -148,7 +148,7 @@ inline static WebCompletion debugCompletion(NSString *name)
         
         if (webXR == NO)
         {
-            rect.origin.y += [[self barView] bounds].size.height;
+            rect = UIEdgeInsetsInsetRect([[[self webView] superview] bounds], UIEdgeInsetsMake([[self barView] bounds].size.height, 0, 0, 0));
         }
         
         [[self animator] animate:[self webView] toFrame:rect];
