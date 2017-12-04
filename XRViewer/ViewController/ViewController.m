@@ -465,15 +465,21 @@ typedef void (^UICompletion)(void);
     }
     else
     {
-        NSString* lastURL = [[NSUserDefaults standardUserDefaults] stringForKey:LAST_URL_KEY];
-        if (lastURL) {
-            [[self webController] loadURL:lastURL];
+        NSString* requestedURL = [[NSUserDefaults standardUserDefaults] stringForKey:REQUESTED_URL_KEY];
+        if (requestedURL && ![requestedURL isEqualToString:@""]) {
+            [[NSUserDefaults standardUserDefaults] setObject:nil forKey:REQUESTED_URL_KEY];
+            [[self webController] loadURL:requestedURL];
         } else {
-            NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:HOME_URL_KEY];
-            if (homeURL && ![homeURL isEqualToString:@""]) {
-                [[self webController] loadURL:homeURL];
+            NSString* lastURL = [[NSUserDefaults standardUserDefaults] stringForKey:LAST_URL_KEY];
+            if (lastURL) {
+                [[self webController] loadURL:lastURL];
             } else {
-                [[self webController] loadURL:WEB_URL];
+                NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:HOME_URL_KEY];
+                if (homeURL && ![homeURL isEqualToString:@""]) {
+                    [[self webController] loadURL:homeURL];
+                } else {
+                    [[self webController] loadURL:WEB_URL];
+                }
             }
         }
     }
