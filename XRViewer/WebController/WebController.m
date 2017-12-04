@@ -148,7 +148,11 @@ inline static WebCompletion debugCompletion(NSString *name)
         
         if (webXR == NO)
         {
+#ifdef POLYFILL_READY_FOR_RESIZE
             rect = UIEdgeInsetsInsetRect([[[self webView] superview] bounds], UIEdgeInsetsMake([[self barView] bounds].size.height, 0, 0, 0));
+#else
+            rect.origin.y += [[self barView] bounds].size.height;
+#endif
         }
         
         [[self animator] animate:[self webView] toFrame:rect];
