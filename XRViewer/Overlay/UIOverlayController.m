@@ -174,21 +174,16 @@
     [[self rootView] addSubview:[self touchView]];
     
     [[self touchView] setBackgroundColor:[UIColor clearColor]];
-    
-    [[self touchView] setAutoresizingMask:
-     UIViewAutoresizingFlexibleRightMargin |
-     UIViewAutoresizingFlexibleLeftMargin |
-     UIViewAutoresizingFlexibleBottomMargin |
-     UIViewAutoresizingFlexibleTopMargin |
-     UIViewAutoresizingFlexibleWidth |
-     UIViewAutoresizingFlexibleHeight];
 }
 
 - (void)setupOverlayWindow
 {
     UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
     
-    [self setOverlayWindow:[[UIWindow alloc] initWithFrame:[mainWindow bounds]]];
+    UIEdgeInsets insets = [mainWindow safeAreaInsets];
+    CGRect rect = UIEdgeInsetsInsetRect([mainWindow bounds], insets);
+    
+    [self setOverlayWindow:[[UIWindow alloc] initWithFrame:rect]];
     
     [self setOverlayVC:[[OverlayViewController alloc] init]];
     [[[self overlayVC] view] setFrame:[[self overlayWindow] bounds]];

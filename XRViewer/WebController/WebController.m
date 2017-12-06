@@ -14,7 +14,8 @@
 @property (nonatomic, copy) NSString *lastURL;
 
 @property (nonatomic, weak) BarView *barView;
-
+@property (nonatomic, weak) NSLayoutConstraint* barViewTopAnchorConstraint;
+@property (nonatomic, weak) NSLayoutConstraint* webViewTopAnchorConstraint;
 @end
 
 typedef void (^WebCompletion)(id _Nullable param, NSError * _Nullable error);
@@ -99,6 +100,8 @@ inline static WebCompletion debugCompletion(NSString *name)
 }
 - (void)loadURL:(NSString *)theUrl
 {
+    [self goFullScreen];
+    
     NSURL *url;
     if([theUrl hasPrefix:@"http://"] || [theUrl hasPrefix:@"https://"]) {
         url = [NSURL URLWithString:theUrl];
@@ -144,19 +147,13 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     dispatch_async(dispatch_get_main_queue(), ^
     {
-        CGRect rect = [[[self webView] superview] bounds];
+        [[[self webView] scrollView] setContentInsetAdjustmentBehavior: webXR? UIScrollViewContentInsetAdjustmentNever: UIScrollViewContentInsetAdjustmentAlways];
         
-        if (webXR == NO)
-        {
-#ifdef POLYFILL_READY_FOR_RESIZE
-            rect = UIEdgeInsetsInsetRect([[[self webView] superview] bounds], UIEdgeInsetsMake([[self barView] bounds].size.height, 0, 0, 0));
-#else
-            rect.origin.y += [[self barView] bounds].size.height;
-#endif
-        }
-        
-        [[self animator] animate:[self webView] toFrame:rect];
-        
+        float webViewTopAnchorConstraintConstant = webXR? 0.0f: URL_BAR_HEIGHT;
+        [[self webViewTopAnchorConstraint] setConstant:webViewTopAnchorConstraintConstant];
+        [[[self webView] superview] setNeedsLayout];
+        [[[self webView] superview] layoutIfNeeded];
+         
         UIColor *backColor = webXR ? [UIColor clearColor] : [UIColor whiteColor];
         [[[self webView] superview] setBackgroundColor:backColor];
         
@@ -166,10 +163,12 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)showBar:(BOOL)showBar
 {
-    CGRect rect = [[self barView] bounds];
-    rect.origin.y = showBar ? 0 : 0 - [[self barView] bounds].size.height;
-    
-    [[self animator] animate:[self barView] toFrame:rect];
+    float topAnchorConstant = showBar ? 0.0f : 0.0f - URL_BAR_HEIGHT * 2;
+    [UIView animateWithDuration:URL_BAR_ANIMATION_TIME_IN_SECONDS animations:^{
+        [[self barViewTopAnchorConstraint] setConstant:topAnchorConstant];
+        [[[self barView] superview] setNeedsUpdateConstraints];
+        [[[self barView] superview] setNeedsLayout];
+    }];
 }
 
 - (void)showDebug:(BOOL)showDebug
@@ -385,6 +384,13 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 #pragma mark Private
 
+- (void)goFullScreen {
+    [[[self webView] scrollView] setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+    [[self webViewTopAnchorConstraint] setConstant:0.0];
+    [[[self webView] superview] setNeedsLayout];
+    [[[self webView] superview] layoutIfNeeded];
+}
+
 - (BOOL)shouldShowError:(NSError *)error
 {
     return (([error code] > 600) || ([error code] < 200));
@@ -399,14 +405,6 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)setupWebUI
 {
-    [[self webView] setAutoresizingMask:
-     UIViewAutoresizingFlexibleRightMargin |
-     UIViewAutoresizingFlexibleLeftMargin |
-     UIViewAutoresizingFlexibleBottomMargin |
-     UIViewAutoresizingFlexibleTopMargin |
-     UIViewAutoresizingFlexibleWidth |
-     UIViewAutoresizingFlexibleHeight];
-    
     [[self webView] setAutoresizesSubviews:YES];
     
     [[self webView] setAllowsLinkPreview:NO];
@@ -420,11 +418,17 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)setupBarView
 {
     BarView *barView = [[[NSBundle mainBundle] loadNibNamed:@"BarView" owner:self options:nil] firstObject];
-    [barView setFrame:CGRectMake(0, 0, [[self webView] bounds].size.width, URL_BAR_HEIGHT)];
-    [barView setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin |
-     UIViewAutoresizingFlexibleLeftMargin |
-     UIViewAutoresizingFlexibleWidth];
+    [barView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [[[self webView] superview] addSubview:barView];
+    
+    NSLayoutConstraint* topAnchorConstraint = [[barView topAnchor] constraintEqualToAnchor:[[barView superview] topAnchor]];
+    [topAnchorConstraint setActive:YES];
+    [self setBarViewTopAnchorConstraint: topAnchorConstraint];
+    
+    [[[barView leftAnchor] constraintEqualToAnchor:[[barView superview] leftAnchor]] setActive:YES];
+    [[[barView rightAnchor] constraintEqualToAnchor:[[barView superview] rightAnchor]] setActive:YES];
+    [[[barView heightAnchor] constraintEqualToConstant:URL_BAR_HEIGHT] setActive:YES];
+    
     [self setBarView:barView];
     
     __weak typeof (self) blockSelf = self;
@@ -518,6 +522,17 @@ inline static WebCompletion debugCompletion(NSString *name)
     
     WKWebView *wv = [[WKWebView alloc] initWithFrame:[rootView bounds] configuration:conf];
     [rootView addSubview:wv];
+    [wv setTranslatesAutoresizingMaskIntoConstraints:NO];
+    
+    NSLayoutConstraint* webViewTopAnchorConstraint = [[wv topAnchor] constraintEqualToAnchor:[rootView topAnchor]];
+    [self setWebViewTopAnchorConstraint: webViewTopAnchorConstraint];
+    [webViewTopAnchorConstraint setActive:YES];
+    [[[wv leftAnchor] constraintEqualToAnchor:[rootView leftAnchor]] setActive:YES];
+    [[[wv rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]] setActive:YES];
+    [[[wv bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor]] setActive:YES];
+    
+    [[wv scrollView] setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+    
     [wv setNavigationDelegate:self];
     [wv setUIDelegate:self];
     [self setWebView:wv];
