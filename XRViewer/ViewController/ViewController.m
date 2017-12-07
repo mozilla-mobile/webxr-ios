@@ -10,8 +10,7 @@
 #import "Reachability.h"
 #import "AppStateController.h"
 #import "LayerView.h"
-#import "AnalyticsEvents.h"
-#import <Google/Analytics.h>
+#import "AnalyticsManager.h"
 
 #define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
@@ -372,10 +371,7 @@ typedef void (^UICompletion)(void);
     [[self arkController] startSessionWithAppState:[[self stateController] state]];
     
     // Log event when we start an AR session
-    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory: CATEGORY
-                                                                                        action: ACTION_AR_SESSION_STARTED
-                                                                                         label: nil
-                                                                                         value: nil] build]];
+    [[AnalyticsManager shared] sendEventWithAction:ACTION_AR_SESSION_STARTED];
 }
 
 - (void)setupWebController

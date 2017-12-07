@@ -1,27 +1,41 @@
 #import "AppDelegate.h"
-#import "AnalyticsEvents.h"
-#import <Google/Analytics.h>
+#import "AnalyticsManager.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [self registerDefaultsFromSettingsBundle];
+    
     [DDLog addLogger:[DDTTYLogger sharedInstance]]; // TTY = Xcode console
     
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
-    
-    // Configure tracker from GoogleService-Info.plist
-    NSError *configureError;
-    [[GGLContext sharedInstance] configureWithError:&configureError];
-    NSAssert(!configureError, @"Error configuring Google services: %@", configureError);
-    
-    id<GAITracker> tracker = [[GAI sharedInstance] defaultTracker];
-    [tracker send:[[GAIDictionaryBuilder createEventWithCategory: CATEGORY
-                                                          action: ACTION_APP_LAUNCHED
-                                                           label: nil
-                                                           value: nil] build]];
+
+    [[AnalyticsManager shared] initialize];
+    [[AnalyticsManager shared] sendEventWithAction:ACTION_APP_LAUNCHED];
     
     return YES;
+}
+
+- (void)registerDefaultsFromSettingsBundle {
+    NSString *settingsBundle = [[NSBundle mainBundle] pathForResource:@"Settings" ofType:@"bundle"];
+    if(!settingsBundle) {
+        NSLog(@"Could not find Settings.bundle");
+        return;
+    }
+
+    NSDictionary *settings = [NSDictionary dictionaryWithContentsOfFile:[settingsBundle stringByAppendingPathComponent:@"Root.plist"]];
+    NSArray *preferences = settings[@"PreferenceSpecifiers"];
+    
+    NSMutableDictionary *defaultsToRegister = [[NSMutableDictionary alloc] initWithCapacity:[preferences count]];
+    for(NSDictionary *prefSpecification in preferences) {
+        NSString *key = prefSpecification[@"Key"];
+        if(key) {
+            defaultsToRegister[key] = prefSpecification[@"DefaultValue"];
+        }
+    }
+    
+    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultsToRegister];
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
@@ -41,17 +55,11 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory: CATEGORY
-                                                          action: ACTION_APP_DID_BECOME_ACTIVE
-                                                           label: nil
-                                                           value: nil] build]];
+    [[AnalyticsManager shared] sendEventWithAction: ACTION_APP_DID_BECOME_ACTIVE];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory: CATEGORY
-                                                          action: ACTION_APP_DID_ENTER_BACKGROUND
-                                                           label: nil
-                                                           value: nil] build]];
+    [[AnalyticsManager shared] sendEventWithAction:ACTION_APP_DID_ENTER_BACKGROUND];
 }
 
 @end

@@ -1,11 +1,3 @@
-//
-//  AnalyticsEvents.h
-//  XRViewer
-//
-//  Created by Roberto Garrido on 29/11/17.
-//  Copyright © 2017 Mozilla. All rights reserved.
-//
-
 #ifndef AnalyticsEvents_h
 #define AnalyticsEvents_h
 
