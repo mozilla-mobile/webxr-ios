@@ -1,15 +1,24 @@
 #import "AnalyticsManager.h"
 #import <Google/Analytics.h>
 
-@implementation AnalyticsManager {
+@interface AnalyticsManager ()
+@property (nonatomic) BOOL initialized;
+@end
 
+@implementation AnalyticsManager {
 }
 
 - (void)initialize {
-    // Configure tracker from GoogleService-Info.plist
-    NSError *configureError;
-    [[GGLContext sharedInstance] configureWithError:&configureError];
-    NSAssert(!configureError, @"Error configuring Google services: %@", configureError);
+    BOOL useAnalytics = [[NSUserDefaults standardUserDefaults] boolForKey:USE_ANALYTICS_KEY];
+    if (useAnalytics) {
+        // Configure tracker from GoogleService-Info.plist
+        NSError *configureError;
+        [[GGLContext sharedInstance] configureWithError:&configureError];
+        NSAssert(!configureError, @"Error configuring Google services: %@", configureError);
+        [self setInitialized:YES];
+    } else {
+        [self setInitialized:NO];
+    }
 }
 
 + (AnalyticsManager *)shared {
@@ -23,7 +32,7 @@
 
 - (void)sendEventWithAction:(NSString *)actionName {
     BOOL useAnalytics = [[NSUserDefaults standardUserDefaults] boolForKey:USE_ANALYTICS_KEY];
-    if (useAnalytics) {
+    if (useAnalytics && [self initialized]) {
         [[[GAI sharedInstance] defaultTracker] send:[[GAIDictionaryBuilder createEventWithCategory: CATEGORY
                                                                                             action: actionName
                                                                                              label: nil

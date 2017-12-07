@@ -11,8 +11,10 @@
     
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 
+#if defined(USE_ANALYTICS)
     [[AnalyticsManager shared] initialize];
     [[AnalyticsManager shared] sendEventWithAction:ACTION_APP_LAUNCHED];
+#endif
     
     return YES;
 }
