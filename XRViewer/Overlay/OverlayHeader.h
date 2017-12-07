@@ -13,13 +13,13 @@ typedef void (^HotAction)(BOOL); // long
 #define RECORD_OFFSET_X 25.5
 #define RECORD_OFFSET_Y 25.5
 
-#define MIC_SIZE_W 55.5
-#define MIC_SIZE_H 55.5
+#define MIC_SIZE_W 27.75
+#define MIC_SIZE_H 27.75
 
 #define TRACK_SIZE_W 256
 #define TRACK_SIZE_H 62
 
-#define DOT_SIZE 12
+#define DOT_SIZE 6
 #define DOT_OFFSET_Y 9.5
 
 #define RECORD_LABEL_OFFSET_X 4.5

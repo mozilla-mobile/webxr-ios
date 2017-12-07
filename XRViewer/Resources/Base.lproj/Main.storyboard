@@ -60,10 +60,10 @@
                         <constraints>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="2c2-sH-loz"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="2qV-Bb-iAI"/>
-                            <constraint firstItem="NaB-9b-LZq" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="D3d-fu-aKE"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="D3d-fu-aKE"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="GFe-uq-zen"/>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="Gvp-8I-EIt"/>
-                            <constraint firstItem="NaB-9b-LZq" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="IVQ-2x-L76"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="IVQ-2x-L76"/>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="MSF-Ba-Gy1"/>
                             <constraint firstAttribute="bottom" secondItem="Pr5-sC-23l" secondAttribute="bottom" id="NeL-ZY-iQh"/>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="P6w-lb-rW2"/>
@@ -72,7 +72,7 @@
                             <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="Y2f-OP-taj"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="ecg-bu-gQi"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="gIe-3g-LF3"/>
-                            <constraint firstItem="NaB-9b-LZq" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="ivb-Sb-gYU"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="ivb-Sb-gYU"/>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="kES-oz-U7r"/>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="kPL-7d-ZYR"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="ltL-KU-uG7"/>
@@ -81,7 +81,7 @@
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="rdY-e9-qs9"/>
                             <constraint firstAttribute="trailing" secondItem="Pr5-sC-23l" secondAttribute="trailing" id="zAq-Ca-Y1L"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="zhZ-5g-8Va"/>
-                            <constraint firstItem="NaB-9b-LZq" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="zqr-RF-nCV"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="zqr-RF-nCV"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="L8Y-Me-cba"/>
                     </view>

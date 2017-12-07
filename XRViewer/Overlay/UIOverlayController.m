@@ -173,17 +173,18 @@
     
     [[self rootView] addSubview:[self touchView]];
     
+    [[[[self touchView] topAnchor] constraintEqualToAnchor:[[self rootView] topAnchor]] setActive: YES];
+    [[[[self touchView] bottomAnchor] constraintEqualToAnchor:[[self rootView] bottomAnchor]] setActive: YES];
+    [[[[self touchView] leftAnchor] constraintEqualToAnchor:[[self rootView] leftAnchor]] setActive: YES];
+    [[[[self touchView] rightAnchor] constraintEqualToAnchor:[[self rootView] rightAnchor]] setActive: YES];
+    
     [[self touchView] setBackgroundColor:[UIColor clearColor]];
 }
 
 - (void)setupOverlayWindow
 {
     UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
-    
-    UIEdgeInsets insets = [mainWindow safeAreaInsets];
-    CGRect rect = UIEdgeInsetsInsetRect([mainWindow bounds], insets);
-    
-    [self setOverlayWindow:[[UIWindow alloc] initWithFrame:rect]];
+    [self setOverlayWindow:[[UIWindow alloc] initWithFrame:[mainWindow bounds]]];
     
     [self setOverlayVC:[[OverlayViewController alloc] init]];
     [[[self overlayVC] view] setFrame:[[self overlayWindow] bounds]];
