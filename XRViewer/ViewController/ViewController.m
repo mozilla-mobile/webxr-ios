@@ -79,6 +79,18 @@ typedef void (^UICompletion)(void);
     [[self webController] viewWillTransitionToSize:size];
 }
 
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    float topSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].top;
+    [[[self webController] barViewHeightAnchorConstraint] setConstant:topSafeAreaInset + URL_BAR_HEIGHT];
+    
+    // If XR is active, then the top anchor is 0 (fullscreen), else topSafeAreaInset + URL_BAR_HEIGHT
+    [[[self webController] webViewTopAnchorConstraint] setConstant:[[[self stateController] state] webXR] ? 0.0f : topSafeAreaInset + URL_BAR_HEIGHT];
+    
+    [[self webLayerView] setNeedsLayout];
+    [[self webLayerView] layoutIfNeeded];
+}
+
 #pragma mark Setups
 
 - (void)setupCommonControllers

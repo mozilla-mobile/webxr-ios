@@ -15,7 +15,6 @@
 
 @property (nonatomic, weak) BarView *barView;
 @property (nonatomic, weak) NSLayoutConstraint* barViewTopAnchorConstraint;
-@property (nonatomic, weak) NSLayoutConstraint* webViewTopAnchorConstraint;
 @end
 
 typedef void (^WebCompletion)(id _Nullable param, NSError * _Nullable error);
@@ -147,7 +146,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     dispatch_async(dispatch_get_main_queue(), ^
     {
-        [[[self webView] scrollView] setContentInsetAdjustmentBehavior: webXR? UIScrollViewContentInsetAdjustmentNever: UIScrollViewContentInsetAdjustmentAlways];
+        // TODO: adjust also left and right anchors to use the safe area when the web is not XR
         
         float webViewTopAnchorConstraintConstant = webXR? 0.0f: URL_BAR_HEIGHT;
         [[self webViewTopAnchorConstraint] setConstant:webViewTopAnchorConstraintConstant];
@@ -427,7 +426,9 @@ inline static WebCompletion debugCompletion(NSString *name)
     
     [[[barView leftAnchor] constraintEqualToAnchor:[[barView superview] leftAnchor]] setActive:YES];
     [[[barView rightAnchor] constraintEqualToAnchor:[[barView superview] rightAnchor]] setActive:YES];
-    [[[barView heightAnchor] constraintEqualToConstant:URL_BAR_HEIGHT] setActive:YES];
+    NSLayoutConstraint *barViewHeightAnchorConstraint = [[barView heightAnchor] constraintEqualToConstant:URL_BAR_HEIGHT];
+    [self setBarViewHeightAnchorConstraint: barViewHeightAnchorConstraint];
+    [barViewHeightAnchorConstraint setActive:YES];
     
     [self setBarView:barView];
     

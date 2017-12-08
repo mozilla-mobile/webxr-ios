@@ -37,6 +37,10 @@ typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
 
 @property (nonatomic, strong) Animator *animator;
 
+@property (nonatomic, weak) NSLayoutConstraint *barViewHeightAnchorConstraint;
+
+@property (nonatomic, weak) NSLayoutConstraint* webViewTopAnchorConstraint;
+
 - (instancetype)initWithRootView:(UIView *)rootView;
 - (void)viewWillTransitionToSize:(CGSize)size;
 
