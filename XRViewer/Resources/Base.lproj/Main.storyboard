@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
     <device id="retina5_5" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -58,30 +58,30 @@
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="2c2-sH-loz"/>
-                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="2qV-Bb-iAI"/>
-                            <constraint firstItem="NaB-9b-LZq" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="D3d-fu-aKE"/>
-                            <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="GFe-uq-zen"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="Gvp-8I-EIt"/>
-                            <constraint firstItem="NaB-9b-LZq" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="IVQ-2x-L76"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="MSF-Ba-Gy1"/>
-                            <constraint firstItem="L8Y-Me-cba" firstAttribute="bottom" secondItem="Pr5-sC-23l" secondAttribute="bottom" id="NeL-ZY-iQh"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="P6w-lb-rW2"/>
-                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="RBb-Ar-FV4"/>
-                            <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="V1j-Ro-quZ"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="Y2f-OP-taj"/>
-                            <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" id="ecg-bu-gQi"/>
-                            <constraint firstItem="Pr5-sC-23l" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="gIe-3g-LF3"/>
-                            <constraint firstItem="NaB-9b-LZq" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="ivb-Sb-gYU"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="kES-oz-U7r"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="kPL-7d-ZYR"/>
-                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="ltL-KU-uG7"/>
-                            <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="m7O-0J-noB"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="rZh-KL-mp1"/>
-                            <constraint firstItem="Pr5-sC-23l" firstAttribute="trailing" secondItem="L8Y-Me-cba" secondAttribute="trailing" id="rdY-e9-qs9"/>
-                            <constraint firstItem="L8Y-Me-cba" firstAttribute="trailing" secondItem="Pr5-sC-23l" secondAttribute="trailing" id="zAq-Ca-Y1L"/>
-                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="bottom" secondItem="L8Y-Me-cba" secondAttribute="bottom" id="zhZ-5g-8Va"/>
-                            <constraint firstItem="NaB-9b-LZq" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" id="zqr-RF-nCV"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="2c2-sH-loz"/>
+                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="2qV-Bb-iAI"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="D3d-fu-aKE"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="GFe-uq-zen"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="Gvp-8I-EIt"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="IVQ-2x-L76"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="MSF-Ba-Gy1"/>
+                            <constraint firstAttribute="bottom" secondItem="Pr5-sC-23l" secondAttribute="bottom" id="NeL-ZY-iQh"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="P6w-lb-rW2"/>
+                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="RBb-Ar-FV4"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="V1j-Ro-quZ"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="Y2f-OP-taj"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="ecg-bu-gQi"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="gIe-3g-LF3"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="ivb-Sb-gYU"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="kES-oz-U7r"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="kPL-7d-ZYR"/>
+                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="ltL-KU-uG7"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="m7O-0J-noB"/>
+                            <constraint firstItem="73L-9y-k0E" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="rZh-KL-mp1"/>
+                            <constraint firstItem="Pr5-sC-23l" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="rdY-e9-qs9"/>
+                            <constraint firstAttribute="trailing" secondItem="Pr5-sC-23l" secondAttribute="trailing" id="zAq-Ca-Y1L"/>
+                            <constraint firstItem="RAF-Ke-Lef" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="zhZ-5g-8Va"/>
+                            <constraint firstItem="NaB-9b-LZq" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="zqr-RF-nCV"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="L8Y-Me-cba"/>
                     </view>

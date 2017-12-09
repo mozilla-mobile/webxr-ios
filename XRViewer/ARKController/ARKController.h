@@ -13,6 +13,8 @@ typedef void (^DidUpdate)(ARKController *);
 typedef void (^DidFailSession)(NSError *);
 typedef void (^DidInterupt)(BOOL);
 typedef void (^DidChangeTrackingState)(NSString *state);
+typedef void (^DidAddPlaneAnchors)(void);
+typedef void (^DidRemovePlaneAnchors)(void);
 
 @interface ARKController : NSObject
 
@@ -20,6 +22,8 @@ typedef void (^DidChangeTrackingState)(NSString *state);
 @property(copy) DidInterupt didInterupt;
 @property(copy) DidFailSession didFailSession;
 @property(copy) DidChangeTrackingState didChangeTrackingState;
+@property(copy) DidAddPlaneAnchors didAddPlaneAnchors;
+@property(copy) DidRemovePlaneAnchors didRemovePlaneAnchors;
 
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 - (UIView *)arkView;
@@ -40,5 +44,8 @@ typedef void (^DidChangeTrackingState)(NSString *state);
 
 - (void)removeAnchors:(NSArray *)anchorNames;
 
+- (NSArray *)currentPlanesArray;
+
+- (NSString *)trackingState;
 @end
 

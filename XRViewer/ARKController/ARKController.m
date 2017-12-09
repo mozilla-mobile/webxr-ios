@@ -58,11 +58,18 @@
          */
         [self setConfiguration:[ARWorldTrackingConfiguration new]];
         [[self configuration] setPlaneDetection:ARPlaneDetectionHorizontal];
+        [[self configuration] setWorldAlignment:ARWorldAlignmentGravityAndHeading];
         
         Class cls = (type == ARKMetal) ? [ARKMetalController class] : [ARKSceneKitController class];
         id<ARKControllerProtocol> controller = [[cls alloc] initWithSesion:[self session] size:[rootView bounds].size];
         [self setController:controller];
         [rootView addSubview:[controller renderView]];
+        [[controller renderView] setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [[[[controller renderView] topAnchor] constraintEqualToAnchor:[rootView topAnchor]] setActive:YES];
+        [[[[controller renderView] leftAnchor] constraintEqualToAnchor:[rootView leftAnchor]] setActive:YES];
+        [[[[controller renderView] rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]] setActive:YES];
+        [[[[controller renderView] bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor]] setActive:YES];
+        
         [[self controller] setHitTestFocusPoint:[[[self controller] renderView] center]];
     }
     
@@ -332,6 +339,11 @@
     return [array copy];
 }
 
+- (NSString *)trackingState {
+    return trackingState([[[self session] currentFrame] camera]);
+}
+
+
 - (NSDictionary *)planeDictFromPlaneAnchor:(ARPlaneAnchor *)planeAnchor
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
@@ -355,6 +367,12 @@
 - (void)session:(ARSession *)session didAddAnchors:(NSArray<ARAnchor*>*)anchors
 {
     DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
+    // Inform up in the calling hierarchy when we have plane anchors added to the scene
+    if ([self didAddPlaneAnchors]) {
+        if ([self anyPlaneAnchor:anchors]) {
+            [self didAddPlaneAnchors]();
+        }
+    }
 }
 
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
@@ -365,6 +383,23 @@
 - (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors
 {
     DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
+    // Inform up in the calling hierarchy when we have plane anchors removed from the scene
+    if ([self didRemovePlaneAnchors]) {
+        if ([self anyPlaneAnchor:anchors]) {
+            [self didRemovePlaneAnchors]();
+        }
+    }
+}
+
+- (BOOL)anyPlaneAnchor:(NSArray<ARAnchor *> *)anchorArray {
+    BOOL anyPlaneAnchor = NO;
+    for (ARAnchor *anchor in anchorArray) {
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
+            anyPlaneAnchor = YES;
+            break;
+        }
+    }
+    return anyPlaneAnchor;
 }
 
 #pragma mark ARSessionObserver

@@ -131,10 +131,9 @@
     [[self overlayWindow] setAlpha:interruption? 1 : 0];
 }
 
-- (void)setTrackingState:(NSString *)state
-{
-    [[self overlayVC] setTrackingState:state withAnimationCompletion:^(BOOL finish)
-     {}];
+- (void)setTrackingState:(NSString *)state sceneHasPlanes:(BOOL)hasPlanes {
+
+    [[self overlayVC] setTrackingState:state withAnimationCompletion:^(BOOL finish) {} sceneHasPlanes:hasPlanes];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size
@@ -174,21 +173,17 @@
     
     [[self rootView] addSubview:[self touchView]];
     
-    [[self touchView] setBackgroundColor:[UIColor clearColor]];
+    [[[[self touchView] topAnchor] constraintEqualToAnchor:[[self rootView] topAnchor]] setActive: YES];
+    [[[[self touchView] bottomAnchor] constraintEqualToAnchor:[[self rootView] bottomAnchor]] setActive: YES];
+    [[[[self touchView] leftAnchor] constraintEqualToAnchor:[[self rootView] leftAnchor]] setActive: YES];
+    [[[[self touchView] rightAnchor] constraintEqualToAnchor:[[self rootView] rightAnchor]] setActive: YES];
     
-    [[self touchView] setAutoresizingMask:
-     UIViewAutoresizingFlexibleRightMargin |
-     UIViewAutoresizingFlexibleLeftMargin |
-     UIViewAutoresizingFlexibleBottomMargin |
-     UIViewAutoresizingFlexibleTopMargin |
-     UIViewAutoresizingFlexibleWidth |
-     UIViewAutoresizingFlexibleHeight];
+    [[self touchView] setBackgroundColor:[UIColor clearColor]];
 }
 
 - (void)setupOverlayWindow
 {
     UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
-    
     [self setOverlayWindow:[[UIWindow alloc] initWithFrame:[mainWindow bounds]]];
     
     [self setOverlayVC:[[OverlayViewController alloc] init]];

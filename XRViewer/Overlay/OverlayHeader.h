@@ -13,13 +13,13 @@ typedef void (^HotAction)(BOOL); // long
 #define RECORD_OFFSET_X 25.5
 #define RECORD_OFFSET_Y 25.5
 
-#define MIC_SIZE_W 55.5
-#define MIC_SIZE_H 55.5
+#define MIC_SIZE_W 27.75
+#define MIC_SIZE_H 27.75
 
-#define TRACK_SIZE_W 78
-#define TRACK_SIZE_H 22
+#define TRACK_SIZE_W 256
+#define TRACK_SIZE_H 62
 
-#define DOT_SIZE 12
+#define DOT_SIZE 6
 #define DOT_OFFSET_Y 9.5
 
 #define RECORD_LABEL_OFFSET_X 4.5
@@ -27,6 +27,7 @@ typedef void (^HotAction)(BOOL); // long
 #define RECORD_LABEL_HEIGHT 12
 
 #define URL_BAR_HEIGHT 49
+#define URL_BAR_ANIMATION_TIME_IN_SECONDS 0.5
 
 #warning LOCALIZATION
 #define HELP_TEXT     @"Tap for photo, hold for video"
