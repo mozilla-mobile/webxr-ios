@@ -115,6 +115,9 @@
 #define WEB_AR_TRACKING_STATE_LIMITED_FEATURES     @"ar_tracking_limited_insufficient_features"
 #define WEB_AR_TRACKING_STATE_NOT_AVAILABLE        @"ar_tracking_not_available"
 
+#define AR_CAMERA_PROJECTION_MATRIX_Z_NEAR 0.001f
+#define AR_CAMERA_PROJECTION_MATRIX_Z_FAR 1000.0f
+
 
 static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
 {
