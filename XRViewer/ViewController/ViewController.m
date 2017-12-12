@@ -72,11 +72,19 @@ typedef void (^UICompletion)(void);
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
 {
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    // Disable the transition animation if we are on XR
+    if ([[[self stateController] state] webXR]) {
+        [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+            [UIView setAnimationsEnabled:YES];
+        }];
+        [UIView setAnimationsEnabled:NO];
+    }
     
     [[self arkController] viewWillTransitionToSize:size];
     [[self overlayController] viewWillTransitionToSize:size];
     [[self webController] viewWillTransitionToSize:size];
+    
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
 - (void)viewDidLayoutSubviews {
