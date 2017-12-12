@@ -71,6 +71,8 @@
         [[[[controller renderView] bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor]] setActive:YES];
         
         [[self controller] setHitTestFocusPoint:[[[self controller] renderView] center]];
+
+        self.interfaceOrientation = [self getInterfaceOrientation];
     }
     
     return self;
@@ -120,6 +122,34 @@
 - (void)viewWillTransitionToSize:(CGSize)size
 {
     [[self controller] setHitTestFocusPoint:CGPointMake(size.width / 2, size.height / 2)];
+    self.interfaceOrientation = [self getInterfaceOrientation];
+}
+
+- (UIInterfaceOrientation)getInterfaceOrientation {
+    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
+    UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
+    switch (deviceOrientation) {
+        case UIDeviceOrientationPortrait: {
+            interfaceOrientation = UIInterfaceOrientationPortrait;
+        } break;
+
+        case UIDeviceOrientationPortraitUpsideDown: {
+            interfaceOrientation = UIInterfaceOrientationPortraitUpsideDown;
+        } break;
+
+        case UIDeviceOrientationLandscapeLeft: {
+            interfaceOrientation = UIInterfaceOrientationLandscapeRight;
+        } break;
+
+        case UIDeviceOrientationLandscapeRight: {
+            interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
+        } break;
+
+        default:
+            break;
+    }
+
+    return interfaceOrientation;
 }
 
 - (UIView *)arkView
@@ -270,13 +300,13 @@
             if ([[self request][WEB_AR_CAMERA_OPTION] boolValue])
             {
                 CGSize size = [[self controller] renderView].frame.size;
-                matrix_float4x4 projectionMatrix = [[frame camera] projectionMatrixForOrientation:[self interfaceOrientation]
+                matrix_float4x4 projectionMatrix = [[frame camera] projectionMatrixForOrientation:self.interfaceOrientation
                                                                                viewportSize:size
                                                                                       zNear:AR_CAMERA_PROJECTION_MATRIX_Z_NEAR
                                                                                        zFar:AR_CAMERA_PROJECTION_MATRIX_Z_FAR];
                 newData[WEB_AR_PROJ_CAMERA_OPTION] = arrayFromMatrix4x4(projectionMatrix);
              
-                matrix_float4x4 viewMatrix = [frame.camera viewMatrixForOrientation:[self interfaceOrientation]];
+                matrix_float4x4 viewMatrix = [frame.camera viewMatrixForOrientation:self.interfaceOrientation];
                 matrix_float4x4 modelMatrix = matrix_invert(viewMatrix);
                 
                 newData[WEB_AR_CAMERA_TRANSFORM_OPTION] = arrayFromMatrix4x4(modelMatrix);
@@ -291,33 +321,6 @@
             os_unfair_lock_unlock(&(lock));
         }
     }
-}
-
-- (UIInterfaceOrientation)interfaceOrientation {
-    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
-    UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
-    switch (deviceOrientation) {
-        case UIDeviceOrientationPortrait: {
-            interfaceOrientation = UIInterfaceOrientationPortrait;
-        } break;
-            
-        case UIDeviceOrientationPortraitUpsideDown: {
-            interfaceOrientation = UIInterfaceOrientationPortraitUpsideDown;
-        } break;
-            
-        case UIDeviceOrientationLandscapeLeft: {
-            interfaceOrientation = UIInterfaceOrientationLandscapeRight;
-        } break;
-            
-        case UIDeviceOrientationLandscapeRight: {
-            interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
-        } break;
-            
-        default:
-            break;
-    }
-    
-    return interfaceOrientation;
 }
 
 - (NSArray *)currentAnchorsArray

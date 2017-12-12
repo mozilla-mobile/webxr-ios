@@ -24,6 +24,7 @@ typedef void (^DidRemovePlaneAnchors)(void);
 @property(copy) DidChangeTrackingState didChangeTrackingState;
 @property(copy) DidAddPlaneAnchors didAddPlaneAnchors;
 @property(copy) DidRemovePlaneAnchors didRemovePlaneAnchors;
+@property UIInterfaceOrientation interfaceOrientation;
 
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 - (UIView *)arkView;
