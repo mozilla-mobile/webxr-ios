@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
-    <device id="retina5_5" orientation="landscape">
+    <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -14,29 +14,30 @@
             <objects>
                 <viewController id="BV1-FR-VrT" customClass="ViewController" sceneMemberID="viewController">
                     <view key="view" opaque="NO" contentMode="scaleToFill" id="3se-qz-xqx">
-                        <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pr5-sC-23l" userLabel="ARKView" customClass="LayerView">
-                                <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RAF-Ke-Lef" userLabel=" WebView" customClass="LayerView">
-                                <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NaB-9b-LZq" userLabel="HotView" customClass="LayerView">
-                                <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="73L-9y-k0E" userLabel="SplashView" customClass="LayerView">
-                                <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bgH" translatesAutoresizingMaskIntoConstraints="NO" id="0Zx-bn-O3A">
-                                        <rect key="frame" x="0.0" y="0.0" width="736" height="414"/>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bgH" translatesAutoresizingMaskIntoConstraints="NO" id="0Zx-bn-O3A">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                                        <variation key="heightClass=regular-widthClass=compact" image="bgV"/>
                                     </imageView>
                                     <activityIndicatorView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="NsR-hH-fKn">
-                                        <rect key="frame" x="706" y="384" width="20" height="20"/>
+                                        <rect key="frame" x="384" y="706" width="20" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="20" id="H9i-rs-sIs"/>
                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="OCh-Gf-xa2"/>
@@ -45,7 +46,7 @@
                                         </constraints>
                                     </activityIndicatorView>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="NsR-hH-fKn" secondAttribute="trailing" constant="10" id="6to-ax-Fyc"/>
                                     <constraint firstAttribute="bottom" secondItem="NsR-hH-fKn" secondAttribute="bottom" constant="10" id="Mog-uO-hHr"/>
@@ -69,15 +70,11 @@
                             <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="P6w-lb-rW2"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="RBb-Ar-FV4"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="V1j-Ro-quZ"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="Y2f-OP-taj"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="ecg-bu-gQi"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="gIe-3g-LF3"/>
                             <constraint firstItem="NaB-9b-LZq" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="ivb-Sb-gYU"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="kES-oz-U7r"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="kPL-7d-ZYR"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="ltL-KU-uG7"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="m7O-0J-noB"/>
-                            <constraint firstItem="73L-9y-k0E" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="rZh-KL-mp1"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="rdY-e9-qs9"/>
                             <constraint firstAttribute="trailing" secondItem="Pr5-sC-23l" secondAttribute="trailing" id="zAq-Ca-Y1L"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="zhZ-5g-8Va"/>
@@ -98,5 +95,6 @@
     </scenes>
     <resources>
         <image name="bgH" width="1104" height="621"/>
+        <image name="bgV" width="621" height="1104"/>
     </resources>
 </document>
