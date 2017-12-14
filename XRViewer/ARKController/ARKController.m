@@ -11,7 +11,7 @@
 {
     NSDictionary *arkData;
     os_unfair_lock lock;
-    NSMutableDictionary *anchors; // key - JS anchor name : value - ARAnchor NSUUID string
+    NSMutableDictionary *objects; // key - JS anchor name : value - ARAnchor NSUUID string
 }
 
 @property (nonatomic, strong) id<ARKControllerProtocol> controller;
@@ -28,7 +28,14 @@
 
 @end
 
-@implementation ARKController
+@implementation ARKController {
+    /// Array of anchor dictionaries that were added since the last frame.
+    /// Contains the initial data of the anchor when it was added.
+    NSMutableArray *addedAnchorsSinceLastFrame;
+
+    /// Array of anchor IDs that were removed since the last frame
+    NSMutableArray *removedAnchorsSinceLastFrame;
+}
 
 #pragma mark Interface
 
@@ -44,8 +51,10 @@
     if (self)
     {
         lock = OS_UNFAIR_LOCK_INIT;
-        anchors = [NSMutableDictionary new];
-        
+        objects = [NSMutableDictionary new];
+        addedAnchorsSinceLastFrame = [NSMutableArray new];
+        removedAnchorsSinceLastFrame = [NSMutableArray new];
+
         [self setSession:[ARSession new]];
         [[self session] setDelegate:self];
         
@@ -229,7 +238,7 @@
 
 - (BOOL)addAnchor:(NSString *)name transform:(NSArray *)transform
 {
-    if ((name == nil) || [anchors objectForKey:name])
+    if ((name == nil) || [objects objectForKey:name])
     {
         DDLogError(@"Duplicate or NIL anchor Name - %@", name);
         return NO;
@@ -240,7 +249,7 @@
     ARAnchor *anchor = [[ARAnchor alloc] initWithTransform:matrix];
     
     [[self session] addAnchor:anchor];
-    [anchors setObject:[[anchor identifier] UUIDString] forKey:name];
+    [objects setObject:[[anchor identifier] UUIDString] forKey:name];
     
     return YES;
 }
@@ -256,20 +265,20 @@
             [[self session] removeAnchor:anchor];
         }
         
-        [anchors removeAllObjects];
+        [objects removeAllObjects];
     }
     else
     {
         for (NSString *name in anchorNames)
         {
-            NSString *uuid = anchors[name];
+            NSString *uuid = objects[name];
             
             for (ARAnchor *anchor in [currentFrame anchors])
             {
                 if ([[[anchor identifier] UUIDString] isEqualToString:uuid])
                 {
                     [[self session] removeAnchor:anchor];
-                    [anchors removeObjectForKey:uuid];
+                    [objects removeObjectForKey:uuid];
                     
                     break;
                 }
@@ -314,8 +323,18 @@
             if ([[self request][WEB_AR_3D_OBJECTS_OPTION] boolValue])
             {
                 newData[WEB_AR_3D_OBJECTS_OPTION] = [self currentAnchorsArray];
+                
+                // Prepare the objectsRemoved array
+                NSArray *removedObjects = [removedAnchorsSinceLastFrame copy];
+                [removedAnchorsSinceLastFrame removeAllObjects];
+                newData[WEB_AR_3D_REMOVED_OBJECTS_OPTION] = removedObjects;
+                
+                // Prepare the newObjects array
+                NSArray *newObjects = [addedAnchorsSinceLastFrame copy];
+                [addedAnchorsSinceLastFrame removeAllObjects];
+                newData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
             }
-            
+
             os_unfair_lock_lock(&(lock));
             arkData = [newData copy];
             os_unfair_lock_unlock(&(lock));
@@ -325,29 +344,12 @@
 
 - (NSArray *)currentAnchorsArray
 {
-    ARFrame *currentFrame = [[self session] currentFrame];
-    
     NSMutableArray *array = [NSMutableArray array];
+    [objects enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
+     {
+         [array addObject:objects[key]];
+     }];
     
-    for (ARAnchor *anchor in [currentFrame anchors])
-    {
-        __block NSString *name = nil;
-        [anchors enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
-         {
-             if ([[[anchor identifier] UUIDString] isEqualToString:obj])
-             {
-                 name = key;
-                 *stop = YES;
-             }
-         }];
-        
-        if (name)
-        {
-            [array addObject:[self anchorDictFromAnchor:anchor withName:name]];
-        }
-    }
-    
-    //DDLogDebug(@"Anchors - %@", [array debugDescription]);
     return [array copy];
 }
 
@@ -357,6 +359,11 @@
     
     dict[WEB_AR_UUID_OPTION] = name;
     dict[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([anchor transform]);
+
+    if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
+        ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)anchor;
+        [self addPlaneAnchorData:planeAnchor toDictionary:dict];
+    }
     
     return [dict copy];
 }
@@ -406,6 +413,12 @@
 - (void)session:(ARSession *)session didAddAnchors:(NSArray<ARAnchor*>*)anchors
 {
     DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
+    for (ARAnchor* addedAnchor in anchors) {
+        NSDictionary *addedAnchorDictionary = [self getDictionaryForAnchor:addedAnchor];
+        [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+        objects[[addedAnchor.identifier UUIDString]] = addedAnchorDictionary;
+    }
+
     // Inform up in the calling hierarchy when we have plane anchors added to the scene
     if ([self didAddPlaneAnchors]) {
         if ([self anyPlaneAnchor:anchors]) {
@@ -414,14 +427,40 @@
     }
 }
 
+- (NSDictionary *)getDictionaryForAnchor:(ARAnchor *)addedAnchor {
+    NSMutableDictionary *addedAnchorDictionary = [[self anchorDictFromAnchor:addedAnchor withName:[addedAnchor.identifier UUIDString]] mutableCopy];
+    if ([addedAnchor isKindOfClass:[ARPlaneAnchor class]]) {
+        ARPlaneAnchor *addedPlaneAnchor = (ARPlaneAnchor *)addedAnchor;
+        [self addPlaneAnchorData:addedPlaneAnchor toDictionary: addedAnchorDictionary];
+    }
+    return [addedAnchorDictionary copy];
+}
+
+- (void)addPlaneAnchorData:(ARPlaneAnchor *)planeAnchor toDictionary:(NSMutableDictionary *)dictionary {
+    dictionary[WEB_AR_H_PLANE_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
+    dictionary[WEB_AR_H_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
+    dictionary[WEB_AR_H_PLANE_ALIGNMENT_OPTION] = @([planeAnchor alignment]);
+}
+
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
 {
-    //DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
+    DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
+    for (ARAnchor* updatedAnchor in anchors) {
+        NSString* anchorID = [updatedAnchor.identifier UUIDString];
+        NSDictionary *updatedAnchorDictionary = [self getDictionaryForAnchor:updatedAnchor];
+        objects[anchorID] = updatedAnchorDictionary;
+    }
 }
 
 - (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors
 {
     DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
+    for (ARAnchor* removedAnchor in anchors) {
+        NSString* anchorID = [removedAnchor.identifier UUIDString];
+        [removedAnchorsSinceLastFrame addObject: anchorID];
+        objects[anchorID] = nil;
+    }
+
     // Inform up in the calling hierarchy when we have plane anchors removed from the scene
     if ([self didRemovePlaneAnchors]) {
         if ([self anyPlaneAnchor:anchors]) {

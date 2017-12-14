@@ -146,8 +146,6 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     dispatch_async(dispatch_get_main_queue(), ^
     {
-        // TODO: adjust also left and right anchors to use the safe area when the web is not XR
-        
         float webViewTopAnchorConstraintConstant = webXR? 0.0f: URL_BAR_HEIGHT;
         [[self webViewTopAnchorConstraint] setConstant:webViewTopAnchorConstraintConstant];
         [[[self webView] superview] setNeedsLayout];

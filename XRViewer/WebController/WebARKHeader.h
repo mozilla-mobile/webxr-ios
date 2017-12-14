@@ -79,6 +79,7 @@
 #define WEB_AR_H_PLANE_OPTION          @"h_plane"
 #define WEB_AR_H_PLANE_CENTER_OPTION   @"h_plane_center"
 #define WEB_AR_H_PLANE_EXTENT_OPTION   @"h_plane_extent"
+#define WEB_AR_H_PLANE_ALIGNMENT_OPTION @"plane_alignment"
 #define WEB_AR_H_PLANE_ID_OPTION       @"h_plane_id"
 #define WEB_AR_SHOW_H_PLANE_OPTION     @"show_h_plane"
 
@@ -89,6 +90,8 @@
 
 
 #define WEB_AR_3D_OBJECTS_OPTION       @"objects" // from IOS - [ {name , matrix} ]
+#define WEB_AR_3D_REMOVED_OBJECTS_OPTION @"removedObjects"
+#define WEB_AR_3D_NEW_OBJECTS_OPTION   @"newObjects" 
 
 #define WEB_AR_TYPE_OPTION             @"type"
 #define WEB_AR_POSITION_OPTION         @"position"
