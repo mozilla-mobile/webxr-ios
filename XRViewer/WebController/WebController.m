@@ -198,7 +198,12 @@ inline static WebCompletion debugCompletion(NSString *name)
 }
 
 - (void)updateWindowSize {
-    [self callWebMethod:WEB_AR_IOS_WINDOW_RESIZE_MESSAGE param:NSStringFromCGSize([self webView].frame.size) webCompletion:debugCompletion(@"arkitWindowResize")];
+    CGSize size = [self webView].frame.size;
+    NSDictionary* sizeDictionary = @{
+                                WEB_AR_IOS_SIZE_WIDTH_PARAMETER: @(size.width),
+                                WEB_AR_IOS_SIZE_HEIGHT_PARAMETER: @(size.height),
+                                };
+    [self callWebMethod:WEB_AR_IOS_WINDOW_RESIZE_MESSAGE paramJSON:sizeDictionary webCompletion:debugCompletion(@"arkitWindowResize")];
 }
 
 #pragma mark WKScriptMessageHandler
