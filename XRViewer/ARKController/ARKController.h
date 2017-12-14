@@ -15,6 +15,7 @@ typedef void (^DidInterupt)(BOOL);
 typedef void (^DidChangeTrackingState)(NSString *state);
 typedef void (^DidAddPlaneAnchors)(void);
 typedef void (^DidRemovePlaneAnchors)(void);
+typedef void (^DidUpdateWindowSize)(void);
 
 @interface ARKController : NSObject
 
@@ -24,7 +25,10 @@ typedef void (^DidRemovePlaneAnchors)(void);
 @property(copy) DidChangeTrackingState didChangeTrackingState;
 @property(copy) DidAddPlaneAnchors didAddPlaneAnchors;
 @property(copy) DidRemovePlaneAnchors didRemovePlaneAnchors;
+@property(copy) DidUpdateWindowSize didUpdateWindowSize;
 @property UIInterfaceOrientation interfaceOrientation;
+
+@property(nonatomic) BOOL shouldUpdateWindowSize;
 
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 - (UIView *)arkView;

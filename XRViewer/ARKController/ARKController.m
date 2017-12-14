@@ -54,6 +54,7 @@
         objects = [NSMutableDictionary new];
         addedAnchorsSinceLastFrame = [NSMutableArray new];
         removedAnchorsSinceLastFrame = [NSMutableArray new];
+        [self setShouldUpdateWindowSize:YES];
 
         [self setSession:[ARSession new]];
         [[self session] setDelegate:self];
@@ -408,6 +409,13 @@
     [self updateARKDataWithFrame:frame];
     
     [self didUpdate](self);
+
+    if ([self shouldUpdateWindowSize]) {
+        [self setShouldUpdateWindowSize:NO];
+        if ([self didUpdateWindowSize]) {
+            [self didUpdateWindowSize]();
+        }
+    }
 }
 
 - (void)session:(ARSession *)session didAddAnchors:(NSArray<ARAnchor*>*)anchors

@@ -197,6 +197,10 @@ inline static WebCompletion debugCompletion(NSString *name)
     [self callWebMethod:WEB_AR_IOS_TRACKING_STATE_MESSAGE param:state webCompletion:debugCompletion(@"arkitDidChangeTrackingState")];
 }
 
+- (void)updateWindowSize {
+    [self callWebMethod:WEB_AR_IOS_WINDOW_RESIZE_MESSAGE param:NSStringFromCGSize([self webView].frame.size) webCompletion:debugCompletion(@"arkitWindowResize")];
+}
+
 #pragma mark WKScriptMessageHandler
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message

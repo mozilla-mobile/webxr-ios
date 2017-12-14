@@ -254,6 +254,13 @@ typedef void (^UICompletion)(void);
      {
          [[blockSelf stateController] applyOnEnterForegroundAction];
      }];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+}
+
+- (void)deviceOrientationDidChange:(NSNotification *)notification
+{
+    [[self arkController] setShouldUpdateWindowSize: YES];
 }
 
 - (void)setupReachability
@@ -384,6 +391,10 @@ typedef void (^UICompletion)(void);
         // overlay controller. He will decide on the warning message to show
         [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
                                          sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
+    }];
+
+    [[self arkController] setDidUpdateWindowSize:^{
+        [[blockSelf webController] updateWindowSize];
     }];
 
     [[self animator] animate:[self arkLayerView] toFade:NO];

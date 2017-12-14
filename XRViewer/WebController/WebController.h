@@ -59,6 +59,9 @@ typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
 - (void)wasARInterruption:(BOOL)interruption;
 - (void)didBackgroundAction:(BOOL)background;
 - (void)didChangeARTrackingState:(NSString *)state;
+
+- (void)updateWindowSize;
+
 - (void)didReceiveMemoryWarning;
 
 - (WKWebView *)webView;

@@ -38,6 +38,8 @@
 
 #define WEB_AR_IOS_WIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"
 
+#define WEB_AR_IOS_WINDOW_RESIZE_MESSAGE   @"arkitWindowResize"
+
 // OPTIONS
 #define WEB_AR_CALLBACK_OPTION         @"callback"
 #define WEB_AR_REQUEST_OPTION          @"options"
@@ -91,7 +93,7 @@
 
 #define WEB_AR_3D_OBJECTS_OPTION       @"objects" // from IOS - [ {name , matrix} ]
 #define WEB_AR_3D_REMOVED_OBJECTS_OPTION @"removedObjects"
-#define WEB_AR_3D_NEW_OBJECTS_OPTION   @"newObjects" 
+#define WEB_AR_3D_NEW_OBJECTS_OPTION   @"newObjects"
 
 #define WEB_AR_TYPE_OPTION             @"type"
 #define WEB_AR_POSITION_OPTION         @"position"
