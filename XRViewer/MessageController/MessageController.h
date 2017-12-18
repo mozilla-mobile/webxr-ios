@@ -23,6 +23,8 @@ typedef void (^DidHideMessageByUser)(void);
 
 - (void)showMessageAboutARInteruption:(BOOL)interupt;
 
+- (void)showMessageAboutFailSessionWithMessage:(NSString *)message completion:(void (^)(void))completion;
+
 - (void)showMessageAboutFailSessionWithCompletion:(void(^)(void))completion;
 
 - (void)showMessageAboutMemoryWarningWithCompletion:(void(^)(void))completion;

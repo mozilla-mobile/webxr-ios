@@ -349,22 +349,38 @@ typedef void (^UICompletion)(void);
              [blockSelf sendARKData];
          }
      }];
-#define CAMERA_ACCESS_NOT_AUTORIZED_CODE 103
     [[self arkController] setDidFailSession:^(NSError *error)
-     {
-         if ([error code] != CAMERA_ACCESS_NOT_AUTORIZED_CODE)
-         {
-             dispatch_async(dispatch_get_main_queue(), ^
-                            {
-                                [[blockSelf messageController] showMessageAboutFailSessionWithCompletion:^
-                                 {
-                                     dispatch_async(dispatch_get_main_queue(), ^
-                                                    {
-                                                        [[blockSelf webController] reload];
-                                                    });
-                                 }];
-                            });
-         }
+    {
+        NSString* errorMessage = @"ARKit Error";
+        switch ([error code]) {
+            case CAMERA_ACCESS_NOT_AUTHORIZED_ARKIT_ERROR_CODE:
+                // If there is a camera access error, do nothing
+                return;
+            case UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_CODE:
+                errorMessage = UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_MESSAGE;
+                break;
+            case SENSOR_UNAVAILABLE_ARKIT_ERROR_CODE:
+                errorMessage = SENSOR_UNAVAILABLE_ARKIT_ERROR_MESSAGE;
+                break;
+            case SENSOR_FAILED_ARKIT_ERROR_CODE:
+                errorMessage = SENSOR_FAILED_ARKIT_ERROR_MESSAGE;
+                break;
+            case WORLD_TRACKING_FAILED_ARKIT_ERROR_CODE:
+                errorMessage = WORLD_TRACKING_FAILED_ARKIT_ERROR_MESSAGE;
+                break;
+
+            default:
+                break;
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
+                dispatch_async(dispatch_get_main_queue(), ^
+                {
+                    [[blockSelf webController] reload];
+                });
+            }];
+        });
      }];
     
     [[self arkController] setDidInterupt:^(BOOL interruption)

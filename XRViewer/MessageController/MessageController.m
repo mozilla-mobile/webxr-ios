@@ -114,6 +114,36 @@
     }
 }
 
+- (void)showMessageAboutFailSessionWithMessage: (NSString*)message completion:(void(^)(void))completion
+{
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"AR Session Failed"
+                                                    message:message
+                                                      image:nil
+                                            buttonAlignment:UILayoutConstraintAxisHorizontal
+                                            transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:200.0
+                                           gestureDismissal:NO
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+    ];
+
+    DefaultButton *ok = [[DefaultButton alloc] initWithTitle:@"Ok" height:40 dismissOnTap:YES action:^
+    {
+        [popup dismissViewControllerAnimated:YES completion:NULL];
+
+        [self didHideMessageByUser]();
+
+        completion();
+    }];
+
+    [popup addButtons: @[ok]];
+
+    [[self viewController] presentViewController:popup animated:YES completion:nil];
+
+    [self didShowMessage]();
+
+}
+
 - (void)showMessageAboutFailSessionWithCompletion:(void(^)(void))completion
 {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"AR Session Failed"
