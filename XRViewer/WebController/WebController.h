@@ -41,6 +41,8 @@ typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
 
 @property (nonatomic, weak) NSLayoutConstraint* webViewTopAnchorConstraint;
 
+@property(nonatomic, strong) NSLayoutConstraint *webViewLeftAnchorConstraint;
+
 - (instancetype)initWithRootView:(UIView *)rootView;
 - (void)viewWillTransitionToSize:(CGSize)size;
 

@@ -391,10 +391,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 #pragma mark Private
 
 - (void)goFullScreen {
-    [[[self webView] scrollView] setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
     [[self webViewTopAnchorConstraint] setConstant:0.0];
-    [[[self webView] superview] setNeedsLayout];
-    [[[self webView] superview] layoutIfNeeded];
 }
 
 - (BOOL)shouldShowError:(NSError *)error
@@ -535,7 +532,9 @@ inline static WebCompletion debugCompletion(NSString *name)
     NSLayoutConstraint* webViewTopAnchorConstraint = [[wv topAnchor] constraintEqualToAnchor:[rootView topAnchor]];
     [self setWebViewTopAnchorConstraint: webViewTopAnchorConstraint];
     [webViewTopAnchorConstraint setActive:YES];
-    [[[wv leftAnchor] constraintEqualToAnchor:[rootView leftAnchor]] setActive:YES];
+    NSLayoutConstraint* webViewLeftAnchorConstraint = [[wv leftAnchor] constraintEqualToAnchor:[rootView leftAnchor]];
+    [self setWebViewLeftAnchorConstraint: webViewLeftAnchorConstraint];
+    [webViewLeftAnchorConstraint setActive:YES];
     [[[wv rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]] setActive:YES];
     [[[wv bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor]] setActive:YES];
     

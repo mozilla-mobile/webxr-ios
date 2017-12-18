@@ -89,12 +89,16 @@ typedef void (^UICompletion)(void);
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
+
+    // If XR is active, then the top anchor is 0 (fullscreen), else topSafeAreaInset + URL_BAR_HEIGHT
     float topSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].top;
     [[[self webController] barViewHeightAnchorConstraint] setConstant:topSafeAreaInset + URL_BAR_HEIGHT];
-    
-    // If XR is active, then the top anchor is 0 (fullscreen), else topSafeAreaInset + URL_BAR_HEIGHT
     [[[self webController] webViewTopAnchorConstraint] setConstant:[[[self stateController] state] webXR] ? 0.0f : topSafeAreaInset + URL_BAR_HEIGHT];
-    
+
+    // If XR is active, then the left anchor is 0 (fullscreen), else leftSafeAreaInset, so we respect the notch
+    float leftSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].left;
+    [[[self webController] webViewLeftAnchorConstraint] setConstant:[[[self stateController] state] webXR] ? 0.0f : leftSafeAreaInset];
+
     [[self webLayerView] setNeedsLayout];
     [[self webLayerView] layoutIfNeeded];
 }
