@@ -11,6 +11,7 @@
 #import "AppStateController.h"
 #import "LayerView.h"
 #import "AnalyticsManager.h"
+#import "Utils.h"
 
 #define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
@@ -95,9 +96,21 @@ typedef void (^UICompletion)(void);
     [[[self webController] barViewHeightAnchorConstraint] setConstant:topSafeAreaInset + URL_BAR_HEIGHT];
     [[[self webController] webViewTopAnchorConstraint] setConstant:[[[self stateController] state] webXR] ? 0.0f : topSafeAreaInset + URL_BAR_HEIGHT];
 
-    // If XR is active, then the left anchor is 0 (fullscreen), else leftSafeAreaInset, so we respect the notch
-    float leftSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].left;
-    [[[self webController] webViewLeftAnchorConstraint] setConstant:[[[self stateController] state] webXR] ? 0.0f : leftSafeAreaInset];
+    
+    [[[self webController] webViewLeftAnchorConstraint] setConstant:0.0f];
+    [[[self webController] webViewRightAnchorConstraint] setConstant:0.0f];
+    if (![[[self stateController] state] webXR]) {
+        UIInterfaceOrientation currentOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
+        if (currentOrientation == UIInterfaceOrientationLandscapeLeft) {
+            // The notch is to the right
+            float rightSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].right;
+            [[[self webController] webViewRightAnchorConstraint] setConstant:[[[self stateController] state] webXR] ? 0.0f : -rightSafeAreaInset];
+        } else if (currentOrientation == UIInterfaceOrientationLandscapeRight) {
+            // The notch is to the left
+            float leftSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].left;
+            [[[self webController] webViewLeftAnchorConstraint] setConstant:leftSafeAreaInset];
+        }
+    }
 
     [[self webLayerView] setNeedsLayout];
     [[self webLayerView] layoutIfNeeded];

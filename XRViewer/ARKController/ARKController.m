@@ -6,6 +6,7 @@
 #import "ARKMetalController.h"
 #import "HitAnchor.h"
 #import "HitTestResult.h"
+#import "Utils.h"
 
 @interface ARKController () <ARSessionDelegate>
 {
@@ -82,7 +83,7 @@
         
         [[self controller] setHitTestFocusPoint:[[[self controller] renderView] center]];
 
-        self.interfaceOrientation = [self getInterfaceOrientation];
+        self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
     }
     
     return self;
@@ -132,34 +133,7 @@
 - (void)viewWillTransitionToSize:(CGSize)size
 {
     [[self controller] setHitTestFocusPoint:CGPointMake(size.width / 2, size.height / 2)];
-    self.interfaceOrientation = [self getInterfaceOrientation];
-}
-
-- (UIInterfaceOrientation)getInterfaceOrientation {
-    UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
-    UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
-    switch (deviceOrientation) {
-        case UIDeviceOrientationPortrait: {
-            interfaceOrientation = UIInterfaceOrientationPortrait;
-        } break;
-
-        case UIDeviceOrientationPortraitUpsideDown: {
-            interfaceOrientation = UIInterfaceOrientationPortraitUpsideDown;
-        } break;
-
-        case UIDeviceOrientationLandscapeLeft: {
-            interfaceOrientation = UIInterfaceOrientationLandscapeRight;
-        } break;
-
-        case UIDeviceOrientationLandscapeRight: {
-            interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
-        } break;
-
-        default:
-            break;
-    }
-
-    return interfaceOrientation;
+    self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
 }
 
 - (UIView *)arkView

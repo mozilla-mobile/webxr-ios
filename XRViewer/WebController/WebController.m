@@ -535,7 +535,10 @@ inline static WebCompletion debugCompletion(NSString *name)
     NSLayoutConstraint* webViewLeftAnchorConstraint = [[wv leftAnchor] constraintEqualToAnchor:[rootView leftAnchor]];
     [self setWebViewLeftAnchorConstraint: webViewLeftAnchorConstraint];
     [webViewLeftAnchorConstraint setActive:YES];
-    [[[wv rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]] setActive:YES];
+    NSLayoutConstraint *webViewRightAnchorConstraint = [[wv rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]];
+    [self setWebViewRightAnchorConstraint: webViewRightAnchorConstraint];
+    [webViewRightAnchorConstraint setActive:YES];
+    
     [[[wv bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor]] setActive:YES];
     
     [[wv scrollView] setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];

@@ -39,6 +39,7 @@
 		04C64BC81F71011700ACFB8B /* LayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BC71F71011700ACFB8B /* LayerView.m */; };
 		04C64BCE1F71094500ACFB8B /* AppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCC1F71016A00ACFB8B /* AppState.m */; };
 		04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCA1F71016A00ACFB8B /* AppStateController.m */; };
+		5184F8FC0384A338F76D2653 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 5184FF937519BAF48DCEB808 /* Utils.m */; };
 		5184FFCF8E6F866F5F39C576 /* AnalyticsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5184FC2DFFB538B8928F5397 /* AnalyticsManager.m */; };
 		591A8C502FA83D70E8F5B5B4 /* Pods_XRViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */; };
 		620D24A11FC48994002127FD /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 620D24A01FC48994002127FD /* Settings.bundle */; };
@@ -113,8 +114,10 @@
 		04C64BCC1F71016A00ACFB8B /* AppState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppState.m; sourceTree = "<group>"; };
 		04C64BCD1F71016B00ACFB8B /* AppState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppState.h; sourceTree = "<group>"; };
 		23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.release.xcconfig"; sourceTree = "<group>"; };
+		5184F32A43380670077FB602 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		5184F32F2BAA59617B4202B8 /* AnalyticsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalyticsManager.h; sourceTree = "<group>"; };
 		5184FC2DFFB538B8928F5397 /* AnalyticsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnalyticsManager.m; sourceTree = "<group>"; };
+		5184FF937519BAF48DCEB808 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
 		620D24A01FC48994002127FD /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		62414B161FCEFAEA00D1CDC8 /* AnalyticsEvents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnalyticsEvents.h; sourceTree = "<group>"; };
 		625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -166,6 +169,7 @@
 		041503C31F28944F00887400 /* XRViewer */ = {
 			isa = PBXGroup;
 			children = (
+				621437971FE968090055252A /* Utils */,
 				62414B151FCEFACC00D1CDC8 /* Analytics */,
 				04A983771F32280000120CF8 /* AppDelegate */,
 				04A983731F32276600120CF8 /* ViewController */,
@@ -348,6 +352,15 @@
 				23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		621437971FE968090055252A /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				5184FF937519BAF48DCEB808 /* Utils.m */,
+				5184F32A43380670077FB602 /* Utils.h */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		62414B151FCEFACC00D1CDC8 /* Analytics */ = {
@@ -543,6 +556,7 @@
 				04C64BCE1F71094500ACFB8B /* AppState.m in Sources */,
 				0449DE071F4D7F000057F639 /* MessageController.m in Sources */,
 				5184FFCF8E6F866F5F39C576 /* AnalyticsManager.m in Sources */,
+				5184F8FC0384A338F76D2653 /* Utils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
