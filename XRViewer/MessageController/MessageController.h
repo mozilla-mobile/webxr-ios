@@ -25,6 +25,8 @@ typedef void (^DidHideMessageByUser)(void);
 
 - (void)showMessageAboutFailSessionWithMessage:(NSString *)message completion:(void (^)(void))completion;
 
+- (void)showMessageWithTitle:(NSString*)title message:(NSString*)message hideAfter:(NSInteger)seconds;
+
 - (void)showMessageAboutFailSessionWithCompletion:(void(^)(void))completion;
 
 - (void)showMessageAboutMemoryWarningWithCompletion:(void(^)(void))completion;

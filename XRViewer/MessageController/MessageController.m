@@ -114,6 +114,25 @@
     }
 }
 
+- (void)showMessageWithTitle:(NSString*)title message:(NSString*)message hideAfter:(NSInteger)seconds {
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:title
+                                                    message:message
+                                                      image:nil
+                                            buttonAlignment:UILayoutConstraintAxisHorizontal
+                                            transitionStyle:PopupDialogTransitionStyleZoomIn
+                                             preferredWidth:200.0
+                                           gestureDismissal:NO
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+                          ];
+    
+    [[self viewController] presentViewController:popup animated:YES completion:nil];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(seconds * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [popup dismissViewControllerAnimated:YES completion:nil];
+    });
+}
+
 - (void)showMessageAboutFailSessionWithMessage: (NSString*)message completion:(void(^)(void))completion
 {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"AR Session Failed"
