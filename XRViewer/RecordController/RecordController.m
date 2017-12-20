@@ -4,6 +4,7 @@
 #import "Endian.h"
 #import <Photos/Photos.h>
 #import "OverlayHeader.h"
+#import "XRViewer-Swift.h"
 
 #define USER_DECLINED_RECORD_CODE -5801
 
@@ -270,6 +271,7 @@
     
     __weak typeof (self) blockSelf = self;
     
+    [[AnalyticsManager sharedInstance] sendEventWithCategory:EventCategoryAction method:EventMethodTap object:EventObjectRecordPictureButton];
     [[self recorder] startCaptureWithHandler:^(CMSampleBufferRef  _Nonnull sampleBuffer, RPSampleBufferType bufferType, NSError * _Nullable error)
      {
          if ((++_shotCounter) == _frameToShot)
@@ -334,6 +336,7 @@
     {
         AudioServicesPlaySystemSound(END_RECORDING_SOUND_ID);
         
+        [[AnalyticsManager sharedInstance] sendEventWithCategory:EventCategoryAction method:EventMethodTap object:EventObjectRelaseVideoButton];
         [[self recorder] stopRecordingWithHandler:^(RPPreviewViewController * _Nullable previewViewController, NSError * _Nullable error)
          {
              dispatch_async(dispatch_get_main_queue(), ^
@@ -380,6 +383,7 @@
         
         [self action](RecordStateGoingToRecording);
         
+        [[AnalyticsManager sharedInstance] sendEventWithCategory:EventCategoryAction method:EventMethodTap object:EventObjectRecordVideoButton];
         [[self recorder] startRecordingWithHandler:^(NSError * _Nullable error)
          {
              dispatch_async(dispatch_get_main_queue(), ^

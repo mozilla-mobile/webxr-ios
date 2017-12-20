@@ -10,8 +10,8 @@
 #import "Reachability.h"
 #import "AppStateController.h"
 #import "LayerView.h"
-#import "AnalyticsManager.h"
 #import "Utils.h"
+#import "XRViewer-Swift.h"
 
 #define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
@@ -435,7 +435,7 @@ typedef void (^UICompletion)(void);
     [[self arkController] startSessionWithAppState:[[self stateController] state]];
     
     // Log event when we start an AR session
-    [[AnalyticsManager shared] sendEventWithAction:ACTION_AR_SESSION_STARTED];
+    [[AnalyticsManager sharedInstance] sendEventWithCategory:EventCategoryAction method:EventMethodWebXR object:EventObjectInitialize];
 }
 
 - (void)setupWebController

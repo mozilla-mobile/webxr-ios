@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
-#import "AnalyticsManager.h"
+#import "Constants.h"
+#import "XRViewer-Swift.h"
 
 @implementation AppDelegate
 
@@ -11,10 +12,8 @@
     
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 
-#if defined(USE_ANALYTICS)
-    [[AnalyticsManager shared] initialize];
-    [[AnalyticsManager shared] sendEventWithAction:ACTION_APP_LAUNCHED];
-#endif
+    BOOL sendUsageData = [[NSUserDefaults standardUserDefaults] boolForKey:USE_ANALYTICS_KEY];
+    [[AnalyticsManager sharedInstance] initializeWithSendUsageData:sendUsageData];
     
     return YES;
 }
@@ -54,14 +53,6 @@
         return YES;
     }
     return NO;
-}
-
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    [[AnalyticsManager shared] sendEventWithAction: ACTION_APP_DID_BECOME_ACTIVE];
-}
-
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    [[AnalyticsManager shared] sendEventWithAction:ACTION_APP_DID_ENTER_BACKGROUND];
 }
 
 @end
