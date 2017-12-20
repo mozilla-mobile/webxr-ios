@@ -169,7 +169,9 @@ typedef void (^UICompletion)(void);
              [blockSelf setupLocationController];
              
              [[blockSelf stateController] setShowMode:ShowSingle];
-             [[blockSelf messageController] showMessageWithTitle:@"AR Session Started" message:@"Swipe down to show the URL bar" hideAfter:2];
+             [[blockSelf messageController] showMessageWithTitle:AR_SESSION_STARTED_POPUP_TITLE
+                                                         message:AR_SESSION_STARTED_POPUP_MESSAGE
+                                                       hideAfter:AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS];
          }
          else
          {

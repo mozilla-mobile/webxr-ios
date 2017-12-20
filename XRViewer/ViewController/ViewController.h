@@ -5,6 +5,10 @@
 #define SENSOR_FAILED_ARKIT_ERROR_MESSAGE @"A sensor failed to provide the required input"
 #define WORLD_TRACKING_FAILED_ARKIT_ERROR_MESSAGE @"World tracking has encountered a fatal error"
 
+#define AR_SESSION_STARTED_POPUP_TITLE @"AR Session Started"
+#define AR_SESSION_STARTED_POPUP_MESSAGE @"Swipe down to show the URL bar"
+#define AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS 2
+
 @interface ViewController : UIViewController
 
 @end
