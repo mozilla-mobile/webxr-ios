@@ -3,11 +3,18 @@
 #import "Animator.h"
 #import "AppState.h"
 
+#define SWIPE_GESTURE_AREA_HEIGHT 200
+
 typedef NS_ENUM(NSUInteger, RecordState);
+
+typedef void (^OnSwipeDown)(void);
+typedef void (^OnSwipeUp)(void);
 
 @interface UIOverlayController : NSObject
 
 @property (nonatomic, strong) Animator *animator;
+@property (nonatomic, copy) OnSwipeDown onSwipeDown;
+@property (nonatomic, copy) OnSwipeUp onSwipeUp;
 
 - (instancetype)initWithRootView:(UIView *)rootView
                     cameraAction:(HotAction)cameraAction

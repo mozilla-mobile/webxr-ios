@@ -160,11 +160,14 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)showBar:(BOOL)showBar
 {
+    NSLog(@"Show bar: %@", showBar? @"Yes": @"No");
+    [[[self barView] superview] layoutIfNeeded];
+    
     float topAnchorConstant = showBar ? 0.0f : 0.0f - URL_BAR_HEIGHT * 2;
+    [[self barViewTopAnchorConstraint] setConstant:topAnchorConstant];
+    
     [UIView animateWithDuration:URL_BAR_ANIMATION_TIME_IN_SECONDS animations:^{
-        [[self barViewTopAnchorConstraint] setConstant:topAnchorConstant];
-        [[[self barView] superview] setNeedsUpdateConstraints];
-        [[[self barView] superview] setNeedsLayout];
+        [[[self barView] superview] layoutIfNeeded];
     }];
 }
 

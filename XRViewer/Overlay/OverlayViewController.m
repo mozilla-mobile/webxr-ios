@@ -38,6 +38,14 @@
     [self setup];
 }
 
+- (BOOL)prefersStatusBarHidden {
+    return [super prefersStatusBarHidden];
+}
+
+- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures {
+    return UIRectEdgeTop;
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -664,6 +672,8 @@
     [[self view] addSubview:[self buildLabel]];
     
     [self viewWillTransitionToSize:[[self view] bounds].size];
+    
+    [self setNeedsUpdateOfScreenEdgesDeferringSystemGestures];
 }
 
 - (NSString *)appVersion

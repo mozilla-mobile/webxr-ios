@@ -27,7 +27,7 @@ typedef void (^HotAction)(BOOL); // long
 #define RECORD_LABEL_HEIGHT 12
 
 #define URL_BAR_HEIGHT 49
-#define URL_BAR_ANIMATION_TIME_IN_SECONDS 0.5
+#define URL_BAR_ANIMATION_TIME_IN_SECONDS 0.2
 
 #warning LOCALIZATION
 #define HELP_TEXT     @"Tap for photo, hold for video"

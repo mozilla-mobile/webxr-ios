@@ -619,6 +619,14 @@ typedef void (^UICompletion)(void);
     [[self overlayController] setOptions:[[[self stateController] state] showOptions]];
     [[self overlayController] setMicEnabled:[[[self stateController] state] micEnabled]];
     [[self overlayController] setRecordState:[[[self stateController] state] recordState]];
+    
+    [[self overlayController] setOnSwipeDown:^{
+        [[blockSelf webController] showBar:YES];
+    }];
+    
+    [[self overlayController] setOnSwipeUp:^{
+        [[blockSelf webController] showBar:NO];
+    }];
 }
 
 #pragma mark Cleanups
