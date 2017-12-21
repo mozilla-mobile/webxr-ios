@@ -88,9 +88,7 @@ typedef void (^UICompletion)(void);
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-
+- (void)updateConstraints {
     // If XR is active, then the top anchor is 0 (fullscreen), else topSafeAreaInset + URL_BAR_HEIGHT
     float topSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].top;
     [[[self webController] barViewHeightAnchorConstraint] setConstant:topSafeAreaInset + URL_BAR_HEIGHT];
@@ -179,6 +177,8 @@ typedef void (^UICompletion)(void);
              
              [[blockSelf stateController] setShowMode:ShowNothing];
          }
+         
+         [blockSelf updateConstraints];
          
          [[blockSelf webController] setupForWebXR:xr];
      }];
@@ -281,6 +281,7 @@ typedef void (^UICompletion)(void);
 - (void)deviceOrientationDidChange:(NSNotification *)notification
 {
     [[self arkController] setShouldUpdateWindowSize: YES];
+    [self updateConstraints];
 }
 
 - (void)setupReachability
