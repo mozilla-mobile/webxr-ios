@@ -146,6 +146,8 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     dispatch_async(dispatch_get_main_queue(), ^
     {
+        [[self barView] setDebugVisible:webXR];
+        [[self barView] setDebugSelected:NO];
         float webViewTopAnchorConstraintConstant = webXR? 0.0f: URL_BAR_HEIGHT;
         [[self webViewTopAnchorConstraint] setConstant:webViewTopAnchorConstraintConstant];
         [[[self webView] superview] setNeedsLayout];
@@ -484,6 +486,12 @@ inline static WebCompletion debugCompletion(NSString *name)
      {
          [blockSelf loadURL:url];
      }];
+    
+    [barView setDebugButtonToggledAction:^(BOOL selected) {
+        if ([blockSelf onDebugButtonToggled]) {
+            [blockSelf onDebugButtonToggled](selected);
+        }
+    }];
 }
 
 - (void)setupWebContent

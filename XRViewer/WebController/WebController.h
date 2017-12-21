@@ -18,7 +18,7 @@ typedef void (^OnSetUI)(NSDictionary *);
 
 typedef void (^OnHitTest)(NSUInteger, CGFloat, CGFloat, ResultArrayBlock);
 typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
-
+typedef void (^OnDebugButtonToggled)(BOOL);
 
 @interface WebController : NSObject
 
@@ -34,6 +34,7 @@ typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
 @property(nonatomic, copy) OnAddAnchor onAddAnchor;
 @property(nonatomic, copy) OnLoad onStartLoad;
 @property(nonatomic, copy) OnLoad onFinishLoad;
+@property(nonatomic, copy) OnDebugButtonToggled onDebugButtonToggled;
 
 @property (nonatomic, strong) Animator *animator;
 

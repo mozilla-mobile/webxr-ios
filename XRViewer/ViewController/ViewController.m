@@ -88,6 +88,11 @@ typedef void (^UICompletion)(void);
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    [self updateConstraints];
+}
+
 - (void)updateConstraints {
     // If XR is active, then the top anchor is 0 (fullscreen), else topSafeAreaInset + URL_BAR_HEIGHT
     float topSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].top;
@@ -524,6 +529,10 @@ typedef void (^UICompletion)(void);
      {
          [[blockSelf arkController] removeAnchors:objects];
      }];
+    
+    [[self webController] setOnDebugButtonToggled:^(BOOL selected) {
+        [[blockSelf arkController] setShowMode:selected? ShowMultiDebug: ShowNothing];
+    }];
     
     if ([[self stateController] wasMemoryWarning])
     {

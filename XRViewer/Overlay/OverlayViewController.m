@@ -12,8 +12,6 @@
 @property (nonatomic, strong) UIButton *recordButton;
 @property (nonatomic, strong) UIButton *trackingStateButton;
 @property (nonatomic, strong) UIButton *micButton;
-@property (nonatomic, strong) UIButton *showButton;
-@property (nonatomic, strong) UIButton *debugButton;
 
 @property (nonatomic, strong) UILabel *recordTimingLabel;
 @property (nonatomic, strong) UIView *recordDot;
@@ -140,8 +138,6 @@
     [[self helperLabel] setTransform:CGAffineTransformMakeRotation(-M_PI/2)];
     
     [[self trackingStateButton] setFrame:trackFrameIn(updRect)];
-    [[self showButton] setFrame:showFrameIn(updRect)];
-    [[self debugButton] setFrame:debugFrameIn(updRect)];
     [[self recordDot] setFrame:dotFrameIn(updRect)];
     [[self recordTimingLabel] setFrame:recordLabelFrameIn(updRect)];
     [[self buildLabel] setFrame:buildFrameIn(updRect)];
@@ -173,21 +169,8 @@
     {
         case ShowNothing:
         {
-            [[self animator] animate:[self showButton] toFade:YES completion:^(BOOL f)
-             {
-                 dispatch_async(dispatch_get_main_queue(), ^
-                                {
-                                    if (completion)
-                                    {
-                                        completion(f);
-                                    }
-                                });
-             }];
-            
             [[self animator] animate:[self recordButton] toFade:YES];
             [[self animator] animate:[self micButton] toFade:YES];
-            
-            [[self animator] animate:[self debugButton] toFade:YES];
             
             [[self animator] animate:[self helperLabel] toFade:YES];
             
@@ -195,62 +178,38 @@
             [[self animator] animate:[self recordDot] toFade:YES];
             
             [[self timer] invalidate];
+            if (completion) {
+                completion(YES);
+            }
             break;
         }
         case ShowSingle:
         {
-            [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
-             {
-                 dispatch_async(dispatch_get_main_queue(), ^
-                                {
-                                    if (completion)
-                                    {
-                                        completion(f);
-                                    }
-                                });
-             }];
-            
-            [[self showButton] setSelected:NO];
-            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self helperLabel] toFade:YES];
-            [[self animator] animate:[self debugButton] toFade:YES];
             [[self animator] animate:[self buildLabel] toFade:YES];
             [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
             [[self timer] invalidate];
+            if (completion) {
+                completion(YES);
+            }
             break;
         }
         case ShowMulti:
         {
-            [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
-             {
-                 dispatch_async(dispatch_get_main_queue(), ^
-                                {
-                                    if (completion)
-                                    {
-                                        completion(f);
-                                    }
-                                });
-             }];
-            [[self showButton] setSelected:YES];
             [self updateWithRecordStateInDebug:NO];
+            if (completion) {
+                completion(YES);
+            }
             break;
         }
         case ShowMultiDebug:
         {
-            [[self animator] animate:[self showButton] toFade:NO completion:^(BOOL f)
-             {
-                 dispatch_async(dispatch_get_main_queue(), ^
-                                {
-                                    if (completion)
-                                    {
-                                        completion(f);
-                                    }
-                                });
-             }];
-            [[self showButton] setSelected:YES];
             [self updateWithRecordStateInDebug:YES];
+            if (completion) {
+                completion(YES);
+            }
             break;
         }
     }
@@ -270,12 +229,10 @@
     switch ([self recordState])
     {
         case RecordStateIsReady:
-            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self micButton] toFade:([self showOptions] & Mic) ? NO : YES];
             [[self animator] animate:[self helperLabel] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
-            [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
             [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
@@ -291,10 +248,8 @@
             
         case RecordStatePhoto:
         {
-            [[self showButton] setEnabled:NO];
             [[self animator] animate:[self helperLabel] toFade:YES];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
-            [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
             [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
@@ -313,10 +268,8 @@
         case RecordStateRecordingWithMicrophone:
         case RecordStateRecording:
         {
-            [[self showButton] setEnabled:NO];
             [[self animator] animate:[self helperLabel] toFade:YES];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
-            [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
             [[self animator] animate:[self recordDot] toFade:([self showOptions] & CaptureTime) ? NO : YES];
             [[self animator] animate:[self recordTimingLabel] toFade:([self showOptions] & CaptureTime) ? NO : YES];
             
@@ -349,13 +302,10 @@
         case RecordStatePreviewing:
         {
             BOOL isIpad = [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
-            [[self showButton] setEnabled:YES];
-            [[self animator] animate:[self showButton] toFade:isIpad ? NO : YES];
             [[self animator] animate:[self recordButton] toFade:isIpad && ([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self micButton] toFade:isIpad && ([self showOptions] & Mic) ? NO : YES];
             [[self animator] animate:[self helperLabel] toFade:isIpad && ([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self buildLabel] toFade:isIpad && (debug && ([self showOptions] & BuildNumber)) ? NO : YES];
-            [[self animator] animate:[self debugButton] toFade:isIpad && ([self showOptions] & Debug) ? NO : YES];
             [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
@@ -367,12 +317,10 @@
             break;
         }
         case RecordStateDisabled:
-            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self recordButton] toFade:YES];
             [[self animator] animate:[self micButton] toFade:YES];
             [[self animator] animate:[self helperLabel] toFade:NO];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
-            [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
             [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
@@ -383,12 +331,10 @@
             
             break;
         case RecordStateAuthDisabled:
-            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self micButton] toFade:([self showOptions] & Mic) ? NO : YES];
             [[self animator] animate:[self helperLabel] toFade:NO];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
-            [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
             [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
@@ -400,12 +346,10 @@
             
             break;
         case RecordStateError:
-            [[self showButton] setEnabled:YES];
             [[self animator] animate:[self recordButton] toFade:([self showOptions] & Capture) ? NO : YES];
             [[self animator] animate:[self micButton] toFade:([self showOptions] & Mic) ? NO : YES];
             [[self animator] animate:[self helperLabel] toFade:NO];
             [[self animator] animate:[self buildLabel] toFade:(debug && ([self showOptions] & BuildNumber)) ? NO : YES];
-            [[self animator] animate:[self debugButton] toFade:([self showOptions] & Debug) ? NO : YES];
             [[self animator] animate:[self recordDot] toFade:YES];
             [[self animator] animate:[self recordTimingLabel] toFade:YES];
             
@@ -632,15 +576,6 @@
     [[self trackingStateButton] setContentVerticalAlignment:UIControlContentVerticalAlignmentFill];
     [[self trackingStateButton] setContentHorizontalAlignment:UIControlContentHorizontalAlignmentFill];
     [[self view] addSubview:[self trackingStateButton]];
-    
-    [self setShowButton:[UIButton buttonWithType:UIButtonTypeCustom]];
-    [[self showButton] setImage:[UIImage imageNamed:@"3DHide"] forState:UIControlStateNormal];
-    [[self showButton] setImage:[UIImage imageNamed:@"3DShow"] forState:UIControlStateSelected];
-    [[self view] addSubview:[self showButton]];
-    
-    [self setDebugButton:[UIButton buttonWithType:UIButtonTypeCustom]];
-    [[self debugButton] setImage:[UIImage imageNamed:@"settings"] forState:UIControlStateNormal];
-    [[self view] addSubview:[self debugButton]];
     
     [self setRecordDot:[[UIView alloc] initWithFrame:dotFrameIn([[self view] bounds])]];
     [[[self recordDot] layer] setCornerRadius:(DOT_SIZE / 2.0)];

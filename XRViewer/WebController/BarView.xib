@@ -19,11 +19,11 @@
                     <rect key="frame" x="0.0" y="0.0" width="375" height="49.5"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </view>
-                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="qHr-Ni-uhX">
-                    <rect key="frame" x="0.0" y="6" width="375" height="44"/>
+                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="qHr-Ni-uhX">
+                    <rect key="frame" x="0.0" y="10" width="375" height="40"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mqO-Dv-xI4">
-                            <rect key="frame" x="0.0" y="11" width="31.5" height="22"/>
+                            <rect key="frame" x="0.0" y="9" width="31.5" height="22"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="31.5" id="ue3-GG-9cf"/>
                             </constraints>
@@ -33,14 +33,14 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Feq-Eq-O9v">
-                            <rect key="frame" x="39.5" y="11" width="31.5" height="22"/>
+                            <rect key="frame" x="33.5" y="9" width="31.5" height="22"/>
                             <state key="normal" image="forwardSelected"/>
                             <connections>
                                 <action selector="forwardAction:" destination="iN0-l3-epB" eventType="touchDown" id="5l8-zq-29a"/>
                             </connections>
                         </button>
                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="T5z-0b-MVG" customClass="URLTextField">
-                            <rect key="frame" x="79" y="7.5" width="244" height="29.5"/>
+                            <rect key="frame" x="67" y="5.5" width="224" height="29.5"/>
                             <color key="backgroundColor" red="0.87058823529411766" green="0.87450980392156863" blue="0.87058823529411766" alpha="0.69512521404109584" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="29.5" id="JiL-UK-7MC"/>
@@ -49,13 +49,25 @@
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" textContentType="url"/>
                         </textField>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eTd-Vy-1bs">
-                            <rect key="frame" x="331" y="0.0" width="44" height="44"/>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gip-B1-QYb" userLabel="Debug Btn">
+                            <rect key="frame" x="293" y="0.0" width="40" height="40"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="44" id="O0k-SP-qAC"/>
-                                <constraint firstAttribute="width" constant="44" id="q5O-jT-1cJ"/>
+                                <constraint firstAttribute="width" constant="40" id="6a9-Uk-Fsa"/>
+                                <constraint firstAttribute="height" constant="40" id="NOS-Zy-W2Y"/>
                             </constraints>
-                            <inset key="imageEdgeInsets" minX="0.0" minY="8" maxX="0.0" maxY="0.0"/>
+                            <inset key="contentEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
+                            <state key="normal" image="debugOff"/>
+                            <connections>
+                                <action selector="debugAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="MOb-5E-Tc2"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eTd-Vy-1bs">
+                            <rect key="frame" x="335" y="0.0" width="40" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="O0k-SP-qAC"/>
+                                <constraint firstAttribute="width" constant="40" id="q5O-jT-1cJ"/>
+                            </constraints>
+                            <inset key="contentEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
                             <state key="normal" image="home"/>
                             <connections>
                                 <action selector="homeAction:" destination="iN0-l3-epB" eventType="touchDown" id="isa-yp-QMS"/>
@@ -81,6 +93,7 @@
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
                 <outlet property="backBtn" destination="mqO-Dv-xI4" id="9XM-SO-666"/>
+                <outlet property="debugBtn" destination="Gip-B1-QYb" id="JqR-Zg-PX6"/>
                 <outlet property="forwardBtn" destination="Feq-Eq-O9v" id="PZu-iD-Ele"/>
                 <outlet property="homeBtn" destination="eTd-Vy-1bs" id="wln-Fj-oBZ"/>
                 <outlet property="urlField" destination="T5z-0b-MVG" id="mck-MR-ueM"/>
@@ -90,7 +103,8 @@
     </objects>
     <resources>
         <image name="backSelected" width="10" height="18"/>
+        <image name="debugOff" width="37" height="37"/>
         <image name="forwardSelected" width="10" height="18"/>
-        <image name="home" width="50" height="50"/>
+        <image name="home" width="37" height="37"/>
     </resources>
 </document>
