@@ -75,7 +75,7 @@ If the ping was received successfully, the server responds with an HTTP `200` st
 
 ## Events
 
-The event ping contains a list of events ([see event format on readthedocs.io](https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/telemetry/collection/events.html)) for the following actions:
+The event ping contains a list of events for the following actions:
 
 ### App Lifecycle
 
