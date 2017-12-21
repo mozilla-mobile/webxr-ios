@@ -14,7 +14,7 @@
 			<key>Key</key>
 			<string>useAnalytics</string>
 			<key>DefaultValue</key>
-			<false/>
+			<true/>
 		</dict>
 		<dict>
 			<key>Type</key>
