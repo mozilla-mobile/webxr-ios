@@ -55,4 +55,12 @@
     return NO;
 }
 
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    [[AnalyticsManager sharedInstance] sendEventWithCategory:EventCategoryAction method:EventMethodForeground object:EventObjectApp];
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    [[AnalyticsManager sharedInstance] sendEventWithCategory:EventCategoryAction method:EventMethodBackground object:EventObjectApp];
+}
+
 @end
