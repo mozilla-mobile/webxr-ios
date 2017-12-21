@@ -12,11 +12,13 @@ import MozillaTelemetry
 @objc enum EventCategory: Int {
     case action
     case api
+    case app
     
     func name() -> String {
         switch self {
         case .action: return "action"
         case .api: return "api"
+        case .app: return "app"
         }
     }
 }
@@ -24,11 +26,13 @@ import MozillaTelemetry
 @objc enum EventMethod: Int {
     case tap
     case webXR
+    case lifeCycle
     
     func name () -> String {
         switch self {
         case .tap: return "tap"
         case .webXR: return "webXR"
+        case .lifeCycle: return "lifeCycle"
         }
     }
 }
@@ -38,6 +42,8 @@ import MozillaTelemetry
     case recordPictureButton
     case relaseVideoButton
     case initialize
+    case background
+    case foreground
     
     func name () -> String {
         switch self {
@@ -45,6 +51,8 @@ import MozillaTelemetry
         case .recordPictureButton: return "record_picture_button"
         case .relaseVideoButton: return "release_video_button"
         case .initialize: return "init"
+        case .background: return "background"
+        case .foreground: return "foreground"
         }
     }
 }
