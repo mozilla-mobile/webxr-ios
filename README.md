@@ -32,3 +32,22 @@ While your iOS device is cabled to your development machine, you can use Safari 
 
 It can be handy to change the default URL loaded by the app by changing the `WEB_URL` string in WebARKHeader.h to the URL of your local web server. 
 
+## Telemetry and Data Collection
+
+The WebXR Viewer for iOS uses Mozilla's own Telemetry service (developed for Firefox and Focus) for anonymous insight into usage of various app features. This event tracking is turned on by default for the WebXR Viewer for iOS (opt-out).
+
+You can read more about how we use the Telemetry service [here](Telemetry.md).
+
+## Getting involved
+
+We encourage you to participate in this open source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any kind of positive contribution. Please read the [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/).
+
+* Issues: [https://github.com/mozilla-mobile/webxr-ios/issues](https://github.com/mozilla-mobile/webxr-ios/issues)
+
+* Slack: We are on the AFrame and WebVR slacks
+
+## License
+
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at http://mozilla.org/MPL/2.0/
