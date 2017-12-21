@@ -141,7 +141,9 @@ typedef void (^UICompletion)(void);
          [[blockSelf arkController] setShowMode:mode];
          [[blockSelf overlayController] setMode:mode];
          
-         [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
+         if (![[blockSelf stateController] isRecording]) {
+             [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
+         }
      }];
     
     [[self stateController] setOnOptionsUpdate:^(ShowOptions options)
@@ -625,11 +627,19 @@ typedef void (^UICompletion)(void);
     [[self overlayController] setRecordState:[[[self stateController] state] recordState]];
     
     [[self overlayController] setOnSwipeDown:^{
-        [[blockSelf webController] showBar:YES];
+        if ([[[blockSelf stateController] state] webXR]) {
+            [[blockSelf webController] showBar:YES];
+            [[blockSelf stateController] setShowMode:ShowMulti];
+        }
     }];
     
     [[self overlayController] setOnSwipeUp:^{
-        [[blockSelf webController] showBar:NO];
+        if ([[[blockSelf stateController] state] webXR]) {
+            if (![[blockSelf stateController] isRecording]) {
+                [[blockSelf stateController] setShowMode:ShowNothing];
+            }
+            [[blockSelf webController] showBar:NO];
+        }
     }];
 }
 
