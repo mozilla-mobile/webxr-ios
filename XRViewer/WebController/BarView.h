@@ -32,4 +32,6 @@ typedef void (^DebugButtonToggledAction)(BOOL selected);
 - (void)setDebugSelected:(BOOL)selected;
 - (void)setDebugVisible:(BOOL)visible;
 
+- (void)hideKeyboard;
+
 @end

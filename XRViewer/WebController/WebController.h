@@ -73,5 +73,7 @@ typedef void (^OnDebugButtonToggled)(BOOL);
 
 - (BOOL)sendARData:(NSDictionary *)data;
 
+- (void)hideKeyboard;
+
 @end
 

@@ -186,6 +186,10 @@
     }
 }
 
+- (void)hideKeyboard {
+    [[self urlField] resignFirstResponder];
+}
+
 #pragma mark UITextField Delegate
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField

@@ -648,6 +648,7 @@ typedef void (^UICompletion)(void);
                 [[blockSelf stateController] setShowMode:ShowNothing];
             }
             [[blockSelf webController] showBar:NO];
+            [[blockSelf webController] hideKeyboard];
         }
     }];
 }

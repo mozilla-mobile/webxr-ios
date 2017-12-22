@@ -146,6 +146,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     dispatch_async(dispatch_get_main_queue(), ^
     {
+        [[self barView] hideKeyboard];
         [[self barView] setDebugVisible:webXR];
         [[self barView] setDebugSelected:NO];
         float webViewTopAnchorConstraintConstant = webXR? 0.0f: URL_BAR_HEIGHT;
@@ -210,6 +211,11 @@ inline static WebCompletion debugCompletion(NSString *name)
                                 };
     [self callWebMethod:WEB_AR_IOS_WINDOW_RESIZE_MESSAGE paramJSON:sizeDictionary webCompletion:debugCompletion(@"arkitWindowResize")];
 }
+
+- (void)hideKeyboard {
+    [[self barView] hideKeyboard];
+}
+
 
 #pragma mark WKScriptMessageHandler
 
