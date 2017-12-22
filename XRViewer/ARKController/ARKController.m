@@ -294,6 +294,7 @@
                 matrix_float4x4 modelMatrix = matrix_invert(viewMatrix);
                 
                 newData[WEB_AR_CAMERA_TRANSFORM_OPTION] = arrayFromMatrix4x4(modelMatrix);
+                newData[WEB_AR_CAMERA_VIEW_OPTION] = arrayFromMatrix4x4(viewMatrix);
             }
             if ([[self request][WEB_AR_3D_OBJECTS_OPTION] boolValue])
             {

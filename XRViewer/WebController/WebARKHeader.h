@@ -114,6 +114,7 @@
 #define WEB_AR_CAMERA_OPTION           @"camera"
 #define WEB_AR_PROJ_CAMERA_OPTION      @"projection_camera"
 #define WEB_AR_CAMERA_TRANSFORM_OPTION @"camera_transform"
+#define WEB_AR_CAMERA_VIEW_OPTION      @"camera_view"
 
 #define WEB_AR_TRACKING_STATE_NORMAL               @"ar_tracking_normal"
 #define WEB_AR_TRACKING_STATE_LIMITED              @"ar_tracking_limited"
