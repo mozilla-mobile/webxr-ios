@@ -27,6 +27,16 @@
         case UIDeviceOrientationLandscapeRight: {
             interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
         } break;
+            
+        case UIDeviceOrientationFaceUp: {
+            // Without more context, we don't know the interface orientation when the device is oriented flat, so take it from the statusBarOrientation
+            interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+        } break;
+            
+        case UIDeviceOrientationFaceDown: {
+            // Without more context, we don't know the interface orientation when the device is oriented flat, so take it from the statusBarOrientation
+            interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+        } break;
 
         default:
             break;
