@@ -55,7 +55,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     [self layout];
     
-    [self callWebMethod:WEB_AR_IOS_WIEW_WILL_TRANSITION_TO_SIZE_MESSAGE param:NSStringFromCGSize(size) webCompletion:debugCompletion(@"viewWillTransitionToSize")];
+    [self callWebMethod:WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE param:NSStringFromCGSize(size) webCompletion:debugCompletion(@"viewWillTransitionToSize")];
 }
 
 - (void)clean
