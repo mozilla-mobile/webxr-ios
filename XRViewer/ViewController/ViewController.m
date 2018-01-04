@@ -210,8 +210,12 @@ typedef void (^UICompletion)(void);
     [[self stateController] setOnMemoryWarning:^(NSString *url)
      {
          [[blockSelf messageController] showMessageAboutMemoryWarningWithCompletion:^{
-              [[blockSelf webController] loadURL:ERROR_URL];
+              [[blockSelf webController] loadURL:URL_TO_LOAD_AFTER_ERROR];
           }];
+
+         [[blockSelf webController] didReceiveError: [NSError errorWithDomain:MEMORY_ERROR_DOMAIN
+                                                                         code:MEMORY_ERROR_CODE
+                                                                     userInfo:@{NSLocalizedDescriptionKey: MEMORY_ERROR_MESSAGE}]];
      }];
     
     [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
@@ -399,9 +403,11 @@ typedef void (^UICompletion)(void);
         dispatch_async(dispatch_get_main_queue(), ^{
             [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [[blockSelf webController] loadURL:ERROR_URL];
+                    [[blockSelf webController] loadURL:URL_TO_LOAD_AFTER_ERROR];
                 });
             }];
+
+            [[blockSelf webController] didReceiveError: error];
         });
      }];
     

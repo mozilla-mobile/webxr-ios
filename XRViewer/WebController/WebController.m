@@ -209,13 +209,21 @@ inline static WebCompletion debugCompletion(NSString *name)
                                 WEB_AR_IOS_SIZE_WIDTH_PARAMETER: @(size.width),
                                 WEB_AR_IOS_SIZE_HEIGHT_PARAMETER: @(size.height),
                                 };
-    [self callWebMethod:WEB_AR_IOS_WINDOW_RESIZE_MESSAGE paramJSON:sizeDictionary webCompletion:debugCompletion(@"arkitWindowResize")];
+    [self callWebMethod:WEB_AR_IOS_WINDOW_RESIZE_MESSAGE paramJSON:sizeDictionary webCompletion:debugCompletion(WEB_AR_IOS_WINDOW_RESIZE_MESSAGE)];
 }
 
 - (void)hideKeyboard {
     [[self barView] hideKeyboard];
 }
 
+- (void)didReceiveError:(NSError *)error {
+    NSDictionary* errorDictionary = @{
+            WEB_AR_IOS_ERROR_DOMAIN_PARAMETER: error.domain,
+            WEB_AR_IOS_ERROR_CODE_PARAMETER: @(error.code),
+            WEB_AR_IOS_ERROR_MESSAGE_PARAMETER: error.localizedDescription
+    };
+    [self callWebMethod:WEB_AR_IOS_ERROR_MESSAGE paramJSON:errorDictionary webCompletion:debugCompletion(WEB_AR_IOS_ERROR_MESSAGE)];
+}
 
 #pragma mark WKScriptMessageHandler
 

@@ -39,8 +39,12 @@
 #define WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"
 
 #define WEB_AR_IOS_WINDOW_RESIZE_MESSAGE   @"arkitWindowResize"
+#define WEB_AR_IOS_ERROR_MESSAGE           @"onError"
 #define WEB_AR_IOS_SIZE_WIDTH_PARAMETER   @"width"
 #define WEB_AR_IOS_SIZE_HEIGHT_PARAMETER   @"height"
+#define WEB_AR_IOS_ERROR_DOMAIN_PARAMETER   @"domain"
+#define WEB_AR_IOS_ERROR_CODE_PARAMETER   @"code"
+#define WEB_AR_IOS_ERROR_MESSAGE_PARAMETER   @"message"
 
 // OPTIONS
 #define WEB_AR_CALLBACK_OPTION         @"callback"

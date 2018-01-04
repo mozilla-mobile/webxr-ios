@@ -75,5 +75,6 @@ typedef void (^OnDebugButtonToggled)(BOOL);
 
 - (void)hideKeyboard;
 
+- (void)didReceiveError:(NSError *)error;
 @end
 
