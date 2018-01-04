@@ -9,6 +9,8 @@
 #define AR_SESSION_STARTED_POPUP_MESSAGE @"Swipe down to show the URL bar"
 #define AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS 2
 
+#define ERROR_URL @"https://ios-viewer.webxrexperiments.com/viewer.html"
+
 @interface ViewController : UIViewController
 
 @end

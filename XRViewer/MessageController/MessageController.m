@@ -196,7 +196,7 @@
 - (void)showMessageAboutMemoryWarningWithCompletion:(void(^)(void))completion
 {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Memory Issue Occurred"
-                                                    message:@"There was not enough memory for the application to keep working. Webpage was reloaded"
+                                                    message:@"There was not enough memory for the application to keep working"
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp

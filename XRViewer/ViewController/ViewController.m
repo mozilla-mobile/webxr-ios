@@ -209,9 +209,8 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnMemoryWarning:^(NSString *url)
      {
-         [[blockSelf messageController] showMessageAboutMemoryWarningWithCompletion:^
-          {
-              [blockSelf loadURL:url];
+         [[blockSelf messageController] showMessageAboutMemoryWarningWithCompletion:^{
+              [[blockSelf webController] loadURL:ERROR_URL];
           }];
      }];
     
@@ -399,9 +398,8 @@ typedef void (^UICompletion)(void);
 
         dispatch_async(dispatch_get_main_queue(), ^{
             [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
-                dispatch_async(dispatch_get_main_queue(), ^
-                {
-                    [[blockSelf webController] reload];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[blockSelf webController] loadURL:ERROR_URL];
                 });
             }];
         });
