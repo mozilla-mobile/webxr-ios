@@ -224,7 +224,7 @@ typedef void (^UICompletion)(void);
     [[self stateController] setOnInterruption:^(BOOL interruption)
      {
          [[blockSelf recordController] stopRecordingByInterruption:blockSelf];
-         [[blockSelf messageController] showMessageAboutARInteruption:interruption];
+         [[blockSelf messageController] showMessageAboutARInterruption:interruption];
          
          [[blockSelf overlayController] setARKitInterruption:interruption];
          [[blockSelf webController] wasARInterruption:interruption];

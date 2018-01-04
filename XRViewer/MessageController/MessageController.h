@@ -21,7 +21,7 @@ typedef void (^DidHideMessageByUser)(void);
 
 - (void)showMessageAboutWebError:(NSError *)error withCompletion:(void(^)(BOOL reload))reloadCompletion;
 
-- (void)showMessageAboutARInteruption:(BOOL)interupt;
+- (void)showMessageAboutARInterruption:(BOOL)interrupt;
 
 - (void)showMessageAboutFailSessionWithMessage:(NSString *)message completion:(void (^)(void))completion;
 

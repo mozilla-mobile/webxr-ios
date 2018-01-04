@@ -83,9 +83,9 @@
     [self didShowMessage]();
 }
 
-- (void)showMessageAboutARInteruption:(BOOL)interupt
+- (void)showMessageAboutARInterruption:(BOOL)interrupt
 {
-    if (interupt && _arPopup == nil)
+    if (interrupt && _arPopup == nil)
     {
         PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"AR Interruption Occurred"
                                                         message:@"Please wait, it would be fixed automatically"
@@ -104,7 +104,7 @@
         
         [self didShowMessage]();
     }
-    else if (interupt == NO && _arPopup)
+    else if (interrupt == NO && _arPopup)
     {
         [_arPopup dismissViewControllerAnimated:YES completion:NULL];
         
