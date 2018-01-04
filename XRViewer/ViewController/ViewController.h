@@ -15,7 +15,6 @@
 #define MEMORY_ERROR_CODE       0
 #define MEMORY_ERROR_MESSAGE    @"Memory warning received"
 
-#define
 
 @interface ViewController : UIViewController
 
