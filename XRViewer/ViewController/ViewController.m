@@ -60,16 +60,6 @@ typedef void (^UICompletion)(void);
                    {
                        [self setupTargetControllers];
                    });
-    
-    [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(testError) userInfo:nil repeats:NO];
-}
-
-- (void)testError {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[self messageController] showMessageAboutMemoryWarningWithCompletion:^{
-            [[self webController] loadBlankHTMLString];
-        }];
-    });
 }
 
 - (void)didReceiveMemoryWarning
