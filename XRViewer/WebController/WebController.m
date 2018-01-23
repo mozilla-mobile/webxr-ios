@@ -135,6 +135,10 @@ inline static WebCompletion debugCompletion(NSString *name)
     }
 }
 
+- (void)loadBlankHTMLString {
+    [[self webView] loadHTMLString:@"<html></html>" baseURL:[[self webView] URL]];
+}
+
 - (void)startRecording:(BOOL)start
 {
     NSString *message = start ? WEB_AR_IOS_START_RECORDING_MESSAGE : WEB_AR_IOS_STOP_RECORDING_MESSAGE;

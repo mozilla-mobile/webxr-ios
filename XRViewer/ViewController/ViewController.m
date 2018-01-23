@@ -60,6 +60,16 @@ typedef void (^UICompletion)(void);
                    {
                        [self setupTargetControllers];
                    });
+    
+    [NSTimer scheduledTimerWithTimeInterval:10.0 target:self selector:@selector(testError) userInfo:nil repeats:NO];
+}
+
+- (void)testError {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[self messageController] showMessageAboutMemoryWarningWithCompletion:^{
+            [[self webController] loadBlankHTMLString];
+        }];
+    });
 }
 
 - (void)didReceiveMemoryWarning
@@ -210,7 +220,7 @@ typedef void (^UICompletion)(void);
     [[self stateController] setOnMemoryWarning:^(NSString *url)
      {
          [[blockSelf messageController] showMessageAboutMemoryWarningWithCompletion:^{
-              [[blockSelf webController] loadURL:URL_TO_LOAD_AFTER_ERROR];
+             [[self webController] loadBlankHTMLString];
           }];
 
          [[blockSelf webController] didReceiveError: [NSError errorWithDomain:MEMORY_ERROR_DOMAIN
@@ -403,7 +413,7 @@ typedef void (^UICompletion)(void);
         dispatch_async(dispatch_get_main_queue(), ^{
             [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [[blockSelf webController] loadURL:URL_TO_LOAD_AFTER_ERROR];
+                    [[self webController] loadBlankHTMLString];
                 });
             }];
 

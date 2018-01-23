@@ -51,6 +51,8 @@ typedef void (^OnDebugButtonToggled)(BOOL);
 
 - (void)loadURL:(NSString *)url;
 
+- (void)loadBlankHTMLString;
+
 - (NSString *)lastURL;
 
 - (void)reload;
