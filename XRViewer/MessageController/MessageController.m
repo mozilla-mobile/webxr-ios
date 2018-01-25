@@ -269,7 +269,7 @@
     }];
     ok.titleColor = UIColor.blueColor;
 
-    DefaultButton *cancel = [[DefaultButton alloc] initWithTitle:@"CANCEL" height:40 dismissOnTap:YES action:^{
+    DefaultButton *cancel = [[DefaultButton alloc] initWithTitle:@"Cancel" height:40 dismissOnTap:YES action:^{
         responseBock(false);
     }];
 
