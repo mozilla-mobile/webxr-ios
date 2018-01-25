@@ -10,7 +10,8 @@
 #import "Reachability.h"
 #import "AppStateController.h"
 #import "LayerView.h"
-#import "AnalyticsManager.h"
+#import "Utils.h"
+#import "XRViewer-Swift.h"
 
 #define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
@@ -72,11 +73,50 @@ typedef void (^UICompletion)(void);
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id <UIViewControllerTransitionCoordinator>)coordinator
 {
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    // Disable the transition animation if we are on XR
+    if ([[[self stateController] state] webXR]) {
+        [coordinator animateAlongsideTransition:nil completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+            [UIView setAnimationsEnabled:YES];
+        }];
+        [UIView setAnimationsEnabled:NO];
+    }
     
     [[self arkController] viewWillTransitionToSize:size];
     [[self overlayController] viewWillTransitionToSize:size];
     [[self webController] viewWillTransitionToSize:size];
+    
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    [self updateConstraints];
+}
+
+- (void)updateConstraints {
+    // If XR is active, then the top anchor is 0 (fullscreen), else topSafeAreaInset + URL_BAR_HEIGHT
+    float topSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].top;
+    [[[self webController] barViewHeightAnchorConstraint] setConstant:topSafeAreaInset + URL_BAR_HEIGHT];
+    [[[self webController] webViewTopAnchorConstraint] setConstant:[[[self stateController] state] webXR] ? 0.0f : topSafeAreaInset + URL_BAR_HEIGHT];
+
+    
+    [[[self webController] webViewLeftAnchorConstraint] setConstant:0.0f];
+    [[[self webController] webViewRightAnchorConstraint] setConstant:0.0f];
+    if (![[[self stateController] state] webXR]) {
+        UIInterfaceOrientation currentOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
+        if (currentOrientation == UIInterfaceOrientationLandscapeLeft) {
+            // The notch is to the right
+            float rightSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].right;
+            [[[self webController] webViewRightAnchorConstraint] setConstant:[[[self stateController] state] webXR] ? 0.0f : -rightSafeAreaInset];
+        } else if (currentOrientation == UIInterfaceOrientationLandscapeRight) {
+            // The notch is to the left
+            float leftSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].left;
+            [[[self webController] webViewLeftAnchorConstraint] setConstant:leftSafeAreaInset];
+        }
+    }
+
+    [[self webLayerView] setNeedsLayout];
+    [[self webLayerView] layoutIfNeeded];
 }
 
 #pragma mark Setups
@@ -106,7 +146,9 @@ typedef void (^UICompletion)(void);
          [[blockSelf arkController] setShowMode:mode];
          [[blockSelf overlayController] setMode:mode];
          
-         [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
+         if (![[blockSelf stateController] isRecording]) {
+             [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
+         }
      }];
     
     [[self stateController] setOnOptionsUpdate:^(ShowOptions options)
@@ -132,6 +174,9 @@ typedef void (^UICompletion)(void);
              [blockSelf setupLocationController];
              
              [[blockSelf stateController] setShowMode:ShowSingle];
+             [[blockSelf messageController] showMessageWithTitle:AR_SESSION_STARTED_POPUP_TITLE
+                                                         message:AR_SESSION_STARTED_POPUP_MESSAGE
+                                                       hideAfter:AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS];
          }
          else
          {
@@ -139,6 +184,8 @@ typedef void (^UICompletion)(void);
              
              [[blockSelf stateController] setShowMode:ShowNothing];
          }
+         
+         [blockSelf updateConstraints];
          
          [[blockSelf webController] setupForWebXR:xr];
      }];
@@ -234,6 +281,14 @@ typedef void (^UICompletion)(void);
      {
          [[blockSelf stateController] applyOnEnterForegroundAction];
      }];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+}
+
+- (void)deviceOrientationDidChange:(NSNotification *)notification
+{
+    [[self arkController] setShouldUpdateWindowSize: YES];
+    [self updateConstraints];
 }
 
 - (void)setupReachability
@@ -318,22 +373,38 @@ typedef void (^UICompletion)(void);
              [blockSelf sendARKData];
          }
      }];
-#define CAMERA_ACCESS_NOT_AUTORIZED_CODE 103
     [[self arkController] setDidFailSession:^(NSError *error)
-     {
-         if ([error code] != CAMERA_ACCESS_NOT_AUTORIZED_CODE)
-         {
-             dispatch_async(dispatch_get_main_queue(), ^
-                            {
-                                [[blockSelf messageController] showMessageAboutFailSessionWithCompletion:^
-                                 {
-                                     dispatch_async(dispatch_get_main_queue(), ^
-                                                    {
-                                                        [[blockSelf webController] reload];
-                                                    });
-                                 }];
-                            });
-         }
+    {
+        NSString* errorMessage = @"ARKit Error";
+        switch ([error code]) {
+            case CAMERA_ACCESS_NOT_AUTHORIZED_ARKIT_ERROR_CODE:
+                // If there is a camera access error, do nothing
+                return;
+            case UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_CODE:
+                errorMessage = UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_MESSAGE;
+                break;
+            case SENSOR_UNAVAILABLE_ARKIT_ERROR_CODE:
+                errorMessage = SENSOR_UNAVAILABLE_ARKIT_ERROR_MESSAGE;
+                break;
+            case SENSOR_FAILED_ARKIT_ERROR_CODE:
+                errorMessage = SENSOR_FAILED_ARKIT_ERROR_MESSAGE;
+                break;
+            case WORLD_TRACKING_FAILED_ARKIT_ERROR_CODE:
+                errorMessage = WORLD_TRACKING_FAILED_ARKIT_ERROR_MESSAGE;
+                break;
+
+            default:
+                break;
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
+                dispatch_async(dispatch_get_main_queue(), ^
+                {
+                    [[blockSelf webController] reload];
+                });
+            }];
+        });
      }];
     
     [[self arkController] setDidInterupt:^(BOOL interruption)
@@ -366,12 +437,16 @@ typedef void (^UICompletion)(void);
                                          sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
     }];
 
+    [[self arkController] setDidUpdateWindowSize:^{
+        [[blockSelf webController] updateWindowSize];
+    }];
+
     [[self animator] animate:[self arkLayerView] toFade:NO];
     
     [[self arkController] startSessionWithAppState:[[self stateController] state]];
     
     // Log event when we start an AR session
-    [[AnalyticsManager shared] sendEventWithAction:ACTION_AR_SESSION_STARTED];
+    [[AnalyticsManager sharedInstance] sendEventWithCategory:EventCategoryAction method:EventMethodWebXR object:EventObjectInitialize];
 }
 
 - (void)setupWebController
@@ -454,6 +529,10 @@ typedef void (^UICompletion)(void);
      {
          [[blockSelf arkController] removeAnchors:objects];
      }];
+    
+    [[self webController] setOnDebugButtonToggled:^(BOOL selected) {
+        [[blockSelf arkController] setShowMode:selected? ShowMultiDebug: ShowNothing];
+    }];
     
     if ([[self stateController] wasMemoryWarning])
     {
@@ -555,6 +634,23 @@ typedef void (^UICompletion)(void);
     [[self overlayController] setOptions:[[[self stateController] state] showOptions]];
     [[self overlayController] setMicEnabled:[[[self stateController] state] micEnabled]];
     [[self overlayController] setRecordState:[[[self stateController] state] recordState]];
+    
+    [[self overlayController] setOnSwipeDown:^{
+        if ([[[blockSelf stateController] state] webXR]) {
+            [[blockSelf webController] showBar:YES];
+            [[blockSelf stateController] setShowMode:ShowMulti];
+        }
+    }];
+    
+    [[self overlayController] setOnSwipeUp:^{
+        if ([[[blockSelf stateController] state] webXR]) {
+            if (![[blockSelf stateController] isRecording]) {
+                [[blockSelf stateController] setShowMode:ShowNothing];
+            }
+            [[blockSelf webController] showBar:NO];
+            [[blockSelf webController] hideKeyboard];
+        }
+    }];
 }
 
 #pragma mark Cleanups

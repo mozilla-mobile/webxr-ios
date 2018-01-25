@@ -38,6 +38,10 @@
 
 #define WEB_AR_IOS_WIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"
 
+#define WEB_AR_IOS_WINDOW_RESIZE_MESSAGE   @"arkitWindowResize"
+#define WEB_AR_IOS_SIZE_WIDTH_PARAMETER   @"width"
+#define WEB_AR_IOS_SIZE_HEIGHT_PARAMETER   @"height"
+
 // OPTIONS
 #define WEB_AR_CALLBACK_OPTION         @"callback"
 #define WEB_AR_REQUEST_OPTION          @"options"
@@ -79,6 +83,7 @@
 #define WEB_AR_H_PLANE_OPTION          @"h_plane"
 #define WEB_AR_H_PLANE_CENTER_OPTION   @"h_plane_center"
 #define WEB_AR_H_PLANE_EXTENT_OPTION   @"h_plane_extent"
+#define WEB_AR_H_PLANE_ALIGNMENT_OPTION @"plane_alignment"
 #define WEB_AR_H_PLANE_ID_OPTION       @"h_plane_id"
 #define WEB_AR_SHOW_H_PLANE_OPTION     @"show_h_plane"
 
@@ -89,6 +94,8 @@
 
 
 #define WEB_AR_3D_OBJECTS_OPTION       @"objects" // from IOS - [ {name , matrix} ]
+#define WEB_AR_3D_REMOVED_OBJECTS_OPTION @"removedObjects"
+#define WEB_AR_3D_NEW_OBJECTS_OPTION   @"newObjects"
 
 #define WEB_AR_TYPE_OPTION             @"type"
 #define WEB_AR_POSITION_OPTION         @"position"
@@ -107,6 +114,7 @@
 #define WEB_AR_CAMERA_OPTION           @"camera"
 #define WEB_AR_PROJ_CAMERA_OPTION      @"projection_camera"
 #define WEB_AR_CAMERA_TRANSFORM_OPTION @"camera_transform"
+#define WEB_AR_CAMERA_VIEW_OPTION      @"camera_view"
 
 #define WEB_AR_TRACKING_STATE_NORMAL               @"ar_tracking_normal"
 #define WEB_AR_TRACKING_STATE_LIMITED              @"ar_tracking_limited"
@@ -114,6 +122,9 @@
 #define WEB_AR_TRACKING_STATE_LIMITED_MOTION       @"ar_tracking_limited_excessive_motion"
 #define WEB_AR_TRACKING_STATE_LIMITED_FEATURES     @"ar_tracking_limited_insufficient_features"
 #define WEB_AR_TRACKING_STATE_NOT_AVAILABLE        @"ar_tracking_not_available"
+
+#define AR_CAMERA_PROJECTION_MATRIX_Z_NEAR 0.001f
+#define AR_CAMERA_PROJECTION_MATRIX_Z_FAR 1000.0f
 
 
 static inline ShowOptions showOptionsFormDict(NSDictionary *dict)

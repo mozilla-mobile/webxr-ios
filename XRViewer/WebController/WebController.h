@@ -18,7 +18,7 @@ typedef void (^OnSetUI)(NSDictionary *);
 
 typedef void (^OnHitTest)(NSUInteger, CGFloat, CGFloat, ResultArrayBlock);
 typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
-
+typedef void (^OnDebugButtonToggled)(BOOL);
 
 @interface WebController : NSObject
 
@@ -34,8 +34,17 @@ typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
 @property(nonatomic, copy) OnAddAnchor onAddAnchor;
 @property(nonatomic, copy) OnLoad onStartLoad;
 @property(nonatomic, copy) OnLoad onFinishLoad;
+@property(nonatomic, copy) OnDebugButtonToggled onDebugButtonToggled;
 
 @property (nonatomic, strong) Animator *animator;
+
+@property (nonatomic, weak) NSLayoutConstraint *barViewHeightAnchorConstraint;
+
+@property (nonatomic, weak) NSLayoutConstraint* webViewTopAnchorConstraint;
+
+@property(nonatomic, strong) NSLayoutConstraint *webViewLeftAnchorConstraint;
+
+@property(nonatomic, strong) NSLayoutConstraint *webViewRightAnchorConstraint;
 
 - (instancetype)initWithRootView:(UIView *)rootView;
 - (void)viewWillTransitionToSize:(CGSize)size;
@@ -55,11 +64,16 @@ typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
 - (void)wasARInterruption:(BOOL)interruption;
 - (void)didBackgroundAction:(BOOL)background;
 - (void)didChangeARTrackingState:(NSString *)state;
+
+- (void)updateWindowSize;
+
 - (void)didReceiveMemoryWarning;
 
 - (WKWebView *)webView;
 
 - (BOOL)sendARData:(NSDictionary *)data;
+
+- (void)hideKeyboard;
 
 @end
 

@@ -15,7 +15,6 @@
 
 @property (nonatomic, weak) BarView *barView;
 @property (nonatomic, weak) NSLayoutConstraint* barViewTopAnchorConstraint;
-@property (nonatomic, weak) NSLayoutConstraint* webViewTopAnchorConstraint;
 @end
 
 typedef void (^WebCompletion)(id _Nullable param, NSError * _Nullable error);
@@ -147,8 +146,9 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     dispatch_async(dispatch_get_main_queue(), ^
     {
-        [[[self webView] scrollView] setContentInsetAdjustmentBehavior: webXR? UIScrollViewContentInsetAdjustmentNever: UIScrollViewContentInsetAdjustmentAlways];
-        
+        [[self barView] hideKeyboard];
+        [[self barView] setDebugVisible:webXR];
+        [[self barView] setDebugSelected:NO];
         float webViewTopAnchorConstraintConstant = webXR? 0.0f: URL_BAR_HEIGHT;
         [[self webViewTopAnchorConstraint] setConstant:webViewTopAnchorConstraintConstant];
         [[[self webView] superview] setNeedsLayout];
@@ -163,11 +163,14 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)showBar:(BOOL)showBar
 {
+    NSLog(@"Show bar: %@", showBar? @"Yes": @"No");
+    [[[self barView] superview] layoutIfNeeded];
+    
     float topAnchorConstant = showBar ? 0.0f : 0.0f - URL_BAR_HEIGHT * 2;
+    [[self barViewTopAnchorConstraint] setConstant:topAnchorConstant];
+    
     [UIView animateWithDuration:URL_BAR_ANIMATION_TIME_IN_SECONDS animations:^{
-        [[self barViewTopAnchorConstraint] setConstant:topAnchorConstant];
-        [[[self barView] superview] setNeedsUpdateConstraints];
-        [[[self barView] superview] setNeedsLayout];
+        [[[self barView] superview] layoutIfNeeded];
     }];
 }
 
@@ -199,6 +202,20 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     [self callWebMethod:WEB_AR_IOS_TRACKING_STATE_MESSAGE param:state webCompletion:debugCompletion(@"arkitDidChangeTrackingState")];
 }
+
+- (void)updateWindowSize {
+    CGSize size = [self webView].frame.size;
+    NSDictionary* sizeDictionary = @{
+                                WEB_AR_IOS_SIZE_WIDTH_PARAMETER: @(size.width),
+                                WEB_AR_IOS_SIZE_HEIGHT_PARAMETER: @(size.height),
+                                };
+    [self callWebMethod:WEB_AR_IOS_WINDOW_RESIZE_MESSAGE paramJSON:sizeDictionary webCompletion:debugCompletion(@"arkitWindowResize")];
+}
+
+- (void)hideKeyboard {
+    [[self barView] hideKeyboard];
+}
+
 
 #pragma mark WKScriptMessageHandler
 
@@ -385,10 +402,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 #pragma mark Private
 
 - (void)goFullScreen {
-    [[[self webView] scrollView] setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
     [[self webViewTopAnchorConstraint] setConstant:0.0];
-    [[[self webView] superview] setNeedsLayout];
-    [[[self webView] superview] layoutIfNeeded];
 }
 
 - (BOOL)shouldShowError:(NSError *)error
@@ -427,7 +441,9 @@ inline static WebCompletion debugCompletion(NSString *name)
     
     [[[barView leftAnchor] constraintEqualToAnchor:[[barView superview] leftAnchor]] setActive:YES];
     [[[barView rightAnchor] constraintEqualToAnchor:[[barView superview] rightAnchor]] setActive:YES];
-    [[[barView heightAnchor] constraintEqualToConstant:URL_BAR_HEIGHT] setActive:YES];
+    NSLayoutConstraint *barViewHeightAnchorConstraint = [[barView heightAnchor] constraintEqualToConstant:URL_BAR_HEIGHT];
+    [self setBarViewHeightAnchorConstraint: barViewHeightAnchorConstraint];
+    [barViewHeightAnchorConstraint setActive:YES];
     
     [self setBarView:barView];
     
@@ -476,6 +492,12 @@ inline static WebCompletion debugCompletion(NSString *name)
      {
          [blockSelf loadURL:url];
      }];
+    
+    [barView setDebugButtonToggledAction:^(BOOL selected) {
+        if ([blockSelf onDebugButtonToggled]) {
+            [blockSelf onDebugButtonToggled](selected);
+        }
+    }];
 }
 
 - (void)setupWebContent
@@ -527,8 +549,13 @@ inline static WebCompletion debugCompletion(NSString *name)
     NSLayoutConstraint* webViewTopAnchorConstraint = [[wv topAnchor] constraintEqualToAnchor:[rootView topAnchor]];
     [self setWebViewTopAnchorConstraint: webViewTopAnchorConstraint];
     [webViewTopAnchorConstraint setActive:YES];
-    [[[wv leftAnchor] constraintEqualToAnchor:[rootView leftAnchor]] setActive:YES];
-    [[[wv rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]] setActive:YES];
+    NSLayoutConstraint* webViewLeftAnchorConstraint = [[wv leftAnchor] constraintEqualToAnchor:[rootView leftAnchor]];
+    [self setWebViewLeftAnchorConstraint: webViewLeftAnchorConstraint];
+    [webViewLeftAnchorConstraint setActive:YES];
+    NSLayoutConstraint *webViewRightAnchorConstraint = [[wv rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]];
+    [self setWebViewRightAnchorConstraint: webViewRightAnchorConstraint];
+    [webViewRightAnchorConstraint setActive:YES];
+    
     [[[wv bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor]] setActive:YES];
     
     [[wv scrollView] setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];

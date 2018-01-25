@@ -10,6 +10,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *backBtn;
 @property (weak, nonatomic) IBOutlet UIButton *forwardBtn;
 @property (weak, nonatomic) IBOutlet UIButton *homeBtn;
+@property (weak, nonatomic) IBOutlet UIButton *debugBtn;
 @property (nonatomic, weak) UIButton *reloadBtn;
 @property (nonatomic, weak) UIButton *cancelBtn;
 @property (nonatomic, weak) UIActivityIndicatorView *ai;
@@ -65,6 +66,14 @@
     [[self forwardBtn] setEnabled:enabled];
 }
 
+- (void)setDebugSelected:(BOOL)selected {
+    [[self debugBtn] setSelected:selected];
+}
+
+- (void)setDebugVisible:(BOOL)visible {
+    [[self debugBtn] setHidden:!visible];
+}
+
 - (void)setup
 {
     [[self backBtn] setImage:[UIImage imageNamed:@"back"] forState:UIControlStateDisabled];
@@ -108,6 +117,9 @@
     
     [[self urlField] setRightView:rightView];
     [[self urlField] setRightViewMode:UITextFieldViewModeUnlessEditing];
+    
+    [[self debugBtn] setImage:[UIImage imageNamed:@"debugOff"] forState:UIControlStateNormal];
+    [[self debugBtn] setImage:[UIImage imageNamed:@"debugOn"] forState:UIControlStateSelected];
 }
 
 - (IBAction)backAction:(id)sender
@@ -165,6 +177,17 @@
     {
         [self cancelActionBlock](self);
     }
+}
+
+- (IBAction)debugAction:(id)sender {
+    if ([self debugButtonToggledAction]) {
+        [[self debugBtn] setSelected: ![[self debugBtn] isSelected]];
+        [self debugButtonToggledAction]([[self debugBtn] isSelected]);
+    }
+}
+
+- (void)hideKeyboard {
+    [[self urlField] resignFirstResponder];
 }
 
 #pragma mark UITextField Delegate
