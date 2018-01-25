@@ -10,7 +10,7 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>(Unused) Allow app usage data collection</string>
+			<string>Allow app usage data collection</string>
 			<key>Key</key>
 			<string>useAnalytics</string>
 			<key>DefaultValue</key>
