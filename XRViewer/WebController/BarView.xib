@@ -80,7 +80,7 @@
                                 <constraint firstAttribute="width" constant="40" id="n4N-Kw-UfJ"/>
                             </constraints>
                             <inset key="contentEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
-                            <state key="normal" image="ic_settings"/>
+                            <state key="normal" image="gear_settings"/>
                             <connections>
                                 <action selector="settingsAction" destination="iN0-l3-epB" eventType="touchUpInside" id="FFB-8D-6P0"/>
                             </connections>
@@ -116,9 +116,9 @@
     </objects>
     <resources>
         <image name="backSelected" width="10" height="18"/>
-        <image name="debugOff" width="37" height="37"/>
+        <image name="debugOff" width="56" height="56"/>
         <image name="forwardSelected" width="10" height="18"/>
-        <image name="home" width="37" height="37"/>
-        <image name="ic_settings" width="24" height="24"/>
+        <image name="gear_settings" width="56" height="56"/>
+        <image name="home" width="56" height="56"/>
     </resources>
 </document>

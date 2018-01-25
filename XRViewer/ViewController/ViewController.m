@@ -539,11 +539,18 @@ typedef void (^UICompletion)(void);
     }];
     
     [[self webController] setOnSettingsButtonTapped:^{
+        // Before showing the settings popup, we hide the bar and the debug buttons so they are not in the way
+        // After dismissing the popup, we show them again.
+        [[blockSelf webController] showBar:NO];
+        [[blockSelf webController] hideKeyboard];
+        [[blockSelf stateController] setShowMode:ShowNothing];
         [[blockSelf messageController] showSettingsPopup: ^(BOOL response) {
             if (response) {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:^(BOOL success)
                  {}];
             }
+            [[blockSelf webController] showBar:YES];
+            [[blockSelf stateController] setShowMode:ShowMulti];
         }];
     }];
     
