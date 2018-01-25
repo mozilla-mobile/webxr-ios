@@ -32,11 +32,12 @@
 #define WEB_AR_IOS_WAS_INTERRUPTED_MESSAGE     @"arkitInterrupted"
 #define WEB_AR_IOS_INTERRUPTION_ENDED_MESSAGE  @"arkitInterruptionEnded"
 
-#define WEB_AR_IOS_TRACKING_STATE_MESSAGE       @"ar_tracking_changed"
+#define WEB_AR_IOS_TRACKING_STATE_MESSAGE       @"arTrackingChanged"
 
 #define WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE   @"ios_did_receive_memory_warning"
 
-#define WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"
+// This message is not being used by the polyfill
+// #define WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"
 
 #define WEB_AR_IOS_WINDOW_RESIZE_MESSAGE   @"arkitWindowResize"
 #define WEB_AR_IOS_ERROR_MESSAGE           @"onError"

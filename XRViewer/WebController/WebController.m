@@ -55,7 +55,8 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     [self layout];
     
-    [self callWebMethod:WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE param:NSStringFromCGSize(size) webCompletion:debugCompletion(@"viewWillTransitionToSize")];
+    // This message is not being used by the polyfyill
+    // [self callWebMethod:WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE param:NSStringFromCGSize(size) webCompletion:debugCompletion(@"viewWillTransitionToSize")];
 }
 
 - (void)clean
