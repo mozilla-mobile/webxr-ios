@@ -33,4 +33,5 @@ typedef void (^DidHideMessageByUser)(void);
 
 - (void)showMessageAboutConnectionRequired;
 
+- (void)showSettingsPopup:(void (^)(BOOL))responseBock;
 @end

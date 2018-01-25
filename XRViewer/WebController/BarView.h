@@ -9,6 +9,7 @@ typedef void (^ReloadAction)(id sender);
 typedef void (^CancelAction)(id sender);
 typedef void (^GoAction)(NSString *url);
 typedef void (^DebugButtonToggledAction)(BOOL selected);
+typedef void (^SettingsAction)(void);
 
 
 @interface BarView : UIView
@@ -20,6 +21,7 @@ typedef void (^DebugButtonToggledAction)(BOOL selected);
 @property (nonatomic, copy) CancelAction cancelActionBlock;
 @property (nonatomic, copy) GoAction goActionBlock;
 @property (nonatomic, copy) DebugButtonToggledAction debugButtonToggledAction;
+@property (nonatomic, copy) SettingsAction settingsActionBlock;
 
 - (NSString *)urlFieldText;
 

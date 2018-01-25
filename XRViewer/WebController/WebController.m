@@ -511,6 +511,12 @@ inline static WebCompletion debugCompletion(NSString *name)
             [blockSelf onDebugButtonToggled](selected);
         }
     }];
+    
+    [barView setSettingsActionBlock:^{
+        if ([blockSelf onSettingsButtonTapped]) {
+            [blockSelf onSettingsButtonTapped]();
+        }
+    }];
 }
 
 - (void)setupWebContent

@@ -11,6 +11,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *forwardBtn;
 @property (weak, nonatomic) IBOutlet UIButton *homeBtn;
 @property (weak, nonatomic) IBOutlet UIButton *debugBtn;
+@property (weak, nonatomic) IBOutlet UIButton *settingsBtn;
 @property (nonatomic, weak) UIButton *reloadBtn;
 @property (nonatomic, weak) UIButton *cancelBtn;
 @property (nonatomic, weak) UIActivityIndicatorView *ai;
@@ -183,6 +184,12 @@
     if ([self debugButtonToggledAction]) {
         [[self debugBtn] setSelected: ![[self debugBtn] isSelected]];
         [self debugButtonToggledAction]([[self debugBtn] isSelected]);
+    }
+}
+
+- (IBAction)settingsAction {
+    if ([self settingsActionBlock]) {
+        [self settingsActionBlock]();
     }
 }
 

@@ -538,6 +538,15 @@ typedef void (^UICompletion)(void);
         [[blockSelf arkController] setShowMode:selected? ShowMultiDebug: ShowNothing];
     }];
     
+    [[self webController] setOnSettingsButtonTapped:^{
+        [[blockSelf messageController] showSettingsPopup: ^(BOOL response) {
+            if (response) {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:^(BOOL success)
+                 {}];
+            }
+        }];
+    }];
+    
     if ([[self stateController] wasMemoryWarning])
     {
         [[self stateController] applyOnDidReceiveMemoryAction];
