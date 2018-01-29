@@ -42,6 +42,13 @@
 		5184F8FC0384A338F76D2653 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 5184FF937519BAF48DCEB808 /* Utils.m */; };
 		591A8C502FA83D70E8F5B5B4 /* Pods_XRViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */; };
 		620D24A11FC48994002127FD /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 620D24A01FC48994002127FD /* Settings.bundle */; };
+		62242AC0201F037F00506412 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62242ABF201F037F00506412 /* SettingsViewController.swift */; };
+		62242AC3201F2A0700506412 /* TextInputTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62242AC1201F2A0700506412 /* TextInputTableViewCell.swift */; };
+		62242AC4201F2A0700506412 /* TextInputTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 62242AC2201F2A0700506412 /* TextInputTableViewCell.xib */; };
+		62242AC7201F2AE100506412 /* SwitchInputTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62242AC5201F2AE100506412 /* SwitchInputTableViewCell.swift */; };
+		62242AC8201F2AE100506412 /* SwitchInputTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 62242AC6201F2AE100506412 /* SwitchInputTableViewCell.xib */; };
+		62242ACB201F2D3600506412 /* TextTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62242AC9201F2D3600506412 /* TextTableViewCell.swift */; };
+		62242ACC201F2D3600506412 /* TextTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 62242ACA201F2D3600506412 /* TextTableViewCell.xib */; };
 		6241012D1FEABABF006FDBE3 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6241012C1FEABABF006FDBE3 /* AnalyticsManager.swift */; };
 		625051091FCDBDBE00EEAC0A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
@@ -117,6 +124,13 @@
 		5184F32A43380670077FB602 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		5184FF937519BAF48DCEB808 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
 		620D24A01FC48994002127FD /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		62242ABF201F037F00506412 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		62242AC1201F2A0700506412 /* TextInputTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputTableViewCell.swift; sourceTree = "<group>"; };
+		62242AC2201F2A0700506412 /* TextInputTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextInputTableViewCell.xib; sourceTree = "<group>"; };
+		62242AC5201F2AE100506412 /* SwitchInputTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchInputTableViewCell.swift; sourceTree = "<group>"; };
+		62242AC6201F2AE100506412 /* SwitchInputTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SwitchInputTableViewCell.xib; sourceTree = "<group>"; };
+		62242AC9201F2D3600506412 /* TextTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextTableViewCell.swift; sourceTree = "<group>"; };
+		62242ACA201F2D3600506412 /* TextTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TextTableViewCell.xib; sourceTree = "<group>"; };
 		6241012B1FEABABF006FDBE3 /* XRViewer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XRViewer-Bridging-Header.h"; sourceTree = "<group>"; };
 		6241012C1FEABABF006FDBE3 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
 		625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -169,6 +183,7 @@
 		041503C31F28944F00887400 /* XRViewer */ = {
 			isa = PBXGroup;
 			children = (
+				62242ABC201F028800506412 /* SettingsController */,
 				62676C111FEACCE200474547 /* Constants */,
 				621437971FE968090055252A /* Utils */,
 				62414B151FCEFACC00D1CDC8 /* Analytics */,
@@ -365,6 +380,20 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		62242ABC201F028800506412 /* SettingsController */ = {
+			isa = PBXGroup;
+			children = (
+				62242ABF201F037F00506412 /* SettingsViewController.swift */,
+				62242AC1201F2A0700506412 /* TextInputTableViewCell.swift */,
+				62242AC2201F2A0700506412 /* TextInputTableViewCell.xib */,
+				62242AC5201F2AE100506412 /* SwitchInputTableViewCell.swift */,
+				62242AC6201F2AE100506412 /* SwitchInputTableViewCell.xib */,
+				62242AC9201F2D3600506412 /* TextTableViewCell.swift */,
+				62242ACA201F2D3600506412 /* TextTableViewCell.xib */,
+			);
+			path = SettingsController;
+			sourceTree = "<group>";
+		};
 		62414B151FCEFACC00D1CDC8 /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
@@ -462,10 +491,13 @@
 				041503D71F28944F00887400 /* LaunchScreen.storyboard in Resources */,
 				0401E04B1F612C240075D823 /* BarView.xib in Resources */,
 				041503D21F28944F00887400 /* Main.storyboard in Resources */,
+				62242AC4201F2A0700506412 /* TextInputTableViewCell.xib in Resources */,
 				04A8156A1F419F840082D31D /* Assets.xcassets in Resources */,
 				620D24A11FC48994002127FD /* Settings.bundle in Resources */,
+				62242ACC201F2D3600506412 /* TextTableViewCell.xib in Resources */,
 				04A815681F419EB60082D31D /* Models.scnassets in Resources */,
 				625051091FCDBDBE00EEAC0A /* GoogleService-Info.plist in Resources */,
+				62242AC8201F2AE100506412 /* SwitchInputTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -551,18 +583,22 @@
 				04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */,
 				04A93D3A1F63CC8D002928CA /* SCNNode+Show.m in Sources */,
 				04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */,
+				62242AC3201F2A0700506412 /* TextInputTableViewCell.swift in Sources */,
 				04A9837A1F32291D00120CF8 /* ARKController.m in Sources */,
 				04A815791F42DA990082D31D /* FocusNode.m in Sources */,
 				04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */,
 				04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */,
 				045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */,
+				62242AC0201F037F00506412 /* SettingsViewController.swift in Sources */,
 				04A806771F3D9ED900B8732C /* PlaneNode.m in Sources */,
 				045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */,
 				04A8067A1F3DCAA200B8732C /* AnchorNode.m in Sources */,
 				04A983791F32291900120CF8 /* RecordController.m in Sources */,
+				62242AC7201F2AE100506412 /* SwitchInputTableViewCell.swift in Sources */,
 				04A8156D1F41BA660082D31D /* HitAnchor.m in Sources */,
 				04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */,
 				04C64BCE1F71094500ACFB8B /* AppState.m in Sources */,
+				62242ACB201F2D3600506412 /* TextTableViewCell.swift in Sources */,
 				0449DE071F4D7F000057F639 /* MessageController.m in Sources */,
 				6241012D1FEABABF006FDBE3 /* AnalyticsManager.swift in Sources */,
 				5184F8FC0384A338F76D2653 /* Utils.m in Sources */,

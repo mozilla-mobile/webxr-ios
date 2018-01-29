@@ -541,6 +541,7 @@ typedef void (^UICompletion)(void);
     [[self webController] setOnSettingsButtonTapped:^{
         // Before showing the settings popup, we hide the bar and the debug buttons so they are not in the way
         // After dismissing the popup, we show them again.
+        /*
         [[blockSelf webController] showBar:NO];
         [[blockSelf webController] hideKeyboard];
         [[blockSelf stateController] setShowMode:ShowNothing];
@@ -552,6 +553,21 @@ typedef void (^UICompletion)(void);
             [[blockSelf webController] showBar:YES];
             [[blockSelf stateController] setShowMode:ShowMulti];
         }];
+         */
+        
+        SettingsViewController* settingsViewController = [SettingsViewController new];
+        UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
+        __weak typeof (SettingsViewController*) weakSettingsViewController = settingsViewController;
+        settingsViewController.onDoneButtonTapped = ^{
+            [weakSettingsViewController dismissViewControllerAnimated:YES completion:nil];
+            [[blockSelf webController] showBar:YES];
+            [[blockSelf stateController] setShowMode:ShowMulti];
+        };
+
+        [[blockSelf webController] showBar:NO];
+        [[blockSelf webController] hideKeyboard];
+        [[blockSelf stateController] setShowMode:ShowNothing];
+        [blockSelf presentViewController:navigationController animated:YES completion:nil];
     }];
     
     if ([[self stateController] wasMemoryWarning])
