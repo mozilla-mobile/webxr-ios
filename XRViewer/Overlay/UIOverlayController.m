@@ -180,18 +180,16 @@
     
     [[self touchView] setBackgroundColor:[UIColor clearColor]];
     
-    UISwipeGestureRecognizer* gestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action: @selector(swipeDown:)];
-    [gestureRecognizer setDirection: UISwipeGestureRecognizerDirectionDown];
+    UIScreenEdgePanGestureRecognizer * gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(swipeFromEdge:)];
+    [gestureRecognizer setEdges:UIRectEdgeTop];
     [[[self rootView] superview] addGestureRecognizer:gestureRecognizer];
-    gestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action: @selector(swipeUp:)];
-    [gestureRecognizer setDirection: UISwipeGestureRecognizerDirectionUp];
-    [[[self rootView] superview] addGestureRecognizer:gestureRecognizer];
+    
+    UISwipeGestureRecognizer* swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action: @selector(swipeUp:)];
+    [swipeGestureRecognizer setDirection: UISwipeGestureRecognizerDirectionUp];
+    [[[self rootView] superview] addGestureRecognizer:swipeGestureRecognizer];
 }
 
-- (void)swipeDown: (UISwipeGestureRecognizer*)recognizer {
-    CGPoint location = [recognizer locationInView:[[self rootView] superview]];
-    if (location.y > SWIPE_GESTURE_AREA_HEIGHT) return;
-    
+- (void)swipeFromEdge: (UISwipeGestureRecognizer*)recognizer {
     if ([self onSwipeDown]) {
         [self onSwipeDown]();
     }
