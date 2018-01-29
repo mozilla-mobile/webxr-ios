@@ -1,10 +1,10 @@
-#  Project WebXR Viewer: A VR and AR Project by Mozilla
+#  Project WebXR Viewer: An AR Project by Mozilla
 
 Help Mozilla Research by taking part in Project WebXR Viewer, an augmented reality and virtual reality viewer that lets you navigate to XR experiences just like websites.
 
 ## In this initial release, you can:
 
-Browse to websites written using [WebXR](https://github.com/mozilla/webxr-polyfill/), a proposal for extending WebVR with AR support that will work across all XR devices.
+Browse to websites written using [WebXR](https://github.com/mozilla/webxr-polyfill/), a proposal for extending WebVR with AR support that will work across all XR devices.  The WebXR Viewer uses Apple's ARKit to display WebXR content using AR.
 
 Record and share videos taken of your web content in the real world.
 
