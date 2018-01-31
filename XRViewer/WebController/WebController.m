@@ -4,6 +4,7 @@
 #import "ARKHelper.h"
 #import "OverlayHeader.h"
 #import "BarView.h"
+#import "Constants.h"
 
 @interface WebController () <WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler>
 
@@ -91,7 +92,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void) goHome
 {
     NSLog(@"going home");
-    NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:HOME_URL_KEY];
+    NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:homeURLKey];
     if (homeURL && ![homeURL isEqualToString:@""]) {
         [self loadURL: homeURL];
     } else {
