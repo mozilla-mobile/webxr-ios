@@ -1,16 +1,16 @@
 //
-//  TextInputTableViewCell.swift
+//  TermsAndConditionsTableViewCell.swift
 //  XRViewer
 //
-//  Created by Roberto Garrido on 29/1/18.
+//  Created by Roberto Garrido on 30/1/18.
 //  Copyright © 2018 Mozilla. All rights reserved.
 //
 
 import UIKit
 
-class TextInputTableViewCell: UITableViewCell {
+class TermsAndConditionsTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var labelTermsAndConditions: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

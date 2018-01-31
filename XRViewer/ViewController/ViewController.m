@@ -12,6 +12,7 @@
 #import "LayerView.h"
 #import "Utils.h"
 #import "XRViewer-Swift.h"
+#import "Constants.h"
 
 #define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
@@ -585,7 +586,7 @@ typedef void (^UICompletion)(void);
             if (lastURL) {
                 [[self webController] loadURL:lastURL];
             } else {
-                NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:HOME_URL_KEY];
+                NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:homeURLKey];
                 if (homeURL && ![homeURL isEqualToString:@""]) {
                     [[self webController] loadURL:homeURL];
                 } else {

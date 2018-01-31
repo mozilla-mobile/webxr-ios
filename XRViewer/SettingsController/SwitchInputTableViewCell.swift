@@ -10,6 +10,8 @@ import UIKit
 
 class SwitchInputTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var switchControl: UISwitch!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

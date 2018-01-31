@@ -40,6 +40,9 @@
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="textField" destination="J71-3Q-ZeJ" id="Ybq-Vu-iU3"/>
+            </connections>
         </tableViewCell>
     </objects>
 </document>

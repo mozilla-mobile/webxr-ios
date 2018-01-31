@@ -12,7 +12,7 @@
     
     [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 
-    BOOL sendUsageData = [[NSUserDefaults standardUserDefaults] boolForKey:USE_ANALYTICS_KEY];
+    BOOL sendUsageData = [[NSUserDefaults standardUserDefaults] boolForKey:useAnalyticsKey];
     [[AnalyticsManager sharedInstance] initializeWithSendUsageData:sendUsageData];
     
     return YES;
