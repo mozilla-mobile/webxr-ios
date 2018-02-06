@@ -10,7 +10,6 @@ import UIKit
 
 class SettingsViewController: UIViewController {
     let privacyNoticeURL = "https://github.com/mozilla-mobile/webxr-ios/blob/master/PrivacyNotice.md"
-    let termsOfServiceURL = "https://github.com/mozilla-mobile/webxr-ios/blob/master/TermsOfService.md"
     let viewControllerTitle = "XRViewer"
     let termsAndConditionsHeaderTitle = "TERMS AND CONDITIONS"
     let generalHeaderTitle = "GENERAL"
@@ -126,15 +125,9 @@ extension SettingsViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.section == 0 {
-            if indexPath.row == 0 {
-                UIApplication.shared.open(URL(string: privacyNoticeURL)!,
-                                          options: [:],
-                                          completionHandler: nil)
-            } else {
-                UIApplication.shared.open(URL(string: termsOfServiceURL)!,
-                                          options: [:],
-                                          completionHandler: nil)
-            }
+            UIApplication.shared.open(URL(string: privacyNoticeURL)!,
+                                      options: [:],
+                                      completionHandler: nil)
         } else if indexPath.section == 2 {
             UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
         }
