@@ -3,7 +3,6 @@
 #import "WebController.h"
 #import "UIOverlayController.h"
 #import "RecordController.h"
-#import "LocationManager.h"
 #import "WebARKHeader.h"
 #import "MessageController.h"
 #import "Animator.h"
@@ -34,7 +33,6 @@ typedef void (^UICompletion)(void);
 @property (nonatomic, strong) WebController *webController;
 @property (nonatomic, strong) UIOverlayController *overlayController;
 @property (nonatomic, strong) RecordController *recordController;
-@property (nonatomic, strong) LocationManager *locationManager;
 @property (nonatomic, strong) MessageController *messageController;
 @property (nonatomic, strong) Animator *animator;
 @property (nonatomic, strong) Reachability *reachability;
@@ -172,7 +170,6 @@ typedef void (^UICompletion)(void);
          if (xr)
          {
              [blockSelf setupARKController];
-             [blockSelf setupLocationController];
              
              [[blockSelf stateController] setShowMode:ShowSingle];
              [[blockSelf messageController] showMessageWithTitle:AR_SESSION_STARTED_POPUP_TITLE
@@ -221,7 +218,6 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
      {
-         [[blockSelf locationManager] setupForRequest:dict];
          [[blockSelf arkController] startSessionWithAppState:[[blockSelf stateController] state]];
      }];
     
@@ -334,8 +330,6 @@ typedef void (^UICompletion)(void);
 {
     __weak typeof (self) blockSelf = self;
     
-    [self setupLocationController];
-    
     [self setupRecordController];
     
     if ([[self recordController] cameraAvailable])
@@ -354,12 +348,6 @@ typedef void (^UICompletion)(void);
     }
     
     [self setupOverlayController];
-}
-
-- (void)setupLocationController
-{
-    [self setLocationManager:[[LocationManager alloc] init]];
-    [[self locationManager] setupForRequest:[[[self stateController] state] aRRequest]];
 }
 
 - (void)setupARKController
@@ -703,7 +691,6 @@ typedef void (^UICompletion)(void);
 
 - (void)cleanupTargetControllers
 {
-    [self setLocationManager:nil];
     [self setRecordController:nil];
     
     [self cleanWebController];
@@ -774,7 +761,7 @@ typedef void (^UICompletion)(void);
 
 - (NSDictionary *)commonData
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:[[self locationManager] locationData]];
+    NSMutableDictionary *dictionary = [NSMutableDictionary new];
     
     [dictionary setValuesForKeysWithDictionary:[[self arkController] arkData]];
     

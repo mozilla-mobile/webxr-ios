@@ -73,11 +73,6 @@
 #define WEB_AR_URL_OPTION              @"url"
 #define WEB_AR_JS_FRAME_RATE_OPTION    @"js_frame_rate" // bool
 
-#define WEB_AR_LOCATION_OPTION         @"location"
-#define WEB_AR_LOCATION_LON_OPTION     @"longitude"
-#define WEB_AR_LOCATION_LAT_OPTION     @"latitude"
-#define WEB_AR_LOCATION_ALT_OPTION     @"altitude"
-
 #define WEB_IOS_SCREEN_SIZE_OPTION     @"screenSize"
 #define WEB_IOS_SCREEN_SCALE_OPTION    @"screenScale"
 #define WEB_IOS_SYSTEM_VERSION_OPTION  @"systemVersion"

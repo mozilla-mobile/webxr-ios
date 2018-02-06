@@ -32,7 +32,6 @@
 		04A9837A1F32291D00120CF8 /* ARKController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983651F32268900120CF8 /* ARKController.m */; };
 		04A9837B1F32292200120CF8 /* Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983671F3226A500120CF8 /* Renderer.m */; };
 		04A9837C1F32292900120CF8 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836A1F3226A500120CF8 /* Shaders.metal */; };
-		04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836B1F3226BC00120CF8 /* LocationManager.m */; };
 		04A9837E1F32293100120CF8 /* WebController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836D1F3226E000120CF8 /* WebController.m */; };
 		04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1241F3C64A100F96C5A /* ARKMetalController.m */; };
 		04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1281F3C64DF00F96C5A /* ARKSceneKitController.m */; };
@@ -101,8 +100,6 @@
 		04A983681F3226A500120CF8 /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		04A983691F3226A500120CF8 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		04A9836A1F3226A500120CF8 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
-		04A9836B1F3226BC00120CF8 /* LocationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
-		04A9836C1F3226BC00120CF8 /* LocationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
 		04A9836D1F3226E000120CF8 /* WebController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebController.m; sourceTree = "<group>"; };
 		04A9836E1F3226E000120CF8 /* WebController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebController.h; sourceTree = "<group>"; };
 		04A9836F1F3226E000120CF8 /* WebARKHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebARKHeader.h; sourceTree = "<group>"; };
@@ -200,7 +197,6 @@
 				04A983611F32213800120CF8 /* WebController */,
 				0449DE041F4D7EEA0057F639 /* MessageController */,
 				04A983701F3226FD00120CF8 /* RecordController */,
-				04A983621F32215300120CF8 /* LocationManager */,
 				045B2EA41F28EE790005FF96 /* Overlay */,
 				A6160A081F651AF2009F4402 /* Reachability */,
 				0401E04F1F62E5E70075D823 /* Animator */,
@@ -243,15 +239,6 @@
 				0401E04A1F612C240075D823 /* BarView.xib */,
 			);
 			path = WebController;
-			sourceTree = "<group>";
-		};
-		04A983621F32215300120CF8 /* LocationManager */ = {
-			isa = PBXGroup;
-			children = (
-				04A9836C1F3226BC00120CF8 /* LocationManager.h */,
-				04A9836B1F3226BC00120CF8 /* LocationManager.m */,
-			);
-			path = LocationManager;
 			sourceTree = "<group>";
 		};
 		04A983631F32216800120CF8 /* ARKController */ = {
@@ -586,7 +573,6 @@
 				04A9837B1F32292200120CF8 /* Renderer.m in Sources */,
 				0401E04E1F612D910075D823 /* BarView.m in Sources */,
 				04C64BC81F71011700ACFB8B /* LayerView.m in Sources */,
-				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
 				041503DA1F28944F00887400 /* main.m in Sources */,
 				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
 				0401E0521F62E6150075D823 /* Animator.m in Sources */,
