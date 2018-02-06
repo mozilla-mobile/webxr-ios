@@ -19,7 +19,6 @@ class SettingsViewController: UIViewController {
     let footerHeight = CGFloat(55.0)
     let headerHeight = CGFloat(55.0)
     let privacyNoticeLabelText = "Privacy Notice"
-    let termsOfServiceLabelText = "Terms of Service"
     
     var tableView: UITableView!
     var onDoneButtonTapped: (() -> Void)?
@@ -59,7 +58,7 @@ extension SettingsViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 2
+            return 1
         } else if section == 1 {
             return 2
         } else {
@@ -72,18 +71,10 @@ extension SettingsViewController: UITableViewDataSource {
         
         switch indexPath.section {
         case 0:
-            switch indexPath.row {
-            case 0:
-                let termsAndConditionsCell = tableView.dequeueReusableCell(withIdentifier: "TermsAndConditionsTableViewCell", for: indexPath) as! TermsAndConditionsTableViewCell
-                termsAndConditionsCell.labelTermsAndConditions.text = privacyNoticeLabelText
-                cell = termsAndConditionsCell
-            case 1:
-                let termsAndConditionsCell = tableView.dequeueReusableCell(withIdentifier: "TermsAndConditionsTableViewCell", for: indexPath) as! TermsAndConditionsTableViewCell
-                termsAndConditionsCell.labelTermsAndConditions.text = termsOfServiceLabelText
-                cell = termsAndConditionsCell
-            default:
-                fatalError("Cell not registered for indexPath: \(indexPath)")
-            }
+            let termsAndConditionsCell = tableView.dequeueReusableCell(withIdentifier: "TermsAndConditionsTableViewCell", for: indexPath) as! TermsAndConditionsTableViewCell
+            termsAndConditionsCell.labelTermsAndConditions.text = privacyNoticeLabelText
+            cell = termsAndConditionsCell
+            break
         case 1:
             switch indexPath.row {
             case 0:
