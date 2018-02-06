@@ -14,7 +14,7 @@ class SettingsViewController: UIViewController {
     let termsAndConditionsHeaderTitle = "TERMS AND CONDITIONS"
     let generalHeaderTitle = "GENERAL"
     let manageAppPermissionsHeaderTitle = "MANAGE APP PERMISSIONS"
-    let manageAppPermissionsFooterTitle = "This will make the current AR Session to be restarted when you come back"
+    let manageAppPermissionsFooterTitle = "Opening iOS Settings will cause the current AR Session to be restarted when you come back"
     let footerHeight = CGFloat(55.0)
     let headerHeight = CGFloat(55.0)
     let privacyNoticeLabelText = "Privacy Notice"

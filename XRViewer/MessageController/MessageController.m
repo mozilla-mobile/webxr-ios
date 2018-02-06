@@ -254,7 +254,7 @@
 
 - (void)showSettingsPopup:(void (^)(BOOL))responseBock {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Open iOS Settings"
-                                                    message:@"This will make the current AR Session to be restarted when you come back"
+                                                    message:@"Opening iOS Settings will cause the current AR Session to be restarted when you come back"
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
