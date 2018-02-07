@@ -774,7 +774,7 @@ typedef void (^UICompletion)(void);
 
 - (NSDictionary *)commonData
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:[[self locationManager] locationData]];
+    NSMutableDictionary *dictionary = [NSMutableDictionary new];
     
     [dictionary setValuesForKeysWithDictionary:[[self arkController] arkData]];
     
