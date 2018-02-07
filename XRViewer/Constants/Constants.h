@@ -9,7 +9,9 @@
 #ifndef Constants_h
 #define Constants_h
 
-#define USE_ANALYTICS_KEY @"useAnalytics"
+#import <Foundation/Foundation.h>
 
+FOUNDATION_EXPORT NSString *const useAnalyticsKey;
+FOUNDATION_EXPORT NSString *const homeURLKey;
 
 #endif /* Constants_h */

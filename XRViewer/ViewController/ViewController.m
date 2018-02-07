@@ -12,6 +12,7 @@
 #import "LayerView.h"
 #import "Utils.h"
 #import "XRViewer-Swift.h"
+#import "Constants.h"
 
 #define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
@@ -209,10 +210,13 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnMemoryWarning:^(NSString *url)
      {
-         [[blockSelf messageController] showMessageAboutMemoryWarningWithCompletion:^
-          {
-              [blockSelf loadURL:url];
+         [[blockSelf messageController] showMessageAboutMemoryWarningWithCompletion:^{
+             [[self webController] loadBlankHTMLString];
           }];
+
+         [[blockSelf webController] didReceiveError: [NSError errorWithDomain:MEMORY_ERROR_DOMAIN
+                                                                         code:MEMORY_ERROR_CODE
+                                                                     userInfo:@{NSLocalizedDescriptionKey: MEMORY_ERROR_MESSAGE}]];
      }];
     
     [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
@@ -224,7 +228,7 @@ typedef void (^UICompletion)(void);
     [[self stateController] setOnInterruption:^(BOOL interruption)
      {
          [[blockSelf recordController] stopRecordingByInterruption:blockSelf];
-         [[blockSelf messageController] showMessageAboutARInteruption:interruption];
+         [[blockSelf messageController] showMessageAboutARInterruption:interruption];
          
          [[blockSelf overlayController] setARKitInterruption:interruption];
          [[blockSelf webController] wasARInterruption:interruption];
@@ -399,11 +403,12 @@ typedef void (^UICompletion)(void);
 
         dispatch_async(dispatch_get_main_queue(), ^{
             [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
-                dispatch_async(dispatch_get_main_queue(), ^
-                {
-                    [[blockSelf webController] reload];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[self webController] loadBlankHTMLString];
                 });
             }];
+
+            [[blockSelf webController] didReceiveError: error];
         });
      }];
     
@@ -534,6 +539,38 @@ typedef void (^UICompletion)(void);
         [[blockSelf arkController] setShowMode:selected? ShowMultiDebug: ShowNothing];
     }];
     
+    [[self webController] setOnSettingsButtonTapped:^{
+        // Before showing the settings popup, we hide the bar and the debug buttons so they are not in the way
+        // After dismissing the popup, we show them again.
+        /*
+        [[blockSelf webController] showBar:NO];
+        [[blockSelf webController] hideKeyboard];
+        [[blockSelf stateController] setShowMode:ShowNothing];
+        [[blockSelf messageController] showSettingsPopup: ^(BOOL response) {
+            if (response) {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:^(BOOL success)
+                 {}];
+            }
+            [[blockSelf webController] showBar:YES];
+            [[blockSelf stateController] setShowMode:ShowMulti];
+        }];
+         */
+        
+        SettingsViewController* settingsViewController = [SettingsViewController new];
+        UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
+        __weak typeof (SettingsViewController*) weakSettingsViewController = settingsViewController;
+        settingsViewController.onDoneButtonTapped = ^{
+            [weakSettingsViewController dismissViewControllerAnimated:YES completion:nil];
+            [[blockSelf webController] showBar:YES];
+            [[blockSelf stateController] setShowMode:ShowMulti];
+        };
+
+        [[blockSelf webController] showBar:NO];
+        [[blockSelf webController] hideKeyboard];
+        [[blockSelf stateController] setShowMode:ShowNothing];
+        [blockSelf presentViewController:navigationController animated:YES completion:nil];
+    }];
+    
     if ([[self stateController] wasMemoryWarning])
     {
         [[self stateController] applyOnDidReceiveMemoryAction];
@@ -549,7 +586,7 @@ typedef void (^UICompletion)(void);
             if (lastURL) {
                 [[self webController] loadURL:lastURL];
             } else {
-                NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:HOME_URL_KEY];
+                NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:homeURLKey];
                 if (homeURL && ![homeURL isEqualToString:@""]) {
                     [[self webController] loadURL:homeURL];
                 } else {
@@ -737,7 +774,7 @@ typedef void (^UICompletion)(void);
 
 - (NSDictionary *)commonData
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:[[self locationManager] locationData]];
+    NSMutableDictionary *dictionary = [NSMutableDictionary new];
     
     [dictionary setValuesForKeysWithDictionary:[[self arkController] arkData]];
     

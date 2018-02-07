@@ -40,7 +40,7 @@
                             </connections>
                         </button>
                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="T5z-0b-MVG" customClass="URLTextField">
-                            <rect key="frame" x="67" y="5.5" width="224" height="29.5"/>
+                            <rect key="frame" x="67" y="5.5" width="182" height="29.5"/>
                             <color key="backgroundColor" red="0.87058823529411766" green="0.87450980392156863" blue="0.87058823529411766" alpha="0.69512521404109584" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="29.5" id="JiL-UK-7MC"/>
@@ -50,7 +50,7 @@
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" textContentType="url"/>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gip-B1-QYb" userLabel="Debug Btn">
-                            <rect key="frame" x="293" y="0.0" width="40" height="40"/>
+                            <rect key="frame" x="251" y="0.0" width="40" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="40" id="6a9-Uk-Fsa"/>
                                 <constraint firstAttribute="height" constant="40" id="NOS-Zy-W2Y"/>
@@ -62,7 +62,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eTd-Vy-1bs">
-                            <rect key="frame" x="335" y="0.0" width="40" height="40"/>
+                            <rect key="frame" x="293" y="0.0" width="40" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="40" id="O0k-SP-qAC"/>
                                 <constraint firstAttribute="width" constant="40" id="q5O-jT-1cJ"/>
@@ -71,6 +71,18 @@
                             <state key="normal" image="home"/>
                             <connections>
                                 <action selector="homeAction:" destination="iN0-l3-epB" eventType="touchDown" id="isa-yp-QMS"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OYK-Dm-FZm">
+                            <rect key="frame" x="335" y="0.0" width="40" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="Zcf-4q-eWF"/>
+                                <constraint firstAttribute="width" constant="40" id="n4N-Kw-UfJ"/>
+                            </constraints>
+                            <inset key="contentEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
+                            <state key="normal" image="gear_settings"/>
+                            <connections>
+                                <action selector="settingsAction" destination="iN0-l3-epB" eventType="touchUpInside" id="FFB-8D-6P0"/>
                             </connections>
                         </button>
                     </subviews>
@@ -96,6 +108,7 @@
                 <outlet property="debugBtn" destination="Gip-B1-QYb" id="JqR-Zg-PX6"/>
                 <outlet property="forwardBtn" destination="Feq-Eq-O9v" id="PZu-iD-Ele"/>
                 <outlet property="homeBtn" destination="eTd-Vy-1bs" id="wln-Fj-oBZ"/>
+                <outlet property="settingsBtn" destination="OYK-Dm-FZm" id="0vg-mf-1R7"/>
                 <outlet property="urlField" destination="T5z-0b-MVG" id="mck-MR-ueM"/>
             </connections>
             <point key="canvasLocation" x="24.5" y="53"/>
@@ -103,8 +116,9 @@
     </objects>
     <resources>
         <image name="backSelected" width="10" height="18"/>
-        <image name="debugOff" width="37" height="37"/>
+        <image name="debugOff" width="56" height="56"/>
         <image name="forwardSelected" width="10" height="18"/>
-        <image name="home" width="37" height="37"/>
+        <image name="gear_settings" width="56" height="56"/>
+        <image name="home" width="56" height="56"/>
     </resources>
 </document>

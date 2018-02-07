@@ -8,7 +8,6 @@
 // URL
 #define WEB_URL @"https://ios-viewer.webxrexperiments.com/viewer.html"
 #define LAST_URL_KEY @"lastURL"
-#define HOME_URL_KEY @"homeURL"
 
 // MESSAGES
 #define WEB_AR_INIT_MESSAGE            @"initAR"
@@ -32,15 +31,20 @@
 #define WEB_AR_IOS_WAS_INTERRUPTED_MESSAGE     @"arkitInterrupted"
 #define WEB_AR_IOS_INTERRUPTION_ENDED_MESSAGE  @"arkitInterruptionEnded"
 
-#define WEB_AR_IOS_TRACKING_STATE_MESSAGE       @"ar_tracking_changed"
+#define WEB_AR_IOS_TRACKING_STATE_MESSAGE       @"arTrackingChanged"
 
 #define WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE   @"ios_did_receive_memory_warning"
 
-#define WEB_AR_IOS_WIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"
+// This message is not being used by the polyfill
+// #define WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"
 
 #define WEB_AR_IOS_WINDOW_RESIZE_MESSAGE   @"arkitWindowResize"
+#define WEB_AR_IOS_ERROR_MESSAGE           @"onError"
 #define WEB_AR_IOS_SIZE_WIDTH_PARAMETER   @"width"
 #define WEB_AR_IOS_SIZE_HEIGHT_PARAMETER   @"height"
+#define WEB_AR_IOS_ERROR_DOMAIN_PARAMETER   @"domain"
+#define WEB_AR_IOS_ERROR_CODE_PARAMETER   @"code"
+#define WEB_AR_IOS_ERROR_MESSAGE_PARAMETER   @"message"
 
 // OPTIONS
 #define WEB_AR_CALLBACK_OPTION         @"callback"
@@ -56,7 +60,7 @@
 #define WEB_AR_UI_BUILD_OPTION         @"build"
 #define WEB_AR_UI_STATISTICS_OPTION    @"statistics"
 #define WEB_AR_UI_PLANE_OPTION         @"plane"
-#define WEB_AR_UI_WARNINIGS_OPTION     @"warnings"
+#define WEB_AR_UI_WARNINGS_OPTION     @"warnings"
 #define WEB_AR_UI_ANCHORS_OPTION       @"anchors"
 
 #define WEB_AR_ANCHOR_TRANSFORM_OPTION @"anchor_transform"
@@ -186,7 +190,7 @@ static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
         options = options | ARPlanes;
     }
     
-    if ([dict[WEB_AR_UI_WARNINIGS_OPTION] boolValue])
+    if ([dict[WEB_AR_UI_WARNINGS_OPTION] boolValue])
     {
         options = options | ARWarnings;
     }

@@ -4,6 +4,7 @@
 #import "ARKHelper.h"
 #import "OverlayHeader.h"
 #import "BarView.h"
+#import "Constants.h"
 
 @interface WebController () <WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler>
 
@@ -55,7 +56,8 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     [self layout];
     
-    [self callWebMethod:WEB_AR_IOS_WIEW_WILL_TRANSITION_TO_SIZE_MESSAGE param:NSStringFromCGSize(size) webCompletion:debugCompletion(@"viewWillTransitionToSize")];
+    // This message is not being used by the polyfyill
+    // [self callWebMethod:WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE param:NSStringFromCGSize(size) webCompletion:debugCompletion(@"viewWillTransitionToSize")];
 }
 
 - (void)clean
@@ -90,7 +92,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void) goHome
 {
     NSLog(@"going home");
-    NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:HOME_URL_KEY];
+    NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:homeURLKey];
     if (homeURL && ![homeURL isEqualToString:@""]) {
         [self loadURL: homeURL];
     } else {
@@ -133,6 +135,10 @@ inline static WebCompletion debugCompletion(NSString *name)
     {
         [self onError](nil);
     }
+}
+
+- (void)loadBlankHTMLString {
+    [[self webView] loadHTMLString:@"<html></html>" baseURL:[[self webView] URL]];
 }
 
 - (void)startRecording:(BOOL)start
@@ -209,13 +215,21 @@ inline static WebCompletion debugCompletion(NSString *name)
                                 WEB_AR_IOS_SIZE_WIDTH_PARAMETER: @(size.width),
                                 WEB_AR_IOS_SIZE_HEIGHT_PARAMETER: @(size.height),
                                 };
-    [self callWebMethod:WEB_AR_IOS_WINDOW_RESIZE_MESSAGE paramJSON:sizeDictionary webCompletion:debugCompletion(@"arkitWindowResize")];
+    [self callWebMethod:WEB_AR_IOS_WINDOW_RESIZE_MESSAGE paramJSON:sizeDictionary webCompletion:debugCompletion(WEB_AR_IOS_WINDOW_RESIZE_MESSAGE)];
 }
 
 - (void)hideKeyboard {
     [[self barView] hideKeyboard];
 }
 
+- (void)didReceiveError:(NSError *)error {
+    NSDictionary* errorDictionary = @{
+            WEB_AR_IOS_ERROR_DOMAIN_PARAMETER: error.domain,
+            WEB_AR_IOS_ERROR_CODE_PARAMETER: @(error.code),
+            WEB_AR_IOS_ERROR_MESSAGE_PARAMETER: error.localizedDescription
+    };
+    [self callWebMethod:WEB_AR_IOS_ERROR_MESSAGE paramJSON:errorDictionary webCompletion:debugCompletion(WEB_AR_IOS_ERROR_MESSAGE)];
+}
 
 #pragma mark WKScriptMessageHandler
 
@@ -496,6 +510,12 @@ inline static WebCompletion debugCompletion(NSString *name)
     [barView setDebugButtonToggledAction:^(BOOL selected) {
         if ([blockSelf onDebugButtonToggled]) {
             [blockSelf onDebugButtonToggled](selected);
+        }
+    }];
+    
+    [barView setSettingsActionBlock:^{
+        if ([blockSelf onSettingsButtonTapped]) {
+            [blockSelf onSettingsButtonTapped]();
         }
     }];
 }

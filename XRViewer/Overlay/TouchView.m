@@ -96,6 +96,9 @@
             [self setCameraEvent:NO];
             return YES;
         }
+        /*
+         This functionality is not needed anymore, since we are showing/hiding the debug buttons when swipping down/up
+         
         if (CGRectContainsPoint([self increasedRect:[self showRect]], point))
         {
             if (([self recordState] == RecordStateRecording) || ([self recordState] == RecordStateRecordingWithMicrophone))
@@ -113,6 +116,7 @@
             [self setCameraEvent:NO];
             return YES;
         }
+         */
     }
     
     return NO;

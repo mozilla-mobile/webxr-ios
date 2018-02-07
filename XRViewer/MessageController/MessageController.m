@@ -83,9 +83,9 @@
     [self didShowMessage]();
 }
 
-- (void)showMessageAboutARInteruption:(BOOL)interupt
+- (void)showMessageAboutARInterruption:(BOOL)interrupt
 {
-    if (interupt && _arPopup == nil)
+    if (interrupt && _arPopup == nil)
     {
         PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"AR Interruption Occurred"
                                                         message:@"Please wait, it would be fixed automatically"
@@ -104,7 +104,7 @@
         
         [self didShowMessage]();
     }
-    else if (interupt == NO && _arPopup)
+    else if (interrupt == NO && _arPopup)
     {
         [_arPopup dismissViewControllerAnimated:YES completion:NULL];
         
@@ -196,7 +196,7 @@
 - (void)showMessageAboutMemoryWarningWithCompletion:(void(^)(void))completion
 {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Memory Issue Occurred"
-                                                    message:@"There was not enough memory for the application to keep working. Webpage was reloaded"
+                                                    message:@"There was not enough memory for the application to keep working"
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
@@ -250,6 +250,32 @@
     [[self viewController] presentViewController:popup animated:YES completion:nil];
     
     [self didShowMessage]();
+}
+
+- (void)showSettingsPopup:(void (^)(BOOL))responseBock {
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Open iOS Settings"
+                                                    message:@"Opening iOS Settings will cause the current AR Session to be restarted when you come back"
+                                                      image:nil
+                                            buttonAlignment:UILayoutConstraintAxisHorizontal
+                                            transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:200.0
+                                           gestureDismissal:NO
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+    ];
+
+    DefaultButton *ok = [[DefaultButton alloc] initWithTitle:@"OK" height:40 dismissOnTap:YES action:^{
+        responseBock(true);
+    }];
+    ok.titleColor = UIColor.blueColor;
+
+    DefaultButton *cancel = [[DefaultButton alloc] initWithTitle:@"Cancel" height:40 dismissOnTap:YES action:^{
+        responseBock(false);
+    }];
+
+    [popup addButtons: @[cancel, ok]];
+
+    [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
 
 #pragma mark private

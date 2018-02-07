@@ -9,6 +9,11 @@
 #define AR_SESSION_STARTED_POPUP_MESSAGE @"Swipe down to show the URL bar"
 #define AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS 2
 
+#define MEMORY_ERROR_DOMAIN     @"Memory"
+#define MEMORY_ERROR_CODE       0
+#define MEMORY_ERROR_MESSAGE    @"Memory warning received"
+
+
 @interface ViewController : UIViewController
 
 @end
