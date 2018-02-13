@@ -14,6 +14,6 @@
 #define MEMORY_ERROR_MESSAGE    @"Memory warning received"
 
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<UIGestureRecognizerDelegate>
 
 @end

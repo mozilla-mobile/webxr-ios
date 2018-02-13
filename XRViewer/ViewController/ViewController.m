@@ -55,13 +55,51 @@ typedef void (^UICompletion)(void);
 {
     [super viewDidLoad];
     
+    [self setNeedsUpdateOfScreenEdgesDeferringSystemGestures];
+    
     [self setupCommonControllers];
     
     dispatch_async(dispatch_get_main_queue(), ^
                    {
                        [self setupTargetControllers];
                    });
+    
+    
+    UIScreenEdgePanGestureRecognizer * gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(swipeFromEdge:)];
+    [gestureRecognizer setEdges:UIRectEdgeTop];
+    gestureRecognizer.delegate = self;
+    [self.view addGestureRecognizer:gestureRecognizer];
+    
+    UISwipeGestureRecognizer* swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action: @selector(swipeUp:)];
+    [swipeGestureRecognizer setDirection: UISwipeGestureRecognizerDirectionUp];
+    swipeGestureRecognizer.delegate = self;
+    [self.view addGestureRecognizer:swipeGestureRecognizer];
 }
+
+- (void)swipeFromEdge: (UISwipeGestureRecognizer*)recognizer {
+    if ([[[self stateController] state] webXR]) {
+        [[self webController] showBar:YES];
+        [[self stateController] setShowMode:ShowMulti];
+    }
+}
+
+- (void)swipeUp: (UISwipeGestureRecognizer*)recognizer {
+    CGPoint location = [recognizer locationInView:[self view]];
+    if (location.y > SWIPE_GESTURE_AREA_HEIGHT) return;
+ 
+    if ([[[self stateController] state] webXR]) {
+        if (![[self stateController] isRecording]) {
+            [[self stateController] setShowMode:ShowNothing];
+        }
+        [[self webController] showBar:NO];
+        [[self webController] hideKeyboard];
+    }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -118,6 +156,14 @@ typedef void (^UICompletion)(void);
 
     [[self webLayerView] setNeedsLayout];
     [[self webLayerView] layoutIfNeeded];
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return [super prefersStatusBarHidden];
+}
+
+- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures {
+    return UIRectEdgeTop;
 }
 
 #pragma mark Setups
