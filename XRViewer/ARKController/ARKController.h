@@ -53,7 +53,9 @@ typedef void (^DidUpdateWindowSize)(void);
 
 - (void)startSessionWithAppState:(AppState *)state;
 
-- (void)stopSession;
+- (void)resumeSessionWithAppState: (AppState*)state;
+
+- (void)pauseSession;
 
 - (NSDictionary *)arkData;
 

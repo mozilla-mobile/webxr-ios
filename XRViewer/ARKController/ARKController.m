@@ -141,7 +141,7 @@
     return [[self controller] renderView];
 }
 
-- (void)stopSession
+- (void)pauseSession
 {
     [[self session] pause];
 }
@@ -157,28 +157,22 @@
     return [data copy];
 }
 
-- (void)startSessionWithAppState:(AppState *)state
-{
-    if ([state aRRequest] == nil)
-    {
-        [self setRequest:nil];
-        [self removeAnchors:nil];
-        [self setSession:nil];
-        [[self controller] clean];
-        
-        return;
-    }
-    
+- (void)resumeSessionWithAppState: (AppState*)state {
     [self setRequest:[state aRRequest]];
     
-    if ([self session] == nil)
-    {
-        [self setSession:[ARSession new]];
-        [[self session] setDelegate:self];
-        [[self controller] updateSession:[self session]];
-    }
-    
     [[self session] runWithConfiguration:[self configuration]];
+    
+    [self setupDeviceCamera];
+    
+    [self setShowMode:[state showMode]];
+    [self setShowOptions:[state showOptions]];
+}
+
+- (void)startSessionWithAppState:(AppState *)state
+{
+    [self setRequest:[state aRRequest]];
+    
+    [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
     
     [self setupDeviceCamera];
     

@@ -257,7 +257,7 @@ inline static WebCompletion debugCompletion(NSString *name)
              
              if (error == nil)
              {
-                 [blockSelf onInit]([message body][WEB_AR_REQUEST_OPTION][WEB_AR_UI_OPTION]);
+                 [blockSelf onInitAR]([message body][WEB_AR_REQUEST_OPTION][WEB_AR_UI_OPTION]);
              }
              else
              {
@@ -273,14 +273,8 @@ inline static WebCompletion debugCompletion(NSString *name)
     {
         [self setTransferCallback:[[message body] objectForKey:WEB_AR_CALLBACK_OPTION]];
         
-        if ([[[message body] objectForKey:WEB_AR_JS_FRAME_RATE_OPTION] boolValue])
-        {
-            [self onJSUpdate]([[message body] objectForKey:WEB_AR_REQUEST_OPTION]);
-        }
-        else
-        {
-            [self onIOSUpdate]([[message body] objectForKey:WEB_AR_REQUEST_OPTION]);
-        }
+        [self onWatchAR]([[message body] objectForKey:WEB_AR_REQUEST_OPTION]);
+
     }
     else if ([[message name] isEqualToString:WEB_AR_ON_JS_UPDATE_MESSAGE])
     {
@@ -290,10 +284,8 @@ inline static WebCompletion debugCompletion(NSString *name)
     {
         [self setTransferCallback:nil];
         
-        [self onIOSUpdate](nil);
-        
-        [self onJSUpdate](nil);
-        
+        [self onStopAR]();
+
         [self callWebMethod:[[message body] objectForKey:WEB_AR_CALLBACK_OPTION] param:@"" webCompletion:NULL];
     }
     else if ([[message name] isEqualToString:WEB_AR_SET_UI_MESSAGE])

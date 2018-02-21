@@ -20,10 +20,12 @@ typedef void (^OnHitTest)(NSUInteger, CGFloat, CGFloat, ResultArrayBlock);
 typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
 typedef void (^OnDebugButtonToggled)(BOOL);
 typedef void (^OnSettingsButtonTapped)(void);
+typedef void (^OnWatchAR)(NSDictionary *);
+typedef void (^OnStopAR)(void);
 
 @interface WebController : NSObject
 
-@property(nonatomic, copy) OnInit onInit;
+@property(nonatomic, copy) OnInit onInitAR;
 @property(nonatomic, copy) OnWebError onError;
 @property(nonatomic, copy) OnUpdateTransfer onIOSUpdate;
 @property(nonatomic, copy) OnLoadURL loadURL;
@@ -37,6 +39,8 @@ typedef void (^OnSettingsButtonTapped)(void);
 @property(nonatomic, copy) OnLoad onFinishLoad;
 @property(nonatomic, copy) OnDebugButtonToggled onDebugButtonToggled;
 @property(nonatomic, copy) OnSettingsButtonTapped onSettingsButtonTapped;
+@property(nonatomic, copy) OnWatchAR onWatchAR;
+@property(nonatomic, copy) OnStopAR onStopAR;
 
 @property (nonatomic, strong) Animator *animator;
 
@@ -47,6 +51,8 @@ typedef void (^OnSettingsButtonTapped)(void);
 @property(nonatomic, strong) NSLayoutConstraint *webViewLeftAnchorConstraint;
 
 @property(nonatomic, strong) NSLayoutConstraint *webViewRightAnchorConstraint;
+
+@property(nonatomic, strong) NSString *lastXRVisitedURL;
 
 - (instancetype)initWithRootView:(UIView *)rootView;
 - (void)viewWillTransitionToSize:(CGSize)size;

@@ -217,18 +217,14 @@ typedef void (^UICompletion)(void);
      {
          if (xr)
          {
-             [blockSelf setupARKController];
-             [blockSelf setupLocationController];
-             
              [[blockSelf stateController] setShowMode:ShowSingle];
              [[blockSelf messageController] showMessageWithTitle:AR_SESSION_STARTED_POPUP_TITLE
                                                          message:AR_SESSION_STARTED_POPUP_MESSAGE
                                                        hideAfter:AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS];
+
+             [[blockSelf webController] setLastXRVisitedURL:[[[[blockSelf webController] webView] URL] absoluteString]];
          }
-         else
-         {
-             [blockSelf cleanARKController];
-             
+         else {
              [[blockSelf stateController] setShowMode:ShowNothing];
          }
          
@@ -249,8 +245,6 @@ typedef void (^UICompletion)(void);
          if (requestedURL) {
              [[NSUserDefaults standardUserDefaults] setObject:nil forKey:REQUESTED_URL_KEY];
              [blockSelf loadURL:requestedURL];
-         } else {
-             [blockSelf loadURL:url];
          }
      }];
     
@@ -267,8 +261,13 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
      {
-         [[blockSelf locationManager] setupForRequest:dict];
-         [[blockSelf arkController] startSessionWithAppState:[[blockSelf stateController] state]];
+         if (![[[[[blockSelf webController] webView] URL] absoluteString] isEqualToString:[[blockSelf webController] lastXRVisitedURL]]) {
+             [blockSelf setupLocationController];
+             [[blockSelf locationManager] setupForRequest:dict];
+             [blockSelf setupARKController];
+         } else {
+             [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
+         }
      }];
     
     [[self stateController] setOnInterruption:^(BOOL interruption)
@@ -321,7 +320,6 @@ typedef void (^UICompletion)(void);
     
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
      {
-         [blockSelf cleanARKController];
          [[blockSelf webController] didBackgroundAction:YES];
          
          [[blockSelf stateController] saveMoveToBackgroundOnURL:[[blockSelf webController] lastURL]];
@@ -519,10 +517,12 @@ typedef void (^UICompletion)(void);
           { }];
      }];
     
-    [[self webController] setOnInit:^(NSDictionary *uiOptionsDict)
+    [[self webController] setOnInitAR:^(NSDictionary *uiOptionsDict)
      {
+         /*
          [[blockSelf stateController] setWebXR:YES];
          [[blockSelf stateController] setShowMode:ShowSingle];
+          */
          [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
          
          [[blockSelf stateController] applyOnEnterForegroundAction];
@@ -533,16 +533,18 @@ typedef void (^UICompletion)(void);
      {
          [blockSelf showWebError:error];
      }];
-    
-    [[self webController] setOnIOSUpdate:^( NSDictionary * _Nullable request)
-     {
-         [[blockSelf stateController] setARRequest:request];
-     }];
-    
-    [[self webController] setOnJSUpdate:^( NSDictionary * _Nullable request)
-     {
-         [[blockSelf stateController] setARRequest:request];
-     }];
+
+    [[self webController] setOnWatchAR:^( NSDictionary * _Nullable request){
+        [[blockSelf stateController] setARRequest:request];
+        [[blockSelf stateController] setWebXR:YES];
+        [[blockSelf stateController] setShowMode:ShowSingle];
+    }];
+
+    [[self webController] setOnStopAR:^{
+        [[blockSelf arkController] pauseSession];
+        [[blockSelf stateController] setWebXR:NO];
+        [[blockSelf stateController] setShowMode:ShowNothing];
+    }];
     
     [[self webController] setOnJSUpdateData:^NSDictionary *
      {
