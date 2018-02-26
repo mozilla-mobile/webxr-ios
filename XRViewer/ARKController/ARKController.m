@@ -7,12 +7,14 @@
 #import "HitAnchor.h"
 #import "HitTestResult.h"
 #import "Utils.h"
+#import <Accelerate/Accelerate.h>
 
 @interface ARKController () <ARSessionDelegate>
 {
     NSDictionary *arkData;
     os_unfair_lock lock;
     NSMutableDictionary *objects; // key - JS anchor name : value - ARAnchor NSUUID string
+    NSDictionary* computerVisionData;
 }
 
 @property (nonatomic, strong) id<ARKControllerProtocol> controller;
@@ -26,6 +28,13 @@
 
 @property(nonatomic) ShowMode showMode;
 @property(nonatomic) ShowOptions showOptions;
+
+@property vImage_Buffer lumaBuffer;
+@property(nonatomic, strong) NSMutableData* lumaDataBuffer;
+@property(nonatomic, strong) NSMutableString* lumaBase64StringBuffer;
+@property vImage_Buffer chromaBuffer;
+@property(nonatomic, strong) NSMutableData* chromaDataBuffer;
+@property(nonatomic, strong) NSMutableString* chromaBase64StringBuffer;
 
 @end
 
@@ -84,6 +93,11 @@
         [[self controller] setHitTestFocusPoint:[[[self controller] renderView] center]];
 
         self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
+        
+        self.lumaDataBuffer = nil;
+        self.lumaBase64StringBuffer = nil;
+        self.chromaDataBuffer = nil;
+        self.chromaBase64StringBuffer = nil;
     }
     
     return self;
@@ -152,6 +166,16 @@
     
     os_unfair_lock_lock(&(lock));
     data = arkData;
+    os_unfair_lock_unlock(&(lock));
+    
+    return [data copy];
+}
+
+- (NSDictionary*)computerVisionData {
+    NSDictionary* data;
+    
+    os_unfair_lock_lock(&(lock));
+    data = computerVisionData;
     os_unfair_lock_unlock(&(lock));
     
     return [data copy];
@@ -310,13 +334,165 @@
                 [addedAnchorsSinceLastFrame removeAllObjects];
                 newData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
             }
-
+            if (/*[[self request][WEB_AR_CV_INFORMATION_OPTION] boolValue]*/true)
+            {
+                NSMutableDictionary *cvInformation = [NSMutableDictionary new];
+                NSMutableDictionary *frameInformation = [NSMutableDictionary new];
+                frameInformation[@"size"] = @{
+                                              @"width": @(320),
+                                              @"height": @(180)
+                                              };
+                NSInteger timestamp = [frame timestamp];
+                frameInformation[@"timestamp"] = @(timestamp);
+                
+                // TODO: prepare depth data
+                frameInformation[@"capturedDepthData"] = nil;
+                frameInformation[@"capturedDepthDataTimestamp"] = nil;
+                
+                // Computer vision data
+                [self updateBase64BuffersFromPixelBuffer:frame.capturedImage];
+                
+                frameInformation[@"images"] = @[self.lumaBase64StringBuffer, self.chromaBase64StringBuffer];
+                frameInformation[@"imageFormat"] = @"YUV";
+                
+                NSMutableDictionary *cameraInformation = [NSMutableDictionary new];
+                CGSize cameraImageResolution = [[frame camera] imageResolution];
+                cameraInformation[@"cameraImageResolution"] = @{
+                                                                @"width": @(cameraImageResolution.width),
+                                                                @"height": @(cameraImageResolution.height)
+                                                                };
+                
+                // Get the projection matrix
+                CGSize viewportSize = [[self controller] renderView].frame.size;
+                matrix_float4x4 projectionMatrix = [[frame camera] projectionMatrixForOrientation:self.interfaceOrientation
+                                                                                     viewportSize:viewportSize
+                                                                                            zNear:AR_CAMERA_PROJECTION_MATRIX_Z_NEAR
+                                                                                             zFar:AR_CAMERA_PROJECTION_MATRIX_Z_FAR];
+                cameraInformation[@"projectionMatrix"] = arrayFromMatrix4x4(projectionMatrix);
+                
+                // Get the view matrix
+                matrix_float4x4 viewMatrix = [frame.camera viewMatrixForOrientation:self.interfaceOrientation];
+                cameraInformation[@"viewMatrix"] = arrayFromMatrix4x4(viewMatrix);
+                
+                
+                // Send also the interface orientation
+                cameraInformation[@"interfaceOrientation"] = @(self.interfaceOrientation);
+                
+                cvInformation[@"frame"] = frameInformation;
+                cvInformation[@"camera"] = cameraInformation;
+                
+                os_unfair_lock_lock(&(lock));
+                computerVisionData = [cvInformation copy];
+                os_unfair_lock_unlock(&(lock));
+            }
+            
             os_unfair_lock_lock(&(lock));
             arkData = [newData copy];
             os_unfair_lock_unlock(&(lock));
         }
     }
 }
+
+-(void)logPixelBufferInfo:(CVPixelBufferRef)capturedImagePixelBuffer {
+    size_t capturedImagePixelBufferWidth = CVPixelBufferGetWidth(capturedImagePixelBuffer);
+    size_t capturedImagePixelBufferHeight = CVPixelBufferGetHeight(capturedImagePixelBuffer);
+    size_t capturedImagePixelBufferBytesPerRow = CVPixelBufferGetBytesPerRow(capturedImagePixelBuffer);
+    size_t capturedImageNumberOfPlanes = CVPixelBufferGetPlaneCount(capturedImagePixelBuffer);
+    CFTypeID capturedImagePixelBufferTypeID = CVPixelBufferGetTypeID();
+    size_t capturedImagePixelBufferDataSize = CVPixelBufferGetDataSize(capturedImagePixelBuffer);
+    OSType capturedImagePixelBufferPixelFormatType = CVPixelBufferGetPixelFormatType(capturedImagePixelBuffer);
+    void* capturedImagePixelBufferBaseAddress = CVPixelBufferGetBaseAddress(capturedImagePixelBuffer);
+
+    NSLog(@"\n\nnumberOfPlanes: %zu\npixelBufferWidth: %zu\npixelBufferHeight: %zu\npixelBufferTypeID: %lu\npixelBufferDataSize: %zu\npixelBufferBytesPerRow: %zu\npixelBufferPIxelFormatType: %@\npixelBufferBaseAddress: %p\n",
+          capturedImageNumberOfPlanes,
+          capturedImagePixelBufferWidth,
+          capturedImagePixelBufferHeight,
+          capturedImagePixelBufferTypeID,
+          capturedImagePixelBufferDataSize,
+          capturedImagePixelBufferBytesPerRow,
+          [self XXStringForOSType:capturedImagePixelBufferPixelFormatType],
+          capturedImagePixelBufferBaseAddress);
+}
+
+-(void)updateBase64BuffersFromPixelBuffer:(CVPixelBufferRef)capturedImagePixelBuffer {
+
+    [self logPixelBufferInfo:capturedImagePixelBuffer];
+
+    vImagePixelCount targetWidth = 320;
+    vImagePixelCount targetHeight = 180;
+    
+    // Luma
+    CVPixelBufferLockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+    
+    vImage_Buffer lumaSrcBuffer;
+    lumaSrcBuffer.data = CVPixelBufferGetBaseAddressOfPlane(capturedImagePixelBuffer, 0);
+    lumaSrcBuffer.width = CVPixelBufferGetWidthOfPlane(capturedImagePixelBuffer, 0);
+    lumaSrcBuffer.height = CVPixelBufferGetHeightOfPlane(capturedImagePixelBuffer, 0);
+    lumaSrcBuffer.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(capturedImagePixelBuffer, 0);
+    
+    if (self.lumaBuffer.data == nil) {
+        vImageBuffer_Init(&self->_lumaBuffer, targetHeight, targetWidth, 8 * sizeof(Pixel_8), kvImageNoFlags);
+    }
+
+    vImage_Error scaleError = vImageScale_Planar8(&lumaSrcBuffer, &self->_lumaBuffer, NULL, kvImageNoFlags);
+    if (scaleError != 0) {
+        NSLog(@"Error scaling luma image");
+        CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+        return;
+    }
+    
+    if (self.lumaDataBuffer == nil) {
+        self.lumaDataBuffer = [NSMutableData dataWithBytes:self.lumaBuffer.data length:self.lumaBuffer.rowBytes * self.lumaBuffer.height];
+    }
+    [self.lumaDataBuffer setData:[NSData dataWithBytes:self.lumaBuffer.data length:self.lumaBuffer.rowBytes * self.lumaBuffer.height]];
+    
+    if (self.lumaBase64StringBuffer == nil) {
+        self.lumaBase64StringBuffer = [NSMutableString new];
+    }
+    [self.lumaBase64StringBuffer setString:[self.lumaDataBuffer base64EncodedStringWithOptions:0]];
+    
+
+    // Chroma
+    vImage_Buffer chromaSrcBuffer;
+    chromaSrcBuffer.data = CVPixelBufferGetBaseAddressOfPlane(capturedImagePixelBuffer, 1);
+    chromaSrcBuffer.width = CVPixelBufferGetWidthOfPlane(capturedImagePixelBuffer, 1);
+    chromaSrcBuffer.height = CVPixelBufferGetHeightOfPlane(capturedImagePixelBuffer, 1);
+    chromaSrcBuffer.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(capturedImagePixelBuffer, 1);
+    
+    if (self->_chromaBuffer.data == nil) {
+        vImageBuffer_Init(&self->_chromaBuffer, targetHeight / 2, targetWidth / 2, 8 * sizeof(Pixel_16U), kvImageNoFlags);
+    }
+
+    scaleError = vImageScale_CbCr8(&chromaSrcBuffer, &self->_chromaBuffer, NULL, kvImageNoFlags);
+    if (scaleError != 0) {
+        NSLog(@"Error scaling chroma image");
+        CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+        return;
+    }
+
+    if (self.chromaDataBuffer == nil) {
+        self.chromaDataBuffer = [NSMutableData dataWithBytes:self.chromaBuffer.data length:self.chromaBuffer.rowBytes * self.chromaBuffer.height];
+    }
+    [self.chromaDataBuffer setData:[NSData dataWithBytes:self.chromaBuffer.data length:self.chromaBuffer.rowBytes * self.chromaBuffer.height]];
+
+    if (self.chromaBase64StringBuffer == nil) {
+        self.chromaBase64StringBuffer = [NSMutableString new];
+    }
+    [self.chromaBase64StringBuffer setString:[self.chromaDataBuffer base64EncodedStringWithOptions:0]];
+    
+    CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+}
+
+- (NSString *)XXStringForOSType:(OSType)type {
+    unichar c[4];
+    c[0] = (type >> 24) & 0xFF;
+    c[1] = (type >> 16) & 0xFF;
+    c[2] = (type >> 8) & 0xFF;
+    c[3] = (type >> 0) & 0xFF;
+    NSString *string = [NSString stringWithCharacters:c length:4];
+    return string;
+}
+
 
 - (NSArray *)currentAnchorsArray
 {

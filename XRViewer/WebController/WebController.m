@@ -83,6 +83,14 @@ inline static WebCompletion debugCompletion(NSString *name)
     return NO;
 }
 
+
+- (void)sendComputerVisionData:(NSDictionary *)computerVisionData {
+    [self callWebMethod:@"cvData" paramJSON:computerVisionData webCompletion:^(id  _Nullable param, NSError * _Nullable error) {
+        NSLog(@"cvData response");
+    }];
+}
+
+
 - (void)reload
 {
     NSString *url = [[[self barView] urlFieldText] length] > 0 ? [[self barView] urlFieldText] : [self lastURL];

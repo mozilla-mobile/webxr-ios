@@ -100,6 +100,7 @@
 #define WEB_AR_3D_OBJECTS_OPTION       @"objects" // from IOS - [ {name , matrix} ]
 #define WEB_AR_3D_REMOVED_OBJECTS_OPTION @"removedObjects"
 #define WEB_AR_3D_NEW_OBJECTS_OPTION   @"newObjects"
+#define WEB_AR_CV_INFORMATION_OPTION   @"cvInformation"
 
 #define WEB_AR_TYPE_OPTION             @"type"
 #define WEB_AR_POSITION_OPTION         @"position"

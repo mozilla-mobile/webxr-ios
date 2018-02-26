@@ -422,6 +422,7 @@ typedef void (^UICompletion)(void);
          {
              [blockSelf sendARKData];
          }
+         [blockSelf sendComputerVisionData];
      }];
     [[self arkController] setDidFailSession:^(NSError *error)
     {
@@ -830,6 +831,10 @@ typedef void (^UICompletion)(void);
 - (void)sendARKData
 {
     [[self webController] sendARData:[self commonData]];
+}
+
+-(void)sendComputerVisionData {
+    [[self webController] sendComputerVisionData:[[self arkController] computerVisionData]];
 }
 
 #pragma mark Web

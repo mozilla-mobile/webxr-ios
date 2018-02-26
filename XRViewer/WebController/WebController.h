@@ -80,5 +80,7 @@ typedef void (^OnSettingsButtonTapped)(void);
 - (void)hideKeyboard;
 
 - (void)didReceiveError:(NSError *)error;
+
+- (void)sendComputerVisionData:(NSDictionary *)computerVisionData;
 @end
 
