@@ -16,6 +16,7 @@
 
 @property (nonatomic, weak) BarView *barView;
 @property (nonatomic, weak) NSLayoutConstraint* barViewTopAnchorConstraint;
+@property (nonatomic, strong) NSString* documentReadyState;
 @end
 
 typedef void (^WebCompletion)(id _Nullable param, NSError * _Nullable error);
@@ -357,20 +358,20 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self barView] setForwardEnabled:[[self webView] canGoForward]];
 }
 
-- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
-{
-    DDLogDebug(@"didFinishNavigation - %@", navigation);
-    NSString* loadedURL = [[[self webView] URL] absoluteString];
-    [self setLastURL:loadedURL];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:loadedURL forKey:LAST_URL_KEY];
-    
-    [self onFinishLoad]();
-    
-    [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
-    [[self barView] setBackEnabled:[[self webView] canGoBack]];
-    [[self barView] setForwardEnabled:[[self webView] canGoForward]];
-}
+//- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+//{
+//    DDLogDebug(@"didFinishNavigation - %@", navigation);
+//    NSString* loadedURL = [[[self webView] URL] absoluteString];
+//    [self setLastURL:loadedURL];
+//
+//    [[NSUserDefaults standardUserDefaults] setObject:loadedURL forKey:LAST_URL_KEY];
+//
+//    [self onFinishLoad]();
+//
+//    [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
+//    [[self barView] setBackEnabled:[[self webView] canGoBack]];
+//    [[self barView] setForwardEnabled:[[self webView] canGoForward]];
+//}
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
 {
@@ -575,6 +576,42 @@ inline static WebCompletion debugCompletion(NSString *name)
     [wv setNavigationDelegate:self];
     [wv setUIDelegate:self];
     [self setWebView:wv];
+    
+    [wv addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
+}
+
+- (void) documentDidBecomeInteractive {
+    NSLog(@"documentDidBecomeInteractive");
+    NSString* loadedURL = [[[self webView] URL] absoluteString];
+    [self setLastURL:loadedURL];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:loadedURL forKey:LAST_URL_KEY];
+    
+    [self onFinishLoad]();
+    
+    [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
+    [[self barView] setBackEnabled:[[self webView] canGoBack]];
+    [[self barView] setForwardEnabled:[[self webView] canGoForward]];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    __weak typeof (self) blockSelf = self;
+    
+    if ([keyPath isEqualToString:@"estimatedProgress"] && object == [blockSelf webView]) {
+        [[blockSelf webView] evaluateJavaScript:@"document.readyState" completionHandler:^(NSString* _Nullable readyState, NSError * _Nullable error) {
+            
+            NSLog(@"Estimated progress: %f", [[blockSelf webView] estimatedProgress]);
+            NSLog(@"document.readyState: %@", readyState);
+            
+            if ([readyState isEqualToString:@"interactive"] && ![[blockSelf documentReadyState] isEqualToString:@"interactive"]) {
+                [self documentDidBecomeInteractive];
+            }
+            
+            blockSelf.documentReadyState = readyState;
+        }];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 @end
