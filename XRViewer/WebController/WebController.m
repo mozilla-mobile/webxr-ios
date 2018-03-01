@@ -349,7 +349,10 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
 {
-    DDLogDebug(@"didStartProvisionalNavigation - %@", navigation);
+    DDLogDebug(@"didStartProvisionalNavigation - %@\n on thread %@", navigation, [[NSThread currentThread] description]);
+
+    [[self webView] addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
+    self.documentReadyState = nil;
     
     [self onStartLoad]();
     
@@ -358,9 +361,9 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self barView] setForwardEnabled:[[self webView] canGoForward]];
 }
 
-//- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
-//{
-//    DDLogDebug(@"didFinishNavigation - %@", navigation);
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+{
+    DDLogDebug(@"didFinishNavigation - %@", navigation);
 //    NSString* loadedURL = [[[self webView] URL] absoluteString];
 //    [self setLastURL:loadedURL];
 //
@@ -371,11 +374,17 @@ inline static WebCompletion debugCompletion(NSString *name)
 //    [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
 //    [[self barView] setBackEnabled:[[self webView] canGoBack]];
 //    [[self barView] setForwardEnabled:[[self webView] canGoForward]];
-//}
+}
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
 {
     DDLogError(@"Web Error - %@", error);
+    
+    @try {
+        [[self webView] removeObserver:self forKeyPath:@"estimatedProgress"];
+    } @catch (NSException* exception) {
+        NSLog(@"%@", [exception description]);
+    }
     
     if ([self shouldShowError:error])
     {
@@ -390,6 +399,12 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
 {
     DDLogError(@"Web Error - %@", error);
+    
+    @try {
+        [[self webView] removeObserver:self forKeyPath:@"estimatedProgress"];
+    } @catch (NSException* exception) {
+        NSLog(@"%@", [exception description]);
+    }
     
     if ([self shouldShowError:error])
     {
@@ -576,8 +591,6 @@ inline static WebCompletion debugCompletion(NSString *name)
     [wv setNavigationDelegate:self];
     [wv setUIDelegate:self];
     [self setWebView:wv];
-    
-    [wv addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void) documentDidBecomeInteractive {
@@ -599,15 +612,22 @@ inline static WebCompletion debugCompletion(NSString *name)
     
     if ([keyPath isEqualToString:@"estimatedProgress"] && object == [blockSelf webView]) {
         [[blockSelf webView] evaluateJavaScript:@"document.readyState" completionHandler:^(NSString* _Nullable readyState, NSError * _Nullable error) {
-            
-            NSLog(@"Estimated progress: %f", [[blockSelf webView] estimatedProgress]);
-            NSLog(@"document.readyState: %@", readyState);
-            
-            if ([readyState isEqualToString:@"interactive"] && ![[blockSelf documentReadyState] isEqualToString:@"interactive"]) {
-                [self documentDidBecomeInteractive];
-            }
-            
-            blockSelf.documentReadyState = readyState;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"Estimated progress: %f", [[blockSelf webView] estimatedProgress]);
+                NSLog(@"document.readyState: %@", readyState);
+                
+                if (([readyState isEqualToString:@"interactive"] && ![[blockSelf documentReadyState] isEqualToString:@"interactive"]) ||
+                    ([[blockSelf webView] estimatedProgress] >= 1.0)) {
+                    @try {
+                        [[blockSelf webView] removeObserver:blockSelf forKeyPath:@"estimatedProgress"];
+                        [blockSelf documentDidBecomeInteractive];
+                    }@catch(NSException* exception) {
+                        NSLog(@"%@", [exception description]);
+                    }
+                }
+                
+                blockSelf.documentReadyState = readyState;
+            });
         }];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
