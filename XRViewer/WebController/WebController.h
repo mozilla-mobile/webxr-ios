@@ -22,6 +22,7 @@ typedef void (^OnDebugButtonToggled)(BOOL);
 typedef void (^OnSettingsButtonTapped)(void);
 typedef void (^OnWatchAR)(NSDictionary *);
 typedef void (^OnStopAR)(void);
+typedef void (^OnResetTrackingButtonTapped)(void);
 
 @interface WebController : NSObject
 
@@ -41,6 +42,7 @@ typedef void (^OnStopAR)(void);
 @property(nonatomic, copy) OnSettingsButtonTapped onSettingsButtonTapped;
 @property(nonatomic, copy) OnWatchAR onWatchAR;
 @property(nonatomic, copy) OnStopAR onStopAR;
+@property(nonatomic, copy) OnResetTrackingButtonTapped onResetTrackingButtonTapped;
 
 @property (nonatomic, strong) Animator *animator;
 

@@ -155,6 +155,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     {
         [[self barView] hideKeyboard];
         [[self barView] setDebugVisible:webXR];
+        [[self barView] setRestartTrackingVisible:webXR];
         [[self barView] setDebugSelected:NO];
         float webViewTopAnchorConstraintConstant = webXR? 0.0f: URL_BAR_HEIGHT;
         [[self webViewTopAnchorConstraint] setConstant:webViewTopAnchorConstraintConstant];
@@ -524,6 +525,12 @@ inline static WebCompletion debugCompletion(NSString *name)
     [barView setSettingsActionBlock:^{
         if ([blockSelf onSettingsButtonTapped]) {
             [blockSelf onSettingsButtonTapped]();
+        }
+    }];
+
+    [barView setRestartTrackingActionBlock:^{
+        if ([blockSelf onResetTrackingButtonTapped]) {
+            [blockSelf onResetTrackingButtonTapped]();
         }
     }];
 }

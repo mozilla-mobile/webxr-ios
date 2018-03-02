@@ -15,6 +15,7 @@
 @property (nonatomic, weak) UIButton *reloadBtn;
 @property (nonatomic, weak) UIButton *cancelBtn;
 @property (nonatomic, weak) UIActivityIndicatorView *ai;
+@property (weak, nonatomic) IBOutlet UIButton *restartTrackingBtn;
 
 @end
 
@@ -73,6 +74,10 @@
 
 - (void)setDebugVisible:(BOOL)visible {
     [[self debugBtn] setHidden:!visible];
+}
+
+- (void)setRestartTrackingVisible:(BOOL)visible {
+    [[self restartTrackingBtn] setHidden:!visible];
 }
 
 - (void)setup
@@ -190,6 +195,12 @@
 - (IBAction)settingsAction {
     if ([self settingsActionBlock]) {
         [self settingsActionBlock]();
+    }
+}
+
+- (IBAction)restartTrackingAction:(id)sender {
+    if ([self restartTrackingActionBlock]) {
+        [self restartTrackingActionBlock]();
     }
 }
 

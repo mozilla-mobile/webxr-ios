@@ -642,7 +642,11 @@ typedef void (^UICompletion)(void);
         [[blockSelf stateController] setShowMode:ShowNothing];
         [blockSelf presentViewController:navigationController animated:YES completion:nil];
     }];
-    
+
+    [[self webController] setOnResetTrackingButtonTapped:^{
+        [blockSelf startNewARKitSessionWithRequest:[[[blockSelf stateController] state] aRRequest]];
+    }];
+
     if ([[self stateController] wasMemoryWarning])
     {
         [[self stateController] applyOnDidReceiveMemoryAction];

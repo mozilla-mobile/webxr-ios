@@ -10,6 +10,7 @@ typedef void (^CancelAction)(id sender);
 typedef void (^GoAction)(NSString *url);
 typedef void (^DebugButtonToggledAction)(BOOL selected);
 typedef void (^SettingsAction)(void);
+typedef void (^ResetTrackingAction)(void);
 
 
 @interface BarView : UIView
@@ -22,6 +23,7 @@ typedef void (^SettingsAction)(void);
 @property (nonatomic, copy) GoAction goActionBlock;
 @property (nonatomic, copy) DebugButtonToggledAction debugButtonToggledAction;
 @property (nonatomic, copy) SettingsAction settingsActionBlock;
+@property (nonatomic, copy) ResetTrackingAction restartTrackingActionBlock;
 
 - (NSString *)urlFieldText;
 
@@ -33,6 +35,8 @@ typedef void (^SettingsAction)(void);
 
 - (void)setDebugSelected:(BOOL)selected;
 - (void)setDebugVisible:(BOOL)visible;
+
+- (void)setRestartTrackingVisible:(BOOL)visible;
 
 - (void)hideKeyboard;
 
