@@ -13,5 +13,7 @@
 
 FOUNDATION_EXPORT NSString *const useAnalyticsKey;
 FOUNDATION_EXPORT NSString *const homeURLKey;
+FOUNDATION_EXPORT NSString *const lastTimeARSessionWasPausedKey;
+FOUNDATION_EXPORT int const minutesBetweenPausedSessions;
 
 #endif /* Constants_h */

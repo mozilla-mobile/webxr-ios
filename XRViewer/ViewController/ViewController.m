@@ -262,11 +262,22 @@ typedef void (^UICompletion)(void);
     [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
      {
          if (![[[[[blockSelf webController] webView] URL] absoluteString] isEqualToString:[[blockSelf webController] lastXRVisitedURL]]) {
+             NSLog(@"This site is not the last XR site visited, so setting up a new ARKit session");
              [blockSelf setupLocationController];
              [[blockSelf locationManager] setupForRequest:dict];
              [blockSelf setupARKController];
          } else {
-             [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
+             NSDate* lastTimeARSessionWasPaused = [[NSUserDefaults standardUserDefaults] objectForKey:lastTimeARSessionWasPausedKey];
+             NSDate* now = [NSDate new];
+             if (lastTimeARSessionWasPaused && [now timeIntervalSinceDate:lastTimeARSessionWasPaused] >= minutesBetweenPausedSessions * 60) {
+                 NSLog(@"This site is the last XR site visited, and it's been more than %d minutes since we last vistied, so setting up a new ARKit session", minutesBetweenPausedSessions);
+                 [blockSelf setupLocationController];
+                 [[blockSelf locationManager] setupForRequest:dict];
+                 [blockSelf setupARKController];
+             } else {
+                 NSLog(@"This site is the last XR site visited, and it's been less than %d minutes since we last vistied, so resuming the ARKit session", minutesBetweenPausedSessions);
+                 [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
+             }
          }
      }];
     
@@ -542,6 +553,7 @@ typedef void (^UICompletion)(void);
 
     [[self webController] setOnStopAR:^{
         [[blockSelf arkController] pauseSession];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSDate new] forKey:lastTimeARSessionWasPausedKey];
         [[blockSelf stateController] setWebXR:NO];
         [[blockSelf stateController] setShowMode:ShowNothing];
     }];

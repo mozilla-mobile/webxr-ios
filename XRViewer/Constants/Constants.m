@@ -10,3 +10,5 @@
 
 NSString *const useAnalyticsKey = @"useAnalytics";
 NSString *const homeURLKey = @"homeURL";
+NSString *const lastTimeARSessionWasPausedKey = @"lastTimeARSessionWasPaused";
+int const minutesBetweenPausedSessions = 5;
