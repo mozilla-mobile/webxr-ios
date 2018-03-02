@@ -261,24 +261,25 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
      {
-         if (![[[[[blockSelf webController] webView] URL] absoluteString] isEqualToString:[[blockSelf webController] lastXRVisitedURL]]) {
+         if ([self urlIsNotTheLastXRVisitedURL]) {
              NSLog(@"This site is not the last XR site visited, so setting up a new ARKit session");
-             [blockSelf setupLocationController];
-             [[blockSelf locationManager] setupForRequest:dict];
-             [blockSelf setupARKController];
+             [blockSelf startNewARKitSessionWithRequest:dict];
          } else {
+             NSDate* lastRequestTime = [[NSUserDefaults standardUserDefaults] objectForKey:lastRequestTimeKey];
              NSDate* lastTimeARSessionWasPaused = [[NSUserDefaults standardUserDefaults] objectForKey:lastTimeARSessionWasPausedKey];
              NSDate* now = [NSDate new];
              if (lastTimeARSessionWasPaused && [now timeIntervalSinceDate:lastTimeARSessionWasPaused] >= minutesBetweenPausedSessions * 60) {
                  NSLog(@"This site is the last XR site visited, and it's been more than %d minutes since we last vistied, so setting up a new ARKit session", minutesBetweenPausedSessions);
-                 [blockSelf setupLocationController];
-                 [[blockSelf locationManager] setupForRequest:dict];
-                 [blockSelf setupARKController];
+                 [blockSelf startNewARKitSessionWithRequest:dict];[blockSelf setupARKController];
+             } else if ([now timeIntervalSinceDate:lastRequestTime] < minSecondsNeededForANewARRequestToProvokeAResume) {
+                 NSLog(@"It's been less than %d seconds since the last time we reloaded, so setting up a new ARKit session", minSecondsNeededForANewARRequestToProvokeAResume);
+                 [blockSelf startNewARKitSessionWithRequest:dict];
              } else {
                  NSLog(@"This site is the last XR site visited, and it's been less than %d minutes since we last vistied, so resuming the ARKit session", minutesBetweenPausedSessions);
                  [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
              }
          }
+         [[NSUserDefaults standardUserDefaults] setObject:[NSDate new] forKey:lastRequestTimeKey];
      }];
     
     [[self stateController] setOnInterruption:^(BOOL interruption)
@@ -295,6 +296,17 @@ typedef void (^UICompletion)(void);
          [[blockSelf recordController] setMicEnabled:enabled];
          [[blockSelf overlayController] setMicEnabled:enabled];
      }];
+}
+
+-(BOOL)urlIsNotTheLastXRVisitedURL {
+    return ![[[[[self webController] webView] URL] absoluteString] isEqualToString:[[self webController] lastXRVisitedURL]];
+}
+
+- (void)startNewARKitSessionWithRequest: (NSDictionary*)request {
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:lastTimeARSessionWasPausedKey];
+    [self setupLocationController];
+    [[self locationManager] setupForRequest:request];
+    [self setupARKController];
 }
 
 - (void)setupAnimator
