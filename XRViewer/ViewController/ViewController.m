@@ -270,7 +270,7 @@ typedef void (^UICompletion)(void);
              NSDate* now = [NSDate new];
              if (lastTimeARSessionWasPaused && [now timeIntervalSinceDate:lastTimeARSessionWasPaused] >= minutesBetweenPausedSessions * 60) {
                  NSLog(@"This site is the last XR site visited, and it's been more than %d minutes since we last vistied, so setting up a new ARKit session", minutesBetweenPausedSessions);
-                 [blockSelf startNewARKitSessionWithRequest:dict];[blockSelf setupARKController];
+                 [blockSelf startNewARKitSessionWithRequest:dict];
              } else if ([now timeIntervalSinceDate:lastRequestTime] < minSecondsNeededForANewARRequestToProvokeAResume) {
                  NSLog(@"It's been less than %d seconds since the last time we reloaded, so setting up a new ARKit session", minSecondsNeededForANewARRequestToProvokeAResume);
                  [blockSelf startNewARKitSessionWithRequest:dict];
