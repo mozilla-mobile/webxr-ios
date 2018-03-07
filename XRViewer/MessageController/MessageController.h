@@ -34,4 +34,6 @@ typedef void (^DidHideMessageByUser)(void);
 - (void)showMessageAboutConnectionRequired;
 
 - (void)showSettingsPopup:(void (^)(BOOL))responseBock;
+
+- (void)showMessageAboutResetTracking:(void (^)(BOOL))responseBlock;
 @end

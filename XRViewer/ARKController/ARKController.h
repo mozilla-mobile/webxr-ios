@@ -70,5 +70,7 @@ typedef void (^DidUpdateWindowSize)(void);
 - (NSArray *)currentPlanesArray;
 
 - (NSString *)trackingState;
+
+- (void)removeAllAnchors;
 @end
 

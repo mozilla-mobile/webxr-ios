@@ -644,7 +644,12 @@ typedef void (^UICompletion)(void);
     }];
 
     [[self webController] setOnResetTrackingButtonTapped:^{
-        [blockSelf startNewARKitSessionWithRequest:[[[blockSelf stateController] state] aRRequest]];
+
+        [[blockSelf messageController] showMessageAboutResetTracking:^(BOOL resetTracking){
+            if (resetTracking) {
+                [[blockSelf arkController] removeAllAnchors];
+            }
+        }];
     }];
 
     if ([[self stateController] wasMemoryWarning])

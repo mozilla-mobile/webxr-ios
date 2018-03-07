@@ -252,7 +252,7 @@
     [self didShowMessage]();
 }
 
-- (void)showSettingsPopup:(void (^)(BOOL))responseBock {
+- (void)showSettingsPopup:(void (^)(BOOL))responseBlock {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Open iOS Settings"
                                                     message:@"Opening iOS Settings will cause the current AR Session to be restarted when you come back"
                                                       image:nil
@@ -265,18 +265,45 @@
     ];
 
     DefaultButton *ok = [[DefaultButton alloc] initWithTitle:@"OK" height:40 dismissOnTap:YES action:^{
-        responseBock(true);
+        responseBlock(true);
     }];
     ok.titleColor = UIColor.blueColor;
 
     DefaultButton *cancel = [[DefaultButton alloc] initWithTitle:@"Cancel" height:40 dismissOnTap:YES action:^{
-        responseBock(false);
+        responseBlock(false);
     }];
 
     [popup addButtons: @[cancel, ok]];
 
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
+
+- (void)showMessageAboutResetTracking:(void (^)(BOOL))responseBlock {
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Reset tracking information"
+                                                    message:@"This will remove all the anchors in the scene\nAre you sure?"
+                                                      image:nil
+                                            buttonAlignment:UILayoutConstraintAxisHorizontal
+                                            transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:200.0
+                                           gestureDismissal:NO
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+    ];
+
+    DestructiveButton *ok = [[DestructiveButton alloc] initWithTitle:@"YES" height:40 dismissOnTap:YES action:^{
+        responseBlock(true);
+    }];
+    ok.titleColor = UIColor.blueColor;
+
+    DefaultButton *cancel = [[DefaultButton alloc] initWithTitle:@"NO" height:40 dismissOnTap:YES action:^{
+        responseBlock(false);
+    }];
+
+    [popup addButtons: @[cancel, ok]];
+
+    [[self viewController] presentViewController:popup animated:YES completion:nil];
+}
+
 
 #pragma mark private
 

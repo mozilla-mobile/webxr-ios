@@ -256,6 +256,14 @@
     }
 }
 
+- (void)removeAllAnchors {
+    ARFrame *currentFrame = [[self session] currentFrame];
+
+    for (ARAnchor *anchor in [currentFrame anchors]) {
+        [[self session] removeAnchor:anchor];
+    }
+}
+
 #pragma mark Private
 
 - (void)updateARKDataWithFrame:(ARFrame *)frame
