@@ -406,7 +406,7 @@
     for (ARAnchor* addedAnchor in anchors) {
         NSDictionary *addedAnchorDictionary = [self getDictionaryForAnchor:addedAnchor];
         [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
-        objects[[addedAnchor.identifier UUIDString]] = addedAnchorDictionary;
+        objects[addedAnchorDictionary[WEB_AR_UUID_OPTION]] = addedAnchorDictionary;
     }
 
     // Inform up in the calling hierarchy when we have plane anchors added to the scene
@@ -438,9 +438,8 @@
 {
     DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* updatedAnchor in anchors) {
-        NSString* anchorID = [updatedAnchor.identifier UUIDString];
         NSDictionary *updatedAnchorDictionary = [self getDictionaryForAnchor:updatedAnchor];
-        objects[anchorID] = updatedAnchorDictionary;
+        objects[updatedAnchorDictionary[WEB_AR_UUID_OPTION]] = updatedAnchorDictionary;
     }
 }
 
@@ -448,10 +447,13 @@
 {
     DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* removedAnchor in anchors) {
-        NSString* anchorID = [removedAnchor.identifier UUIDString];
+        NSString* arkitAnchorID = [removedAnchor.identifier UUIDString];
+        NSString* userGeneratedAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[arkitAnchorID];
+        NSString* anchorID = userGeneratedAnchorID? userGeneratedAnchorID: arkitAnchorID;
+
         [removedAnchorsSinceLastFrame addObject: anchorID];
         objects[anchorID] = nil;
-        arkitGeneratedAnchorIDUserAnchorIDMap[anchorID] = nil;
+        arkitGeneratedAnchorIDUserAnchorIDMap[arkitAnchorID] = nil;
     }
 
     // Inform up in the calling hierarchy when we have plane anchors removed from the scene
