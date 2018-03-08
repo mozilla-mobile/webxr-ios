@@ -63,7 +63,7 @@ typedef void (^DidUpdateWindowSize)(void);
 - (void)setShowOptions:(ShowOptions)options;
 
 - (NSArray *)hitTestNormPoint:(CGPoint)point types:(NSUInteger)type;
-- (BOOL)addAnchor:(NSString *)name transform:(NSArray *)transform;
+- (BOOL)addAnchor:(NSString *)userGeneratedAnchorID transform:(NSArray *)transform;
 
 - (void)removeAnchors:(NSArray *)anchorNames;
 
