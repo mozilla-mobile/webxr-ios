@@ -245,6 +245,8 @@ typedef void (^UICompletion)(void);
          if (requestedURL) {
              [[NSUserDefaults standardUserDefaults] setObject:nil forKey:REQUESTED_URL_KEY];
              [blockSelf loadURL:requestedURL];
+         } else {
+             [[blockSelf arkController] removeAllAnchors];
          }
      }];
     
