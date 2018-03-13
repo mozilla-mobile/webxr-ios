@@ -216,6 +216,18 @@
     [self setShowOptions:[state showOptions]];
 }
 
+- (void)runSessionResettingTracking {
+    [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking];
+}
+
+- (void)runSessionRemovingAnchors {
+    [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionRemoveExistingAnchors];
+}
+
+- (void)runSessionResettingTrackingAndRemovingAnchors {
+    [[self session] runWithConfiguration:[self configuration] options:ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
+}
+
 - (void)setShowMode:(ShowMode)showMode
 {
     _showMode = showMode;

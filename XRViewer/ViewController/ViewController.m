@@ -663,9 +663,18 @@ typedef void (^UICompletion)(void);
 
     [[self webController] setOnResetTrackingButtonTapped:^{
 
-        [[blockSelf messageController] showMessageAboutResetTracking:^(BOOL resetTracking){
-            if (resetTracking) {
-                [[blockSelf arkController] removeAllAnchors];
+        [[blockSelf messageController] showMessageAboutResetTracking:^(ResetTrackigOption option){
+            switch (option) {
+                case ResetTracking:
+                    [[blockSelf arkController] runSessionResettingTracking];
+                    break;
+                    
+                case RemoveExistingAnchors:
+                    [[blockSelf arkController] runSessionRemovingAnchors];
+                    break;
+                    
+                case ResetTrackingAndRemoveExistingAnchors:
+                    [[blockSelf arkController] runSessionResettingTrackingAndRemovingAnchors];
             }
         }];
     }];

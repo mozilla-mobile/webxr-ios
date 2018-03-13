@@ -278,28 +278,34 @@
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
 
-- (void)showMessageAboutResetTracking:(void (^)(BOOL))responseBlock {
-    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Reset tracking information"
-                                                    message:@"This will remove all the anchors in the scene\nAre you sure?"
+- (void)showMessageAboutResetTracking:(void (^)(ResetTrackigOption))responseBlock {
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Reset tracking"
+                                                    message:@"Please select one of the options below"
                                                       image:nil
-                                            buttonAlignment:UILayoutConstraintAxisHorizontal
+                                            buttonAlignment:UILayoutConstraintAxisVertical
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
-                                             preferredWidth:200.0
+                                             preferredWidth:360.0
                                            gestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
 
-    DestructiveButton *ok = [[DestructiveButton alloc] initWithTitle:@"YES" height:40 dismissOnTap:YES action:^{
-        responseBlock(true);
+    DefaultButton *resetTracking = [[DefaultButton alloc] initWithTitle:@"Reset tracking" height:40 dismissOnTap:YES action:^{
+        responseBlock(ResetTracking);
     }];
-    ok.titleColor = UIColor.blueColor;
+    resetTracking.titleColor = resetTracking.tintColor;
 
-    DefaultButton *cancel = [[DefaultButton alloc] initWithTitle:@"NO" height:40 dismissOnTap:YES action:^{
-        responseBlock(false);
+    DefaultButton *removeExistingAnchors = [[DefaultButton alloc] initWithTitle:@"Remove existing anchors" height:40 dismissOnTap:YES action:^{
+        responseBlock(RemoveExistingAnchors);
     }];
+    removeExistingAnchors.titleColor = removeExistingAnchors.tintColor;
 
-    [popup addButtons: @[cancel, ok]];
+    DefaultButton *resetTrackingAndRemoveExistingAnchors = [[DefaultButton alloc] initWithTitle:@"Reset tracking and remove existing anchors" height:40 dismissOnTap:YES action:^{
+        responseBlock(ResetTrackingAndRemoveExistingAnchors);
+    }];
+    resetTrackingAndRemoveExistingAnchors.titleColor = resetTrackingAndRemoveExistingAnchors.tintColor;
+
+    [popup addButtons: @[resetTracking, removeExistingAnchors, resetTrackingAndRemoveExistingAnchors]];
 
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }

@@ -77,5 +77,11 @@ typedef void (^DidUpdateWindowSize)(void);
 - (NSString *)trackingState;
 
 - (void)removeAllAnchors;
+
+- (void)runSessionResettingTracking;
+
+- (void)runSessionRemovingAnchors;
+
+- (void)runSessionResettingTrackingAndRemovingAnchors;
 @end
 
