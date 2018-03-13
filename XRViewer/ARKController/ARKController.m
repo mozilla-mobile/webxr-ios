@@ -7,12 +7,15 @@
 #import "HitAnchor.h"
 #import "HitTestResult.h"
 #import "Utils.h"
+#import "XRViewer-Swift.h"
+#import <Accelerate/Accelerate.h>
 
 @interface ARKController () <ARSessionDelegate>
 {
     NSDictionary *arkData;
     os_unfair_lock lock;
     NSMutableDictionary *objects; // key - JS anchor name : value - ARAnchor NSUUID string
+    NSDictionary* computerVisionData;
 }
 
 @property (nonatomic, strong) id<ARKControllerProtocol> controller;
@@ -26,6 +29,21 @@
 
 @property(nonatomic) ShowMode showMode;
 @property(nonatomic) ShowOptions showOptions;
+
+/*
+ Computer vision properties
+ We hold different data structures, like accelerate, NSData, and NSString buffers,
+ to avoid allocating/deallocating a huge amount of memory on each frame
+ */
+@property vImage_Buffer lumaBuffer;
+@property CGSize lumaBufferSize;
+@property(nonatomic, strong) NSMutableData* lumaDataBuffer;
+@property(nonatomic, strong) NSMutableString* lumaBase64StringBuffer;
+
+@property vImage_Buffer chromaBuffer;
+@property CGSize chromaBufferSize;
+@property(nonatomic, strong) NSMutableData* chromaDataBuffer;
+@property(nonatomic, strong) NSMutableString* chromaBase64StringBuffer;
 
 @end
 
@@ -88,6 +106,11 @@
         [[self controller] setHitTestFocusPoint:[[[self controller] renderView] center]];
 
         self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
+        
+        self.lumaDataBuffer = nil;
+        self.lumaBase64StringBuffer = nil;
+        self.chromaDataBuffer = nil;
+        self.chromaBase64StringBuffer = nil;
     }
     
     return self;
@@ -161,11 +184,20 @@
     return [data copy];
 }
 
+- (NSDictionary*)computerVisionData {
+    NSDictionary* data;
+    
+    os_unfair_lock_lock(&(lock));
+    data = computerVisionData;
+    os_unfair_lock_unlock(&(lock));
+    
+    return [data copy];
+}
+
 - (void)resumeSessionWithAppState: (AppState*)state {
     [self setRequest:[state aRRequest]];
     
     [[self session] runWithConfiguration:[self configuration]];
-    
     [self setupDeviceCamera];
     
     [self setShowMode:[state showMode]];
@@ -317,11 +349,240 @@
                 [addedAnchorsSinceLastFrame removeAllObjects];
                 newData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
             }
-
+            if ([[self request][WEB_AR_CV_INFORMATION_OPTION] boolValue])
+            {
+                NSMutableDictionary *cameraInformation = [NSMutableDictionary new];
+                CGSize cameraImageResolution = [[frame camera] imageResolution];
+                cameraInformation[@"cameraImageResolution"] = @{
+                                                                @"width": @(cameraImageResolution.width),
+                                                                @"height": @(cameraImageResolution.height)
+                                                                };
+                
+                
+                matrix_float3x3 cameraIntrinsics = [[frame camera] intrinsics];
+                matrix_float3x3 resizedCameraIntrinsics = [[frame camera] intrinsics];
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        resizedCameraIntrinsics.columns[i][j] = cameraIntrinsics.columns[i][j]/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
+                    }
+                }
+                
+                
+                cameraInformation[@"cameraIntrinsics"] = arrayFromMatrix3x3(resizedCameraIntrinsics);
+                
+                // Get the projection matrix
+                CGSize viewportSize = [[self controller] renderView].frame.size;
+                matrix_float4x4 projectionMatrix = [[frame camera] projectionMatrixForOrientation:self.interfaceOrientation
+                                                                                     viewportSize:viewportSize
+                                                                                            zNear:AR_CAMERA_PROJECTION_MATRIX_Z_NEAR
+                                                                                             zFar:AR_CAMERA_PROJECTION_MATRIX_Z_FAR];
+                cameraInformation[@"projectionMatrix"] = arrayFromMatrix4x4(projectionMatrix);
+                
+                // Get the view matrix
+                matrix_float4x4 viewMatrix = [frame.camera viewMatrixForOrientation:self.interfaceOrientation];
+                cameraInformation[@"viewMatrix"] = arrayFromMatrix4x4(viewMatrix);
+                
+                
+                // Send also the interface orientation
+                cameraInformation[@"interfaceOrientation"] = @(self.interfaceOrientation);
+                
+                NSMutableDictionary *cvInformation = [NSMutableDictionary new];
+                NSMutableDictionary *frameInformation = [NSMutableDictionary new];
+                NSInteger timestamp = [frame timestamp];
+                frameInformation[@"timestamp"] = @(timestamp);
+                
+                // TODO: prepare depth data
+                frameInformation[@"capturedDepthData"] = nil;
+                frameInformation[@"capturedDepthDataTimestamp"] = nil;
+                
+                // Computer vision data
+                [self updateBase64BuffersFromPixelBuffer:frame.capturedImage];
+                
+                NSMutableDictionary *lumaBufferDictionary = [NSMutableDictionary new];
+                lumaBufferDictionary[@"size"] = @{
+                                        @"width": @(self.lumaBufferSize.width),
+                                        @"height": @(self.lumaBufferSize.height)
+                                        };
+                lumaBufferDictionary[@"buffer"] = self.lumaBase64StringBuffer;
+                
+                
+                NSMutableDictionary *chromaBufferDictionary = [NSMutableDictionary new];
+                chromaBufferDictionary[@"size"] = @{
+                                        @"width": @(self.chromaBufferSize.width),
+                                        @"height": @(self.chromaBufferSize.height)
+                                        };
+                chromaBufferDictionary[@"buffer"] = self.chromaBase64StringBuffer;
+                
+                frameInformation[@"buffers"] = @[lumaBufferDictionary, chromaBufferDictionary];
+                frameInformation[@"pixelFormatType"] = [self stringForOSType:CVPixelBufferGetPixelFormatType(frame.capturedImage)];
+                
+                cvInformation[@"frame"] = frameInformation;
+                cvInformation[@"camera"] = cameraInformation;
+                
+                os_unfair_lock_lock(&(lock));
+                computerVisionData = [cvInformation copy];
+                os_unfair_lock_unlock(&(lock));
+            }
+            
             os_unfair_lock_lock(&(lock));
             arkData = [newData copy];
             os_unfair_lock_unlock(&(lock));
         }
+    }
+}
+
+-(void)logPixelBufferInfo:(CVPixelBufferRef)capturedImagePixelBuffer {
+    size_t capturedImagePixelBufferWidth = CVPixelBufferGetWidth(capturedImagePixelBuffer);
+    size_t capturedImagePixelBufferHeight = CVPixelBufferGetHeight(capturedImagePixelBuffer);
+    size_t capturedImagePixelBufferBytesPerRow = CVPixelBufferGetBytesPerRow(capturedImagePixelBuffer);
+    size_t capturedImageNumberOfPlanes = CVPixelBufferGetPlaneCount(capturedImagePixelBuffer);
+    CFTypeID capturedImagePixelBufferTypeID = CVPixelBufferGetTypeID();
+    size_t capturedImagePixelBufferDataSize = CVPixelBufferGetDataSize(capturedImagePixelBuffer);
+    OSType capturedImagePixelBufferPixelFormatType = CVPixelBufferGetPixelFormatType(capturedImagePixelBuffer);
+    void* capturedImagePixelBufferBaseAddress = CVPixelBufferGetBaseAddress(capturedImagePixelBuffer);
+
+    NSLog(@"\n\nnumberOfPlanes: %zu\npixelBufferWidth: %zu\npixelBufferHeight: %zu\npixelBufferTypeID: %lu\npixelBufferDataSize: %zu\npixelBufferBytesPerRow: %zu\npixelBufferPIxelFormatType: %@\npixelBufferBaseAddress: %p\n",
+          capturedImageNumberOfPlanes,
+          capturedImagePixelBufferWidth,
+          capturedImagePixelBufferHeight,
+          capturedImagePixelBufferTypeID,
+          capturedImagePixelBufferDataSize,
+          capturedImagePixelBufferBytesPerRow,
+          [self stringForOSType:capturedImagePixelBufferPixelFormatType],
+          capturedImagePixelBufferBaseAddress);
+}
+
+-(void)updateBase64BuffersFromPixelBuffer:(CVPixelBufferRef)capturedImagePixelBuffer {
+
+    //[self logPixelBufferInfo:capturedImagePixelBuffer];
+    
+    // Luma
+    CVPixelBufferLockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+
+    size_t lumaBufferWidth = CVPixelBufferGetWidthOfPlane(capturedImagePixelBuffer, 0);
+    size_t lumaBufferHeight = CVPixelBufferGetHeightOfPlane(capturedImagePixelBuffer, 0);
+    
+    vImage_Buffer lumaSrcBuffer;
+    lumaSrcBuffer.data = CVPixelBufferGetBaseAddressOfPlane(capturedImagePixelBuffer, 0);
+    lumaSrcBuffer.width = lumaBufferWidth;
+    lumaSrcBuffer.height = lumaBufferHeight;
+    lumaSrcBuffer.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(capturedImagePixelBuffer, 0);
+    
+    vImagePixelCount targetWidth = lumaBufferWidth/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
+    vImagePixelCount targetHeight = lumaBufferHeight/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
+    
+    self.lumaBufferSize = CGSizeMake(targetWidth, targetHeight);
+    self.chromaBufferSize = CGSizeMake(targetWidth/2.0, targetHeight/2.0);
+    
+    if (self.lumaBuffer.data == nil) {
+        vImageBuffer_Init(&self->_lumaBuffer, self.lumaBufferSize.height, self.lumaBufferSize.width, 8 * sizeof(Pixel_8), kvImageNoFlags);
+    }
+
+    vImage_Error scaleError = vImageScale_Planar8(&lumaSrcBuffer, &self->_lumaBuffer, NULL, kvImageNoFlags);
+    if (scaleError != 0) {
+        NSLog(@"Error scaling luma image");
+        CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+        return;
+    }
+    
+    if (self.lumaDataBuffer == nil) {
+        self.lumaDataBuffer = [NSMutableData dataWithBytes:self.lumaBuffer.data length:self.lumaBuffer.rowBytes * self.lumaBuffer.height];
+    }
+    [self.lumaDataBuffer setData:[NSData dataWithBytes:self.lumaBuffer.data length:self.lumaBuffer.rowBytes * self.lumaBuffer.height]];
+    
+    if (self.lumaBase64StringBuffer == nil) {
+        self.lumaBase64StringBuffer = [NSMutableString new];
+    }
+    [self.lumaBase64StringBuffer setString:[self.lumaDataBuffer base64EncodedStringWithOptions:0]];
+    
+
+    // Chroma
+    vImage_Buffer chromaSrcBuffer;
+    chromaSrcBuffer.data = CVPixelBufferGetBaseAddressOfPlane(capturedImagePixelBuffer, 1);
+    chromaSrcBuffer.width = CVPixelBufferGetWidthOfPlane(capturedImagePixelBuffer, 1);
+    chromaSrcBuffer.height = CVPixelBufferGetHeightOfPlane(capturedImagePixelBuffer, 1);
+    chromaSrcBuffer.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(capturedImagePixelBuffer, 1);
+    
+    if (self->_chromaBuffer.data == nil) {
+        vImageBuffer_Init(&self->_chromaBuffer, self.chromaBufferSize.height, self.chromaBufferSize.width, 8 * sizeof(Pixel_16U), kvImageNoFlags);
+    }
+
+    scaleError = vImageScale_CbCr8(&chromaSrcBuffer, &self->_chromaBuffer, NULL, kvImageNoFlags);
+    if (scaleError != 0) {
+        NSLog(@"Error scaling chroma image");
+        CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+        return;
+    }
+
+    if (self.chromaDataBuffer == nil) {
+        self.chromaDataBuffer = [NSMutableData dataWithBytes:self.chromaBuffer.data length:self.chromaBuffer.rowBytes * self.chromaBuffer.height];
+    }
+    [self.chromaDataBuffer setData:[NSData dataWithBytes:self.chromaBuffer.data length:self.chromaBuffer.rowBytes * self.chromaBuffer.height]];
+
+    if (self.chromaBase64StringBuffer == nil) {
+        self.chromaBase64StringBuffer = [NSMutableString new];
+    }
+    [self.chromaBase64StringBuffer setString:[self.chromaDataBuffer base64EncodedStringWithOptions:0]];
+    
+    CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+}
+
+- (NSString *)stringForOSType:(OSType)type {
+    switch (type) {
+        case kCVPixelFormatType_1Monochrome:                   return @"kCVPixelFormatType_1Monochrome";
+        case kCVPixelFormatType_2Indexed:                      return @"kCVPixelFormatType_2Indexed";
+        case kCVPixelFormatType_4Indexed:                      return @"kCVPixelFormatType_4Indexed";
+        case kCVPixelFormatType_8Indexed:                      return @"kCVPixelFormatType_8Indexed";
+        case kCVPixelFormatType_1IndexedGray_WhiteIsZero:      return @"kCVPixelFormatType_1IndexedGray_WhiteIsZero";
+        case kCVPixelFormatType_2IndexedGray_WhiteIsZero:      return @"kCVPixelFormatType_2IndexedGray_WhiteIsZero";
+        case kCVPixelFormatType_4IndexedGray_WhiteIsZero:      return @"kCVPixelFormatType_4IndexedGray_WhiteIsZero";
+        case kCVPixelFormatType_8IndexedGray_WhiteIsZero:      return @"kCVPixelFormatType_8IndexedGray_WhiteIsZero";
+        case kCVPixelFormatType_16BE555:                       return @"kCVPixelFormatType_16BE555";
+        case kCVPixelFormatType_16LE555:                       return @"kCVPixelFormatType_16LE555";
+        case kCVPixelFormatType_16LE5551:                      return @"kCVPixelFormatType_16LE5551";
+        case kCVPixelFormatType_16BE565:                       return @"kCVPixelFormatType_16BE565";
+        case kCVPixelFormatType_16LE565:                       return @"kCVPixelFormatType_16LE565";
+        case kCVPixelFormatType_24RGB:                         return @"kCVPixelFormatType_24RGB";
+        case kCVPixelFormatType_24BGR:                         return @"kCVPixelFormatType_24BGR";
+        case kCVPixelFormatType_32ARGB:                        return @"kCVPixelFormatType_32ARGB";
+        case kCVPixelFormatType_32BGRA:                        return @"kCVPixelFormatType_32BGRA";
+        case kCVPixelFormatType_32ABGR:                        return @"kCVPixelFormatType_32ABGR";
+        case kCVPixelFormatType_32RGBA:                        return @"kCVPixelFormatType_32RGBA";
+        case kCVPixelFormatType_64ARGB:                        return @"kCVPixelFormatType_64ARGB";
+        case kCVPixelFormatType_48RGB:                         return @"kCVPixelFormatType_48RGB";
+        case kCVPixelFormatType_32AlphaGray:                   return @"kCVPixelFormatType_32AlphaGray";
+        case kCVPixelFormatType_16Gray:                        return @"kCVPixelFormatType_16Gray";
+        case kCVPixelFormatType_30RGB:                         return @"kCVPixelFormatType_30RGB";
+        case kCVPixelFormatType_422YpCbCr8:                    return @"kCVPixelFormatType_422YpCbCr8";
+        case kCVPixelFormatType_4444YpCbCrA8:                  return @"kCVPixelFormatType_4444YpCbCrA8";
+        case kCVPixelFormatType_4444YpCbCrA8R:                 return @"kCVPixelFormatType_4444YpCbCrA8R";
+        case kCVPixelFormatType_4444AYpCbCr8:                  return @"kCVPixelFormatType_4444AYpCbCr8";
+        case kCVPixelFormatType_4444AYpCbCr16:                 return @"kCVPixelFormatType_4444AYpCbCr16";
+        case kCVPixelFormatType_444YpCbCr8:                    return @"kCVPixelFormatType_444YpCbCr8";
+        case kCVPixelFormatType_422YpCbCr16:                   return @"kCVPixelFormatType_422YpCbCr16";
+        case kCVPixelFormatType_422YpCbCr10:                   return @"kCVPixelFormatType_422YpCbCr10";
+        case kCVPixelFormatType_444YpCbCr10:                   return @"kCVPixelFormatType_444YpCbCr10";
+        case kCVPixelFormatType_420YpCbCr8Planar:              return @"kCVPixelFormatType_420YpCbCr8Planar";
+        case kCVPixelFormatType_420YpCbCr8PlanarFullRange:     return @"kCVPixelFormatType_420YpCbCr8PlanarFullRange";
+        case kCVPixelFormatType_422YpCbCr_4A_8BiPlanar:        return @"kCVPixelFormatType_422YpCbCr_4A_8BiPlanar";
+        case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange:  return @"kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange";
+        case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange:   return @"kCVPixelFormatType_420YpCbCr8BiPlanarFullRange";
+        case kCVPixelFormatType_422YpCbCr8_yuvs:               return @"kCVPixelFormatType_422YpCbCr8_yuvs";
+        case kCVPixelFormatType_422YpCbCr8FullRange:           return @"kCVPixelFormatType_422YpCbCr8FullRange";
+        case kCVPixelFormatType_OneComponent8:                 return @"kCVPixelFormatType_OneComponent8";
+        case kCVPixelFormatType_TwoComponent8:                 return @"kCVPixelFormatType_TwoComponent8";
+        case kCVPixelFormatType_30RGBLEPackedWideGamut:        return @"kCVPixelFormatType_30RGBLEPackedWideGamut";
+        case kCVPixelFormatType_OneComponent16Half:            return @"kCVPixelFormatType_OneComponent16Half";
+        case kCVPixelFormatType_OneComponent32Float:           return @"kCVPixelFormatType_OneComponent32Float";
+        case kCVPixelFormatType_TwoComponent16Half:            return @"kCVPixelFormatType_TwoComponent16Half";
+        case kCVPixelFormatType_TwoComponent32Float:           return @"kCVPixelFormatType_TwoComponent32Float";
+        case kCVPixelFormatType_64RGBAHalf:                    return @"kCVPixelFormatType_64RGBAHalf";
+        case kCVPixelFormatType_128RGBAFloat:                  return @"kCVPixelFormatType_128RGBAFloat";
+        case kCVPixelFormatType_14Bayer_GRBG:                  return @"kCVPixelFormatType_14Bayer_GRBG";
+        case kCVPixelFormatType_14Bayer_RGGB:                  return @"kCVPixelFormatType_14Bayer_RGGB";
+        case kCVPixelFormatType_14Bayer_BGGR:                  return @"kCVPixelFormatType_14Bayer_BGGR";
+        case kCVPixelFormatType_14Bayer_GBRG:                  return @"kCVPixelFormatType_14Bayer_GBRG";
+        default: return @"UNKNOWN";
     }
 }
 

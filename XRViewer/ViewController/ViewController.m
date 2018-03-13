@@ -277,6 +277,9 @@ typedef void (^UICompletion)(void);
              } else {
                  NSLog(@"This site is the last XR site visited, and it's been less than %d minutes since we last visited, so resuming the ARKit session", minutesBetweenPausedSessions);
                  [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
+                 if (dict[WEB_AR_CV_INFORMATION_OPTION]) {
+                     [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
+                 }
              }
          }
          [[NSUserDefaults standardUserDefaults] setObject:[NSDate new] forKey:lastRequestTimeKey];
@@ -307,6 +310,9 @@ typedef void (^UICompletion)(void);
     [self setupLocationController];
     [[self locationManager] setupForRequest:request];
     [self setupARKController];
+    if (request[WEB_AR_CV_INFORMATION_OPTION]) {
+        [[[self stateController] state] setComputerVisionDataRequested:YES];
+    }
 }
 
 - (void)setupAnimator
@@ -442,6 +448,11 @@ typedef void (^UICompletion)(void);
          if ([[blockSelf stateController] shouldSendARKData])
          {
              [blockSelf sendARKData];
+         }
+
+         if ([[blockSelf stateController] shouldSendCVData]) {
+             [blockSelf sendComputerVisionData];
+             [[[blockSelf stateController] state] setComputerVisionDataRequested:NO];
          }
      }];
     [[self arkController] setDidFailSession:^(NSError *error)
@@ -641,6 +652,10 @@ typedef void (^UICompletion)(void);
         [[blockSelf webController] hideKeyboard];
         [[blockSelf stateController] setShowMode:ShowNothing];
         [blockSelf presentViewController:navigationController animated:YES completion:nil];
+    }];
+
+    [[self webController] setOnComputerVisionDataRequested:^{
+        [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
     }];
 
     [[self webController] setOnResetTrackingButtonTapped:^{
@@ -865,6 +880,10 @@ typedef void (^UICompletion)(void);
 - (void)sendARKData
 {
     [[self webController] sendARData:[self commonData]];
+}
+
+-(void)sendComputerVisionData {
+    [[self webController] sendComputerVisionData:[[self arkController] computerVisionData]];
 }
 
 #pragma mark Web

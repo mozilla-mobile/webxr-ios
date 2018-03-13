@@ -21,6 +21,7 @@ typedef void (^OnAddAnchor)(NSString *, NSArray *, ResultBlock);
 typedef void (^OnDebugButtonToggled)(BOOL);
 typedef void (^OnSettingsButtonTapped)(void);
 typedef void (^OnWatchAR)(NSDictionary *);
+typedef void (^OnComputerVisionDataRequested)(void);
 typedef void (^OnStopAR)(void);
 typedef void (^OnResetTrackingButtonTapped)(void);
 
@@ -41,6 +42,7 @@ typedef void (^OnResetTrackingButtonTapped)(void);
 @property(nonatomic, copy) OnDebugButtonToggled onDebugButtonToggled;
 @property(nonatomic, copy) OnSettingsButtonTapped onSettingsButtonTapped;
 @property(nonatomic, copy) OnWatchAR onWatchAR;
+@property(nonatomic, copy) OnComputerVisionDataRequested onComputerVisionDataRequested;
 @property(nonatomic, copy) OnStopAR onStopAR;
 @property(nonatomic, copy) OnResetTrackingButtonTapped onResetTrackingButtonTapped;
 
@@ -88,5 +90,7 @@ typedef void (^OnResetTrackingButtonTapped)(void);
 - (void)hideKeyboard;
 
 - (void)didReceiveError:(NSError *)error;
+
+- (void)sendComputerVisionData:(NSDictionary *)computerVisionData;
 @end
 
