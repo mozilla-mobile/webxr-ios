@@ -304,6 +304,32 @@
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
 
+- (void)showMessageAboutAccessingTheCapturedImage:(void (^)(BOOL))granted {
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Video Camera Image Access"
+                                                    message:@"WebXR Viewer app isplays video from your camera in the background without automatically giving access to those images to the web page. This page is requesting access to images from the video camera\nAllow?"
+                                                      image:nil
+                                            buttonAlignment:UILayoutConstraintAxisHorizontal
+                                            transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:340.0
+                                           gestureDismissal:NO
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+    ];
+
+    DestructiveButton *ok = [[DestructiveButton alloc] initWithTitle:@"YES" height:40 dismissOnTap:YES action:^{
+        granted(true);
+    }];
+    ok.titleColor = UIColor.blueColor;
+
+    DefaultButton *cancel = [[DefaultButton alloc] initWithTitle:@"NO" height:40 dismissOnTap:YES action:^{
+        granted(false);
+    }];
+
+    [popup addButtons: @[cancel, ok]];
+
+    [[self viewController] presentViewController:popup animated:YES completion:nil];
+}
+
 
 #pragma mark private
 

@@ -569,9 +569,24 @@ typedef void (^UICompletion)(void);
      }];
 
     [[self webController] setOnWatchAR:^( NSDictionary * _Nullable request){
-        [[blockSelf stateController] setARRequest:request];
-        [[blockSelf stateController] setWebXR:YES];
-        [[blockSelf stateController] setShowMode:ShowSingle];
+        if (request[WEB_AR_CV_INFORMATION_OPTION]) {
+            [[blockSelf messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
+                if (granted) {
+                    [[blockSelf stateController] setARRequest:request];
+                } else {
+                    NSMutableDictionary* dictionary = [request mutableCopy];
+                    dictionary[WEB_AR_CV_INFORMATION_OPTION] = nil;
+                    [[blockSelf stateController] setARRequest:dictionary];
+                }
+                
+                [[blockSelf stateController] setWebXR:YES];
+                [[blockSelf stateController] setShowMode:ShowSingle];
+            }];
+        } else {
+            [[blockSelf stateController] setARRequest:request];
+            [[blockSelf stateController] setWebXR:YES];
+            [[blockSelf stateController] setShowMode:ShowSingle];
+        }
     }];
 
     [[self webController] setOnStopAR:^{

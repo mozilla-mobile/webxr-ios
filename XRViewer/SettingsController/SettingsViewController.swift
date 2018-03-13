@@ -20,7 +20,7 @@ class SettingsViewController: UIViewController {
     let privacyNoticeLabelText = "Privacy Notice"
     
     var tableView: UITableView!
-    var onDoneButtonTapped: (() -> Void)?
+    @objc var onDoneButtonTapped: (() -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()

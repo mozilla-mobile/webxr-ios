@@ -5,9 +5,11 @@ PODS:
   - CocoaLumberjack/Default (3.3.0)
   - CocoaLumberjack/Extensions (3.3.0):
     - CocoaLumberjack/Default
+  - DynamicBlurView (2.0.2)
   - MozillaTelemetry (1.0.10)
   - pop (1.0.10)
-  - PopupDialog (0.6.2)
+  - PopupDialog (0.7.1):
+    - DynamicBlurView (~> 2.0)
 
 DEPENDENCIES:
   - CocoaLumberjack
@@ -27,10 +29,11 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   CocoaLumberjack: 3c8c74683302f9012bb168e1c4b7ae3c0b558431
+  DynamicBlurView: aa6db4defc6e537eb86fc5e58dd3991666178399
   MozillaTelemetry: 5154e88588516c0f047108817fdd85b312e69c7e
   pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
-  PopupDialog: d4336d7274a6aa3af4cb26d8b6691510eba90cc3
+  PopupDialog: 39598b7d41719f5c025b4b70e62728bae7734fef
 
-PODFILE CHECKSUM: c99d3898f172ba5c7c6f86bcfe5dee2dad04052b
+PODFILE CHECKSUM: 80950c8789b6d235abe22c2c4a753d8af8998191
 
 COCOAPODS: 1.4.0

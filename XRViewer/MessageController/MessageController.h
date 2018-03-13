@@ -36,4 +36,6 @@ typedef void (^DidHideMessageByUser)(void);
 - (void)showSettingsPopup:(void (^)(BOOL))responseBock;
 
 - (void)showMessageAboutResetTracking:(void (^)(BOOL))responseBlock;
+
+- (void)showMessageAboutAccessingTheCapturedImage:(void (^)(BOOL))granted;
 @end
