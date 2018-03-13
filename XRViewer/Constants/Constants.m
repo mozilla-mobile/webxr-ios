@@ -10,3 +10,7 @@
 
 NSString *const useAnalyticsKey = @"useAnalytics";
 NSString *const homeURLKey = @"homeURL";
+NSString *const lastTimeARSessionWasPausedKey = @"lastTimeARSessionWasPaused";
+int const minutesBetweenPausedSessions = 5;
+int const minSecondsNeededForANewARRequestToProvokeAResume = 15;
+NSString *const lastRequestTimeKey = @"lastRequestTimeKey";

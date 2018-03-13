@@ -40,7 +40,7 @@
                             </connections>
                         </button>
                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="T5z-0b-MVG" customClass="URLTextField">
-                            <rect key="frame" x="67" y="5.5" width="182" height="29.5"/>
+                            <rect key="frame" x="67" y="5.5" width="140" height="29.5"/>
                             <color key="backgroundColor" red="0.87058823529411766" green="0.87450980392156863" blue="0.87058823529411766" alpha="0.69512521404109584" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="29.5" id="JiL-UK-7MC"/>
@@ -49,6 +49,17 @@
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" textContentType="url"/>
                         </textField>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kX6-cA-A5y">
+                            <rect key="frame" x="209" y="0.0" width="40" height="40"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="40" id="UuK-oG-BRL"/>
+                                <constraint firstAttribute="height" constant="40" id="o0v-lK-Ja8"/>
+                            </constraints>
+                            <state key="normal" title="R"/>
+                            <connections>
+                                <action selector="restartTrackingAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="oHp-3h-qUe"/>
+                            </connections>
+                        </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gip-B1-QYb" userLabel="Debug Btn">
                             <rect key="frame" x="251" y="0.0" width="40" height="40"/>
                             <constraints>
@@ -108,6 +119,7 @@
                 <outlet property="debugBtn" destination="Gip-B1-QYb" id="JqR-Zg-PX6"/>
                 <outlet property="forwardBtn" destination="Feq-Eq-O9v" id="PZu-iD-Ele"/>
                 <outlet property="homeBtn" destination="eTd-Vy-1bs" id="wln-Fj-oBZ"/>
+                <outlet property="restartTrackingBtn" destination="kX6-cA-A5y" id="Jn4-3Z-e7R"/>
                 <outlet property="settingsBtn" destination="OYK-Dm-FZm" id="0vg-mf-1R7"/>
                 <outlet property="urlField" destination="T5z-0b-MVG" id="mck-MR-ueM"/>
             </connections>

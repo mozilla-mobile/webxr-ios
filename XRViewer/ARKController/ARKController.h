@@ -17,6 +17,9 @@
 // World tracking has encountered a fatal error.
 #define WORLD_TRACKING_FAILED_ARKIT_ERROR_CODE 200
 
+// Appy this scale factor to the captured image before sending it to the JS side
+#define COMPUTER_VISION_IMAGE_SCALE_FACTOR 4.0
+
 
 typedef NS_ENUM(NSUInteger, ARKType)
 {
@@ -59,16 +62,20 @@ typedef void (^DidUpdateWindowSize)(void);
 
 - (NSDictionary *)arkData;
 
+- (NSDictionary*)computerVisionData;
+
 - (void)setShowMode:(ShowMode)mode;
 - (void)setShowOptions:(ShowOptions)options;
 
 - (NSArray *)hitTestNormPoint:(CGPoint)point types:(NSUInteger)type;
-- (BOOL)addAnchor:(NSString *)name transform:(NSArray *)transform;
+- (BOOL)addAnchor:(NSString *)userGeneratedAnchorID transform:(NSArray *)transform;
 
 - (void)removeAnchors:(NSArray *)anchorNames;
 
 - (NSArray *)currentPlanesArray;
 
 - (NSString *)trackingState;
+
+- (void)removeAllAnchors;
 @end
 

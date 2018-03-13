@@ -261,13 +261,28 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
      {
-         if (![[[[[blockSelf webController] webView] URL] absoluteString] isEqualToString:[[blockSelf webController] lastXRVisitedURL]]) {
-             [blockSelf setupLocationController];
-             [[blockSelf locationManager] setupForRequest:dict];
-             [blockSelf setupARKController];
+         if ([self urlIsNotTheLastXRVisitedURL]) {
+             NSLog(@"This site is not the last XR site visited, so setting up a new ARKit session");
+             [blockSelf startNewARKitSessionWithRequest:dict];
          } else {
-             [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
+             NSDate* lastRequestTime = [[NSUserDefaults standardUserDefaults] objectForKey:lastRequestTimeKey];
+             NSDate* lastTimeARSessionWasPaused = [[NSUserDefaults standardUserDefaults] objectForKey:lastTimeARSessionWasPausedKey];
+             NSDate* now = [NSDate new];
+             if (lastTimeARSessionWasPaused && [now timeIntervalSinceDate:lastTimeARSessionWasPaused] >= minutesBetweenPausedSessions * 60) {
+                 NSLog(@"This site is the last XR site visited, and it's been more than %d minutes since we last visited, so setting up a new ARKit session", minutesBetweenPausedSessions);
+                 [blockSelf startNewARKitSessionWithRequest:dict];
+             } else if ([now timeIntervalSinceDate:lastRequestTime] < minSecondsNeededForANewARRequestToProvokeAResume) {
+                 NSLog(@"It's been less than %d seconds since the last time we reloaded, so setting up a new ARKit session", minSecondsNeededForANewARRequestToProvokeAResume);
+                 [blockSelf startNewARKitSessionWithRequest:dict];
+             } else {
+                 NSLog(@"This site is the last XR site visited, and it's been less than %d minutes since we last visited, so resuming the ARKit session", minutesBetweenPausedSessions);
+                 [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
+                 if (dict[WEB_AR_CV_INFORMATION_OPTION]) {
+                     [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
+                 }
+             }
          }
+         [[NSUserDefaults standardUserDefaults] setObject:[NSDate new] forKey:lastRequestTimeKey];
      }];
     
     [[self stateController] setOnInterruption:^(BOOL interruption)
@@ -284,6 +299,20 @@ typedef void (^UICompletion)(void);
          [[blockSelf recordController] setMicEnabled:enabled];
          [[blockSelf overlayController] setMicEnabled:enabled];
      }];
+}
+
+-(BOOL)urlIsNotTheLastXRVisitedURL {
+    return ![[[[[self webController] webView] URL] absoluteString] isEqualToString:[[self webController] lastXRVisitedURL]];
+}
+
+- (void)startNewARKitSessionWithRequest: (NSDictionary*)request {
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:lastTimeARSessionWasPausedKey];
+    [self setupLocationController];
+    [[self locationManager] setupForRequest:request];
+    [self setupARKController];
+    if (request[WEB_AR_CV_INFORMATION_OPTION]) {
+        [[[self stateController] state] setComputerVisionDataRequested:YES];
+    }
 }
 
 - (void)setupAnimator
@@ -420,6 +449,11 @@ typedef void (^UICompletion)(void);
          {
              [blockSelf sendARKData];
          }
+
+         if ([[blockSelf stateController] shouldSendCVData]) {
+             [blockSelf sendComputerVisionData];
+             [[[blockSelf stateController] state] setComputerVisionDataRequested:NO];
+         }
      }];
     [[self arkController] setDidFailSession:^(NSError *error)
     {
@@ -542,6 +576,7 @@ typedef void (^UICompletion)(void);
 
     [[self webController] setOnStopAR:^{
         [[blockSelf arkController] pauseSession];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSDate new] forKey:lastTimeARSessionWasPausedKey];
         [[blockSelf stateController] setWebXR:NO];
         [[blockSelf stateController] setShowMode:ShowNothing];
     }];
@@ -618,7 +653,20 @@ typedef void (^UICompletion)(void);
         [[blockSelf stateController] setShowMode:ShowNothing];
         [blockSelf presentViewController:navigationController animated:YES completion:nil];
     }];
-    
+
+    [[self webController] setOnComputerVisionDataRequested:^{
+        [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
+    }];
+
+    [[self webController] setOnResetTrackingButtonTapped:^{
+
+        [[blockSelf messageController] showMessageAboutResetTracking:^(BOOL resetTracking){
+            if (resetTracking) {
+                [[blockSelf arkController] removeAllAnchors];
+            }
+        }];
+    }];
+
     if ([[self stateController] wasMemoryWarning])
     {
         [[self stateController] applyOnDidReceiveMemoryAction];
@@ -832,6 +880,10 @@ typedef void (^UICompletion)(void);
 - (void)sendARKData
 {
     [[self webController] sendARData:[self commonData]];
+}
+
+-(void)sendComputerVisionData {
+    [[self webController] sendComputerVisionData:[[self arkController] computerVisionData]];
 }
 
 #pragma mark Web

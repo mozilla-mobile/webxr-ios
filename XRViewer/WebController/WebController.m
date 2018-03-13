@@ -16,6 +16,7 @@
 
 @property (nonatomic, weak) BarView *barView;
 @property (nonatomic, weak) NSLayoutConstraint* barViewTopAnchorConstraint;
+@property (nonatomic, strong) NSString* documentReadyState;
 @end
 
 typedef void (^WebCompletion)(id _Nullable param, NSError * _Nullable error);
@@ -82,6 +83,16 @@ inline static WebCompletion debugCompletion(NSString *name)
     
     return NO;
 }
+
+
+- (void)sendComputerVisionData:(NSDictionary *)computerVisionData {
+    [self callWebMethod:@"onComputerVisionData" paramJSON:computerVisionData webCompletion:^(id  _Nullable param, NSError * _Nullable error) {
+        if (error != nil) {
+            NSLog(@"Error onComputerVisionData: %@", [error localizedDescription]);
+        }
+    }];
+}
+
 
 - (void)reload
 {
@@ -154,6 +165,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     {
         [[self barView] hideKeyboard];
         [[self barView] setDebugVisible:webXR];
+        [[self barView] setRestartTrackingVisible:webXR];
         [[self barView] setDebugSelected:NO];
         float webViewTopAnchorConstraintConstant = webXR? 0.0f: URL_BAR_HEIGHT;
         [[self webViewTopAnchorConstraint] setConstant:webViewTopAnchorConstraintConstant];
@@ -315,6 +327,10 @@ inline static WebCompletion debugCompletion(NSString *name)
                            {
                                [blockSelf callWebMethod:hitCallback paramJSON:results webCompletion:debugCompletion(@"onAddAnchor")];
                            });
+    } else if ([[message name] isEqualToString:WEB_AR_REQUEST_CV_DATA_MESSAGE]) {
+        if ([self onComputerVisionDataRequested]) {
+            [self onComputerVisionDataRequested]();
+        }
     }
     else
     {
@@ -348,7 +364,10 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(null_unspecified WKNavigation *)navigation
 {
-    DDLogDebug(@"didStartProvisionalNavigation - %@", navigation);
+    DDLogDebug(@"didStartProvisionalNavigation - %@\n on thread %@", navigation, [[NSThread currentThread] description]);
+
+    [[self webView] addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
+    self.documentReadyState = nil;
     
     [self onStartLoad]();
     
@@ -360,21 +379,27 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
 {
     DDLogDebug(@"didFinishNavigation - %@", navigation);
-    NSString* loadedURL = [[[self webView] URL] absoluteString];
-    [self setLastURL:loadedURL];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:loadedURL forKey:LAST_URL_KEY];
-    
-    [self onFinishLoad]();
-    
-    [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
-    [[self barView] setBackEnabled:[[self webView] canGoBack]];
-    [[self barView] setForwardEnabled:[[self webView] canGoForward]];
+//    NSString* loadedURL = [[[self webView] URL] absoluteString];
+//    [self setLastURL:loadedURL];
+//
+//    [[NSUserDefaults standardUserDefaults] setObject:loadedURL forKey:LAST_URL_KEY];
+//
+//    [self onFinishLoad]();
+//
+//    [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
+//    [[self barView] setBackEnabled:[[self webView] canGoBack]];
+//    [[self barView] setForwardEnabled:[[self webView] canGoForward]];
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
 {
     DDLogError(@"Web Error - %@", error);
+    
+    @try {
+        [[self webView] removeObserver:self forKeyPath:@"estimatedProgress"];
+    } @catch (NSException* exception) {
+        NSLog(@"%@", [exception description]);
+    }
     
     if ([self shouldShowError:error])
     {
@@ -389,6 +414,12 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error
 {
     DDLogError(@"Web Error - %@", error);
+    
+    @try {
+        [[self webView] removeObserver:self forKeyPath:@"estimatedProgress"];
+    } @catch (NSException* exception) {
+        NSLog(@"%@", [exception description]);
+    }
     
     if ([self shouldShowError:error])
     {
@@ -510,6 +541,12 @@ inline static WebCompletion debugCompletion(NSString *name)
             [blockSelf onSettingsButtonTapped]();
         }
     }];
+
+    [barView setRestartTrackingActionBlock:^{
+        if ([blockSelf onResetTrackingButtonTapped]) {
+            [blockSelf onResetTrackingButtonTapped]();
+        }
+    }];
 }
 
 - (void)setupWebContent
@@ -522,6 +559,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_SET_UI_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_HIT_TEST_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_ADD_ANCHOR_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_REQUEST_CV_DATA_MESSAGE];
 }
 
 - (void)cleanWebContent
@@ -534,6 +572,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_SET_UI_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_HIT_TEST_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ADD_ANCHOR_MESSAGE];
+    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_REQUEST_CV_DATA_MESSAGE];
 }
 
 - (void)setupWebViewWithRootView:(__autoreleasing UIView*)rootView
@@ -575,6 +614,47 @@ inline static WebCompletion debugCompletion(NSString *name)
     [wv setNavigationDelegate:self];
     [wv setUIDelegate:self];
     [self setWebView:wv];
+}
+
+- (void) documentDidBecomeInteractive {
+    NSLog(@"documentDidBecomeInteractive");
+    NSString* loadedURL = [[[self webView] URL] absoluteString];
+    [self setLastURL:loadedURL];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:loadedURL forKey:LAST_URL_KEY];
+    
+    [self onFinishLoad]();
+    
+    [[self barView] finishLoading:[[[self webView] URL] absoluteString]];
+    [[self barView] setBackEnabled:[[self webView] canGoBack]];
+    [[self barView] setForwardEnabled:[[self webView] canGoForward]];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    __weak typeof (self) blockSelf = self;
+    
+    if ([keyPath isEqualToString:@"estimatedProgress"] && object == [blockSelf webView]) {
+        [[blockSelf webView] evaluateJavaScript:@"document.readyState" completionHandler:^(NSString* _Nullable readyState, NSError * _Nullable error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"Estimated progress: %f", [[blockSelf webView] estimatedProgress]);
+                NSLog(@"document.readyState: %@", readyState);
+                
+                if (([readyState isEqualToString:@"interactive"] && ![[blockSelf documentReadyState] isEqualToString:@"interactive"]) ||
+                    ([[blockSelf webView] estimatedProgress] >= 1.0)) {
+                    @try {
+                        [[blockSelf webView] removeObserver:blockSelf forKeyPath:@"estimatedProgress"];
+                        [blockSelf documentDidBecomeInteractive];
+                    }@catch(NSException* exception) {
+                        NSLog(@"%@", [exception description]);
+                    }
+                }
+                
+                blockSelf.documentReadyState = readyState;
+            });
+        }];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 @end

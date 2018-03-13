@@ -120,6 +120,10 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
     return [[self state] webXR] && [[self state] aRRequest];
 }
 
+- (BOOL)shouldSendCVData {
+    return [[self state] computerVisionDataRequested];
+}
+
 - (void)invertMic
 {
     BOOL micEnabledUpdated = ![[self state] micEnabled];
