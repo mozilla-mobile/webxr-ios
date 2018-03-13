@@ -31,9 +31,11 @@
 @property(nonatomic) ShowOptions showOptions;
 
 @property vImage_Buffer lumaBuffer;
+@property CGSize lumaBufferSize;
 @property(nonatomic, strong) NSMutableData* lumaDataBuffer;
 @property(nonatomic, strong) NSMutableString* lumaBase64StringBuffer;
 @property vImage_Buffer chromaBuffer;
+@property CGSize chromaBufferSize;
 @property(nonatomic, strong) NSMutableData* chromaDataBuffer;
 @property(nonatomic, strong) NSMutableString* chromaBase64StringBuffer;
 
@@ -335,33 +337,26 @@
                 [addedAnchorsSinceLastFrame removeAllObjects];
                 newData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
             }
-            if (/*[[self request][WEB_AR_CV_INFORMATION_OPTION] boolValue]*/true)
+            if ([[self request][WEB_AR_CV_INFORMATION_OPTION] boolValue])
             {
-                NSMutableDictionary *cvInformation = [NSMutableDictionary new];
-                NSMutableDictionary *frameInformation = [NSMutableDictionary new];
-                frameInformation[@"size"] = @{
-                                              @"width": @(320),
-                                              @"height": @(180)
-                                              };
-                NSInteger timestamp = [frame timestamp];
-                frameInformation[@"timestamp"] = @(timestamp);
-                
-                // TODO: prepare depth data
-                frameInformation[@"capturedDepthData"] = nil;
-                frameInformation[@"capturedDepthDataTimestamp"] = nil;
-                
-                // Computer vision data
-                [self updateBase64BuffersFromPixelBuffer:frame.capturedImage];
-                
-                frameInformation[@"images"] = @[self.lumaBase64StringBuffer, self.chromaBase64StringBuffer];
-                frameInformation[@"pixelFormatType"] = [self stringForOSType:CVPixelBufferGetPixelFormatType(frame.capturedImage)];
-                
                 NSMutableDictionary *cameraInformation = [NSMutableDictionary new];
                 CGSize cameraImageResolution = [[frame camera] imageResolution];
                 cameraInformation[@"cameraImageResolution"] = @{
                                                                 @"width": @(cameraImageResolution.width),
                                                                 @"height": @(cameraImageResolution.height)
                                                                 };
+                
+                
+                matrix_float3x3 cameraIntrinsics = [[frame camera] intrinsics];
+                matrix_float3x3 resizedCameraIntrinsics = [[frame camera] intrinsics];
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        resizedCameraIntrinsics.columns[i][j] = cameraIntrinsics.columns[i][j]/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
+                    }
+                }
+                
+                
+                cameraInformation[@"cameraIntrinsics"] = arrayFromMatrix3x3(resizedCameraIntrinsics);
                 
                 // Get the projection matrix
                 CGSize viewportSize = [[self controller] renderView].frame.size;
@@ -378,6 +373,36 @@
                 
                 // Send also the interface orientation
                 cameraInformation[@"interfaceOrientation"] = @(self.interfaceOrientation);
+                
+                NSMutableDictionary *cvInformation = [NSMutableDictionary new];
+                NSMutableDictionary *frameInformation = [NSMutableDictionary new];
+                NSInteger timestamp = [frame timestamp];
+                frameInformation[@"timestamp"] = @(timestamp);
+                
+                // TODO: prepare depth data
+                frameInformation[@"capturedDepthData"] = nil;
+                frameInformation[@"capturedDepthDataTimestamp"] = nil;
+                
+                // Computer vision data
+                [self updateBase64BuffersFromPixelBuffer:frame.capturedImage];
+                
+                NSMutableDictionary *lumaBuffer = [NSMutableDictionary new];
+                lumaBuffer[@"size"] = @{
+                                        @"width": @(self.lumaBufferSize.width),
+                                        @"height": @(self.lumaBufferSize.height)
+                                        };
+                lumaBuffer[@"buffer"] = self.lumaBase64StringBuffer;
+                
+                
+                NSMutableDictionary *chromaBuffer = [NSMutableDictionary new];
+                chromaBuffer[@"size"] = @{
+                                        @"width": @(self.chromaBufferSize.width),
+                                        @"height": @(self.chromaBufferSize.height)
+                                        };
+                chromaBuffer[@"buffer"] = self.chromaBase64StringBuffer;
+                
+                frameInformation[@"buffers"] = @[lumaBuffer, chromaBuffer];
+                frameInformation[@"pixelFormatType"] = [self stringForOSType:CVPixelBufferGetPixelFormatType(frame.capturedImage)];
                 
                 cvInformation[@"frame"] = frameInformation;
                 cvInformation[@"camera"] = cameraInformation;
@@ -418,21 +443,27 @@
 -(void)updateBase64BuffersFromPixelBuffer:(CVPixelBufferRef)capturedImagePixelBuffer {
 
     //[self logPixelBufferInfo:capturedImagePixelBuffer];
-
-    vImagePixelCount targetWidth = 320;
-    vImagePixelCount targetHeight = 180;
     
     // Luma
     CVPixelBufferLockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+
+    size_t lumaBufferWidth = CVPixelBufferGetWidthOfPlane(capturedImagePixelBuffer, 0);
+    size_t lumaBufferHeight = CVPixelBufferGetHeightOfPlane(capturedImagePixelBuffer, 0);
     
     vImage_Buffer lumaSrcBuffer;
     lumaSrcBuffer.data = CVPixelBufferGetBaseAddressOfPlane(capturedImagePixelBuffer, 0);
-    lumaSrcBuffer.width = CVPixelBufferGetWidthOfPlane(capturedImagePixelBuffer, 0);
-    lumaSrcBuffer.height = CVPixelBufferGetHeightOfPlane(capturedImagePixelBuffer, 0);
+    lumaSrcBuffer.width = lumaBufferWidth;
+    lumaSrcBuffer.height = lumaBufferHeight;
     lumaSrcBuffer.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(capturedImagePixelBuffer, 0);
     
+    vImagePixelCount targetWidth = lumaBufferWidth/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
+    vImagePixelCount targetHeight = lumaBufferHeight/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
+    
+    self.lumaBufferSize = CGSizeMake(targetWidth, targetHeight);
+    self.chromaBufferSize = CGSizeMake(targetWidth/2.0, targetHeight/2.0);
+    
     if (self.lumaBuffer.data == nil) {
-        vImageBuffer_Init(&self->_lumaBuffer, targetHeight, targetWidth, 8 * sizeof(Pixel_8), kvImageNoFlags);
+        vImageBuffer_Init(&self->_lumaBuffer, self.lumaBufferSize.height, self.lumaBufferSize.width, 8 * sizeof(Pixel_8), kvImageNoFlags);
     }
 
     vImage_Error scaleError = vImageScale_Planar8(&lumaSrcBuffer, &self->_lumaBuffer, NULL, kvImageNoFlags);
@@ -461,7 +492,7 @@
     chromaSrcBuffer.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(capturedImagePixelBuffer, 1);
     
     if (self->_chromaBuffer.data == nil) {
-        vImageBuffer_Init(&self->_chromaBuffer, targetHeight / 2, targetWidth / 2, 8 * sizeof(Pixel_16U), kvImageNoFlags);
+        vImageBuffer_Init(&self->_chromaBuffer, self.chromaBufferSize.height, self.chromaBufferSize.width, 8 * sizeof(Pixel_16U), kvImageNoFlags);
     }
 
     scaleError = vImageScale_CbCr8(&chromaSrcBuffer, &self->_chromaBuffer, NULL, kvImageNoFlags);

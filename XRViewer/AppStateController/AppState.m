@@ -13,6 +13,7 @@
     [copy setMicEnabled:[self micEnabled]];
     [copy setTrackingState:[self trackingState]];
     [copy setInterruption:[self interruption]];
+    [copy setComputerVisionDataRequested:[self computerVisionDataRequested]];
     
     return copy;
 }

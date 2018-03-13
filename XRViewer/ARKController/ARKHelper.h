@@ -9,6 +9,19 @@
 
 #define BOX_SIZE 0.05
 
+static inline NSArray * arrayFromMatrix3x3(matrix_float3x3  matrix)
+{
+    return @[@(matrix.columns[0][0]),
+             @(matrix.columns[0][1]),
+             @(matrix.columns[0][2]),
+             @(matrix.columns[1][0]),
+             @(matrix.columns[1][1]),
+             @(matrix.columns[1][2]),
+             @(matrix.columns[2][0]),
+             @(matrix.columns[2][1]),
+             @(matrix.columns[2][2])];
+}
+
 static inline NSArray * arrayFromMatrix4x4(matrix_float4x4  matrix)
 {
     return @[@(matrix.columns[0][0]),

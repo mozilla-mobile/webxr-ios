@@ -85,8 +85,10 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 
 - (void)sendComputerVisionData:(NSDictionary *)computerVisionData {
-    [self callWebMethod:@"cvData" paramJSON:computerVisionData webCompletion:^(id  _Nullable param, NSError * _Nullable error) {
-        NSLog(@"cvData response");
+    [self callWebMethod:@"onComputerVisionData" paramJSON:computerVisionData webCompletion:^(id  _Nullable param, NSError * _Nullable error) {
+        if (error != nil) {
+            NSLog(@"Error onComputerVisionData: %@", [error localizedDescription]);
+        }
     }];
 }
 
@@ -331,6 +333,10 @@ inline static WebCompletion debugCompletion(NSString *name)
                            {
                                [blockSelf callWebMethod:hitCallback paramJSON:results webCompletion:debugCompletion(@"onAddAnchor")];
                            });
+    } else if ([[message name] isEqualToString:WEB_AR_REQUEST_CV_DATA_MESSAGE]) {
+        if ([self onComputerVisionDataRequested]) {
+            [self onComputerVisionDataRequested]();
+        }
     }
     else
     {
@@ -538,6 +544,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_SET_UI_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_HIT_TEST_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_ADD_ANCHOR_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_REQUEST_CV_DATA_MESSAGE];
 }
 
 - (void)cleanWebContent
@@ -550,6 +557,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_SET_UI_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_HIT_TEST_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ADD_ANCHOR_MESSAGE];
+    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_REQUEST_CV_DATA_MESSAGE];
 }
 
 - (void)setupWebViewWithRootView:(__autoreleasing UIView*)rootView

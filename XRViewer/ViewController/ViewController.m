@@ -269,6 +269,9 @@ typedef void (^UICompletion)(void);
      {
          [[blockSelf locationManager] setupForRequest:dict];
          [[blockSelf arkController] startSessionWithAppState:[[blockSelf stateController] state]];
+         if (dict[WEB_AR_CV_INFORMATION_OPTION]) {
+             [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
+         }
      }];
     
     [[self stateController] setOnInterruption:^(BOOL interruption)
@@ -422,7 +425,11 @@ typedef void (^UICompletion)(void);
          {
              [blockSelf sendARKData];
          }
-         [blockSelf sendComputerVisionData];
+
+         if ([[blockSelf stateController] shouldSendCVData]) {
+             [blockSelf sendComputerVisionData];
+             [[[blockSelf stateController] state] setComputerVisionDataRequested:NO];
+         }
      }];
     [[self arkController] setDidFailSession:^(NSError *error)
     {
@@ -617,7 +624,11 @@ typedef void (^UICompletion)(void);
         [[blockSelf stateController] setShowMode:ShowNothing];
         [blockSelf presentViewController:navigationController animated:YES completion:nil];
     }];
-    
+
+    [[self webController] setOnComputerVisionDataRequested:^{
+        [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
+    }];
+
     if ([[self stateController] wasMemoryWarning])
     {
         [[self stateController] applyOnDidReceiveMemoryAction];

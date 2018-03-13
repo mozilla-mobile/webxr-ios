@@ -60,6 +60,8 @@ typedef NS_ENUM(NSUInteger, RecordState)
 @property(nonatomic) BOOL micEnabled;
 @property(nonatomic) BOOL interruption;
 
+@property(nonatomic) BOOL computerVisionDataRequested;
+
 + (instancetype)defaultState;
 
 - (instancetype)updatedShowMode:(ShowMode)showMode;

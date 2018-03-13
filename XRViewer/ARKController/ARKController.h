@@ -17,6 +17,9 @@
 // World tracking has encountered a fatal error.
 #define WORLD_TRACKING_FAILED_ARKIT_ERROR_CODE 200
 
+// Appy this scale factor to the captured image before sending it to the JS side
+#define COMPUTER_VISION_IMAGE_SCALE_FACTOR 4.0
+
 
 typedef NS_ENUM(NSUInteger, ARKType)
 {
