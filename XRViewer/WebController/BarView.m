@@ -1,5 +1,6 @@
 #import "BarView.h"
 #import "OverlayHeader.h"
+#import "FontAwesomeKit/FAKFontAwesome.h"
 
 @interface URLTextField : UITextField
 @end
@@ -126,6 +127,15 @@
     
     [[self debugBtn] setImage:[UIImage imageNamed:@"debugOff"] forState:UIControlStateNormal];
     [[self debugBtn] setImage:[UIImage imageNamed:@"debugOn"] forState:UIControlStateSelected];
+    
+    NSError *error;
+    FAKFontAwesome *streetViewIcon = [FAKFontAwesome  iconWithIdentifier:@"fa-street-view" size:24 error:&error];
+    if (error != nil) {
+        NSLog(@"%@", [error localizedDescription]);
+    } else {
+        UIImage* streetViewImage = [streetViewIcon imageWithSize:CGSizeMake(24, 24)];
+        [[self restartTrackingBtn] setImage:streetViewImage forState:UIControlStateNormal];
+    }
 }
 
 - (IBAction)backAction:(id)sender

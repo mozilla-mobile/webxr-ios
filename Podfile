@@ -11,6 +11,7 @@ target 'XRViewer' do
     pod 'PopupDialog'
     pod 'pop'
     pod 'MozillaTelemetry', :git => 'https://github.com/mozilla-mobile/telemetry-ios.git', :branch => 'master'
+    pod 'FontAwesomeKit'
 end
 
 

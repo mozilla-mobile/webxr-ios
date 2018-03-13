@@ -6,6 +6,27 @@ PODS:
   - CocoaLumberjack/Extensions (3.3.0):
     - CocoaLumberjack/Default
   - DynamicBlurView (2.0.2)
+  - FontAwesomeKit (2.2.1):
+    - FontAwesomeKit/Core (= 2.2.1)
+    - FontAwesomeKit/FontAwesome (= 2.2.1)
+    - FontAwesomeKit/FoundationIcons (= 2.2.1)
+    - FontAwesomeKit/IonIcons (= 2.2.1)
+    - FontAwesomeKit/Material (= 2.2.1)
+    - FontAwesomeKit/Octicons (= 2.2.1)
+    - FontAwesomeKit/Zocial (= 2.2.1)
+  - FontAwesomeKit/Core (2.2.1)
+  - FontAwesomeKit/FontAwesome (2.2.1):
+    - FontAwesomeKit/Core
+  - FontAwesomeKit/FoundationIcons (2.2.1):
+    - FontAwesomeKit/Core
+  - FontAwesomeKit/IonIcons (2.2.1):
+    - FontAwesomeKit/Core
+  - FontAwesomeKit/Material (2.2.1):
+    - FontAwesomeKit/Core
+  - FontAwesomeKit/Octicons (2.2.1):
+    - FontAwesomeKit/Core
+  - FontAwesomeKit/Zocial (2.2.1):
+    - FontAwesomeKit/Core
   - MozillaTelemetry (1.0.10)
   - pop (1.0.10)
   - PopupDialog (0.7.1):
@@ -13,6 +34,7 @@ PODS:
 
 DEPENDENCIES:
   - CocoaLumberjack
+  - FontAwesomeKit
   - MozillaTelemetry (from `https://github.com/mozilla-mobile/telemetry-ios.git`, branch `master`)
   - pop
   - PopupDialog
@@ -30,10 +52,11 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   CocoaLumberjack: 3c8c74683302f9012bb168e1c4b7ae3c0b558431
   DynamicBlurView: aa6db4defc6e537eb86fc5e58dd3991666178399
+  FontAwesomeKit: 3614979b3dbb0ec3f7fac1bd760b91f66c31db67
   MozillaTelemetry: 5154e88588516c0f047108817fdd85b312e69c7e
   pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
   PopupDialog: 39598b7d41719f5c025b4b70e62728bae7734fef
 
-PODFILE CHECKSUM: 80950c8789b6d235abe22c2c4a753d8af8998191
+PODFILE CHECKSUM: e11564dc94e5eaea60b7cb5567bbbdde414e4d59
 
 COCOAPODS: 1.4.0
