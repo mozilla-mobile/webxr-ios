@@ -666,15 +666,12 @@ typedef void (^UICompletion)(void);
         [[blockSelf messageController] showMessageAboutResetTracking:^(ResetTrackigOption option){
             switch (option) {
                 case ResetTracking:
-                    [[blockSelf arkController] runSessionResettingTracking];
+                    [[blockSelf arkController] runSessionResettingTrackingAndRemovingAnchors];
                     break;
                     
                 case RemoveExistingAnchors:
                     [[blockSelf arkController] runSessionRemovingAnchors];
                     break;
-                    
-                case ResetTrackingAndRemoveExistingAnchors:
-                    [[blockSelf arkController] runSessionResettingTrackingAndRemovingAnchors];
             }
         }];
     }];

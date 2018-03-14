@@ -6,8 +6,7 @@ typedef void (^DidHideMessageByUser)(void);
 
 typedef NS_ENUM(NSInteger, ResetTrackigOption) {
     ResetTracking,
-    RemoveExistingAnchors,
-    ResetTrackingAndRemoveExistingAnchors
+    RemoveExistingAnchors
 };
 
 

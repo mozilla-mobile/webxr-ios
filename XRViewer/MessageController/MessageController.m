@@ -284,7 +284,7 @@
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisVertical
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
-                                             preferredWidth:360.0
+                                             preferredWidth:200.0
                                            gestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
@@ -295,24 +295,22 @@
     }];
     resetTracking.titleColor = resetTracking.tintColor;
 
-    DefaultButton *removeExistingAnchors = [[DefaultButton alloc] initWithTitle:@"Remove existing anchors" height:40 dismissOnTap:YES action:^{
+    DefaultButton *removeExistingAnchors = [[DefaultButton alloc] initWithTitle:@"Remove all anchors" height:40 dismissOnTap:YES action:^{
         responseBlock(RemoveExistingAnchors);
     }];
     removeExistingAnchors.titleColor = removeExistingAnchors.tintColor;
 
-    DefaultButton *resetTrackingAndRemoveExistingAnchors = [[DefaultButton alloc] initWithTitle:@"Reset tracking and remove existing anchors" height:40 dismissOnTap:YES action:^{
-        responseBlock(ResetTrackingAndRemoveExistingAnchors);
-    }];
-    resetTrackingAndRemoveExistingAnchors.titleColor = resetTrackingAndRemoveExistingAnchors.tintColor;
-
-    [popup addButtons: @[resetTracking, removeExistingAnchors, resetTrackingAndRemoveExistingAnchors]];
+    CancelButton * cancelButton = [[CancelButton alloc] initWithTitle:@"Cancel" height:40 dismissOnTap:YES action:^{}];
+    cancelButton.titleColor = cancelButton.tintColor;
+    
+    [popup addButtons: @[resetTracking, removeExistingAnchors, cancelButton]];
 
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
 
 - (void)showMessageAboutAccessingTheCapturedImage:(void (^)(BOOL))granted {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Video Camera Image Access"
-                                                    message:@"WebXR Viewer app displays video from your camera in the background without automatically giving access to those images to the web page. This page is requesting access to images from the video camera.\n\nAllow?"
+                                                    message:@"WebXR Viewer app displays video from your camera in the background without automatically giving access to those images to the web page.\n\nThis page is requesting access to images from the video camera. Allow?"
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp

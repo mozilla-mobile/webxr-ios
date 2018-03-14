@@ -135,6 +135,7 @@
     } else {
         UIImage* streetViewImage = [streetViewIcon imageWithSize:CGSizeMake(24, 24)];
         [[self restartTrackingBtn] setImage:streetViewImage forState:UIControlStateNormal];
+        [[self restartTrackingBtn] setTintColor:[UIColor grayColor]];
     }
 }
 
