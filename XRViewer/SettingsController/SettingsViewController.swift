@@ -91,7 +91,7 @@ extension SettingsViewController: UITableViewDataSource {
                 cell = switchInputCell
             case 2:
                 let textInputCell = tableView.dequeueReusableCell(withIdentifier: "TextInputTableViewCell", for: indexPath) as! TextInputTableViewCell
-                textInputCell.labelTitle?.text = "Seconds to keep the AR Session in background"
+                textInputCell.labelTitle?.text = "ARKit shutdown delay:"
                 textInputCell.textField.text = UserDefaults.standard.string(forKey: secondsInBackgroundKey)
                 textInputCell.textField.keyboardType = .numberPad
                 textInputCell.textField.delegate = self
@@ -99,7 +99,7 @@ extension SettingsViewController: UITableViewDataSource {
                 cell = textInputCell
             case 3:
                 let textInputCell = tableView.dequeueReusableCell(withIdentifier: "TextInputTableViewCell", for: indexPath) as! TextInputTableViewCell
-                textInputCell.labelTitle?.text = "Distant anchors distance threshold in meters"
+                textInputCell.labelTitle?.text = "Anchor retention threshold (meters):"
                 textInputCell.textField.text = UserDefaults.standard.string(forKey: distantAnchorsDistanceKey)
                 textInputCell.textField.keyboardType = .numberPad
                 textInputCell.textField.delegate = self

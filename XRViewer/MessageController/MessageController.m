@@ -290,12 +290,12 @@
                                                  completion:^{}
     ];
 
-    DefaultButton *resetTracking = [[DefaultButton alloc] initWithTitle:@"Reset tracking" height:40 dismissOnTap:YES action:^{
+    DefaultButton *resetTracking = [[DefaultButton alloc] initWithTitle:@"Completely restart tracking" height:40 dismissOnTap:YES action:^{
         responseBlock(ResetTracking);
     }];
     resetTracking.titleColor = resetTracking.tintColor;
 
-    DefaultButton *removeExistingAnchors = [[DefaultButton alloc] initWithTitle:@"Remove all anchors" height:40 dismissOnTap:YES action:^{
+    DefaultButton *removeExistingAnchors = [[DefaultButton alloc] initWithTitle:@"Remove known anchors" height:40 dismissOnTap:YES action:^{
         responseBlock(RemoveExistingAnchors);
     }];
     removeExistingAnchors.titleColor = removeExistingAnchors.tintColor;
