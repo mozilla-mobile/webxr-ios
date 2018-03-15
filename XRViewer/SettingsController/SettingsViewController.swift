@@ -59,7 +59,7 @@ extension SettingsViewController: UITableViewDataSource {
         if section == 0 {
             return 1
         } else if section == 1 {
-            return 3
+            return 4
         } else {
             return 1
         }
@@ -97,6 +97,14 @@ extension SettingsViewController: UITableViewDataSource {
                 textInputCell.textField.delegate = self
                 textInputCell.textField.tag = 2
                 cell = textInputCell
+            case 3:
+                let textInputCell = tableView.dequeueReusableCell(withIdentifier: "TextInputTableViewCell", for: indexPath) as! TextInputTableViewCell
+                textInputCell.labelTitle?.text = "Distant anchors distance threshold in meters"
+                textInputCell.textField.text = UserDefaults.standard.string(forKey: distantAnchorsDistanceKey)
+                textInputCell.textField.keyboardType = .numberPad
+                textInputCell.textField.delegate = self
+                textInputCell.textField.tag = 3
+                cell = textInputCell
             default:
                 fatalError("Cell not registered for indexPath: \(indexPath)")
             }
@@ -125,11 +133,12 @@ extension SettingsViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let text = textField.text, textField.tag == 1 {
             UserDefaults.standard.set(text, forKey: homeURLKey)
-            textField.resignFirstResponder()
         } else if let text = textField.text, textField.tag == 2 {
             UserDefaults.standard.set(text, forKey: secondsInBackgroundKey)
-            textField.resignFirstResponder()
+        } else if let text = textField.text, textField.tag == 3 {
+            UserDefaults.standard.set(text, forKey: distantAnchorsDistanceKey)
         }
+        textField.resignFirstResponder()
         return true
     }
 }

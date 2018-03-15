@@ -41,6 +41,10 @@
     if ([[NSUserDefaults standardUserDefaults] integerForKey:secondsInBackgroundKey] == 0) {
         [[NSUserDefaults standardUserDefaults] setInteger:sessionInBackgroundDefaultTimeInSeconds forKey:secondsInBackgroundKey];
     }
+    
+    if ([[NSUserDefaults standardUserDefaults] floatForKey:distantAnchorsDistanceKey] == 0.0) {
+        [[NSUserDefaults standardUserDefaults] setFloat:distantAnchorsDefaultDistanceInMeters forKey:distantAnchorsDistanceKey];
+    }
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {

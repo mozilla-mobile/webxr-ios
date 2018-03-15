@@ -11,4 +11,6 @@
 NSString *const useAnalyticsKey = @"useAnalytics";
 NSString *const homeURLKey = @"homeURL";
 NSString *const secondsInBackgroundKey = @"secondsInBackgroundKey";
+NSString *const distantAnchorsDistanceKey = @"distantAnchorsDistanceKey";
 int const sessionInBackgroundDefaultTimeInSeconds = 60;
+float const distantAnchorsDefaultDistanceInMeters = 3.0;

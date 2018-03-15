@@ -15,5 +15,7 @@ FOUNDATION_EXPORT NSString *const useAnalyticsKey;
 FOUNDATION_EXPORT NSString *const homeURLKey;
 FOUNDATION_EXPORT NSString *const secondsInBackgroundKey;
 FOUNDATION_EXPORT int const sessionInBackgroundDefaultTimeInSeconds;
+FOUNDATION_EXPORT NSString *const distantAnchorsDistanceKey;
+FOUNDATION_EXPORT float const distantAnchorsDefaultDistanceInMeters;
 
 #endif /* Constants_h */

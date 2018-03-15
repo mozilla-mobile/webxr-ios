@@ -9,6 +9,7 @@
 #import "Utils.h"
 #import "XRViewer-Swift.h"
 #import <Accelerate/Accelerate.h>
+#import "Constants.h"
 
 @interface ARKController () <ARSessionDelegate>
 {
@@ -315,11 +316,12 @@
 - (void)removeDistantAnchors {
     matrix_float4x4 viewMatrix = [[[self.session currentFrame] camera] viewMatrixForOrientation:self.interfaceOrientation];
     matrix_float4x4 modelMatrix = matrix_invert(viewMatrix);
+    float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:distantAnchorsDistanceKey];
     
     for (ARAnchor *anchor in [[self.session currentFrame] anchors]) {
         float distance = simd_distance(anchor.transform.columns[3], modelMatrix.columns[3]);
         //NSLog(@"Distance to anchor %@: %f", [anchor.identifier UUIDString], distance);
-        if (distance > 3.0) {
+        if (distance >= distanceThreshold) {
             [self.session removeAnchor:anchor];
         }
     }
