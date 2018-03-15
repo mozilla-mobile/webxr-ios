@@ -360,8 +360,6 @@ typedef void (^UICompletion)(void);
     
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
      {
-         [[blockSelf timerSessionRunningInBackground] invalidate];
-         
          [[blockSelf webController] didBackgroundAction:YES];
          
          [[blockSelf stateController] saveMoveToBackgroundOnURL:[[blockSelf webController] lastURL]];
