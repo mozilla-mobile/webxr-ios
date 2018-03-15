@@ -37,6 +37,10 @@
     }
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultsToRegister];
+    
+    if ([[NSUserDefaults standardUserDefaults] integerForKey:secondsInBackgroundKey] == 0) {
+        [[NSUserDefaults standardUserDefaults] setInteger:sessionInBackgroundDefaultTimeInSeconds forKey:secondsInBackgroundKey];
+    }
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {

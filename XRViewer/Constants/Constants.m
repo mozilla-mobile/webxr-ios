@@ -10,4 +10,5 @@
 
 NSString *const useAnalyticsKey = @"useAnalytics";
 NSString *const homeURLKey = @"homeURL";
-int const sessionInBackgroundTimeInSeconds = 60;
+NSString *const secondsInBackgroundKey = @"secondsInBackgroundKey";
+int const sessionInBackgroundDefaultTimeInSeconds = 60;

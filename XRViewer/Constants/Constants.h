@@ -13,6 +13,7 @@
 
 FOUNDATION_EXPORT NSString *const useAnalyticsKey;
 FOUNDATION_EXPORT NSString *const homeURLKey;
-FOUNDATION_EXPORT int const sessionInBackgroundTimeInSeconds;
+FOUNDATION_EXPORT NSString *const secondsInBackgroundKey;
+FOUNDATION_EXPORT int const sessionInBackgroundDefaultTimeInSeconds;
 
 #endif /* Constants_h */

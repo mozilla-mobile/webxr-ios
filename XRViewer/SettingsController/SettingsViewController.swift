@@ -59,7 +59,7 @@ extension SettingsViewController: UITableViewDataSource {
         if section == 0 {
             return 1
         } else if section == 1 {
-            return 2
+            return 3
         } else {
             return 1
         }
@@ -78,14 +78,25 @@ extension SettingsViewController: UITableViewDataSource {
             switch indexPath.row {
             case 0:
                 let textInputCell = tableView.dequeueReusableCell(withIdentifier: "TextInputTableViewCell", for: indexPath) as! TextInputTableViewCell
+                textInputCell.labelTitle?.text = "Home URL"
                 textInputCell.textField.text = UserDefaults.standard.string(forKey: homeURLKey)
                 textInputCell.textField.delegate = self
+                textInputCell.textField.keyboardType = .URL
+                textInputCell.textField.tag = 1
                 cell = textInputCell
             case 1:
                 let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
                 switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: useAnalyticsKey)
                 switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
                 cell = switchInputCell
+            case 2:
+                let textInputCell = tableView.dequeueReusableCell(withIdentifier: "TextInputTableViewCell", for: indexPath) as! TextInputTableViewCell
+                textInputCell.labelTitle?.text = "Seconds to keep the AR Session in background"
+                textInputCell.textField.text = UserDefaults.standard.string(forKey: secondsInBackgroundKey)
+                textInputCell.textField.keyboardType = .numberPad
+                textInputCell.textField.delegate = self
+                textInputCell.textField.tag = 2
+                cell = textInputCell
             default:
                 fatalError("Cell not registered for indexPath: \(indexPath)")
             }
@@ -112,8 +123,11 @@ extension SettingsViewController: UITableViewDataSource {
 
 extension SettingsViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let text = textField.text {
+        if let text = textField.text, textField.tag == 1 {
             UserDefaults.standard.set(text, forKey: homeURLKey)
+            textField.resignFirstResponder()
+        } else if let text = textField.text, textField.tag == 2 {
+            UserDefaults.standard.set(text, forKey: secondsInBackgroundKey)
             textField.resignFirstResponder()
         }
         return true

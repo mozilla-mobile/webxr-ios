@@ -229,8 +229,9 @@ typedef void (^UICompletion)(void);
              [[blockSelf stateController] setShowMode:ShowNothing];
              if ([[blockSelf arkController] arSessionState] == ARKSessionRunning) {
                  [blockSelf.timerSessionRunningInBackground invalidate];
-                 NSLog(@"\n\n*********\n\nMoving away from an XR site, keep ARKit running, and launch the timer\n\n*********");
-                 blockSelf.timerSessionRunningInBackground = [NSTimer scheduledTimerWithTimeInterval:sessionInBackgroundTimeInSeconds repeats:NO block:^(NSTimer * _Nonnull timer) {
+                 NSInteger timerSeconds = [[NSUserDefaults standardUserDefaults] integerForKey:secondsInBackgroundKey];
+                 NSLog(@"\n\n*********\n\nMoving away from an XR site, keep ARKit running, and launch the timer for %ld seconds\n\n*********", timerSeconds);
+                 blockSelf.timerSessionRunningInBackground = [NSTimer scheduledTimerWithTimeInterval:timerSeconds repeats:NO block:^(NSTimer * _Nonnull timer) {
                      NSLog(@"\n\n*********\n\nTimer expired, pausing session\n\n*********");
                      [[blockSelf arkController] pauseSession];
                      [timer invalidate];
@@ -286,9 +287,7 @@ typedef void (^UICompletion)(void);
                  } else {
                      NSLog(@"\n\n*********\n\nThis site is the last XR site visited, and the timer hasn't expired yet. Continue with the session\n\n*********");
                  }
-                 
              } else {
-                 // The timer of the session running in background expired, so reset everything and run a new session
                  NSLog(@"\n\n*********\n\nRequest of a new AR session when the timer already expired\n\n*********");
                  [[blockSelf arkController] runSessionResettingTrackingAndRemovingAnchors];
                  if (dict[WEB_AR_CV_INFORMATION_OPTION]) {
@@ -361,6 +360,8 @@ typedef void (^UICompletion)(void);
     
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
      {
+         [[blockSelf timerSessionRunningInBackground] invalidate];
+         
          [[blockSelf webController] didBackgroundAction:YES];
          
          [[blockSelf stateController] saveMoveToBackgroundOnURL:[[blockSelf webController] lastURL]];
