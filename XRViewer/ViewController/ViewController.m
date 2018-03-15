@@ -38,6 +38,7 @@ typedef void (^UICompletion)(void);
 @property (nonatomic, strong) MessageController *messageController;
 @property (nonatomic, strong) Animator *animator;
 @property (nonatomic, strong) Reachability *reachability;
+@property (nonatomic, strong) NSTimer* timerSessionRunningInBackground;
 
 @end
 
@@ -226,6 +227,15 @@ typedef void (^UICompletion)(void);
          }
          else {
              [[blockSelf stateController] setShowMode:ShowNothing];
+             if ([[blockSelf arkController] arSessionState] == ARKSessionRunning) {
+                 [blockSelf.timerSessionRunningInBackground invalidate];
+                 NSLog(@"\n\n*********\n\nMoving away from an XR site, keep ARKit running, and launch the timer\n\n*********");
+                 blockSelf.timerSessionRunningInBackground = [NSTimer scheduledTimerWithTimeInterval:sessionInBackgroundTimeInSeconds repeats:NO block:^(NSTimer * _Nonnull timer) {
+                     NSLog(@"\n\n*********\n\nTimer expired, pausing session\n\n*********");
+                     [[blockSelf arkController] pauseSession];
+                     [timer invalidate];
+                 }];
+             }
          }
          
          [blockSelf updateConstraints];
@@ -246,7 +256,7 @@ typedef void (^UICompletion)(void);
              [[NSUserDefaults standardUserDefaults] setObject:nil forKey:REQUESTED_URL_KEY];
              [blockSelf loadURL:requestedURL];
          } else {
-             [[blockSelf arkController] removeAllAnchors];
+             [[blockSelf arkController] runSessionRemovingAnchors];
          }
      }];
     
@@ -263,28 +273,29 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
      {
-         if ([self urlIsNotTheLastXRVisitedURL]) {
-             NSLog(@"This site is not the last XR site visited, so setting up a new ARKit session");
+         if (![blockSelf arkController]) {
+             NSLog(@"\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********");
              [blockSelf startNewARKitSessionWithRequest:dict];
          } else {
-             NSDate* lastRequestTime = [[NSUserDefaults standardUserDefaults] objectForKey:lastRequestTimeKey];
-             NSDate* lastTimeARSessionWasPaused = [[NSUserDefaults standardUserDefaults] objectForKey:lastTimeARSessionWasPausedKey];
-             NSDate* now = [NSDate new];
-             if (lastTimeARSessionWasPaused && [now timeIntervalSinceDate:lastTimeARSessionWasPaused] >= minutesBetweenPausedSessions * 60) {
-                 NSLog(@"This site is the last XR site visited, and it's been more than %d minutes since we last visited, so setting up a new ARKit session", minutesBetweenPausedSessions);
-                 [blockSelf startNewARKitSessionWithRequest:dict];
-             } else if ([now timeIntervalSinceDate:lastRequestTime] < minSecondsNeededForANewARRequestToProvokeAResume) {
-                 NSLog(@"It's been less than %d seconds since the last time we reloaded, so setting up a new ARKit session", minSecondsNeededForANewARRequestToProvokeAResume);
-                 [blockSelf startNewARKitSessionWithRequest:dict];
+             if (blockSelf.timerSessionRunningInBackground.isValid) {
+                 [blockSelf.timerSessionRunningInBackground invalidate];
+                 
+                 if ([blockSelf urlIsNotTheLastXRVisitedURL]) {
+                     NSLog(@"\n\n*********\n\nThis site is not the last XR site visited, and the timer hasn't expired yet. Remove distant anchors and continue with the session\n\n*********");
+                     [[blockSelf arkController] removeDistantAnchors];
+                 } else {
+                     NSLog(@"\n\n*********\n\nThis site is the last XR site visited, and the timer hasn't expired yet. Continue with the session\n\n*********");
+                 }
+                 
              } else {
-                 NSLog(@"This site is the last XR site visited, and it's been less than %d minutes since we last visited, so resuming the ARKit session", minutesBetweenPausedSessions);
-                 [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
+                 // The timer of the session running in background expired, so reset everything and run a new session
+                 NSLog(@"\n\n*********\n\nRequest of a new AR session when the timer already expired\n\n*********");
+                 [[blockSelf arkController] runSessionResettingTrackingAndRemovingAnchors];
                  if (dict[WEB_AR_CV_INFORMATION_OPTION]) {
                      [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
                  }
              }
          }
-         [[NSUserDefaults standardUserDefaults] setObject:[NSDate new] forKey:lastRequestTimeKey];
      }];
     
     [[self stateController] setOnInterruption:^(BOOL interruption)
@@ -308,7 +319,6 @@ typedef void (^UICompletion)(void);
 }
 
 - (void)startNewARKitSessionWithRequest: (NSDictionary*)request {
-    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:lastTimeARSessionWasPausedKey];
     [self setupLocationController];
     [[self locationManager] setupForRequest:request];
     [self setupARKController];
@@ -593,7 +603,6 @@ typedef void (^UICompletion)(void);
 
     [[self webController] setOnStopAR:^{
         [[blockSelf arkController] pauseSession];
-        [[NSUserDefaults standardUserDefaults] setObject:[NSDate new] forKey:lastTimeARSessionWasPausedKey];
         [[blockSelf stateController] setWebXR:NO];
         [[blockSelf stateController] setShowMode:ShowNothing];
     }];

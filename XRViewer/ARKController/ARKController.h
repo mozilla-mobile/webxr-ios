@@ -20,6 +20,12 @@
 // Appy this scale factor to the captured image before sending it to the JS side
 #define COMPUTER_VISION_IMAGE_SCALE_FACTOR 4.0
 
+typedef NS_ENUM(NSUInteger, ARKitSessionState)
+{
+    ARKSessionUnknown,
+    ARKSessionPaused,
+    ARKSessionRunning
+};
 
 typedef NS_ENUM(NSUInteger, ARKType)
 {
@@ -48,6 +54,8 @@ typedef void (^DidUpdateWindowSize)(void);
 @property UIInterfaceOrientation interfaceOrientation;
 
 @property(nonatomic) BOOL shouldUpdateWindowSize;
+
+@property ARKitSessionState arSessionState;
 
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 - (UIView *)arkView;
@@ -83,5 +91,7 @@ typedef void (^DidUpdateWindowSize)(void);
 - (void)runSessionRemovingAnchors;
 
 - (void)runSessionResettingTrackingAndRemovingAnchors;
+
+- (void)removeDistantAnchors;
 @end
 

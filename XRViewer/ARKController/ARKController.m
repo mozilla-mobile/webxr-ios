@@ -81,6 +81,7 @@
 
         [self setSession:[ARSession new]];
         [[self session] setDelegate:self];
+        [self setArSessionState:ARKSessionUnknown];
         
         /**
          A configuration for running world tracking.
@@ -171,6 +172,7 @@
 - (void)pauseSession
 {
     [[self session] pause];
+    [self setArSessionState:ARKSessionPaused];
 }
 
 - (NSDictionary *)arkData
@@ -198,6 +200,7 @@
     [self setRequest:[state aRRequest]];
     
     [[self session] runWithConfiguration:[self configuration]];
+    [self setArSessionState:ARKSessionRunning];
     [self setupDeviceCamera];
     
     [self setShowMode:[state showMode]];
@@ -209,6 +212,7 @@
     [self setRequest:[state aRRequest]];
     
     [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
+    [self setArSessionState:ARKSessionRunning];
     
     [self setupDeviceCamera];
     
@@ -218,14 +222,17 @@
 
 - (void)runSessionResettingTracking {
     [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking];
+    [self setArSessionState:ARKSessionRunning];
 }
 
 - (void)runSessionRemovingAnchors {
     [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionRemoveExistingAnchors];
+    [self setArSessionState:ARKSessionRunning];
 }
 
 - (void)runSessionResettingTrackingAndRemovingAnchors {
     [[self session] runWithConfiguration:[self configuration] options:ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
+    [self setArSessionState:ARKSessionRunning];
 }
 
 - (void)setShowMode:(ShowMode)showMode
@@ -301,6 +308,19 @@
                     break;
                 }
             }
+        }
+    }
+}
+
+- (void)removeDistantAnchors {
+    matrix_float4x4 viewMatrix = [[[self.session currentFrame] camera] viewMatrixForOrientation:self.interfaceOrientation];
+    matrix_float4x4 modelMatrix = matrix_invert(viewMatrix);
+    
+    for (ARAnchor *anchor in [[self.session currentFrame] anchors]) {
+        float distance = simd_distance(anchor.transform.columns[3], modelMatrix.columns[3]);
+        //NSLog(@"Distance to anchor %@: %f", [anchor.identifier UUIDString], distance);
+        if (distance > 3.0) {
+            [self.session removeAnchor:anchor];
         }
     }
 }
