@@ -59,8 +59,8 @@ typedef NS_ENUM(NSUInteger, RecordState)
 @property(nonatomic) BOOL webXR;
 @property(nonatomic) BOOL micEnabled;
 @property(nonatomic) BOOL interruption;
-
 @property(nonatomic) BOOL computerVisionDataRequested;
+@property(nonatomic) BOOL shouldRemoveAnchorsOnNextARSession;
 
 + (instancetype)defaultState;
 

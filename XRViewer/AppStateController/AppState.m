@@ -14,6 +14,7 @@
     [copy setTrackingState:[self trackingState]];
     [copy setInterruption:[self interruption]];
     [copy setComputerVisionDataRequested:[self computerVisionDataRequested]];
+    [copy setShouldRemoveAnchorsOnNextARSession: [self shouldRemoveAnchorsOnNextARSession]];
     
     return copy;
 }

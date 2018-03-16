@@ -17,5 +17,7 @@ FOUNDATION_EXPORT NSString *const secondsInBackgroundKey;
 FOUNDATION_EXPORT int const sessionInBackgroundDefaultTimeInSeconds;
 FOUNDATION_EXPORT NSString *const distantAnchorsDistanceKey;
 FOUNDATION_EXPORT float const distantAnchorsDefaultDistanceInMeters;
+FOUNDATION_EXPORT NSString *const backgroundOrPausedDateKey;
+FOUNDATION_EXPORT double const pauseTimeInSecondsToRemoveAnchors;
 
 #endif /* Constants_h */

@@ -233,6 +233,7 @@ typedef void (^UICompletion)(void);
                  NSLog(@"\n\n*********\n\nMoving away from an XR site, keep ARKit running, and launch the timer for %ld seconds\n\n*********", timerSeconds);
                  blockSelf.timerSessionRunningInBackground = [NSTimer scheduledTimerWithTimeInterval:timerSeconds repeats:NO block:^(NSTimer * _Nonnull timer) {
                      NSLog(@"\n\n*********\n\nTimer expired, pausing session\n\n*********");
+                     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"backgroundOrPausedDateKey"];
                      [[blockSelf arkController] pauseSession];
                      [timer invalidate];
                  }];
@@ -251,14 +252,41 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnEnterForeground:^(NSString *url)
      {
+         [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession: NO];
+         
          [[blockSelf messageController] clean];
          NSString* requestedURL = [[NSUserDefaults standardUserDefaults] stringForKey:REQUESTED_URL_KEY];
          if (requestedURL) {
+             NSLog(@"\n\n*********\n\nMoving to foreground because the user wants to open a URL externally, loading the page\n\n*********");
              [[NSUserDefaults standardUserDefaults] setObject:nil forKey:REQUESTED_URL_KEY];
              [blockSelf loadURL:requestedURL];
          } else {
-             [[blockSelf arkController] runSessionRemovingAnchors];
+             switch ([[blockSelf arkController] arSessionState]) {
+                 case ARKSessionUnknown: {
+                     NSLog(@"\n\n*********\n\nMoving to foreground while ARKit is not initialized, do nothing\n\n*********");
+                     break;
+                 }
+                 case ARKSessionPaused: {
+                     NSLog(@"\n\n*********\n\nMoving to foreground while the session is paused, remember to remove anchors on next AR request\n\n*********");
+                     [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession: YES];
+                     break;
+                 }
+                     
+                 case ARKSessionRunning: {
+                     NSDate *interruptionDate = [[NSUserDefaults standardUserDefaults] objectForKey:backgroundOrPausedDateKey];
+                     NSDate *now = [NSDate date];
+                     if ([now timeIntervalSinceDate:interruptionDate] >= pauseTimeInSecondsToRemoveAnchors) {
+                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a long time, remove the anchors\n\n*********");
+                         [[blockSelf arkController] removeAllAnchors];
+                     } else {
+                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a short time, do nothing\n\n*********");
+                     }
+                     break;
+                 }
+             }
          }
+         
+         [[NSUserDefaults standardUserDefaults] setObject:nil forKey:backgroundOrPausedDateKey];
      }];
     
     [[self stateController] setOnMemoryWarning:^(NSString *url)
@@ -274,26 +302,46 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
      {
+         NSLog(@"\n\n*********\n\nInvalidate timer\n\n*********");
+         [[blockSelf timerSessionRunningInBackground] invalidate];
+         
          if (![blockSelf arkController]) {
              NSLog(@"\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********");
              [blockSelf startNewARKitSessionWithRequest:dict];
          } else {
-             if (blockSelf.timerSessionRunningInBackground.isValid) {
-                 [blockSelf.timerSessionRunningInBackground invalidate];
-                 
-                 if ([blockSelf urlIsNotTheLastXRVisitedURL]) {
-                     NSLog(@"\n\n*********\n\nThis site is not the last XR site visited, and the timer hasn't expired yet. Remove distant anchors and continue with the session\n\n*********");
-                     [[blockSelf arkController] removeDistantAnchors];
-                 } else {
-                     NSLog(@"\n\n*********\n\nThis site is the last XR site visited, and the timer hasn't expired yet. Continue with the session\n\n*********");
+             switch ([[blockSelf arkController] arSessionState]) {
+                 case ARKSessionUnknown: {
+                     NSLog(@"\n\n*********\n\nARKit is in unknown state, instantiate and start a session\n\n*********");
+                     [blockSelf startNewARKitSessionWithRequest:dict];
+                     break;
                  }
-             } else {
-                 NSLog(@"\n\n*********\n\nRequest of a new AR session when the timer already expired\n\n*********");
-                 [[blockSelf arkController] runSessionResettingTrackingAndRemovingAnchors];
-                 if (dict[WEB_AR_CV_INFORMATION_OPTION]) {
-                     [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
+                     
+                 case ARKSessionRunning: {
+                     if ([blockSelf urlIsNotTheLastXRVisitedURL]) {
+                         NSLog(@"\n\n*********\n\nThis site is not the last XR site visited, and the timer hasn't expired yet. Remove distant anchors and continue with the session\n\n*********");
+                         [[blockSelf arkController] removeDistantAnchors];
+                     } else {
+                         NSLog(@"\n\n*********\n\nThis site is the last XR site visited, and the timer hasn't expired yet. Continue with the session\n\n*********");
+                     }
+                     break;
+                 }
+                     
+                 case ARKSessionPaused: {
+                     NSLog(@"\n\n*********\n\nRequest of a new AR session when it's paused\n\n*********");
+                     if ([[[blockSelf stateController] state] shouldRemoveAnchorsOnNextARSession]) {
+                         NSLog(@"\n\n*********\n\nRun session removing anchors\n\n*********");
+                         [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession:NO];
+                         [[blockSelf arkController] runSessionRemovingAnchors];
+                     } else {
+                         NSLog(@"\n\n*********\n\nResume session\n\n*********");
+                         [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
+                     }
+                     break;
                  }
              }
+         }
+         if (dict[WEB_AR_CV_INFORMATION_OPTION]) {
+             [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
          }
      }];
     
@@ -321,9 +369,6 @@ typedef void (^UICompletion)(void);
     [self setupLocationController];
     [[self locationManager] setupForRequest:request];
     [self setupARKController];
-    if (request[WEB_AR_CV_INFORMATION_OPTION]) {
-        [[[self stateController] state] setComputerVisionDataRequested:YES];
-    }
 }
 
 - (void)setupAnimator
@@ -360,6 +405,19 @@ typedef void (^UICompletion)(void);
     
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
      {
+         switch ([[blockSelf arkController] arSessionState]) {
+             case ARKSessionUnknown:
+                 NSLog(@"\n\n*********\n\nMoving to background while ARKit is not initialized, nothing to do\n\n*********");
+                 break;
+             case ARKSessionPaused:
+                 NSLog(@"\n\n*********\n\nMoving to background while the session is paused, nothing to do\n\n*********");
+                 break;
+             case ARKSessionRunning:
+                 NSLog(@"\n\n*********\n\nMoving to background while the session is running, store the timestamp\n\n*********");
+                 [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:backgroundOrPausedDateKey];
+                 break;
+         }
+         
          [[blockSelf webController] didBackgroundAction:YES];
          
          [[blockSelf stateController] saveMoveToBackgroundOnURL:[[blockSelf webController] lastURL]];
