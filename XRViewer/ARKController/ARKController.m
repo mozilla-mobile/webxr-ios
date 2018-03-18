@@ -435,7 +435,8 @@
                 NSMutableDictionary *lumaBufferDictionary = [NSMutableDictionary new];
                 lumaBufferDictionary[@"size"] = @{
                                         @"width": @(self.lumaBufferSize.width),
-                                        @"height": @(self.lumaBufferSize.height)
+                                        @"height": @(self.lumaBufferSize.height),
+                                        @"bytesPerRow": @(self.lumaBuffer.rowBytes)
                                         };
                 lumaBufferDictionary[@"buffer"] = self.lumaBase64StringBuffer;
                 
@@ -443,7 +444,8 @@
                 NSMutableDictionary *chromaBufferDictionary = [NSMutableDictionary new];
                 chromaBufferDictionary[@"size"] = @{
                                         @"width": @(self.chromaBufferSize.width),
-                                        @"height": @(self.chromaBufferSize.height)
+                                        @"height": @(self.chromaBufferSize.height),
+                                        @"bytesPerRow": @(self.chromaBuffer.rowBytes)
                                         };
                 chromaBufferDictionary[@"buffer"] = self.chromaBase64StringBuffer;
                 
