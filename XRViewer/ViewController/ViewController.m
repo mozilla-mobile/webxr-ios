@@ -340,7 +340,7 @@ typedef void (^UICompletion)(void);
                  }
              }
          }
-         if (dict[WEB_AR_CV_INFORMATION_OPTION]) {
+         if ([dict[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
              [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
          }
      }];
@@ -638,7 +638,7 @@ typedef void (^UICompletion)(void);
      }];
 
     [[self webController] setOnWatchAR:^( NSDictionary * _Nullable request){
-        if (request[WEB_AR_CV_INFORMATION_OPTION]) {
+        if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
             [[blockSelf messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
                 if (granted) {
                     [[blockSelf stateController] setARRequest:request];
