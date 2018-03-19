@@ -314,15 +314,38 @@
 }
 
 - (void)removeDistantAnchors {
-    matrix_float4x4 viewMatrix = [[[self.session currentFrame] camera] viewMatrixForOrientation:self.interfaceOrientation];
-    matrix_float4x4 modelMatrix = matrix_invert(viewMatrix);
+    matrix_float4x4 cameraTransform = [[[self.session currentFrame] camera] transform];
     float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:distantAnchorsDistanceKey];
     
     for (ARAnchor *anchor in [[self.session currentFrame] anchors]) {
-        float distance = simd_distance(anchor.transform.columns[3], modelMatrix.columns[3]);
-        //NSLog(@"Distance to anchor %@: %f", [anchor.identifier UUIDString], distance);
-        if (distance >= distanceThreshold) {
-            [self.session removeAnchor:anchor];
+        if ([anchor isKindOfClass:[ARPlaneAnchor self]]) {
+            ARPlaneAnchor* planeAnchor = (ARPlaneAnchor*)anchor;
+            matrix_float4x4 cameraMatrixInAnchorCoordinates = matrix_multiply(matrix_invert(anchor.transform), cameraTransform);
+            simd_float4 cameraPositionInAnchorCoordinates = cameraMatrixInAnchorCoordinates.columns[3];
+            simd_float4 cameraPositionRelativeToPlaneCenter = cameraPositionInAnchorCoordinates - simd_make_float4(planeAnchor.center, 1.0);
+            
+            NSLog(@"cam plane coords:\t %f, %f, %f", cameraPositionRelativeToPlaneCenter[0], cameraPositionRelativeToPlaneCenter[1], cameraPositionRelativeToPlaneCenter[2]);
+            NSLog(@"extents:\t\t\t %f, %f, %f", planeAnchor.extent[0], planeAnchor.extent[1], planeAnchor.extent[2]);
+            NSLog(@"center:\t\t\t\t %f, %f, %f", planeAnchor.center[0], planeAnchor.center[1], planeAnchor.center[2]);
+            if ((cameraPositionRelativeToPlaneCenter[0] - planeAnchor.extent[0] > distanceThreshold) ||
+                (cameraPositionRelativeToPlaneCenter[0] + planeAnchor.extent[0] < -distanceThreshold) ||
+                
+                (cameraPositionRelativeToPlaneCenter[1] - planeAnchor.extent[1] > distanceThreshold) ||
+                (cameraPositionRelativeToPlaneCenter[1] + planeAnchor.extent[1] < -distanceThreshold) ||
+                
+                (cameraPositionRelativeToPlaneCenter[2] - planeAnchor.extent[2] > distanceThreshold) ||
+                (cameraPositionRelativeToPlaneCenter[2] + planeAnchor.extent[2] < -distanceThreshold)
+                ) {
+                
+                NSLog(@"\n\n*********\n\nRemoving distant plane %@\n\n*********", [anchor.identifier UUIDString]);
+                [self.session removeAnchor:anchor];
+            }
+        } else {
+            float distance = simd_distance(anchor.transform.columns[3], cameraTransform.columns[3]);
+            if (distance >= distanceThreshold) {
+                NSLog(@"\n\n*********\n\nRemoving distant anchor %@\n\n*********", [anchor.identifier UUIDString]);
+                [self.session removeAnchor:anchor];
+            }
         }
     }
 }
