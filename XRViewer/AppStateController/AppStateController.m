@@ -121,7 +121,7 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 }
 
 - (BOOL)shouldSendCVData {
-    return [[self state] computerVisionDataRequested];
+    return [[self state] computerVisionFrameRequested] && [[self state] sendComputerVisionData];
 }
 
 - (void)invertMic

@@ -13,9 +13,10 @@
     [copy setMicEnabled:[self micEnabled]];
     [copy setTrackingState:[self trackingState]];
     [copy setInterruption:[self interruption]];
-    [copy setComputerVisionDataRequested:[self computerVisionDataRequested]];
+    [copy setComputerVisionFrameRequested:[self computerVisionFrameRequested]];
     [copy setShouldRemoveAnchorsOnNextARSession: [self shouldRemoveAnchorsOnNextARSession]];
-    
+    [copy setSendComputerVisionData:[self sendComputerVisionData]];
+
     return copy;
 }
 
@@ -67,6 +68,21 @@
     }
     
     if ([self interruption] != [theObject interruption])
+    {
+        return NO;
+    }
+
+    if ([self computerVisionFrameRequested] != [theObject computerVisionFrameRequested])
+    {
+        return NO;
+    }
+
+    if ([self shouldRemoveAnchorsOnNextARSession] != [theObject shouldRemoveAnchorsOnNextARSession])
+    {
+        return NO;
+    }
+
+    if ([self sendComputerVisionData] != [theObject sendComputerVisionData])
     {
         return NO;
     }

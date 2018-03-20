@@ -341,7 +341,8 @@ typedef void (^UICompletion)(void);
              }
          }
          if ([dict[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
-             [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
+             [[[blockSelf stateController] state] setComputerVisionFrameRequested:YES];
+             [[[blockSelf stateController] state] setSendComputerVisionData:YES];
          }
      }];
     
@@ -521,7 +522,7 @@ typedef void (^UICompletion)(void);
 
          if ([[blockSelf stateController] shouldSendCVData]) {
              [blockSelf sendComputerVisionData];
-             [[[blockSelf stateController] state] setComputerVisionDataRequested:NO];
+             [[[blockSelf stateController] state] setComputerVisionFrameRequested:NO];
          }
      }];
     [[self arkController] setDidFailSession:^(NSError *error)
@@ -643,6 +644,7 @@ typedef void (^UICompletion)(void);
                 if (granted) {
                     [[blockSelf webController] userGrantedComputerVisionData:true];
                     [[blockSelf stateController] setARRequest:request];
+                    [[[blockSelf stateController] state] setSendComputerVisionData:true];
                 } else {
                     [[blockSelf webController] userGrantedComputerVisionData:false];
                     NSMutableDictionary* dictionary = [request mutableCopy];
@@ -726,7 +728,7 @@ typedef void (^UICompletion)(void);
     }];
 
     [[self webController] setOnComputerVisionDataRequested:^{
-        [[[blockSelf stateController] state] setComputerVisionDataRequested:YES];
+        [[[blockSelf stateController] state] setComputerVisionFrameRequested:YES];
     }];
 
     [[self webController] setOnResetTrackingButtonTapped:^{
@@ -745,11 +747,11 @@ typedef void (^UICompletion)(void);
     }];
 
     [[self webController] setOnStartSendingComputerVisionData:^{
-
+        [[[blockSelf stateController] state] setSendComputerVisionData:YES];
     }];
 
     [[self webController] setOnStopSendingComputerVisionData:^{
-
+        [[[blockSelf stateController] state] setSendComputerVisionData:NO];
     }];
 
     if ([[self stateController] wasMemoryWarning])

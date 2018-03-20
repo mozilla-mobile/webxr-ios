@@ -459,7 +459,7 @@
                 lumaBufferDictionary[@"size"] = @{
                                         @"width": @(self.lumaBufferSize.width),
                                         @"height": @(self.lumaBufferSize.height),
-                                        @"bytesPerRow": @(self.lumaBuffer.rowBytes)
+                                        @"bytesPerRow": @(self.lumaBufferSize.width)
                                         };
                 lumaBufferDictionary[@"buffer"] = self.lumaBase64StringBuffer;
                 
@@ -468,7 +468,7 @@
                 chromaBufferDictionary[@"size"] = @{
                                         @"width": @(self.chromaBufferSize.width),
                                         @"height": @(self.chromaBufferSize.height),
-                                        @"bytesPerRow": @(self.chromaBuffer.rowBytes)
+                                        @"bytesPerRow": @(self.chromaBufferSize.width)
                                         };
                 chromaBufferDictionary[@"buffer"] = self.chromaBase64StringBuffer;
                 
@@ -513,10 +513,10 @@
 
 -(void)updateBase64BuffersFromPixelBuffer:(CVPixelBufferRef)capturedImagePixelBuffer {
 
-    //[self logPixelBufferInfo:capturedImagePixelBuffer];
-    
     // Luma
     CVPixelBufferLockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+    
+    //[self logPixelBufferInfo:capturedImagePixelBuffer];
 
     size_t lumaBufferWidth = CVPixelBufferGetWidthOfPlane(capturedImagePixelBuffer, 0);
     size_t lumaBufferHeight = CVPixelBufferGetHeightOfPlane(capturedImagePixelBuffer, 0);
@@ -526,6 +526,12 @@
     lumaSrcBuffer.width = lumaBufferWidth;
     lumaSrcBuffer.height = lumaBufferHeight;
     lumaSrcBuffer.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(capturedImagePixelBuffer, 0);
+    
+    size_t extraColumnsOnLeft;
+    size_t extraColumnsOnRight;
+    size_t extraColumnsOnTop;
+    size_t extraColumnsOnBottom;
+    CVPixelBufferGetExtendedPixels(capturedImagePixelBuffer, &extraColumnsOnLeft, &extraColumnsOnRight, &extraColumnsOnTop, &extraColumnsOnBottom);
     
     vImagePixelCount targetWidth = lumaBufferWidth/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
     vImagePixelCount targetHeight = lumaBufferHeight/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
@@ -545,9 +551,13 @@
     }
     
     if (self.lumaDataBuffer == nil) {
-        self.lumaDataBuffer = [NSMutableData dataWithBytes:self.lumaBuffer.data length:self.lumaBuffer.rowBytes * self.lumaBuffer.height];
+        self.lumaDataBuffer = [NSMutableData dataWithBytes:self.lumaBuffer.data
+                                                    length:self.lumaBuffer.width * self.lumaBuffer.height * sizeof(Pixel_8)];
     }
-    [self.lumaDataBuffer setData:[NSData dataWithBytes:self.lumaBuffer.data length:self.lumaBuffer.rowBytes * self.lumaBuffer.height]];
+    for (int currentRow = 0; currentRow < self.lumaBuffer.height; currentRow++) {
+        [self.lumaDataBuffer replaceBytesInRange:NSMakeRange(self.lumaBuffer.width * currentRow, self.lumaBuffer.width)
+                                       withBytes:self.lumaBuffer.data + self.lumaBuffer.rowBytes * currentRow];
+    }
     
     if (self.lumaBase64StringBuffer == nil) {
         self.lumaBase64StringBuffer = [NSMutableString new];
@@ -574,9 +584,13 @@
     }
 
     if (self.chromaDataBuffer == nil) {
-        self.chromaDataBuffer = [NSMutableData dataWithBytes:self.chromaBuffer.data length:self.chromaBuffer.rowBytes * self.chromaBuffer.height];
+        self.chromaDataBuffer = [NSMutableData dataWithBytes:self.chromaBuffer.data
+                                                      length:self.chromaBuffer.width * self.chromaBuffer.height * sizeof(Pixel_16U)];
     }
-    [self.chromaDataBuffer setData:[NSData dataWithBytes:self.chromaBuffer.data length:self.chromaBuffer.rowBytes * self.chromaBuffer.height]];
+    for (int currentRow = 0; currentRow < self.chromaBuffer.height; currentRow++) {
+        [self.chromaDataBuffer replaceBytesInRange:NSMakeRange(self.chromaBuffer.width * currentRow * sizeof(Pixel_16U), self.chromaBuffer.width * sizeof(Pixel_16U))
+                                         withBytes:self.chromaBuffer.data + self.chromaBuffer.rowBytes * currentRow];
+    }
 
     if (self.chromaBase64StringBuffer == nil) {
         self.chromaBase64StringBuffer = [NSMutableString new];
