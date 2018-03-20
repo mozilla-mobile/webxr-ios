@@ -641,8 +641,10 @@ typedef void (^UICompletion)(void);
         if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
             [[blockSelf messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
                 if (granted) {
+                    [[blockSelf webController] userGrantedComputerVisionData:true];
                     [[blockSelf stateController] setARRequest:request];
                 } else {
+                    [[blockSelf webController] userGrantedComputerVisionData:false];
                     NSMutableDictionary* dictionary = [request mutableCopy];
                     dictionary[WEB_AR_CV_INFORMATION_OPTION] = nil;
                     [[blockSelf stateController] setARRequest:dictionary];
@@ -740,6 +742,14 @@ typedef void (^UICompletion)(void);
                     break;
             }
         }];
+    }];
+
+    [[self webController] setOnStartSendingComputerVisionData:^{
+
+    }];
+
+    [[self webController] setOnStopSendingComputerVisionData:^{
+
     }];
 
     if ([[self stateController] wasMemoryWarning])

@@ -24,6 +24,8 @@ typedef void (^OnWatchAR)(NSDictionary *);
 typedef void (^OnComputerVisionDataRequested)(void);
 typedef void (^OnStopAR)(void);
 typedef void (^OnResetTrackingButtonTapped)(void);
+typedef void (^OnStartSendingComputerVisionData)(void);
+typedef void (^OnStopSendingComputerVisionData)(void);
 
 @interface WebController : NSObject
 
@@ -45,6 +47,8 @@ typedef void (^OnResetTrackingButtonTapped)(void);
 @property(nonatomic, copy) OnComputerVisionDataRequested onComputerVisionDataRequested;
 @property(nonatomic, copy) OnStopAR onStopAR;
 @property(nonatomic, copy) OnResetTrackingButtonTapped onResetTrackingButtonTapped;
+@property(nonatomic, copy) OnStartSendingComputerVisionData onStartSendingComputerVisionData;
+@property(nonatomic, copy) OnStopSendingComputerVisionData onStopSendingComputerVisionData;
 
 @property (nonatomic, strong) Animator *animator;
 
@@ -92,5 +96,7 @@ typedef void (^OnResetTrackingButtonTapped)(void);
 - (void)didReceiveError:(NSError *)error;
 
 - (void)sendComputerVisionData:(NSDictionary *)computerVisionData;
+
+- (void)userGrantedComputerVisionData:(bool)granted;
 @end
 

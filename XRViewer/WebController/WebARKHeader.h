@@ -18,6 +18,8 @@
 #define WEB_AR_HIT_TEST_MESSAGE        @"hitTest"
 #define WEB_AR_ADD_ANCHOR_MESSAGE      @"addAnchor"
 #define WEB_AR_REQUEST_CV_DATA_MESSAGE @"requestComputerVisionData"
+#define WEB_AR_START_SENDING_CV_DATA_MESSAGE    @"startSendingComputerVisionData"
+#define WEB_AR_STOP_SENDING_CV_DATA_MESSAGE     @"stopSendingComputerVisionData"
 
 #define WEB_AR_ON_JS_UPDATE_MESSAGE    @"onUpdate" // reques from JS
 
@@ -35,6 +37,7 @@
 #define WEB_AR_IOS_TRACKING_STATE_MESSAGE       @"arTrackingChanged"
 
 #define WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE   @"ios_did_receive_memory_warning"
+#define WEB_AR_IOS_USER_GRANTED_CV_DATA         @"userGrantedComputerVisionData"
 
 // This message is not being used by the polyfill
 // #define WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"

@@ -243,6 +243,10 @@ inline static WebCompletion debugCompletion(NSString *name)
     [self callWebMethod:WEB_AR_IOS_ERROR_MESSAGE paramJSON:errorDictionary webCompletion:debugCompletion(WEB_AR_IOS_ERROR_MESSAGE)];
 }
 
+- (void)userGrantedComputerVisionData:(bool)granted {
+    [self callWebMethod:WEB_AR_IOS_USER_GRANTED_CV_DATA paramJSON:@{@"granted": @(granted)} webCompletion:debugCompletion(WEB_AR_IOS_USER_GRANTED_CV_DATA)];
+}
+
 #pragma mark WKScriptMessageHandler
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
@@ -330,6 +334,14 @@ inline static WebCompletion debugCompletion(NSString *name)
     } else if ([[message name] isEqualToString:WEB_AR_REQUEST_CV_DATA_MESSAGE]) {
         if ([self onComputerVisionDataRequested]) {
             [self onComputerVisionDataRequested]();
+        }
+    } else if ([[message name] isEqualToString:WEB_AR_START_SENDING_CV_DATA_MESSAGE]) {
+        if ([self onStartSendingComputerVisionData]) {
+            [self onStartSendingComputerVisionData]();
+        }
+    } else if ([[message name] isEqualToString:WEB_AR_STOP_SENDING_CV_DATA_MESSAGE]) {
+        if ([self onStopSendingComputerVisionData]) {
+            [self onStopSendingComputerVisionData]();
         }
     }
     else
@@ -560,6 +572,8 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_HIT_TEST_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_ADD_ANCHOR_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_REQUEST_CV_DATA_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_START_SENDING_CV_DATA_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_STOP_SENDING_CV_DATA_MESSAGE];
 }
 
 - (void)cleanWebContent
@@ -573,6 +587,8 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_HIT_TEST_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ADD_ANCHOR_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_REQUEST_CV_DATA_MESSAGE];
+    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_START_SENDING_CV_DATA_MESSAGE];
+    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_STOP_SENDING_CV_DATA_MESSAGE];
 }
 
 - (void)setupWebViewWithRootView:(__autoreleasing UIView*)rootView
