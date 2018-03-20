@@ -459,7 +459,8 @@
                 lumaBufferDictionary[@"size"] = @{
                                         @"width": @(self.lumaBufferSize.width),
                                         @"height": @(self.lumaBufferSize.height),
-                                        @"bytesPerRow": @(self.lumaBufferSize.width)
+                                        @"bytesPerRow": @(self.lumaBufferSize.width * sizeof(Pixel_8)),
+                                        @"bytesPerPixel": @(sizeof(Pixel_8))
                                         };
                 lumaBufferDictionary[@"buffer"] = self.lumaBase64StringBuffer;
                 
@@ -468,7 +469,8 @@
                 chromaBufferDictionary[@"size"] = @{
                                         @"width": @(self.chromaBufferSize.width),
                                         @"height": @(self.chromaBufferSize.height),
-                                        @"bytesPerRow": @(self.chromaBufferSize.width)
+                                        @"bytesPerRow": @(self.chromaBufferSize.width * sizeof(Pixel_16U)),
+                                        @"bytesPerPixel": @(sizeof(Pixel_16U))
                                         };
                 chromaBufferDictionary[@"buffer"] = self.chromaBase64StringBuffer;
                 
