@@ -37,11 +37,13 @@
  to avoid allocating/deallocating a huge amount of memory on each frame
  */
 @property vImage_Buffer lumaBuffer;
+@property void* lumaScaleTemporaryBuffer;
 @property CGSize lumaBufferSize;
 @property(nonatomic, strong) NSMutableData* lumaDataBuffer;
 @property(nonatomic, strong) NSMutableString* lumaBase64StringBuffer;
 
 @property vImage_Buffer chromaBuffer;
+@property void* chromaScaleTemporaryBuffer;
 @property CGSize chromaBufferSize;
 @property(nonatomic, strong) NSMutableData* chromaDataBuffer;
 @property(nonatomic, strong) NSMutableString* chromaBase64StringBuffer;
@@ -543,9 +545,12 @@
     
     if (self.lumaBuffer.data == nil) {
         vImageBuffer_Init(&self->_lumaBuffer, self.lumaBufferSize.height, self.lumaBufferSize.width, 8 * sizeof(Pixel_8), kvImageNoFlags);
+        vImageScale_Planar8(&self->_lumaBuffer, &self->_lumaBuffer, NULL, kvImageGetTempBufferSize);
+        size_t scaledBufferSize = vImageScale_Planar8(&lumaSrcBuffer, &self->_lumaBuffer, NULL, kvImageGetTempBufferSize);
+        self.lumaScaleTemporaryBuffer = malloc(scaledBufferSize * sizeof(Pixel_8));
     }
 
-    vImage_Error scaleError = vImageScale_Planar8(&lumaSrcBuffer, &self->_lumaBuffer, NULL, kvImageNoFlags);
+    vImage_Error scaleError = vImageScale_Planar8(&lumaSrcBuffer, &self->_lumaBuffer, self.lumaScaleTemporaryBuffer, kvImageNoFlags);
     if (scaleError != 0) {
         NSLog(@"Error scaling luma image");
         CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
@@ -576,9 +581,11 @@
     
     if (self->_chromaBuffer.data == nil) {
         vImageBuffer_Init(&self->_chromaBuffer, self.chromaBufferSize.height, self.chromaBufferSize.width, 8 * sizeof(Pixel_16U), kvImageNoFlags);
+        size_t scaledBufferSize = vImageScale_Planar8(&chromaSrcBuffer, &self->_chromaBuffer, NULL, kvImageGetTempBufferSize);
+        self.chromaScaleTemporaryBuffer = malloc(scaledBufferSize * sizeof(Pixel_16U));
     }
 
-    scaleError = vImageScale_CbCr8(&chromaSrcBuffer, &self->_chromaBuffer, NULL, kvImageNoFlags);
+    scaleError = vImageScale_CbCr8(&chromaSrcBuffer, &self->_chromaBuffer, self.chromaScaleTemporaryBuffer, kvImageNoFlags);
     if (scaleError != 0) {
         NSLog(@"Error scaling chroma image");
         CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
