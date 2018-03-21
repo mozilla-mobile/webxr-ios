@@ -212,8 +212,7 @@
 
 - (void)startSessionWithAppState:(AppState *)state
 {
-    [self setRequest:[state aRRequest]];
-    
+    [self updateARConfigurationWithState:state];
     [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
     [self setArSessionState:ARKSessionRunning];
     
@@ -223,18 +222,31 @@
     [self setShowOptions:[state showOptions]];
 }
 
-- (void)runSessionResettingTracking {
-    [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking];
-    [self setArSessionState:ARKSessionRunning];
-}
-
-- (void)runSessionRemovingAnchors {
+- (void)runSessionRemovingAnchorsWithAppState:(AppState *)state {
+    [self updateARConfigurationWithState:state];
     [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionRemoveExistingAnchors];
     [self setArSessionState:ARKSessionRunning];
 }
 
-- (void)runSessionResettingTrackingAndRemovingAnchors {
+- (void)updateARConfigurationWithState:(AppState *)state {
+    [self setRequest:[state aRRequest]];
+
+    if ([[state aRRequest][WEB_AR_WORLD_ALIGNMENT] boolValue]) {
+        [[self configuration] setWorldAlignment:ARWorldAlignmentGravityAndHeading];
+    } else {
+        [[self configuration] setWorldAlignment:ARWorldAlignmentGravity];
+    }
+}
+
+- (void)runSessionResettingTrackingAndRemovingAnchorsWithAppState:(AppState *)state {
+    [self updateARConfigurationWithState:state];
     [[self session] runWithConfiguration:[self configuration] options:ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
+    [self setArSessionState:ARKSessionRunning];
+}
+
+- (void)runSessionWithAppState:(AppState *)state {
+    [self updateARConfigurationWithState:state];
+    [[self session] runWithConfiguration:[self configuration]];
     [self setArSessionState:ARKSessionRunning];
 }
 

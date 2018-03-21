@@ -119,6 +119,7 @@
 #define WEB_AR_UUID_OPTION             @"uuid"
 
 #define WEB_AR_LIGHT_INTENSITY_OPTION  @"light_intensity"
+#define WEB_AR_WORLD_ALIGNMENT         @"alignEUS"
 
 #define WEB_AR_CAMERA_OPTION           @"camera"
 #define WEB_AR_PROJ_CAMERA_OPTION      @"projection_camera"

@@ -86,12 +86,12 @@ typedef void (^DidUpdateWindowSize)(void);
 
 - (void)removeAllAnchors;
 
-- (void)runSessionResettingTracking;
+- (void)runSessionRemovingAnchorsWithAppState:(AppState *)state;
 
-- (void)runSessionRemovingAnchors;
-
-- (void)runSessionResettingTrackingAndRemovingAnchors;
+- (void)runSessionResettingTrackingAndRemovingAnchorsWithAppState:(AppState *)state;
 
 - (void)removeDistantAnchors;
+
+- (void)runSessionWithAppState:(AppState *)state;
 @end
 

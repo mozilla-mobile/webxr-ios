@@ -320,6 +320,7 @@ typedef void (^UICompletion)(void);
                      if ([blockSelf urlIsNotTheLastXRVisitedURL]) {
                          NSLog(@"\n\n*********\n\nThis site is not the last XR site visited, and the timer hasn't expired yet. Remove distant anchors and continue with the session\n\n*********");
                          [[blockSelf arkController] removeDistantAnchors];
+                         [[blockSelf arkController] runSessionWithAppState:[[blockSelf stateController] state]];
                      } else {
                          NSLog(@"\n\n*********\n\nThis site is the last XR site visited, and the timer hasn't expired yet. Continue with the session\n\n*********");
                      }
@@ -331,7 +332,7 @@ typedef void (^UICompletion)(void);
                      if ([[[blockSelf stateController] state] shouldRemoveAnchorsOnNextARSession]) {
                          NSLog(@"\n\n*********\n\nRun session removing anchors\n\n*********");
                          [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession:NO];
-                         [[blockSelf arkController] runSessionRemovingAnchors];
+                         [[blockSelf arkController] runSessionRemovingAnchorsWithAppState:[[blockSelf stateController] state]];
                      } else {
                          NSLog(@"\n\n*********\n\nResume session\n\n*********");
                          [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
@@ -736,11 +737,11 @@ typedef void (^UICompletion)(void);
         [[blockSelf messageController] showMessageAboutResetTracking:^(ResetTrackigOption option){
             switch (option) {
                 case ResetTracking:
-                    [[blockSelf arkController] runSessionResettingTrackingAndRemovingAnchors];
+                    [[blockSelf arkController] runSessionResettingTrackingAndRemovingAnchorsWithAppState:[[blockSelf stateController] state]];
                     break;
                     
                 case RemoveExistingAnchors:
-                    [[blockSelf arkController] runSessionRemovingAnchors];
+                    [[blockSelf arkController] runSessionRemovingAnchorsWithAppState:[[blockSelf stateController] state]];
                     break;
             }
         }];
