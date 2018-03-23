@@ -78,7 +78,9 @@ typedef void (^DidUpdateWindowSize)(void);
 - (NSArray *)hitTestNormPoint:(CGPoint)point types:(NSUInteger)type;
 - (BOOL)addAnchor:(NSString *)userGeneratedAnchorID transform:(NSArray *)transform;
 
-- (void)removeAnchors:(NSArray *)anchorNames;
+/// Removes the anchors with the ids passed as parameter from the scene.
+/// @param anchorIDsToDelete An array of anchor IDs. These can be both ARKit-generated anchorIDs or user-generated anchorIDs
+- (void)removeAnchors:(NSArray *)anchorIDsToDelete;
 
 - (NSArray *)currentPlanesArray;
 

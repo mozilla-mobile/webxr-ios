@@ -294,37 +294,47 @@
     return YES;
 }
 
-- (void)removeAnchors:(NSArray *)anchorNames
-{
-    ARFrame *currentFrame = [[self session] currentFrame];
-    
-    if (anchorNames == nil)
-    {
-        for (ARAnchor *anchor in [currentFrame anchors])
-        {
-            [[self session] removeAnchor:anchor];
-        }
-        
-        [objects removeAllObjects];
-    }
-    else
-    {
-        for (NSString *name in anchorNames)
-        {
-            NSString *uuid = objects[name];
-            
-            for (ARAnchor *anchor in [currentFrame anchors])
-            {
-                if ([[[anchor identifier] UUIDString] isEqualToString:uuid])
-                {
-                    [[self session] removeAnchor:anchor];
-                    [objects removeObjectForKey:uuid];
-                    
-                    break;
-                }
+- (void)removeAnchors:(NSArray *)anchorIDsToDelete {
+    for (NSString *anchorIDToDelete in anchorIDsToDelete) {
+        ARAnchor *anchorToDelete = [self getAnchorFromUserAnchorID:anchorIDToDelete];
+        if (anchorToDelete) {
+            [self.session removeAnchor:anchorToDelete];
+        } else {
+            anchorToDelete = [self getAnchorFromARKitAnchorID:anchorIDToDelete];
+            if (anchorToDelete) {
+                [self.session removeAnchor:anchorToDelete];
             }
         }
     }
+}
+
+- (ARAnchor *)getAnchorFromARKitAnchorID:(NSString *)arkitAnchorID {
+    ARAnchor *anchor = nil;
+    ARFrame *currentFrame = [[self session] currentFrame];
+    for (ARAnchor *currentAnchor in [currentFrame anchors]) {
+        if ([[currentAnchor.identifier UUIDString] isEqualToString:arkitAnchorID]) {
+            anchor = currentAnchor;
+            break;
+        }
+    }
+    return anchor;
+}
+
+- (ARAnchor *)getAnchorFromUserAnchorID:(NSString *)userAnchorID {
+    __block ARAnchor *anchor = nil;
+    [arkitGeneratedAnchorIDUserAnchorIDMap enumerateKeysAndObjectsUsingBlock:^(NSString* arkitID, NSString* userID, BOOL *stop) {
+        if ([userID isEqualToString:userAnchorID]) {
+            ARFrame *currentFrame = [[self session] currentFrame];
+            for (ARAnchor *currentAnchor in [currentFrame anchors]) {
+                if ([[currentAnchor.identifier UUIDString] isEqualToString:arkitID]) {
+                    anchor = currentAnchor;
+                    break;
+                }
+            }
+            *stop = YES;
+        }
+    }];
+    return anchor;
 }
 
 - (void)removeDistantAnchors {
