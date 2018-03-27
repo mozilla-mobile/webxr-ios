@@ -81,6 +81,10 @@
     [[self restartTrackingBtn] setHidden:!visible];
 }
 
+- (BOOL)isDebugButtonSelected {
+    return [[self debugBtn] isSelected];
+}
+
 - (void)setup
 {
     [[self backBtn] setImage:[UIImage imageNamed:@"back"] forState:UIControlStateDisabled];

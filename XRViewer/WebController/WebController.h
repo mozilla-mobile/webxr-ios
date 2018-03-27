@@ -98,5 +98,7 @@ typedef void (^OnStopSendingComputerVisionData)(void);
 - (void)sendComputerVisionData:(NSDictionary *)computerVisionData;
 
 - (void)userGrantedComputerVisionData:(bool)granted;
+
+- (BOOL)isDebugButtonSelected;
 @end
 

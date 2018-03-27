@@ -80,7 +80,9 @@ typedef void (^UICompletion)(void);
 - (void)swipeFromEdge: (UISwipeGestureRecognizer*)recognizer {
     if ([[[self stateController] state] webXR]) {
         [[self webController] showBar:YES];
-        [[self stateController] setShowMode:ShowMulti];
+        if ([[self webController] isDebugButtonSelected]) {
+            [[self stateController] setShowMode:ShowMultiDebug];
+        }
     }
 }
 
@@ -218,7 +220,7 @@ typedef void (^UICompletion)(void);
      {
          if (xr)
          {
-             [[blockSelf stateController] setShowMode:ShowSingle];
+             //[[blockSelf stateController] setShowMode:ShowSingle];
              [[blockSelf messageController] showMessageWithTitle:AR_SESSION_STARTED_POPUP_TITLE
                                                          message:AR_SESSION_STARTED_POPUP_MESSAGE
                                                        hideAfter:AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS];
@@ -226,7 +228,7 @@ typedef void (^UICompletion)(void);
              [[blockSelf webController] setLastXRVisitedURL:[[[[blockSelf webController] webView] URL] absoluteString]];
          }
          else {
-             [[blockSelf stateController] setShowMode:ShowNothing];
+             //[[blockSelf stateController] setShowMode:ShowNothing];
              if ([[blockSelf arkController] arSessionState] == ARKSessionRunning) {
                  [blockSelf.timerSessionRunningInBackground invalidate];
                  NSInteger timerSeconds = [[NSUserDefaults standardUserDefaults] integerForKey:secondsInBackgroundKey];
@@ -622,17 +624,12 @@ typedef void (^UICompletion)(void);
           { }];
      }];
     
-    [[self webController] setOnInitAR:^(NSDictionary *uiOptionsDict)
-     {
-         /*
-         [[blockSelf stateController] setWebXR:YES];
-         [[blockSelf stateController] setShowMode:ShowSingle];
-          */
-         [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
-         
-         [[blockSelf stateController] applyOnEnterForegroundAction];
-         [[blockSelf stateController] applyOnDidReceiveMemoryAction];
-     }];
+    [[self webController] setOnInitAR:^(NSDictionary *uiOptionsDict) {
+        [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
+        
+        [[blockSelf stateController] applyOnEnterForegroundAction];
+        [[blockSelf stateController] applyOnDidReceiveMemoryAction];
+    }];
     
     [[self webController] setOnError:^(NSError *error)
      {
@@ -654,19 +651,16 @@ typedef void (^UICompletion)(void);
                 }
                 
                 [[blockSelf stateController] setWebXR:YES];
-                [[blockSelf stateController] setShowMode:ShowSingle];
             }];
         } else {
             [[blockSelf stateController] setARRequest:request];
             [[blockSelf stateController] setWebXR:YES];
-            [[blockSelf stateController] setShowMode:ShowSingle];
         }
     }];
 
     [[self webController] setOnStopAR:^{
         [[blockSelf arkController] pauseSession];
         [[blockSelf stateController] setWebXR:NO];
-        [[blockSelf stateController] setShowMode:ShowNothing];
     }];
     
     [[self webController] setOnJSUpdateData:^NSDictionary *
@@ -855,23 +849,6 @@ typedef void (^UICompletion)(void);
     [[self overlayController] setOptions:[[[self stateController] state] showOptions]];
     [[self overlayController] setMicEnabled:[[[self stateController] state] micEnabled]];
     [[self overlayController] setRecordState:[[[self stateController] state] recordState]];
-    
-    [[self overlayController] setOnSwipeDown:^{
-        if ([[[blockSelf stateController] state] webXR]) {
-            [[blockSelf webController] showBar:YES];
-            [[blockSelf stateController] setShowMode:ShowMulti];
-        }
-    }];
-    
-    [[self overlayController] setOnSwipeUp:^{
-        if ([[[blockSelf stateController] state] webXR]) {
-            if (![[blockSelf stateController] isRecording]) {
-                [[blockSelf stateController] setShowMode:ShowNothing];
-            }
-            [[blockSelf webController] showBar:NO];
-            [[blockSelf webController] hideKeyboard];
-        }
-    }];
 }
 
 #pragma mark Cleanups

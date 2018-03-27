@@ -166,7 +166,6 @@ inline static WebCompletion debugCompletion(NSString *name)
         [[self barView] hideKeyboard];
         [[self barView] setDebugVisible:webXR];
         [[self barView] setRestartTrackingVisible:webXR];
-        [[self barView] setDebugSelected:NO];
         float webViewTopAnchorConstraintConstant = webXR? 0.0f: URL_BAR_HEIGHT;
         [[self webViewTopAnchorConstraint] setConstant:webViewTopAnchorConstraintConstant];
         [[[self webView] superview] setNeedsLayout];
@@ -245,6 +244,10 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)userGrantedComputerVisionData:(bool)granted {
     [self callWebMethod:WEB_AR_IOS_USER_GRANTED_CV_DATA paramJSON:@{@"granted": @(granted)} webCompletion:debugCompletion(WEB_AR_IOS_USER_GRANTED_CV_DATA)];
+}
+
+- (BOOL)isDebugButtonSelected {
+    return [[self barView] isDebugButtonSelected];
 }
 
 #pragma mark WKScriptMessageHandler

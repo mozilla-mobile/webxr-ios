@@ -40,4 +40,5 @@ typedef void (^ResetTrackingAction)(void);
 
 - (void)hideKeyboard;
 
+- (BOOL)isDebugButtonSelected;
 @end
