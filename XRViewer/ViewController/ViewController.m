@@ -81,7 +81,9 @@ typedef void (^UICompletion)(void);
     if ([[[self stateController] state] webXR]) {
         [[self webController] showBar:YES];
         if ([[self webController] isDebugButtonSelected]) {
-            [[self stateController] setShowMode:ShowMultiDebug];
+            [[self stateController] setShowMode: ShowMultiDebug];
+        } else {
+            [[self stateController] setShowMode: ShowMulti];
         }
     }
 }
@@ -228,7 +230,7 @@ typedef void (^UICompletion)(void);
              [[blockSelf webController] setLastXRVisitedURL:[[[[blockSelf webController] webView] URL] absoluteString]];
          }
          else {
-             //[[blockSelf stateController] setShowMode:ShowNothing];
+             [[blockSelf stateController] setShowMode:ShowNothing];
              if ([[blockSelf arkController] arSessionState] == ARKSessionRunning) {
                  [blockSelf.timerSessionRunningInBackground invalidate];
                  NSInteger timerSeconds = [[NSUserDefaults standardUserDefaults] integerForKey:secondsInBackgroundKey];
@@ -661,6 +663,7 @@ typedef void (^UICompletion)(void);
     [[self webController] setOnStopAR:^{
         [[blockSelf arkController] pauseSession];
         [[blockSelf stateController] setWebXR:NO];
+        [[blockSelf stateController] setShowMode:ShowNothing];
     }];
     
     [[self webController] setOnJSUpdateData:^NSDictionary *
