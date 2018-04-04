@@ -310,7 +310,7 @@
 
 - (void)showMessageAboutAccessingTheCapturedImage:(void (^)(BOOL))granted {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Video Camera Image Access"
-                                                    message:@"WebXR Viewer app displays video from your camera in the background without automatically giving access to those images to the web page.\n\nThis page is requesting access to images from the video camera. Allow?"
+                                                    message:@"WebXR Viewer displays video from your camera without giving the web page access to the video.\n\nThis page is requesting access to images from the video camera. Allow?"
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp

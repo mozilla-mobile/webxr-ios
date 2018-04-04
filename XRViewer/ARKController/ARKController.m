@@ -396,7 +396,9 @@
         if (frame)
         {
             NSMutableDictionary *newData = [NSMutableDictionary dictionaryWithCapacity:3]; // max request object
-            
+            NSInteger ts = [frame timestamp];
+            newData[@"timestamp"] = @(ts);
+
             if ([[self request][WEB_AR_LIGHT_INTENSITY_OPTION] boolValue])
             {
                 newData[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
