@@ -57,6 +57,8 @@
     [self setSession:session];
     
     [[self renderView] setSession:session];
+    
+    [[self renderView] stop:nil];
 }
 
 - (void)clean

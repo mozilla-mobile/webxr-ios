@@ -56,11 +56,19 @@
                                     <constraint firstItem="0Zx-bn-O3A" firstAttribute="top" secondItem="73L-9y-k0E" secondAttribute="top" id="ehD-2L-HM0"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7gF-ps-69Q">
+                                <rect key="frame" x="153.66666666666666" y="353" width="106.99999999999997" height="30"/>
+                                <state key="normal" title="Settings screen"/>
+                                <connections>
+                                    <action selector="settingsTest" destination="BV1-FR-VrT" eventType="touchUpInside" id="bFU-L9-aXr"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="2c2-sH-loz"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="2qV-Bb-iAI"/>
+                            <constraint firstItem="7gF-ps-69Q" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="B0R-GD-RW8"/>
                             <constraint firstItem="NaB-9b-LZq" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="D3d-fu-aKE"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="GFe-uq-zen"/>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="Gvp-8I-EIt"/>
@@ -69,6 +77,7 @@
                             <constraint firstAttribute="bottom" secondItem="Pr5-sC-23l" secondAttribute="bottom" id="NeL-ZY-iQh"/>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="P6w-lb-rW2"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="RBb-Ar-FV4"/>
+                            <constraint firstItem="7gF-ps-69Q" firstAttribute="centerY" secondItem="3se-qz-xqx" secondAttribute="centerY" id="RYp-i2-szM"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="V1j-Ro-quZ"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="ecg-bu-gQi"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="gIe-3g-LF3"/>

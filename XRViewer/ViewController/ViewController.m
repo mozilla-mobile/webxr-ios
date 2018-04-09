@@ -324,7 +324,7 @@ typedef void (^UICompletion)(void);
                      if ([blockSelf urlIsNotTheLastXRVisitedURL]) {
                          NSLog(@"\n\n*********\n\nThis site is not the last XR site visited, and the timer hasn't expired yet. Remove distant anchors and continue with the session\n\n*********");
                          [[blockSelf arkController] removeDistantAnchors];
-                         [[blockSelf arkController] runSessionWithAppState:[[blockSelf stateController] state]];
+                         [[blockSelf arkController] runSessionWithAppState:[[blockSelf stateController] state]]; 
                      } else {
                          NSLog(@"\n\n*********\n\nThis site is the last XR site visited, and the timer hasn't expired yet. Continue with the session\n\n*********");
                      }
@@ -492,13 +492,14 @@ typedef void (^UICompletion)(void);
     }
     else
     {
-        [[self recordController] requestAuthorizationWithCompletion:^(RecordController *sender)
-         {
-             dispatch_async(dispatch_get_main_queue(), ^
-                            {
-                                [blockSelf setupWebController];
-                            });
-         }];
+        [self setupWebController];
+//        [[self recordController] requestAuthorizationWithCompletion:^(RecordController *sender)
+//         {
+//             dispatch_async(dispatch_get_main_queue(), ^
+//                            {
+//                                [blockSelf setupWebController];
+//                            });
+//         }];
     }
     
     [self setupOverlayController];
@@ -998,6 +999,10 @@ typedef void (^UICompletion)(void);
     }
     
     [[self stateController] setWebXR:NO];
+}
+
+- (IBAction)settingsTest {
+    [[self messageController] showPermissionsPopup];
 }
 
 @end
