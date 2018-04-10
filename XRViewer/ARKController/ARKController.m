@@ -449,8 +449,8 @@
                         resizedCameraIntrinsics.columns[i][j] = cameraIntrinsics.columns[i][j]/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
                     }
                 }
-                
-                
+                resizedCameraIntrinsics.columns[2][2] = 1.0f;
+
                 cameraInformation[@"cameraIntrinsics"] = arrayFromMatrix3x3(resizedCameraIntrinsics);
                 
                 // Get the projection matrix
