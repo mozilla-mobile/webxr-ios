@@ -4,6 +4,7 @@
 #define RECORD_STATE_BY_DEFAULT        RecordStateIsReady
 #define SHOW_MODE_BY_DEFAULT           ShowNothing
 #define SHOW_OPTIONS_BY_DEFAULT        None
+#define POPUP_ENABLED_BY_DEFAULT       YES
 
 typedef NS_ENUM(NSUInteger, ShowMode)
 {
@@ -62,6 +63,7 @@ typedef NS_ENUM(NSUInteger, RecordState)
 @property(nonatomic) BOOL computerVisionFrameRequested;
 @property(nonatomic) BOOL shouldRemoveAnchorsOnNextARSession;
 @property(nonatomic) BOOL sendComputerVisionData;
+@property(nonatomic) BOOL shouldShowSessionStartedPopup;
 
 + (instancetype)defaultState;
 

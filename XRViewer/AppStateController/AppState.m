@@ -16,6 +16,7 @@
     [copy setComputerVisionFrameRequested:[self computerVisionFrameRequested]];
     [copy setShouldRemoveAnchorsOnNextARSession: [self shouldRemoveAnchorsOnNextARSession]];
     [copy setSendComputerVisionData:[self sendComputerVisionData]];
+    [copy setShouldShowSessionStartedPopup: [self shouldShowSessionStartedPopup]];
 
     return copy;
 }
@@ -87,6 +88,10 @@
         return NO;
     }
     
+    if ([self shouldShowSessionStartedPopup] != [theObject shouldShowSessionStartedPopup]) {
+        return NO;
+    }
+    
     return YES;
 }
 
@@ -103,6 +108,7 @@
     [state setShowOptions:SHOW_OPTIONS_BY_DEFAULT];
     [state setRecordState:RECORD_STATE_BY_DEFAULT];
     [state setMicEnabled:MICROPHONE_ENABLED_BY_DEFAULT];
+    [state setShouldShowSessionStartedPopup:POPUP_ENABLED_BY_DEFAULT];
     
     // trackingstate default is nil ?
     
