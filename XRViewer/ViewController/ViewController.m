@@ -538,6 +538,16 @@ typedef void (^UICompletion)(void);
         [[blockSelf webController] didReceiveError: error];
         [[blockSelf messageController] hideMessages];
         
+        if ([error code] == SENSOR_FAILED_ARKIT_ERROR_CODE) {
+            NSMutableDictionary* currentARRequest = [[[[blockSelf stateController] state] aRRequest] mutableCopy];
+            if ([currentARRequest[WEB_AR_WORLD_ALIGNMENT] boolValue]) {
+                // The session failed because the compass (heading) couldn't be initialized. Fallback the session to ARWorldAlignmentGravity
+                currentARRequest[WEB_AR_WORLD_ALIGNMENT] = [NSNumber numberWithBool:NO];;
+                [[blockSelf stateController] setARRequest:currentARRequest];
+                return;
+            }
+        }
+        
         NSString* errorMessage = @"ARKit Error";
         switch ([error code]) {
             case CAMERA_ACCESS_NOT_AUTHORIZED_ARKIT_ERROR_CODE:
@@ -563,16 +573,6 @@ typedef void (^UICompletion)(void);
         dispatch_async(dispatch_get_main_queue(), ^{
             [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if ([error code] == SENSOR_FAILED_ARKIT_ERROR_CODE) {
-                        NSMutableDictionary* currentARRequest = [[[[blockSelf stateController] state] aRRequest] mutableCopy];
-                        if ([currentARRequest[WEB_AR_WORLD_ALIGNMENT] boolValue]) {
-                            // The session failed because the compass (heading) couldn't be initialized. Fallback the session to ARWorldAlignmentGravity
-                            currentARRequest[WEB_AR_WORLD_ALIGNMENT] = [NSNumber numberWithBool:NO];;
-                            [blockSelf handleOnWatchARWithRequest:currentARRequest];
-                            return;
-                        }
-                    }
-                    
                     [[self webController] loadBlankHTMLString];
                 });
             }];
