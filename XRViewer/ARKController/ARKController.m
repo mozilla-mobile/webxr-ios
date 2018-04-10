@@ -848,6 +848,8 @@
 {
     DDLogError(@"Session didFailWithError - %@", error);
     
+    [self setArSessionState:ARKSessionUnknown];
+    
     if ([self didFailSession])
     {
         [self didFailSession](error);

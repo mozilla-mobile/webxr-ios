@@ -532,6 +532,9 @@ typedef void (^UICompletion)(void);
      }];
     [[self arkController] setDidFailSession:^(NSError *error)
     {
+        [[blockSelf webController] didReceiveError: error];
+        [[blockSelf messageController] hideMessages];
+        
         NSString* errorMessage = @"ARKit Error";
         switch ([error code]) {
             case CAMERA_ACCESS_NOT_AUTHORIZED_ARKIT_ERROR_CODE:
@@ -557,11 +560,19 @@ typedef void (^UICompletion)(void);
         dispatch_async(dispatch_get_main_queue(), ^{
             [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    if ([error code] == SENSOR_FAILED_ARKIT_ERROR_CODE) {
+                        NSMutableDictionary* currentARRequest = [[[[blockSelf stateController] state] aRRequest] mutableCopy];
+                        if ([currentARRequest[WEB_AR_WORLD_ALIGNMENT] boolValue]) {
+                            // The session failed because the compass (heading) couldn't be initialized. Fallback the session to ARWorldAlignmentGravity
+                            currentARRequest[WEB_AR_WORLD_ALIGNMENT] = [NSNumber numberWithBool:NO];;
+                            [blockSelf handleOnWatchARWithRequest:currentARRequest];
+                            return;
+                        }
+                    }
+                    
                     [[self webController] loadBlankHTMLString];
                 });
             }];
-
-            [[blockSelf webController] didReceiveError: error];
         });
      }];
     
@@ -639,25 +650,7 @@ typedef void (^UICompletion)(void);
      }];
 
     [[self webController] setOnWatchAR:^( NSDictionary * _Nullable request){
-        if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
-            [[blockSelf messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
-                if (granted) {
-                    [[blockSelf webController] userGrantedComputerVisionData:true];
-                    [[blockSelf stateController] setARRequest:request];
-                    [[[blockSelf stateController] state] setSendComputerVisionData:true];
-                } else {
-                    [[blockSelf webController] userGrantedComputerVisionData:false];
-                    NSMutableDictionary* dictionary = [request mutableCopy];
-                    dictionary[WEB_AR_CV_INFORMATION_OPTION] = nil;
-                    [[blockSelf stateController] setARRequest:dictionary];
-                }
-                
-                [[blockSelf stateController] setWebXR:YES];
-            }];
-        } else {
-            [[blockSelf stateController] setARRequest:request];
-            [[blockSelf stateController] setWebXR:YES];
-        }
+        [blockSelf handleOnWatchARWithRequest: request];
     }];
 
     [[self webController] setOnStopAR:^{
@@ -998,6 +991,31 @@ typedef void (^UICompletion)(void);
     }
     
     [[self stateController] setWebXR:NO];
+}
+
+
+- (void)handleOnWatchARWithRequest: (NSDictionary*)request {
+    __weak typeof (self) blockSelf = self;
+    
+    if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
+        [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
+            if (granted) {
+                [[blockSelf webController] userGrantedComputerVisionData:true];
+                [[blockSelf stateController] setARRequest:request];
+                [[[blockSelf stateController] state] setSendComputerVisionData:true];
+            } else {
+                [[blockSelf webController] userGrantedComputerVisionData:false];
+                NSMutableDictionary* dictionary = [request mutableCopy];
+                dictionary[WEB_AR_CV_INFORMATION_OPTION] = nil;
+                [[blockSelf stateController] setARRequest:dictionary];
+            }
+            
+            [[blockSelf stateController] setWebXR:YES];
+        }];
+    } else {
+        [[self stateController] setARRequest:request];
+        [[self stateController] setWebXR:YES];
+    }
 }
 
 @end

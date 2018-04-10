@@ -334,6 +334,10 @@
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
 
+- (void)hideMessages {
+    [[[self viewController] presentedViewController] dismissViewControllerAnimated:YES completion:nil];
+}
+
 
 #pragma mark private
 
