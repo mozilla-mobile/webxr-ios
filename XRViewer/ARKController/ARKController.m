@@ -511,6 +511,18 @@
                 os_unfair_lock_unlock(&(lock));
             }
             
+            if ([[self configuration] worldAlignment] == ARWorldAlignmentGravityAndHeading) {
+                newData[WEB_AR_3D_GEOALIGNED_OPTION] = [NSNumber numberWithBool:YES];
+            } else {
+                newData[WEB_AR_3D_GEOALIGNED_OPTION] = [NSNumber numberWithBool:NO];
+            }
+            
+            if ([[self request][WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
+                newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = [NSNumber numberWithBool:YES];
+            } else {
+                newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = [NSNumber numberWithBool:NO];
+            }
+            
             os_unfair_lock_lock(&(lock));
             arkData = [newData copy];
             os_unfair_lock_unlock(&(lock));

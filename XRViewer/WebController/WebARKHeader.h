@@ -105,6 +105,8 @@
 #define WEB_AR_3D_OBJECTS_OPTION       @"objects" // from IOS - [ {name , matrix} ]
 #define WEB_AR_3D_REMOVED_OBJECTS_OPTION @"removedObjects"
 #define WEB_AR_3D_NEW_OBJECTS_OPTION   @"newObjects"
+#define WEB_AR_3D_GEOALIGNED_OPTION    @"geoaligned"
+#define WEB_AR_3D_VIDEO_ACCESS_OPTION  @"videoAccess"
 #define WEB_AR_CV_INFORMATION_OPTION   @"computer_vision_data"
 
 #define WEB_AR_TYPE_OPTION             @"type"
