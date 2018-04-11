@@ -222,7 +222,7 @@ typedef void (^UICompletion)(void);
      {
          if (xr)
          {
-             //[[blockSelf stateController] setShowMode:ShowSingle];
+             [[blockSelf stateController] setShowMode:ShowSingle];
              if ([[[blockSelf stateController] state] shouldShowSessionStartedPopup]) {
                  [[[blockSelf stateController] state] setShouldShowSessionStartedPopup:NO];
                  [[blockSelf messageController] showMessageWithTitle:AR_SESSION_STARTED_POPUP_TITLE
