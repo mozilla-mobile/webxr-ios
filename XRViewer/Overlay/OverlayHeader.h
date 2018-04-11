@@ -33,7 +33,7 @@ typedef void (^HotAction)(BOOL); // long
 #define HELP_TEXT     @"Tap for photo, hold for video"
 #define ERROR_TEXT    @"Some error has occurred while capturing"
 #define DISABLED_TEXT @"Сapturing is disabled now"
-#define GRANT_TEXT    @"Provide access to camera to make photos / videos"
+#define GRANT_TEXT    @"Tap to provide access to camera to make photos / videos"
 
 #define HELP_LABEL_HEIGHT 16
 #define HELP_LABEL_WIDTH 350

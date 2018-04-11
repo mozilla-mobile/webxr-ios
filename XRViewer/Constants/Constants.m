@@ -8,6 +8,7 @@
 
 #import "Constants.h"
 
+NSString *const permissionsUIAlreadyShownKey = @"permissionsUIAlreadyShownKey";
 NSString *const useAnalyticsKey = @"useAnalytics";
 NSString *const homeURLKey = @"homeURL";
 NSString *const secondsInBackgroundKey = @"secondsInBackgroundKey";

@@ -30,8 +30,6 @@
         
         _manager = [[CLLocationManager alloc] init];
         [_manager setDelegate:self];
-        
-        [self requestAuthorization];
     }
     
     return self;

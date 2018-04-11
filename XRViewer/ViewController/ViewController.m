@@ -75,6 +75,13 @@ typedef void (^UICompletion)(void);
     [swipeGestureRecognizer setDirection: UISwipeGestureRecognizerDirectionUp];
     swipeGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:swipeGestureRecognizer];
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:permissionsUIAlreadyShownKey] == NO) {
+        dispatch_async(dispatch_get_main_queue(), ^ {
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:permissionsUIAlreadyShownKey];
+            [[self messageController] showPermissionsPopup];
+        });
+    }
 }
 
 - (void)swipeFromEdge: (UISwipeGestureRecognizer*)recognizer {
@@ -483,8 +490,6 @@ typedef void (^UICompletion)(void);
 
 - (void)setupTargetControllers
 {
-    __weak typeof (self) blockSelf = self;
-    
     [self setupLocationController];
     
     [self setupRecordController];
@@ -495,13 +500,7 @@ typedef void (^UICompletion)(void);
     }
     else
     {
-        [[self recordController] requestAuthorizationWithCompletion:^(RecordController *sender)
-         {
-             dispatch_async(dispatch_get_main_queue(), ^
-                            {
-                                [blockSelf setupWebController];
-                            });
-         }];
+        [self setupWebController];
     }
     
     [self setupOverlayController];

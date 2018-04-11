@@ -46,4 +46,6 @@ typedef NS_ENUM(NSInteger, ResetTrackigOption) {
 - (void)showMessageAboutAccessingTheCapturedImage:(void (^)(BOOL))granted;
 
 - (void)hideMessages;
+
+- (void)showPermissionsPopup;
 @end

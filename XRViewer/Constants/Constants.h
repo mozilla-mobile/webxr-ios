@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 
+FOUNDATION_EXPORT NSString *const permissionsUIAlreadyShownKey;
 FOUNDATION_EXPORT NSString *const useAnalyticsKey;
 FOUNDATION_EXPORT NSString *const homeURLKey;
 FOUNDATION_EXPORT NSString *const secondsInBackgroundKey;

@@ -1,4 +1,5 @@
 #import "MessageController.h"
+#import "XRViewer-Swift.h"
 #import <PopupDialog/PopupDialog-Swift.h>
 
 #warning LOCALIZATION
@@ -338,6 +339,21 @@
     [[[self viewController] presentedViewController] dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)showPermissionsPopup {
+    RequestPermissionsViewController* viewController = [RequestPermissionsViewController new];
+    viewController.view.translatesAutoresizingMaskIntoConstraints = true;
+    [[viewController.view.heightAnchor constraintEqualToConstant:300.0] setActive:YES];
+    
+    PopupDialog *dialog = [[PopupDialog alloc] initWithViewController:viewController
+                                                      buttonAlignment:UILayoutConstraintAxisVertical
+                                                      transitionStyle:PopupDialogTransitionStyleBounceUp
+                                                       preferredWidth:UIScreen.mainScreen.bounds.size.width/2.0
+                                                     gestureDismissal:YES
+                                                        hideStatusBar:YES
+                                                           completion:^{}];
+    
+    [[self viewController] presentViewController:dialog animated:YES completion:nil];
+}
 
 #pragma mark private
 
