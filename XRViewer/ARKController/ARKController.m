@@ -396,7 +396,7 @@
         if (frame)
         {
             NSMutableDictionary *newData = [NSMutableDictionary dictionaryWithCapacity:3]; // max request object
-            NSInteger ts = [frame timestamp];
+            NSInteger ts = [frame timestamp] * 1000.0;
             newData[@"timestamp"] = @(ts);
 
             if ([[self request][WEB_AR_LIGHT_INTENSITY_OPTION] boolValue])
@@ -471,7 +471,7 @@
                 
                 NSMutableDictionary *cvInformation = [NSMutableDictionary new];
                 NSMutableDictionary *frameInformation = [NSMutableDictionary new];
-                NSInteger timestamp = [frame timestamp];
+                NSInteger timestamp = [frame timestamp] * 1000.0;
                 frameInformation[@"timestamp"] = @(timestamp);
                 
                 // TODO: prepare depth data
