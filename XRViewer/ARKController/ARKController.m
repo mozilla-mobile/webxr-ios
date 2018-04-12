@@ -94,7 +94,7 @@
          Tracking can no longer be resumed once the session is paused.
          */
         [self setConfiguration:[ARWorldTrackingConfiguration new]];
-        [[self configuration] setPlaneDetection:ARPlaneDetectionHorizontal];
+        [[self configuration] setPlaneDetection:ARPlaneDetectionHorizontal | ARPlaneDetectionVertical];
         [[self configuration] setWorldAlignment:ARWorldAlignmentGravityAndHeading];
         
         Class cls = (type == ARKMetal) ? [ARKMetalController class] : [ARKSceneKitController class];
