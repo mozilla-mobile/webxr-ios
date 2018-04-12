@@ -348,7 +348,7 @@
                                                       buttonAlignment:UILayoutConstraintAxisVertical
                                                       transitionStyle:PopupDialogTransitionStyleBounceUp
                                                        preferredWidth:UIScreen.mainScreen.bounds.size.width/2.0
-                                                     gestureDismissal:YES
+                                                     gestureDismissal:NO
                                                         hideStatusBar:YES
                                                            completion:^{}];
     

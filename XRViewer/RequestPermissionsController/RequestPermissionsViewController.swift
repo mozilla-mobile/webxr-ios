@@ -18,7 +18,6 @@ class RequestPermissionsViewController: UIViewController {
     @IBOutlet weak var buttonCamera: UIButton!
     
     let size: CGFloat = 24.0
-    
     var locationManager: CLLocationManager!
     
     override func viewDidLoad() {
@@ -48,8 +47,6 @@ class RequestPermissionsViewController: UIViewController {
         locationManager.delegate = self
         if CLLocationManager.authorizationStatus() == .notDetermined {
             locationManager?.requestWhenInUseAuthorization()
-        } else {
-            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
         }
     }
     
@@ -57,14 +54,17 @@ class RequestPermissionsViewController: UIViewController {
         if AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined {
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 DispatchQueue.main.async {
-                    if granted {
-                        self.buttonCamera.isEnabled = false
-                    }
+                    self.buttonCamera.isEnabled = false
+                    self.handlePopupDismiss()
                 }
             }
             
-        } else {
-            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+        }
+    }
+    
+    func handlePopupDismiss() {
+        if !buttonCamera.isEnabled && !buttonGPS.isEnabled {
+            self.presentingViewController?.dismiss(animated: true, completion: nil)
         }
     }
 }
@@ -72,9 +72,8 @@ class RequestPermissionsViewController: UIViewController {
 extension RequestPermissionsViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         DispatchQueue.main.async {
-            if status == .authorizedWhenInUse {
-                self.buttonGPS.isEnabled = false
-            }
+            self.buttonGPS.isEnabled = false
+            self.handlePopupDismiss()
         }
     }
 }
