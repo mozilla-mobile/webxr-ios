@@ -635,8 +635,8 @@ typedef void (^UICompletion)(void);
     
     [[self webController] setOnFinishLoad:^
      {
-         [blockSelf hideSplashWithCompletion:^
-          { }];
+//         [blockSelf hideSplashWithCompletion:^
+//          { }];
      }];
     
     [[self webController] setOnInitAR:^(NSDictionary *uiOptionsDict) {
@@ -915,17 +915,17 @@ typedef void (^UICompletion)(void);
     
     [self cleanupCommonControllers];
     
-    [self showSplashWithCompletion:^
-     {
+//    [self showSplashWithCompletion:^
+//     {
          [self cleanupTargetControllers];
-     }];
+//     }];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(WAITING_TIME_ON_MEMORY_WARNING * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
                    {
                        [self setupTargetControllers];
                        
-                       [self hideSplashWithCompletion:^
-                        {}];
+//                       [self hideSplashWithCompletion:^
+//                        {}];
                    });
 }
 
@@ -955,19 +955,19 @@ typedef void (^UICompletion)(void);
 {
     if ([error code] == INTERNET_OFFLINE_CODE)
     {
-        [self showSplashWithCompletion:^
-         {
+//        [self showSplashWithCompletion:^
+//         {
              [[self stateController] setShowMode:ShowNothing];
              [[self stateController] saveNotReachableOnURL:[[self webController] lastURL]];
              [[self messageController] showMessageAboutConnectionRequired];
-         }];
+//         }];
     }
     else
     {
         [[self messageController] showMessageAboutWebError:error withCompletion:^(BOOL reload)
          {
-             [self hideSplashWithCompletion:^
-              {
+//             [self hideSplashWithCompletion:^
+//              {
                   if (reload)
                   {
                       [self loadURL:nil];
@@ -976,7 +976,7 @@ typedef void (^UICompletion)(void);
                   {
                       [[self stateController] applyOnMessageShowMode];
                   }
-              }];
+//              }];
          }];
     }
 }
