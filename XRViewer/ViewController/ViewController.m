@@ -656,7 +656,6 @@ typedef void (^UICompletion)(void);
     }];
 
     [[self webController] setOnStopAR:^{
-        [[blockSelf arkController] pauseSession];
         [[blockSelf stateController] setWebXR:NO];
         [[blockSelf stateController] setShowMode:ShowNothing];
     }];
