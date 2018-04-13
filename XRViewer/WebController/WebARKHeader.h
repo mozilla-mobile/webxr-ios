@@ -94,6 +94,7 @@
 #define WEB_AR_H_PLANE_EXTENT_OPTION   @"h_plane_extent"
 #define WEB_AR_H_PLANE_ALIGNMENT_OPTION @"plane_alignment"
 #define WEB_AR_H_PLANE_ID_OPTION       @"h_plane_id"
+#define WEB_AR_PLANE_GEOMETRY_OPTION   @"geometry"
 #define WEB_AR_SHOW_H_PLANE_OPTION     @"show_h_plane"
 
 #define WEB_AR_HIT_TEST_RESULT_OPTION  @"hit_test_result"

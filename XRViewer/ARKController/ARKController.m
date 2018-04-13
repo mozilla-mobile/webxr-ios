@@ -807,10 +807,48 @@
     return [addedAnchorDictionary copy];
 }
 
+-(void)addGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)dictionary {
+    NSMutableDictionary* geometryDictionary = [NSMutableDictionary new];
+    
+    geometryDictionary[@"vertexCount"] = [NSNumber numberWithInteger:planeGeometry.vertexCount];
+    
+    NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:planeGeometry.vertexCount];
+    for (int i = 0; i < planeGeometry.vertexCount; i++) {
+        [vertices addObject:dictFromVector3(planeGeometry.vertices[i])];
+    }
+    geometryDictionary[@"vertices"] = vertices;
+    
+    NSMutableArray* textureCoordinates = [NSMutableArray arrayWithCapacity:planeGeometry.textureCoordinateCount];
+    geometryDictionary[@"textureCoordinateCount"] = [NSNumber numberWithInteger:planeGeometry.textureCoordinateCount];
+    for (int i = 0; i < planeGeometry.textureCoordinateCount; i++) {
+        [textureCoordinates addObject: dictFromVector2(planeGeometry.textureCoordinates[i])];
+    }
+    geometryDictionary[@"textureCoordinates"] = textureCoordinates;
+    
+    geometryDictionary[@"triangleCount"] = [NSNumber numberWithInteger:planeGeometry.triangleCount];
+    
+    NSMutableArray* triangleIndices = [NSMutableArray arrayWithCapacity:planeGeometry.triangleCount*3];
+    for (int i = 0; i < planeGeometry.triangleCount*3; i++) {
+        [triangleIndices addObject: [NSNumber numberWithInteger:planeGeometry.triangleIndices[i]]];
+    }
+    geometryDictionary[@"triangleIndices"] = triangleIndices;
+    
+    geometryDictionary[@"boundaryVertexCount"] = [NSNumber numberWithInteger:planeGeometry.boundaryVertexCount];
+    
+    NSMutableArray* boundaryVertices = [NSMutableArray arrayWithCapacity:planeGeometry.boundaryVertexCount];
+    for (int i = 0; i < planeGeometry.boundaryVertexCount; i ++) {
+        [boundaryVertices addObject: dictFromVector3(planeGeometry.boundaryVertices[i])];
+    }
+    geometryDictionary[@"boundaryVertices"] = boundaryVertices;
+    
+    dictionary[WEB_AR_PLANE_GEOMETRY_OPTION] = geometryDictionary;
+}
+
 - (void)addPlaneAnchorData:(ARPlaneAnchor *)planeAnchor toDictionary:(NSMutableDictionary *)dictionary {
     dictionary[WEB_AR_H_PLANE_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
     dictionary[WEB_AR_H_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
     dictionary[WEB_AR_H_PLANE_ALIGNMENT_OPTION] = @([planeAnchor alignment]);
+    [self addGeometryData:[planeAnchor geometry] toDictionary:dictionary];
 }
 
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
