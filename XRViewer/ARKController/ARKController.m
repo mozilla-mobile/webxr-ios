@@ -465,6 +465,8 @@
                 matrix_float4x4 viewMatrix = [frame.camera viewMatrixForOrientation:self.interfaceOrientation];
                 cameraInformation[@"viewMatrix"] = arrayFromMatrix4x4(viewMatrix);
                 
+                cameraInformation[@"inverse_viewMatrix"] = arrayFromMatrix4x4(matrix_invert(viewMatrix));
+                
                 
                 // Send also the interface orientation
                 cameraInformation[@"interfaceOrientation"] = @(self.interfaceOrientation);
