@@ -10,8 +10,9 @@ typedef NS_ENUM(NSUInteger, ShowMode)
 {
     ShowNothing,
     ShowSingle,
-    ShowMulti,
-    ShowMultiDebug
+    ShowDebug, // Shows the only the debug info
+    ShowMulti, // Shows the URL Bar and the record button
+    ShowMultiDebug // Shows the URL Bar, the record button and the debug info
 };
 
 typedef NS_OPTIONS(NSUInteger, ShowOptions)

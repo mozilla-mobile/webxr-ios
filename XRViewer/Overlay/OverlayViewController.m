@@ -196,6 +196,22 @@
             }
             break;
         }
+        case ShowDebug:
+        {
+            [[self animator] animate:[self recordButton] toFade:YES];
+            [[self animator] animate:[self micButton] toFade:YES];
+            
+            [[self animator] animate:[self helperLabel] toFade:YES];
+            
+            [[self animator] animate:[self buildLabel] toFade:YES];
+            [[self animator] animate:[self recordDot] toFade:YES];
+            
+            [[self timer] invalidate];
+            if (completion) {
+                completion(YES);
+            }
+            break;
+        }
         case ShowMulti:
         {
             [self updateWithRecordStateInDebug:NO];

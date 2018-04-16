@@ -112,7 +112,21 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
         return NO;
     }
     
-    return ([[self state] webXR] == NO) ? YES : (([[self state] showMode] >= ShowMulti) && ([[self state] showOptions] & Browser));
+    BOOL showURLBar = NO;
+    
+    if ([[self state] webXR] == NO) {
+        showURLBar = YES;
+    } else {
+        if([[self state] showMode] == ShowDebug) {
+            showURLBar = NO;
+        } else if ([[self state] showMode] == ShowMulti) {
+            showURLBar = YES;
+        } else if ([[self state] showMode] == ShowMultiDebug) {
+            showURLBar = YES;
+        }
+    }
+    
+    return showURLBar;
 }
 
 - (BOOL)shouldSendARKData

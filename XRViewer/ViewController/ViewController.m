@@ -86,7 +86,6 @@ typedef void (^UICompletion)(void);
 
 - (void)swipeFromEdge: (UISwipeGestureRecognizer*)recognizer {
     if ([[[self stateController] state] webXR]) {
-        [[self webController] showBar:YES];
         if ([[self webController] isDebugButtonSelected]) {
             [[self stateController] setShowMode: ShowMultiDebug];
         } else {
@@ -101,9 +100,12 @@ typedef void (^UICompletion)(void);
  
     if ([[[self stateController] state] webXR]) {
         if (![[self stateController] isRecording]) {
-            [[self stateController] setShowMode:ShowNothing];
+            if ([[self webController] isDebugButtonSelected]) {
+                [[self stateController] setShowMode: ShowDebug];
+            } else {
+                [[self stateController] setShowMode: ShowNothing];
+            }
         }
-        [[self webController] showBar:NO];
         [[self webController] hideKeyboard];
     }
 }
@@ -229,7 +231,10 @@ typedef void (^UICompletion)(void);
      {
          if (xr)
          {
-             [[blockSelf stateController] setShowMode:ShowSingle];
+             if ([[blockSelf webController] isDebugButtonSelected]) {
+                       [[blockSelf stateController] setShowMode:ShowDebug];
+             }
+             
              if ([[[blockSelf stateController] state] shouldShowSessionStartedPopup]) {
                  [[[blockSelf stateController] state] setShouldShowSessionStartedPopup:NO];
                  [[blockSelf messageController] showMessageWithTitle:AR_SESSION_STARTED_POPUP_TITLE
@@ -698,7 +703,7 @@ typedef void (^UICompletion)(void);
      }];
     
     [[self webController] setOnDebugButtonToggled:^(BOOL selected) {
-        [[blockSelf arkController] setShowMode:selected? ShowMultiDebug: ShowNothing];
+        [[blockSelf stateController] setShowMode:selected? ShowMultiDebug: ShowMulti];
     }];
     
     [[self webController] setOnSettingsButtonTapped:^{
