@@ -138,6 +138,10 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
     return [[self state] computerVisionFrameRequested] && [[self state] sendComputerVisionData];
 }
 
+- (BOOL)shouldSendNativeTime {
+    return [[self state] numberOfTimesSendNativeTimeWasCalled] < 10;
+}
+
 - (void)invertMic
 {
     BOOL micEnabledUpdated = ![[self state] micEnabled];

@@ -199,6 +199,10 @@
     return [data copy];
 }
 
+- (NSTimeInterval)currentFrameTimeInMilliseconds {
+    return self.session.currentFrame.timestamp * 1000;
+}
+
 - (void)resumeSessionWithAppState: (AppState*)state {
     [self setRequest:[state aRRequest]];
     

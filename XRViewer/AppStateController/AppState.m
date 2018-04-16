@@ -17,6 +17,7 @@
     [copy setShouldRemoveAnchorsOnNextARSession: [self shouldRemoveAnchorsOnNextARSession]];
     [copy setSendComputerVisionData:[self sendComputerVisionData]];
     [copy setShouldShowSessionStartedPopup: [self shouldShowSessionStartedPopup]];
+    [copy setNumberOfTimesSendNativeTimeWasCalled: [self numberOfTimesSendNativeTimeWasCalled]];
 
     return copy;
 }
@@ -92,6 +93,10 @@
         return NO;
     }
     
+    if ([self numberOfTimesSendNativeTimeWasCalled] != [theObject numberOfTimesSendNativeTimeWasCalled]) {
+        return NO;
+    }
+    
     return YES;
 }
 
@@ -109,6 +114,7 @@
     [state setRecordState:RECORD_STATE_BY_DEFAULT];
     [state setMicEnabled:MICROPHONE_ENABLED_BY_DEFAULT];
     [state setShouldShowSessionStartedPopup:POPUP_ENABLED_BY_DEFAULT];
+    [state setNumberOfTimesSendNativeTimeWasCalled:0];
     
     // trackingstate default is nil ?
     

@@ -533,6 +533,12 @@ typedef void (^UICompletion)(void);
          {
              [blockSelf sendARKData];
          }
+         
+         if ([[blockSelf stateController] shouldSendNativeTime]) {
+             [blockSelf sendNativeTime];
+             int numberOfTimesSendNativeTimeWasCalled = [[[blockSelf stateController] state] numberOfTimesSendNativeTimeWasCalled];
+             [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:++numberOfTimesSendNativeTimeWasCalled];
+         }
 
          if ([[blockSelf stateController] shouldSendCVData]) {
              [blockSelf sendComputerVisionData];
@@ -955,6 +961,10 @@ typedef void (^UICompletion)(void);
     [[self webController] sendComputerVisionData:[[self arkController] computerVisionData]];
 }
 
+-(void)sendNativeTime {
+    [[self webController] sendNativeTime: [[self arkController] currentFrameTimeInMilliseconds]];
+}
+
 #pragma mark Web
 
 - (void)showWebError:(NSError *)error
@@ -1019,10 +1029,12 @@ typedef void (^UICompletion)(void);
             }
             
             [[blockSelf stateController] setWebXR:YES];
+            [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
         }];
     } else {
         [[self stateController] setARRequest:request];
         [[self stateController] setWebXR:YES];
+        [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
     }
 }
 

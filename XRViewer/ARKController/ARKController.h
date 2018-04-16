@@ -72,6 +72,8 @@ typedef void (^DidUpdateWindowSize)(void);
 
 - (NSDictionary*)computerVisionData;
 
+- (NSTimeInterval)currentFrameTimeInMilliseconds;
+
 - (void)setShowMode:(ShowMode)mode;
 - (void)setShowOptions:(ShowOptions)options;
 
