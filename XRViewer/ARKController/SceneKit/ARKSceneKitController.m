@@ -101,7 +101,7 @@
 
 - (void)updateModes
 {
-    if (_showMode == ShowMultiDebug)
+    if (_showMode == ShowMultiDebug || _showMode == ShowDebug)
     {
         [[self renderView] setShowsStatistics:(_showOptions & ARStatistics)];
         [[self renderView] setDebugOptions:(_showOptions & ARPoints) ? ARSCNDebugOptionShowFeaturePoints : SCNDebugOptionNone];
@@ -226,7 +226,7 @@
 {
     [[self planes] enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, PlaneNode * _Nonnull obj, BOOL * _Nonnull stop)
      {
-         [obj show:(([self showMode] == ShowMultiDebug) && ([self showOptions] & ARPlanes))];
+         [obj show:(([self showMode] == ShowMultiDebug) && ([self showOptions] & ARPlanes)) || (([self showMode] == ShowDebug) && ([self showOptions] & ARPlanes))];
      }];
 }
 
