@@ -232,7 +232,9 @@ typedef void (^UICompletion)(void);
          if (xr)
          {
              if ([[blockSelf webController] isDebugButtonSelected]) {
-                       [[blockSelf stateController] setShowMode:ShowDebug];
+                [[blockSelf stateController] setShowMode:ShowDebug];
+             } else {
+                [[blockSelf stateController] setShowMode:ShowNothing];
              }
              
              if ([[[blockSelf stateController] state] shouldShowSessionStartedPopup]) {
