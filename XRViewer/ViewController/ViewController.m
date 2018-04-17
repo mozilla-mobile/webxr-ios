@@ -1018,18 +1018,15 @@ typedef void (^UICompletion)(void);
     __weak typeof (self) blockSelf = self;
     
     [[self arkController] setComputerVisionDataEnabled: false];
+    [[[self stateController] state] setUserGrantedSendingComputerVisionData:false];
+    [[[self stateController] state] setSendComputerVisionData:false];
+    
     if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
-            if (granted) {
-                [[blockSelf webController] userGrantedComputerVisionData:true];
-                [[self arkController] setComputerVisionDataEnabled: true];
-                [[[blockSelf stateController] state] setSendComputerVisionData:true];
-            } else {
-                [[blockSelf webController] userGrantedComputerVisionData:false];
-            }
-            
-            [[blockSelf stateController] setWebXR:YES];
-            [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
+            [[blockSelf webController] userGrantedComputerVisionData:granted];
+            [[self arkController] setComputerVisionDataEnabled:granted];
+            [[[blockSelf stateController] state] setUserGrantedSendingComputerVisionData:granted];
+            [[[blockSelf stateController] state] setSendComputerVisionData:granted];
         }];
     }
 

@@ -67,6 +67,8 @@ typedef NS_ENUM(NSUInteger, RecordState)
 @property(nonatomic) BOOL shouldShowSessionStartedPopup;
 @property(nonatomic) int numberOfTimesSendNativeTimeWasCalled;
 
+@property(nonatomic) bool userGrantedSendingComputerVisionData;
+
 + (instancetype)defaultState;
 
 - (instancetype)updatedShowMode:(ShowMode)showMode;
