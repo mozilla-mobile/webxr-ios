@@ -100,5 +100,7 @@ typedef void (^OnStopSendingComputerVisionData)(void);
 - (void)userGrantedComputerVisionData:(bool)granted;
 
 - (BOOL)isDebugButtonSelected;
+
+- (void)sendNativeTime:(NSTimeInterval)nativeTime;
 @end
 

@@ -65,6 +65,9 @@ typedef NS_ENUM(NSUInteger, RecordState)
 @property(nonatomic) BOOL shouldRemoveAnchorsOnNextARSession;
 @property(nonatomic) BOOL sendComputerVisionData;
 @property(nonatomic) BOOL shouldShowSessionStartedPopup;
+@property(nonatomic) int numberOfTimesSendNativeTimeWasCalled;
+
+@property(nonatomic) bool userGrantedSendingComputerVisionData;
 
 + (instancetype)defaultState;
 

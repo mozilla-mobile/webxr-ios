@@ -76,11 +76,13 @@ typedef void (^UICompletion)(void);
     swipeGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:swipeGestureRecognizer];
     
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:permissionsUIAlreadyShownKey] == NO) {
-        dispatch_async(dispatch_get_main_queue(), ^ {
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:permissionsUIAlreadyShownKey];
-            [[self messageController] showPermissionsPopup];
-        });
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:permissionsUIAlreadyShownKey] == NO &&
+        ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined ||
+         [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == kCLAuthorizationStatusNotDetermined)) {
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:permissionsUIAlreadyShownKey];
+                [[self messageController] showPermissionsPopup];
+            });
     }
 }
 
@@ -232,7 +234,9 @@ typedef void (^UICompletion)(void);
          if (xr)
          {
              if ([[blockSelf webController] isDebugButtonSelected]) {
-                       [[blockSelf stateController] setShowMode:ShowDebug];
+                [[blockSelf stateController] setShowMode:ShowDebug];
+             } else {
+                [[blockSelf stateController] setShowMode:ShowNothing];
              }
              
              if ([[[blockSelf stateController] state] shouldShowSessionStartedPopup]) {
@@ -531,6 +535,12 @@ typedef void (^UICompletion)(void);
          {
              [blockSelf sendARKData];
          }
+         
+         if ([[blockSelf stateController] shouldSendNativeTime]) {
+             [blockSelf sendNativeTime];
+             int numberOfTimesSendNativeTimeWasCalled = [[[blockSelf stateController] state] numberOfTimesSendNativeTimeWasCalled];
+             [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:++numberOfTimesSendNativeTimeWasCalled];
+         }
 
          if ([[blockSelf stateController] shouldSendCVData]) {
              [blockSelf sendComputerVisionData];
@@ -540,7 +550,6 @@ typedef void (^UICompletion)(void);
     [[self arkController] setDidFailSession:^(NSError *error)
     {
         [[blockSelf webController] didReceiveError: error];
-        [[blockSelf messageController] hideMessages];
         
         if ([error code] == SENSOR_FAILED_ARKIT_ERROR_CODE) {
             NSMutableDictionary* currentARRequest = [[[[blockSelf stateController] state] aRRequest] mutableCopy];
@@ -575,6 +584,7 @@ typedef void (^UICompletion)(void);
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
+            [[blockSelf messageController] hideMessages];
             [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [[self webController] loadBlankHTMLString];
@@ -953,6 +963,10 @@ typedef void (^UICompletion)(void);
     [[self webController] sendComputerVisionData:[[self arkController] computerVisionData]];
 }
 
+-(void)sendNativeTime {
+    [[self webController] sendNativeTime: [[self arkController] currentFrameTimeInMilliseconds]];
+}
+
 #pragma mark Web
 
 - (void)showWebError:(NSError *)error
@@ -1003,25 +1017,23 @@ typedef void (^UICompletion)(void);
 - (void)handleOnWatchARWithRequest: (NSDictionary*)request {
     __weak typeof (self) blockSelf = self;
     
+    [[self arkController] setComputerVisionDataEnabled: false];
+    [[[self stateController] state] setUserGrantedSendingComputerVisionData:false];
+    [[[self stateController] state] setSendComputerVisionData:false];
+    
     if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
-            if (granted) {
-                [[blockSelf webController] userGrantedComputerVisionData:true];
-                [[blockSelf stateController] setARRequest:request];
-                [[[blockSelf stateController] state] setSendComputerVisionData:true];
-            } else {
-                [[blockSelf webController] userGrantedComputerVisionData:false];
-                NSMutableDictionary* dictionary = [request mutableCopy];
-                dictionary[WEB_AR_CV_INFORMATION_OPTION] = nil;
-                [[blockSelf stateController] setARRequest:dictionary];
-            }
-            
-            [[blockSelf stateController] setWebXR:YES];
+            [[blockSelf webController] userGrantedComputerVisionData:granted];
+            [[self arkController] setComputerVisionDataEnabled:granted];
+            [[[blockSelf stateController] state] setUserGrantedSendingComputerVisionData:granted];
+            [[[blockSelf stateController] state] setSendComputerVisionData:granted];
         }];
-    } else {
-        [[self stateController] setARRequest:request];
-        [[self stateController] setWebXR:YES];
     }
+
+    [[self stateController] setARRequest:request];
+    [[self stateController] setWebXR:YES];
+    [[self webController] sendNativeTime:[[NSDate date] timeIntervalSince1970]];
+    [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
 }
 
 @end

@@ -135,7 +135,11 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 }
 
 - (BOOL)shouldSendCVData {
-    return [[self state] computerVisionFrameRequested] && [[self state] sendComputerVisionData];
+    return [[self state] computerVisionFrameRequested] && [[self state] sendComputerVisionData] && [[self state] userGrantedSendingComputerVisionData];
+}
+
+- (BOOL)shouldSendNativeTime {
+    return [[self state] numberOfTimesSendNativeTimeWasCalled] < 9;
 }
 
 - (void)invertMic

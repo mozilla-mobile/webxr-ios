@@ -93,6 +93,16 @@ inline static WebCompletion debugCompletion(NSString *name)
     }];
 }
 
+- (void)sendNativeTime:(NSTimeInterval)nativeTime {
+    NSLog(@"Sending native time: %ld", nativeTime);
+    NSDictionary* jsonData = @{@"nativeTime": [NSNumber numberWithDouble:nativeTime]};
+    [self callWebMethod:@"setNativeTime" paramJSON:jsonData webCompletion:^(id  _Nullable param, NSError * _Nullable error) {
+        if (error != nil) {
+            NSLog(@"Error setNativeTime: %@", [error localizedDescription]);
+        }
+    }];
+}
+
 
 - (void)reload
 {
