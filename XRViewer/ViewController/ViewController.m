@@ -531,15 +531,15 @@ typedef void (^UICompletion)(void);
     
     [[self arkController] setDidUpdate:^(ARKController *c)
      {
-         if ([[blockSelf stateController] shouldSendARKData])
-         {
-             [blockSelf sendARKData];
-         }
-         
          if ([[blockSelf stateController] shouldSendNativeTime]) {
              [blockSelf sendNativeTime];
              int numberOfTimesSendNativeTimeWasCalled = [[[blockSelf stateController] state] numberOfTimesSendNativeTimeWasCalled];
              [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:++numberOfTimesSendNativeTimeWasCalled];
+         }
+         
+         if ([[blockSelf stateController] shouldSendARKData])
+         {
+             [blockSelf sendARKData];
          }
 
          if ([[blockSelf stateController] shouldSendCVData]) {
@@ -1032,7 +1032,6 @@ typedef void (^UICompletion)(void);
 
     [[self stateController] setARRequest:request];
     [[self stateController] setWebXR:YES];
-    [[self webController] sendNativeTime:[[NSProcessInfo processInfo] systemUptime]];
     [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
 }
 
