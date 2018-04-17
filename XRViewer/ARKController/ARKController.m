@@ -48,6 +48,8 @@
 @property(nonatomic, strong) NSMutableData* chromaDataBuffer;
 @property(nonatomic, strong) NSMutableString* chromaBase64StringBuffer;
 
+@property (nonatomic) float computerVisionImageScaleFactor;
+
 @end
 
 @implementation ARKController {
@@ -115,6 +117,8 @@
         self.lumaBase64StringBuffer = nil;
         self.chromaDataBuffer = nil;
         self.chromaBase64StringBuffer = nil;
+        self.computerVisionImageScaleFactor = 4.0;
+        self.lumaBufferSize = CGSizeMake(0.0f, 0.0f);
     }
     
     return self;
@@ -449,7 +453,7 @@
                 matrix_float3x3 resizedCameraIntrinsics = [[frame camera] intrinsics];
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
-                        resizedCameraIntrinsics.columns[i][j] = cameraIntrinsics.columns[i][j]/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
+                        resizedCameraIntrinsics.columns[i][j] = cameraIntrinsics.columns[i][j]/self.computerVisionImageScaleFactor;
                     }
                 }
                 resizedCameraIntrinsics.columns[2][2] = 1.0f;
@@ -577,11 +581,10 @@
     size_t extraColumnsOnBottom;
     CVPixelBufferGetExtendedPixels(capturedImagePixelBuffer, &extraColumnsOnLeft, &extraColumnsOnRight, &extraColumnsOnTop, &extraColumnsOnBottom);
     
-    vImagePixelCount targetWidth = lumaBufferWidth/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
-    vImagePixelCount targetHeight = lumaBufferHeight/COMPUTER_VISION_IMAGE_SCALE_FACTOR;
-    
-    self.lumaBufferSize = CGSizeMake(targetWidth, targetHeight);
-    self.chromaBufferSize = CGSizeMake(targetWidth/2.0, targetHeight/2.0);
+    if (self.lumaBufferSize.width == 0.0f) {
+        self.lumaBufferSize = [self downscaleByFactorOf2UntilLargestSideIsLessThan512AvoidingFractionalSides: CGSizeMake(lumaBufferWidth, lumaBufferHeight)];
+    }
+    self.chromaBufferSize = CGSizeMake(self.lumaBufferSize.width/2.0, self.lumaBufferSize.height/2.0);
     
     if (self.lumaBuffer.data == nil) {
         vImageBuffer_Init(&self->_lumaBuffer, self.lumaBufferSize.height, self.lumaBufferSize.width, 8 * sizeof(Pixel_8), kvImageNoFlags);
@@ -647,6 +650,29 @@
     [self.chromaBase64StringBuffer setString:[self.chromaDataBuffer base64EncodedStringWithOptions:0]];
     
     CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, kCVPixelBufferLock_ReadOnly);
+}
+
+- (CGSize)downscaleByFactorOf2UntilLargestSideIsLessThan512AvoidingFractionalSides:(CGSize)originalSize {
+    CGSize result = originalSize;
+
+    BOOL largestSideLessThan512Found = NO;
+    BOOL fractionalSideFound = NO;
+    self.computerVisionImageScaleFactor = 1.0;
+    while (!(largestSideLessThan512Found || fractionalSideFound)) {
+        if ((int)result.width%2 != 0 || (int)result.height%2 != 0) {
+            fractionalSideFound = YES;
+        } else {
+            result = CGSizeMake(result.width/2.0, result.height/2.0);
+            self.computerVisionImageScaleFactor *= 2.0;
+
+            CGFloat largestSide = MAX(result.width, result.height);
+            if (largestSide < 512) {
+                largestSideLessThan512Found = YES;
+            }
+        }
+    }
+
+    return result;
 }
 
 - (NSString *)stringForOSType:(OSType)type {
