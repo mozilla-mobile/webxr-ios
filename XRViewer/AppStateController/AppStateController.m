@@ -139,7 +139,7 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 }
 
 - (BOOL)shouldSendNativeTime {
-    return [[self state] numberOfTimesSendNativeTimeWasCalled] < 10;
+    return [[self state] numberOfTimesSendNativeTimeWasCalled] < 9;
 }
 
 - (void)invertMic

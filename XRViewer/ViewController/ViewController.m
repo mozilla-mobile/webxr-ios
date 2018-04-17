@@ -1032,6 +1032,7 @@ typedef void (^UICompletion)(void);
 
     [[self stateController] setARRequest:request];
     [[self stateController] setWebXR:YES];
+    [[self webController] sendNativeTime:[[NSDate date] timeIntervalSince1970]];
     [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
 }
 
