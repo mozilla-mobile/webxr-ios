@@ -76,11 +76,13 @@ typedef void (^UICompletion)(void);
     swipeGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:swipeGestureRecognizer];
     
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:permissionsUIAlreadyShownKey] == NO) {
-        dispatch_async(dispatch_get_main_queue(), ^ {
-            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:permissionsUIAlreadyShownKey];
-            [[self messageController] showPermissionsPopup];
-        });
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:permissionsUIAlreadyShownKey] == NO &&
+        ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined ||
+         [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == kCLAuthorizationStatusNotDetermined)) {
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:permissionsUIAlreadyShownKey];
+                [[self messageController] showPermissionsPopup];
+            });
     }
 }
 
