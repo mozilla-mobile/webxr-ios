@@ -436,8 +436,7 @@
                 [addedAnchorsSinceLastFrame removeAllObjects];
                 newData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
             }
-            if ([[self request][WEB_AR_CV_INFORMATION_OPTION] boolValue])
-            {
+            if ([self computerVisionDataEnabled]) {
                 NSMutableDictionary *cameraInformation = [NSMutableDictionary new];
                 CGSize cameraImageResolution = [[frame camera] imageResolution];
                 cameraInformation[@"cameraImageResolution"] = @{
@@ -522,8 +521,7 @@
             } else {
                 newData[WEB_AR_3D_GEOALIGNED_OPTION] = [NSNumber numberWithBool:NO];
             }
-            
-            if ([[self request][WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
+            if ([self computerVisionDataEnabled]) {
                 newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = [NSNumber numberWithBool:YES];
             } else {
                 newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = [NSNumber numberWithBool:NO];

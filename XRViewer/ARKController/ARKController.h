@@ -57,6 +57,8 @@ typedef void (^DidUpdateWindowSize)(void);
 
 @property ARKitSessionState arSessionState;
 
+@property(nonatomic) bool computerVisionDataEnabled;
+
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 - (UIView *)arkView;
 

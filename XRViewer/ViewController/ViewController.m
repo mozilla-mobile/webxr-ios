@@ -550,7 +550,6 @@ typedef void (^UICompletion)(void);
     [[self arkController] setDidFailSession:^(NSError *error)
     {
         [[blockSelf webController] didReceiveError: error];
-        [[blockSelf messageController] hideMessages];
         
         if ([error code] == SENSOR_FAILED_ARKIT_ERROR_CODE) {
             NSMutableDictionary* currentARRequest = [[[[blockSelf stateController] state] aRRequest] mutableCopy];
@@ -585,6 +584,7 @@ typedef void (^UICompletion)(void);
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
+            [[blockSelf messageController] hideMessages];
             [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [[self webController] loadBlankHTMLString];
@@ -1017,27 +1017,25 @@ typedef void (^UICompletion)(void);
 - (void)handleOnWatchARWithRequest: (NSDictionary*)request {
     __weak typeof (self) blockSelf = self;
     
+    [[self arkController] setComputerVisionDataEnabled: false];
     if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
             if (granted) {
                 [[blockSelf webController] userGrantedComputerVisionData:true];
-                [[blockSelf stateController] setARRequest:request];
+                [[self arkController] setComputerVisionDataEnabled: true];
                 [[[blockSelf stateController] state] setSendComputerVisionData:true];
             } else {
                 [[blockSelf webController] userGrantedComputerVisionData:false];
-                NSMutableDictionary* dictionary = [request mutableCopy];
-                dictionary[WEB_AR_CV_INFORMATION_OPTION] = nil;
-                [[blockSelf stateController] setARRequest:dictionary];
             }
             
             [[blockSelf stateController] setWebXR:YES];
             [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
         }];
-    } else {
-        [[self stateController] setARRequest:request];
-        [[self stateController] setWebXR:YES];
-        [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
     }
+
+    [[self stateController] setARRequest:request];
+    [[self stateController] setWebXR:YES];
+    [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
 }
 
 @end
