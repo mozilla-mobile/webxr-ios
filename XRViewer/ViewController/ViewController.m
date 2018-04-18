@@ -1019,14 +1019,14 @@ typedef void (^UICompletion)(void);
     
     [[self arkController] setComputerVisionDataEnabled: false];
     [[[self stateController] state] setUserGrantedSendingComputerVisionData:false];
-    [[[self stateController] state] setSendComputerVisionData:false];
-    
+    [[[self stateController] state] setSendComputerVisionData: true];
+
     if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
             [[blockSelf webController] userGrantedComputerVisionData:granted];
             [[self arkController] setComputerVisionDataEnabled:granted];
             [[[blockSelf stateController] state] setUserGrantedSendingComputerVisionData:granted];
-            [[[blockSelf stateController] state] setSendComputerVisionData:granted];
+            //[[[blockSelf stateController] state] setSendComputerVisionData:granted];
         }];
     }
 
