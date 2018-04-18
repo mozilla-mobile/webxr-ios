@@ -1024,7 +1024,7 @@ typedef void (^UICompletion)(void);
     if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
             [[blockSelf webController] userGrantedComputerVisionData:granted];
-            [[self arkController] setComputerVisionDataEnabled:granted];
+            [[blockSelf arkController] setComputerVisionDataEnabled:granted];
             [[[blockSelf stateController] state] setUserGrantedSendingComputerVisionData:granted];
             //[[[blockSelf stateController] state] setSendComputerVisionData:granted];
         }];
@@ -1032,7 +1032,7 @@ typedef void (^UICompletion)(void);
 
     [[self stateController] setARRequest:request];
     [[self stateController] setWebXR:YES];
-    [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
+    [[[self stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
 }
 
 @end
