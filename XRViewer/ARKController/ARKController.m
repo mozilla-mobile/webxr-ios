@@ -786,9 +786,9 @@
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
     
-    dict[WEB_AR_H_PLANE_ID_OPTION] = [[planeAnchor identifier] UUIDString];
-    dict[WEB_AR_H_PLANE_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
-    dict[WEB_AR_H_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
+    dict[WEB_AR_PLANE_ID_OPTION] = [[planeAnchor identifier] UUIDString];
+    dict[WEB_AR_PLANE_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
+    dict[WEB_AR_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
     
     return [dict copy];
 }
@@ -875,9 +875,9 @@
 }
 
 - (void)addPlaneAnchorData:(ARPlaneAnchor *)planeAnchor toDictionary:(NSMutableDictionary *)dictionary {
-    dictionary[WEB_AR_H_PLANE_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
-    dictionary[WEB_AR_H_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
-    dictionary[WEB_AR_H_PLANE_ALIGNMENT_OPTION] = @([planeAnchor alignment]);
+    dictionary[WEB_AR_PLANE_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
+    dictionary[WEB_AR_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
+    dictionary[WEB_AR_PLANE_ALIGNMENT_OPTION] = @([planeAnchor alignment]);
     [self addGeometryData:[planeAnchor geometry] toDictionary:dictionary];
 }
 
