@@ -13,7 +13,12 @@
     [copy setMicEnabled:[self micEnabled]];
     [copy setTrackingState:[self trackingState]];
     [copy setInterruption:[self interruption]];
-    
+    [copy setComputerVisionFrameRequested:[self computerVisionFrameRequested]];
+    [copy setShouldRemoveAnchorsOnNextARSession: [self shouldRemoveAnchorsOnNextARSession]];
+    [copy setSendComputerVisionData:[self sendComputerVisionData]];
+    [copy setShouldShowSessionStartedPopup: [self shouldShowSessionStartedPopup]];
+    [copy setNumberOfTimesSendNativeTimeWasCalled: [self numberOfTimesSendNativeTimeWasCalled]];
+
     return copy;
 }
 
@@ -68,6 +73,29 @@
     {
         return NO;
     }
+
+    if ([self computerVisionFrameRequested] != [theObject computerVisionFrameRequested])
+    {
+        return NO;
+    }
+
+    if ([self shouldRemoveAnchorsOnNextARSession] != [theObject shouldRemoveAnchorsOnNextARSession])
+    {
+        return NO;
+    }
+
+    if ([self sendComputerVisionData] != [theObject sendComputerVisionData])
+    {
+        return NO;
+    }
+    
+    if ([self shouldShowSessionStartedPopup] != [theObject shouldShowSessionStartedPopup]) {
+        return NO;
+    }
+    
+    if ([self numberOfTimesSendNativeTimeWasCalled] != [theObject numberOfTimesSendNativeTimeWasCalled]) {
+        return NO;
+    }
     
     return YES;
 }
@@ -85,6 +113,8 @@
     [state setShowOptions:SHOW_OPTIONS_BY_DEFAULT];
     [state setRecordState:RECORD_STATE_BY_DEFAULT];
     [state setMicEnabled:MICROPHONE_ENABLED_BY_DEFAULT];
+    [state setShouldShowSessionStartedPopup:POPUP_ENABLED_BY_DEFAULT];
+    [state setNumberOfTimesSendNativeTimeWasCalled:0];
     
     // trackingstate default is nil ?
     

@@ -40,6 +40,8 @@ typedef void (^ASURLAction)(NSString *);
 
 - (BOOL)shouldShowURLBar;
 - (BOOL)shouldSendARKData;
+- (BOOL)shouldSendCVData;
+- (BOOL)shouldSendNativeTime;
 
 - (BOOL)isRecording;
 

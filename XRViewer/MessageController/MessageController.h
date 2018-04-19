@@ -4,6 +4,12 @@ typedef void (^DidShowMessage)(void);
 typedef void (^DidHideMessage)(void);
 typedef void (^DidHideMessageByUser)(void);
 
+typedef NS_ENUM(NSInteger, ResetTrackigOption) {
+    ResetTracking,
+    RemoveExistingAnchors
+};
+
+
 @interface MessageController : NSObject
 
 @property(nonatomic, copy) DidShowMessage didShowMessage;
@@ -34,4 +40,12 @@ typedef void (^DidHideMessageByUser)(void);
 - (void)showMessageAboutConnectionRequired;
 
 - (void)showSettingsPopup:(void (^)(BOOL))responseBock;
+
+- (void)showMessageAboutResetTracking:(void (^)(ResetTrackigOption))responseBlock;
+
+- (void)showMessageAboutAccessingTheCapturedImage:(void (^)(BOOL))granted;
+
+- (void)hideMessages;
+
+- (void)showPermissionsPopup;
 @end

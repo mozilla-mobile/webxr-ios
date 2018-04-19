@@ -1,4 +1,5 @@
 #import "MessageController.h"
+#import "XRViewer-Swift.h"
 #import <PopupDialog/PopupDialog-Swift.h>
 
 #warning LOCALIZATION
@@ -252,7 +253,7 @@
     [self didShowMessage]();
 }
 
-- (void)showSettingsPopup:(void (^)(BOOL))responseBock {
+- (void)showSettingsPopup:(void (^)(BOOL))responseBlock {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Open iOS Settings"
                                                     message:@"Opening iOS Settings will cause the current AR Session to be restarted when you come back"
                                                       image:nil
@@ -265,17 +266,93 @@
     ];
 
     DefaultButton *ok = [[DefaultButton alloc] initWithTitle:@"OK" height:40 dismissOnTap:YES action:^{
-        responseBock(true);
+        responseBlock(true);
     }];
     ok.titleColor = UIColor.blueColor;
 
     DefaultButton *cancel = [[DefaultButton alloc] initWithTitle:@"Cancel" height:40 dismissOnTap:YES action:^{
-        responseBock(false);
+        responseBlock(false);
     }];
 
     [popup addButtons: @[cancel, ok]];
 
     [[self viewController] presentViewController:popup animated:YES completion:nil];
+}
+
+- (void)showMessageAboutResetTracking:(void (^)(ResetTrackigOption))responseBlock {
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Reset tracking"
+                                                    message:@"Please select one of the options below"
+                                                      image:nil
+                                            buttonAlignment:UILayoutConstraintAxisVertical
+                                            transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:200.0
+                                           gestureDismissal:NO
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+    ];
+
+    DefaultButton *resetTracking = [[DefaultButton alloc] initWithTitle:@"Completely restart tracking" height:40 dismissOnTap:YES action:^{
+        responseBlock(ResetTracking);
+    }];
+    resetTracking.titleColor = resetTracking.tintColor;
+
+    DefaultButton *removeExistingAnchors = [[DefaultButton alloc] initWithTitle:@"Remove known anchors" height:40 dismissOnTap:YES action:^{
+        responseBlock(RemoveExistingAnchors);
+    }];
+    removeExistingAnchors.titleColor = removeExistingAnchors.tintColor;
+
+    CancelButton * cancelButton = [[CancelButton alloc] initWithTitle:@"Cancel" height:40 dismissOnTap:YES action:^{}];
+    cancelButton.titleColor = cancelButton.tintColor;
+    
+    [popup addButtons: @[resetTracking, removeExistingAnchors, cancelButton]];
+
+    [[self viewController] presentViewController:popup animated:YES completion:nil];
+}
+
+- (void)showMessageAboutAccessingTheCapturedImage:(void (^)(BOOL))granted {
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Video Camera Image Access"
+                                                    message:@"WebXR Viewer displays video from your camera without giving the web page access to the video.\n\nThis page is requesting access to images from the video camera. Allow?"
+                                                      image:nil
+                                            buttonAlignment:UILayoutConstraintAxisHorizontal
+                                            transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:340.0
+                                           gestureDismissal:NO
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+    ];
+
+    DestructiveButton *ok = [[DestructiveButton alloc] initWithTitle:@"YES" height:40 dismissOnTap:YES action:^{
+        granted(true);
+    }];
+    ok.titleColor = UIColor.blueColor;
+
+    DefaultButton *cancel = [[DefaultButton alloc] initWithTitle:@"NO" height:40 dismissOnTap:YES action:^{
+        granted(false);
+    }];
+
+    [popup addButtons: @[cancel, ok]];
+
+    [[self viewController] presentViewController:popup animated:YES completion:nil];
+}
+
+- (void)hideMessages {
+    [[[self viewController] presentedViewController] dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)showPermissionsPopup {
+    RequestPermissionsViewController* viewController = [RequestPermissionsViewController new];
+    viewController.view.translatesAutoresizingMaskIntoConstraints = true;
+    [[viewController.view.heightAnchor constraintEqualToConstant:300.0] setActive:YES];
+    
+    PopupDialog *dialog = [[PopupDialog alloc] initWithViewController:viewController
+                                                      buttonAlignment:UILayoutConstraintAxisVertical
+                                                      transitionStyle:PopupDialogTransitionStyleBounceUp
+                                                       preferredWidth:UIScreen.mainScreen.bounds.size.width/2.0
+                                                     gestureDismissal:NO
+                                                        hideStatusBar:YES
+                                                           completion:^{}];
+    
+    [[self viewController] presentViewController:dialog animated:YES completion:nil];
 }
 
 #pragma mark private

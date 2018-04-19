@@ -38,6 +38,7 @@ typedef void (^UICompletion)(void);
 @property (nonatomic, strong) MessageController *messageController;
 @property (nonatomic, strong) Animator *animator;
 @property (nonatomic, strong) Reachability *reachability;
+@property (nonatomic, strong) NSTimer* timerSessionRunningInBackground;
 
 @end
 
@@ -55,13 +56,66 @@ typedef void (^UICompletion)(void);
 {
     [super viewDidLoad];
     
+    [self setNeedsUpdateOfScreenEdgesDeferringSystemGestures];
+    
     [self setupCommonControllers];
     
     dispatch_async(dispatch_get_main_queue(), ^
                    {
                        [self setupTargetControllers];
                    });
+    
+    
+    UIScreenEdgePanGestureRecognizer * gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(swipeFromEdge:)];
+    [gestureRecognizer setEdges:UIRectEdgeTop];
+    gestureRecognizer.delegate = self;
+    [self.view addGestureRecognizer:gestureRecognizer];
+    
+    UISwipeGestureRecognizer* swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action: @selector(swipeUp:)];
+    [swipeGestureRecognizer setDirection: UISwipeGestureRecognizerDirectionUp];
+    swipeGestureRecognizer.delegate = self;
+    [self.view addGestureRecognizer:swipeGestureRecognizer];
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:permissionsUIAlreadyShownKey] == NO &&
+        ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined ||
+         [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == kCLAuthorizationStatusNotDetermined)) {
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:permissionsUIAlreadyShownKey];
+                [[self messageController] showPermissionsPopup];
+            });
+    }
 }
+
+- (void)swipeFromEdge: (UISwipeGestureRecognizer*)recognizer {
+    if ([[[self stateController] state] webXR]) {
+        if ([[self webController] isDebugButtonSelected]) {
+            [[self stateController] setShowMode: ShowMultiDebug];
+        } else {
+            [[self stateController] setShowMode: ShowMulti];
+        }
+    }
+}
+
+- (void)swipeUp: (UISwipeGestureRecognizer*)recognizer {
+    CGPoint location = [recognizer locationInView:[self view]];
+    if (location.y > SWIPE_GESTURE_AREA_HEIGHT) return;
+ 
+    if ([[[self stateController] state] webXR]) {
+        if (![[self stateController] isRecording]) {
+            if ([[self webController] isDebugButtonSelected]) {
+                [[self stateController] setShowMode: ShowDebug];
+            } else {
+                [[self stateController] setShowMode: ShowNothing];
+            }
+        }
+        [[self webController] hideKeyboard];
+    }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -120,6 +174,14 @@ typedef void (^UICompletion)(void);
     [[self webLayerView] layoutIfNeeded];
 }
 
+- (BOOL)prefersStatusBarHidden {
+    return [super prefersStatusBarHidden];
+}
+
+- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures {
+    return UIRectEdgeTop;
+}
+
 #pragma mark Setups
 
 - (void)setupCommonControllers
@@ -171,19 +233,34 @@ typedef void (^UICompletion)(void);
      {
          if (xr)
          {
-             [blockSelf setupARKController];
-             [blockSelf setupLocationController];
+             if ([[blockSelf webController] isDebugButtonSelected]) {
+                [[blockSelf stateController] setShowMode:ShowDebug];
+             } else {
+                [[blockSelf stateController] setShowMode:ShowNothing];
+             }
              
-             [[blockSelf stateController] setShowMode:ShowSingle];
-             [[blockSelf messageController] showMessageWithTitle:AR_SESSION_STARTED_POPUP_TITLE
-                                                         message:AR_SESSION_STARTED_POPUP_MESSAGE
-                                                       hideAfter:AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS];
+             if ([[[blockSelf stateController] state] shouldShowSessionStartedPopup]) {
+                 [[[blockSelf stateController] state] setShouldShowSessionStartedPopup:NO];
+                 [[blockSelf messageController] showMessageWithTitle:AR_SESSION_STARTED_POPUP_TITLE
+                                                             message:AR_SESSION_STARTED_POPUP_MESSAGE
+                                                           hideAfter:AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS];
+             }
+             
+             [[blockSelf webController] setLastXRVisitedURL:[[[[blockSelf webController] webView] URL] absoluteString]];
          }
-         else
-         {
-             [blockSelf cleanARKController];
-             
+         else {
              [[blockSelf stateController] setShowMode:ShowNothing];
+             if ([[blockSelf arkController] arSessionState] == ARKSessionRunning) {
+                 [blockSelf.timerSessionRunningInBackground invalidate];
+                 NSInteger timerSeconds = [[NSUserDefaults standardUserDefaults] integerForKey:secondsInBackgroundKey];
+                 NSLog(@"\n\n*********\n\nMoving away from an XR site, keep ARKit running, and launch the timer for %ld seconds\n\n*********", timerSeconds);
+                 blockSelf.timerSessionRunningInBackground = [NSTimer scheduledTimerWithTimeInterval:timerSeconds repeats:NO block:^(NSTimer * _Nonnull timer) {
+                     NSLog(@"\n\n*********\n\nTimer expired, pausing session\n\n*********");
+                     [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:@"backgroundOrPausedDateKey"];
+                     [[blockSelf arkController] pauseSession];
+                     [timer invalidate];
+                 }];
+             }
          }
          
          [blockSelf updateConstraints];
@@ -198,14 +275,41 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnEnterForeground:^(NSString *url)
      {
+         [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession: NO];
+         
          [[blockSelf messageController] clean];
          NSString* requestedURL = [[NSUserDefaults standardUserDefaults] stringForKey:REQUESTED_URL_KEY];
          if (requestedURL) {
+             NSLog(@"\n\n*********\n\nMoving to foreground because the user wants to open a URL externally, loading the page\n\n*********");
              [[NSUserDefaults standardUserDefaults] setObject:nil forKey:REQUESTED_URL_KEY];
              [blockSelf loadURL:requestedURL];
          } else {
-             [blockSelf loadURL:url];
+             switch ([[blockSelf arkController] arSessionState]) {
+                 case ARKSessionUnknown: {
+                     NSLog(@"\n\n*********\n\nMoving to foreground while ARKit is not initialized, do nothing\n\n*********");
+                     break;
+                 }
+                 case ARKSessionPaused: {
+                     NSLog(@"\n\n*********\n\nMoving to foreground while the session is paused, remember to remove anchors on next AR request\n\n*********");
+                     [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession: YES];
+                     break;
+                 }
+                     
+                 case ARKSessionRunning: {
+                     NSDate *interruptionDate = [[NSUserDefaults standardUserDefaults] objectForKey:backgroundOrPausedDateKey];
+                     NSDate *now = [NSDate date];
+                     if ([now timeIntervalSinceDate:interruptionDate] >= pauseTimeInSecondsToRemoveAnchors) {
+                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a long time, remove the anchors\n\n*********");
+                         [[blockSelf arkController] removeAllAnchors];
+                     } else {
+                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a short time, do nothing\n\n*********");
+                     }
+                     break;
+                 }
+             }
          }
+         
+         [[NSUserDefaults standardUserDefaults] setObject:nil forKey:backgroundOrPausedDateKey];
      }];
     
     [[self stateController] setOnMemoryWarning:^(NSString *url)
@@ -221,8 +325,49 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnRequestUpdate:^(NSDictionary *dict)
      {
-         [[blockSelf locationManager] setupForRequest:dict];
-         [[blockSelf arkController] startSessionWithAppState:[[blockSelf stateController] state]];
+         NSLog(@"\n\n*********\n\nInvalidate timer\n\n*********");
+         [[blockSelf timerSessionRunningInBackground] invalidate];
+         
+         if (![blockSelf arkController]) {
+             NSLog(@"\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********");
+             [blockSelf startNewARKitSessionWithRequest:dict];
+         } else {
+             switch ([[blockSelf arkController] arSessionState]) {
+                 case ARKSessionUnknown: {
+                     NSLog(@"\n\n*********\n\nARKit is in unknown state, instantiate and start a session\n\n*********");
+                     [blockSelf startNewARKitSessionWithRequest:dict];
+                     break;
+                 }
+                     
+                 case ARKSessionRunning: {
+                     if ([blockSelf urlIsNotTheLastXRVisitedURL]) {
+                         NSLog(@"\n\n*********\n\nThis site is not the last XR site visited, and the timer hasn't expired yet. Remove distant anchors and continue with the session\n\n*********");
+                         [[blockSelf arkController] removeDistantAnchors];
+                         [[blockSelf arkController] runSessionWithAppState:[[blockSelf stateController] state]];
+                     } else {
+                         NSLog(@"\n\n*********\n\nThis site is the last XR site visited, and the timer hasn't expired yet. Continue with the session\n\n*********");
+                     }
+                     break;
+                 }
+                     
+                 case ARKSessionPaused: {
+                     NSLog(@"\n\n*********\n\nRequest of a new AR session when it's paused\n\n*********");
+                     if ([[[blockSelf stateController] state] shouldRemoveAnchorsOnNextARSession]) {
+                         NSLog(@"\n\n*********\n\nRun session removing anchors\n\n*********");
+                         [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession:NO];
+                         [[blockSelf arkController] runSessionRemovingAnchorsWithAppState:[[blockSelf stateController] state]];
+                     } else {
+                         NSLog(@"\n\n*********\n\nResume session\n\n*********");
+                         [[blockSelf arkController] resumeSessionWithAppState:[[blockSelf stateController] state]];
+                     }
+                     break;
+                 }
+             }
+         }
+         if ([dict[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
+             [[[blockSelf stateController] state] setComputerVisionFrameRequested:YES];
+             [[[blockSelf stateController] state] setSendComputerVisionData:YES];
+         }
      }];
     
     [[self stateController] setOnInterruption:^(BOOL interruption)
@@ -239,6 +384,16 @@ typedef void (^UICompletion)(void);
          [[blockSelf recordController] setMicEnabled:enabled];
          [[blockSelf overlayController] setMicEnabled:enabled];
      }];
+}
+
+-(BOOL)urlIsNotTheLastXRVisitedURL {
+    return ![[[[[self webController] webView] URL] absoluteString] isEqualToString:[[self webController] lastXRVisitedURL]];
+}
+
+- (void)startNewARKitSessionWithRequest: (NSDictionary*)request {
+    [self setupLocationController];
+    [[self locationManager] setupForRequest:request];
+    [self setupARKController];
 }
 
 - (void)setupAnimator
@@ -275,7 +430,19 @@ typedef void (^UICompletion)(void);
     
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note)
      {
-         [blockSelf cleanARKController];
+         switch ([[blockSelf arkController] arSessionState]) {
+             case ARKSessionUnknown:
+                 NSLog(@"\n\n*********\n\nMoving to background while ARKit is not initialized, nothing to do\n\n*********");
+                 break;
+             case ARKSessionPaused:
+                 NSLog(@"\n\n*********\n\nMoving to background while the session is paused, nothing to do\n\n*********");
+                 break;
+             case ARKSessionRunning:
+                 NSLog(@"\n\n*********\n\nMoving to background while the session is running, store the timestamp\n\n*********");
+                 [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:backgroundOrPausedDateKey];
+                 break;
+         }
+         
          [[blockSelf webController] didBackgroundAction:YES];
          
          [[blockSelf stateController] saveMoveToBackgroundOnURL:[[blockSelf webController] lastURL]];
@@ -332,8 +499,6 @@ typedef void (^UICompletion)(void);
 
 - (void)setupTargetControllers
 {
-    __weak typeof (self) blockSelf = self;
-    
     [self setupLocationController];
     
     [self setupRecordController];
@@ -344,13 +509,7 @@ typedef void (^UICompletion)(void);
     }
     else
     {
-        [[self recordController] requestAuthorizationWithCompletion:^(RecordController *sender)
-         {
-             dispatch_async(dispatch_get_main_queue(), ^
-                            {
-                                [blockSelf setupWebController];
-                            });
-         }];
+        [self setupWebController];
     }
     
     [self setupOverlayController];
@@ -372,13 +531,36 @@ typedef void (^UICompletion)(void);
     
     [[self arkController] setDidUpdate:^(ARKController *c)
      {
+         if ([[blockSelf stateController] shouldSendNativeTime]) {
+             [blockSelf sendNativeTime];
+             int numberOfTimesSendNativeTimeWasCalled = [[[blockSelf stateController] state] numberOfTimesSendNativeTimeWasCalled];
+             [[[blockSelf stateController] state] setNumberOfTimesSendNativeTimeWasCalled:++numberOfTimesSendNativeTimeWasCalled];
+         }
+         
          if ([[blockSelf stateController] shouldSendARKData])
          {
              [blockSelf sendARKData];
          }
+
+         if ([[blockSelf stateController] shouldSendCVData]) {
+             [blockSelf sendComputerVisionData];
+             [[[blockSelf stateController] state] setComputerVisionFrameRequested:NO];
+         }
      }];
     [[self arkController] setDidFailSession:^(NSError *error)
     {
+        [[blockSelf webController] didReceiveError: error];
+        
+        if ([error code] == SENSOR_FAILED_ARKIT_ERROR_CODE) {
+            NSMutableDictionary* currentARRequest = [[[[blockSelf stateController] state] aRRequest] mutableCopy];
+            if ([currentARRequest[WEB_AR_WORLD_ALIGNMENT] boolValue]) {
+                // The session failed because the compass (heading) couldn't be initialized. Fallback the session to ARWorldAlignmentGravity
+                currentARRequest[WEB_AR_WORLD_ALIGNMENT] = [NSNumber numberWithBool:NO];;
+                [[blockSelf stateController] setARRequest:currentARRequest];
+                return;
+            }
+        }
+        
         NSString* errorMessage = @"ARKit Error";
         switch ([error code]) {
             case CAMERA_ACCESS_NOT_AUTHORIZED_ARKIT_ERROR_CODE:
@@ -402,13 +584,12 @@ typedef void (^UICompletion)(void);
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
+            [[blockSelf messageController] hideMessages];
             [[blockSelf messageController] showMessageAboutFailSessionWithMessage:errorMessage completion:^{
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [[self webController] loadBlankHTMLString];
                 });
             }];
-
-            [[blockSelf webController] didReceiveError: error];
         });
      }];
     
@@ -469,34 +650,30 @@ typedef void (^UICompletion)(void);
     
     [[self webController] setOnFinishLoad:^
      {
-         [blockSelf hideSplashWithCompletion:^
-          { }];
+//         [blockSelf hideSplashWithCompletion:^
+//          { }];
      }];
     
-    [[self webController] setOnInit:^(NSDictionary *uiOptionsDict)
-     {
-         [[blockSelf stateController] setWebXR:YES];
-         [[blockSelf stateController] setShowMode:ShowSingle];
-         [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
-         
-         [[blockSelf stateController] applyOnEnterForegroundAction];
-         [[blockSelf stateController] applyOnDidReceiveMemoryAction];
-     }];
+    [[self webController] setOnInitAR:^(NSDictionary *uiOptionsDict) {
+        [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
+        
+        [[blockSelf stateController] applyOnEnterForegroundAction];
+        [[blockSelf stateController] applyOnDidReceiveMemoryAction];
+    }];
     
     [[self webController] setOnError:^(NSError *error)
      {
          [blockSelf showWebError:error];
      }];
-    
-    [[self webController] setOnIOSUpdate:^( NSDictionary * _Nullable request)
-     {
-         [[blockSelf stateController] setARRequest:request];
-     }];
-    
-    [[self webController] setOnJSUpdate:^( NSDictionary * _Nullable request)
-     {
-         [[blockSelf stateController] setARRequest:request];
-     }];
+
+    [[self webController] setOnWatchAR:^( NSDictionary * _Nullable request){
+        [blockSelf handleOnWatchARWithRequest: request];
+    }];
+
+    [[self webController] setOnStopAR:^{
+        [[blockSelf stateController] setWebXR:NO];
+        [[blockSelf stateController] setShowMode:ShowNothing];
+    }];
     
     [[self webController] setOnJSUpdateData:^NSDictionary *
      {
@@ -536,26 +713,12 @@ typedef void (^UICompletion)(void);
      }];
     
     [[self webController] setOnDebugButtonToggled:^(BOOL selected) {
-        [[blockSelf arkController] setShowMode:selected? ShowMultiDebug: ShowNothing];
+        [[blockSelf stateController] setShowMode:selected? ShowMultiDebug: ShowMulti];
     }];
     
     [[self webController] setOnSettingsButtonTapped:^{
         // Before showing the settings popup, we hide the bar and the debug buttons so they are not in the way
         // After dismissing the popup, we show them again.
-        /*
-        [[blockSelf webController] showBar:NO];
-        [[blockSelf webController] hideKeyboard];
-        [[blockSelf stateController] setShowMode:ShowNothing];
-        [[blockSelf messageController] showSettingsPopup: ^(BOOL response) {
-            if (response) {
-                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:^(BOOL success)
-                 {}];
-            }
-            [[blockSelf webController] showBar:YES];
-            [[blockSelf stateController] setShowMode:ShowMulti];
-        }];
-         */
-        
         SettingsViewController* settingsViewController = [SettingsViewController new];
         UINavigationController* navigationController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
         __weak typeof (SettingsViewController*) weakSettingsViewController = settingsViewController;
@@ -570,7 +733,34 @@ typedef void (^UICompletion)(void);
         [[blockSelf stateController] setShowMode:ShowNothing];
         [blockSelf presentViewController:navigationController animated:YES completion:nil];
     }];
-    
+
+    [[self webController] setOnComputerVisionDataRequested:^{
+        [[[blockSelf stateController] state] setComputerVisionFrameRequested:YES];
+    }];
+
+    [[self webController] setOnResetTrackingButtonTapped:^{
+
+        [[blockSelf messageController] showMessageAboutResetTracking:^(ResetTrackigOption option){
+            switch (option) {
+                case ResetTracking:
+                    [[blockSelf arkController] runSessionResettingTrackingAndRemovingAnchorsWithAppState:[[blockSelf stateController] state]];
+                    break;
+                    
+                case RemoveExistingAnchors:
+                    [[blockSelf arkController] runSessionRemovingAnchorsWithAppState:[[blockSelf stateController] state]];
+                    break;
+            }
+        }];
+    }];
+
+    [[self webController] setOnStartSendingComputerVisionData:^{
+        [[[blockSelf stateController] state] setSendComputerVisionData:YES];
+    }];
+
+    [[self webController] setOnStopSendingComputerVisionData:^{
+        [[[blockSelf stateController] state] setSendComputerVisionData:NO];
+    }];
+
     if ([[self stateController] wasMemoryWarning])
     {
         [[self stateController] applyOnDidReceiveMemoryAction];
@@ -671,23 +861,6 @@ typedef void (^UICompletion)(void);
     [[self overlayController] setOptions:[[[self stateController] state] showOptions]];
     [[self overlayController] setMicEnabled:[[[self stateController] state] micEnabled]];
     [[self overlayController] setRecordState:[[[self stateController] state] recordState]];
-    
-    [[self overlayController] setOnSwipeDown:^{
-        if ([[[blockSelf stateController] state] webXR]) {
-            [[blockSelf webController] showBar:YES];
-            [[blockSelf stateController] setShowMode:ShowMulti];
-        }
-    }];
-    
-    [[self overlayController] setOnSwipeUp:^{
-        if ([[[blockSelf stateController] state] webXR]) {
-            if (![[blockSelf stateController] isRecording]) {
-                [[blockSelf stateController] setShowMode:ShowNothing];
-            }
-            [[blockSelf webController] showBar:NO];
-            [[blockSelf webController] hideKeyboard];
-        }
-    }];
 }
 
 #pragma mark Cleanups
@@ -756,17 +929,17 @@ typedef void (^UICompletion)(void);
     
     [self cleanupCommonControllers];
     
-    [self showSplashWithCompletion:^
-     {
+//    [self showSplashWithCompletion:^
+//     {
          [self cleanupTargetControllers];
-     }];
+//     }];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(WAITING_TIME_ON_MEMORY_WARNING * NSEC_PER_SEC)), dispatch_get_main_queue(), ^
                    {
                        [self setupTargetControllers];
                        
-                       [self hideSplashWithCompletion:^
-                        {}];
+//                       [self hideSplashWithCompletion:^
+//                        {}];
                    });
 }
 
@@ -786,25 +959,33 @@ typedef void (^UICompletion)(void);
     [[self webController] sendARData:[self commonData]];
 }
 
+-(void)sendComputerVisionData {
+    [[self webController] sendComputerVisionData:[[self arkController] computerVisionData]];
+}
+
+-(void)sendNativeTime {
+    [[self webController] sendNativeTime: [[self arkController] currentFrameTimeInMilliseconds]];
+}
+
 #pragma mark Web
 
 - (void)showWebError:(NSError *)error
 {
     if ([error code] == INTERNET_OFFLINE_CODE)
     {
-        [self showSplashWithCompletion:^
-         {
+//        [self showSplashWithCompletion:^
+//         {
              [[self stateController] setShowMode:ShowNothing];
              [[self stateController] saveNotReachableOnURL:[[self webController] lastURL]];
              [[self messageController] showMessageAboutConnectionRequired];
-         }];
+//         }];
     }
     else
     {
         [[self messageController] showMessageAboutWebError:error withCompletion:^(BOOL reload)
          {
-             [self hideSplashWithCompletion:^
-              {
+//             [self hideSplashWithCompletion:^
+//              {
                   if (reload)
                   {
                       [self loadURL:nil];
@@ -813,7 +994,7 @@ typedef void (^UICompletion)(void);
                   {
                       [[self stateController] applyOnMessageShowMode];
                   }
-              }];
+//              }];
          }];
     }
 }
@@ -830,6 +1011,28 @@ typedef void (^UICompletion)(void);
     }
     
     [[self stateController] setWebXR:NO];
+}
+
+
+- (void)handleOnWatchARWithRequest: (NSDictionary*)request {
+    __weak typeof (self) blockSelf = self;
+    
+    [[self arkController] setComputerVisionDataEnabled: false];
+    [[[self stateController] state] setUserGrantedSendingComputerVisionData:false];
+    [[[self stateController] state] setSendComputerVisionData: true];
+
+    if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
+        [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
+            [[blockSelf webController] userGrantedComputerVisionData:granted];
+            [[blockSelf arkController] setComputerVisionDataEnabled:granted];
+            [[[blockSelf stateController] state] setUserGrantedSendingComputerVisionData:granted];
+            //[[[blockSelf stateController] state] setSendComputerVisionData:granted];
+        }];
+    }
+
+    [[self stateController] setARRequest:request];
+    [[self stateController] setWebXR:YES];
+    [[[self stateController] state] setNumberOfTimesSendNativeTimeWasCalled:0];
 }
 
 @end

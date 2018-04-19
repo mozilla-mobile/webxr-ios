@@ -17,6 +17,10 @@
 #define WEB_AR_SET_UI_MESSAGE          @"setUIOptions"
 #define WEB_AR_HIT_TEST_MESSAGE        @"hitTest"
 #define WEB_AR_ADD_ANCHOR_MESSAGE      @"addAnchor"
+#define WEB_AR_REMOVE_ANCHORS_MESSAGE   @"removeAnchors"
+#define WEB_AR_REQUEST_CV_DATA_MESSAGE @"requestComputerVisionData"
+#define WEB_AR_START_SENDING_CV_DATA_MESSAGE    @"startSendingComputerVisionData"
+#define WEB_AR_STOP_SENDING_CV_DATA_MESSAGE     @"stopSendingComputerVisionData"
 
 #define WEB_AR_ON_JS_UPDATE_MESSAGE    @"onUpdate" // reques from JS
 
@@ -34,6 +38,7 @@
 #define WEB_AR_IOS_TRACKING_STATE_MESSAGE       @"arTrackingChanged"
 
 #define WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE   @"ios_did_receive_memory_warning"
+#define WEB_AR_IOS_USER_GRANTED_CV_DATA         @"userGrantedComputerVisionData"
 
 // This message is not being used by the polyfill
 // #define WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"
@@ -100,6 +105,9 @@
 #define WEB_AR_3D_OBJECTS_OPTION       @"objects" // from IOS - [ {name , matrix} ]
 #define WEB_AR_3D_REMOVED_OBJECTS_OPTION @"removedObjects"
 #define WEB_AR_3D_NEW_OBJECTS_OPTION   @"newObjects"
+#define WEB_AR_3D_GEOALIGNED_OPTION    @"geoaligned"
+#define WEB_AR_3D_VIDEO_ACCESS_OPTION  @"videoAccess"
+#define WEB_AR_CV_INFORMATION_OPTION   @"computer_vision_data"
 
 #define WEB_AR_TYPE_OPTION             @"type"
 #define WEB_AR_POSITION_OPTION         @"position"
@@ -114,6 +122,7 @@
 #define WEB_AR_UUID_OPTION             @"uuid"
 
 #define WEB_AR_LIGHT_INTENSITY_OPTION  @"light_intensity"
+#define WEB_AR_WORLD_ALIGNMENT         @"alignEUS"
 
 #define WEB_AR_CAMERA_OPTION           @"camera"
 #define WEB_AR_PROJ_CAMERA_OPTION      @"projection_camera"

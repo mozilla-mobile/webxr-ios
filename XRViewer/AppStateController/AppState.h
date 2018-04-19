@@ -4,13 +4,15 @@
 #define RECORD_STATE_BY_DEFAULT        RecordStateIsReady
 #define SHOW_MODE_BY_DEFAULT           ShowNothing
 #define SHOW_OPTIONS_BY_DEFAULT        None
+#define POPUP_ENABLED_BY_DEFAULT       YES
 
 typedef NS_ENUM(NSUInteger, ShowMode)
 {
     ShowNothing,
     ShowSingle,
-    ShowMulti,
-    ShowMultiDebug
+    ShowDebug, // Shows the only the debug info
+    ShowMulti, // Shows the URL Bar and the record button
+    ShowMultiDebug // Shows the URL Bar, the record button and the debug info
 };
 
 typedef NS_OPTIONS(NSUInteger, ShowOptions)
@@ -59,6 +61,13 @@ typedef NS_ENUM(NSUInteger, RecordState)
 @property(nonatomic) BOOL webXR;
 @property(nonatomic) BOOL micEnabled;
 @property(nonatomic) BOOL interruption;
+@property(nonatomic) BOOL computerVisionFrameRequested;
+@property(nonatomic) BOOL shouldRemoveAnchorsOnNextARSession;
+@property(nonatomic) BOOL sendComputerVisionData;
+@property(nonatomic) BOOL shouldShowSessionStartedPopup;
+@property(nonatomic) int numberOfTimesSendNativeTimeWasCalled;
+
+@property(nonatomic) bool userGrantedSendingComputerVisionData;
 
 + (instancetype)defaultState;
 

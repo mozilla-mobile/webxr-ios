@@ -17,6 +17,12 @@
 // World tracking has encountered a fatal error.
 #define WORLD_TRACKING_FAILED_ARKIT_ERROR_CODE 200
 
+typedef NS_ENUM(NSUInteger, ARKitSessionState)
+{
+    ARKSessionUnknown,
+    ARKSessionPaused,
+    ARKSessionRunning
+};
 
 typedef NS_ENUM(NSUInteger, ARKType)
 {
@@ -46,6 +52,10 @@ typedef void (^DidUpdateWindowSize)(void);
 
 @property(nonatomic) BOOL shouldUpdateWindowSize;
 
+@property ARKitSessionState arSessionState;
+
+@property(nonatomic) bool computerVisionDataEnabled;
+
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 - (UIView *)arkView;
 
@@ -53,20 +63,38 @@ typedef void (^DidUpdateWindowSize)(void);
 
 - (void)startSessionWithAppState:(AppState *)state;
 
-- (void)stopSession;
+- (void)resumeSessionWithAppState: (AppState*)state;
+
+- (void)pauseSession;
 
 - (NSDictionary *)arkData;
+
+- (NSDictionary*)computerVisionData;
+
+- (NSTimeInterval)currentFrameTimeInMilliseconds;
 
 - (void)setShowMode:(ShowMode)mode;
 - (void)setShowOptions:(ShowOptions)options;
 
 - (NSArray *)hitTestNormPoint:(CGPoint)point types:(NSUInteger)type;
-- (BOOL)addAnchor:(NSString *)name transform:(NSArray *)transform;
+- (BOOL)addAnchor:(NSString *)userGeneratedAnchorID transform:(NSArray *)transform;
 
-- (void)removeAnchors:(NSArray *)anchorNames;
+/// Removes the anchors with the ids passed as parameter from the scene.
+/// @param anchorIDsToDelete An array of anchor IDs. These can be both ARKit-generated anchorIDs or user-generated anchorIDs
+- (void)removeAnchors:(NSArray *)anchorIDsToDelete;
 
 - (NSArray *)currentPlanesArray;
 
 - (NSString *)trackingState;
+
+- (void)removeAllAnchors;
+
+- (void)runSessionRemovingAnchorsWithAppState:(AppState *)state;
+
+- (void)runSessionResettingTrackingAndRemovingAnchorsWithAppState:(AppState *)state;
+
+- (void)removeDistantAnchors;
+
+- (void)runSessionWithAppState:(AppState *)state;
 @end
 

@@ -56,11 +56,11 @@ import MozillaTelemetry
 }
 
 public class AnalyticsManager: NSObject {
-    public static let sharedInstance = AnalyticsManager()
+    @objc public static let sharedInstance = AnalyticsManager()
     
     override private init() {}
     
-    func initialize(sendUsageData: Bool) {
+    @objc func initialize(sendUsageData: Bool) {
 #if USE_ANALYTICS
         let telemetryConfig = Telemetry.default.configuration
         telemetryConfig.appName = "WebXR"
@@ -74,7 +74,7 @@ public class AnalyticsManager: NSObject {
 #endif
     }
     
-    func sendEvent(category: EventCategory, method: EventMethod, object: EventObject) {
+    @objc func sendEvent(category: EventCategory, method: EventMethod, object: EventObject) {
 #if USE_ANALYTICS
         let event = TelemetryEvent(category: category.name(), method: method.name(), object: object.name())
         Telemetry.default.recordEvent(event)

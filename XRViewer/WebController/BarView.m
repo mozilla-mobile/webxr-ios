@@ -1,5 +1,6 @@
 #import "BarView.h"
 #import "OverlayHeader.h"
+#import "FontAwesomeKit/FAKFontAwesome.h"
 
 @interface URLTextField : UITextField
 @end
@@ -15,6 +16,7 @@
 @property (nonatomic, weak) UIButton *reloadBtn;
 @property (nonatomic, weak) UIButton *cancelBtn;
 @property (nonatomic, weak) UIActivityIndicatorView *ai;
+@property (weak, nonatomic) IBOutlet UIButton *restartTrackingBtn;
 
 @end
 
@@ -75,6 +77,14 @@
     [[self debugBtn] setHidden:!visible];
 }
 
+- (void)setRestartTrackingVisible:(BOOL)visible {
+    [[self restartTrackingBtn] setHidden:!visible];
+}
+
+- (BOOL)isDebugButtonSelected {
+    return [[self debugBtn] isSelected];
+}
+
 - (void)setup
 {
     [[self backBtn] setImage:[UIImage imageNamed:@"back"] forState:UIControlStateDisabled];
@@ -121,6 +131,16 @@
     
     [[self debugBtn] setImage:[UIImage imageNamed:@"debugOff"] forState:UIControlStateNormal];
     [[self debugBtn] setImage:[UIImage imageNamed:@"debugOn"] forState:UIControlStateSelected];
+    
+    NSError *error;
+    FAKFontAwesome *streetViewIcon = [FAKFontAwesome  iconWithIdentifier:@"fa-street-view" size:24 error:&error];
+    if (error != nil) {
+        NSLog(@"%@", [error localizedDescription]);
+    } else {
+        UIImage* streetViewImage = [streetViewIcon imageWithSize:CGSizeMake(24, 24)];
+        [[self restartTrackingBtn] setImage:streetViewImage forState:UIControlStateNormal];
+        [[self restartTrackingBtn] setTintColor:[UIColor grayColor]];
+    }
 }
 
 - (IBAction)backAction:(id)sender
@@ -190,6 +210,12 @@
 - (IBAction)settingsAction {
     if ([self settingsActionBlock]) {
         [self settingsActionBlock]();
+    }
+}
+
+- (IBAction)restartTrackingAction:(id)sender {
+    if ([self restartTrackingActionBlock]) {
+        [self restartTrackingActionBlock]();
     }
 }
 

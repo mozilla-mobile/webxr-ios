@@ -31,8 +31,10 @@
     [[material diffuse] setWrapS:SCNWrapModeRepeat];
     [[material diffuse] setWrapT:SCNWrapModeRepeat];
     
-    [self setPosition:SCNVector3Make(anchor.center.x, 0, anchor.center.z)];
-    [self setTransform:SCNMatrix4MakeRotation(-M_PI / 2.0, 1.0, 0.0, 0.0)];
+    SCNMatrix4 translateTransform = SCNMatrix4MakeTranslation(anchor.center.x, 0, anchor.center.z);
+    SCNMatrix4 rotationTransform = SCNMatrix4MakeRotation(-M_PI / 2.0, 1.0, 0.0, 0.0);    
+
+    [self setTransform:SCNMatrix4Mult(rotationTransform, translateTransform)];
 }
 
 - (void)setup

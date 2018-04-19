@@ -179,29 +179,6 @@
     [[[[self touchView] rightAnchor] constraintEqualToAnchor:[[self rootView] rightAnchor]] setActive: YES];
     
     [[self touchView] setBackgroundColor:[UIColor clearColor]];
-    
-    UIScreenEdgePanGestureRecognizer * gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(swipeFromEdge:)];
-    [gestureRecognizer setEdges:UIRectEdgeTop];
-    [[[self rootView] superview] addGestureRecognizer:gestureRecognizer];
-    
-    UISwipeGestureRecognizer* swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action: @selector(swipeUp:)];
-    [swipeGestureRecognizer setDirection: UISwipeGestureRecognizerDirectionUp];
-    [[[self rootView] superview] addGestureRecognizer:swipeGestureRecognizer];
-}
-
-- (void)swipeFromEdge: (UISwipeGestureRecognizer*)recognizer {
-    if ([self onSwipeDown]) {
-        [self onSwipeDown]();
-    }
-}
-
-- (void)swipeUp: (UISwipeGestureRecognizer*)recognizer {
-    CGPoint location = [recognizer locationInView:[[self rootView] superview]];
-    if (location.y > SWIPE_GESTURE_AREA_HEIGHT) return;
-    
-    if ([self onSwipeUp]) {
-        [self onSwipeUp]();
-    }
 }
 
 - (void)setupOverlayWindow
