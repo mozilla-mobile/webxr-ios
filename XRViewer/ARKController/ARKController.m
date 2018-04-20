@@ -423,6 +423,9 @@
                                        kCGRenderingIntentDefault);
     ARReferenceImage* result = [[ARReferenceImage alloc] initWithCGImage:cgImage orientation:kCGImagePropertyOrientationUp physicalWidth:physicalWidth];
     result.name = referenceImageDictionary[@"uid"];
+    
+    CGDataProviderRelease(dataProvider);
+    CGColorSpaceRelease(colorSpace);
     return result;
 }
 
