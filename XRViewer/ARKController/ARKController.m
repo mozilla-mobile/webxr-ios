@@ -406,8 +406,8 @@
     size_t width = [referenceImageDictionary[@"imageWidth"] intValue];
     size_t height = [referenceImageDictionary[@"imageHeight"] intValue];
     size_t bitsPerComponent = 8;
-    size_t bitsPerPixel = 24;
-    size_t bytesPerRow = width * 3;
+    size_t bitsPerPixel = 32;
+    size_t bytesPerRow = width * 4;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
     CGBitmapInfo bitmapInfo = 0;
     NSData *data = [[NSData alloc] initWithBase64EncodedString:b64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
