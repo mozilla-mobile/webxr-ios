@@ -71,6 +71,10 @@ static inline NSDictionary * dictFromVector3(vector_float3 vector)
     return @{WEB_AR_X_POSITION_OPTION : @(vector.x),  WEB_AR_Y_POSITION_OPTION : @(vector.y), WEB_AR_Z_POSITION_OPTION : @(vector.z)};
 }
 
+static inline NSDictionary * dictFromVector2(vector_float2 vector) {
+    return @{WEB_AR_X_POSITION_OPTION : @(vector.x),  WEB_AR_Y_POSITION_OPTION : @(vector.y)};
+}
+
 static inline vector_float3 vector3FromDictionary(NSDictionary *dict)
 {
     vector_float3 vector;
