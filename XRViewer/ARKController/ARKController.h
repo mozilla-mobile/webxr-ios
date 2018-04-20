@@ -96,5 +96,7 @@ typedef void (^DidUpdateWindowSize)(void);
 - (void)removeDistantAnchors;
 
 - (void)runSessionWithAppState:(AppState *)state;
+
+- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary;
 @end
 

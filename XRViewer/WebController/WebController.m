@@ -361,6 +361,11 @@ inline static WebCompletion debugCompletion(NSString *name)
         if ([self onRemoveObjects]) {
             [self onRemoveObjects](anchorIDs);
         }
+    } else if ([[message name] isEqualToString:WEB_AR_ADD_IMAGE_ANCHOR]) {
+        NSDictionary *imageAnchorInfoDictionary = [message body];
+        if ([self onAddImageAnchor]) {
+            [self onAddImageAnchor](imageAnchorInfoDictionary);
+        }
     }
     else
     {
@@ -593,6 +598,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_START_SENDING_CV_DATA_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_STOP_SENDING_CV_DATA_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_REMOVE_ANCHORS_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_ADD_IMAGE_ANCHOR_MESSAGE];
 }
 
 - (void)cleanWebContent
@@ -609,6 +615,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_START_SENDING_CV_DATA_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_STOP_SENDING_CV_DATA_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_REMOVE_ANCHORS_MESSAGE];
+    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ADD_IMAGE_ANCHOR_MESSAGE];
 }
 
 - (void)setupWebViewWithRootView:(__autoreleasing UIView*)rootView

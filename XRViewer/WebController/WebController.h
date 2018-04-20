@@ -26,6 +26,7 @@ typedef void (^OnStopAR)(void);
 typedef void (^OnResetTrackingButtonTapped)(void);
 typedef void (^OnStartSendingComputerVisionData)(void);
 typedef void (^OnStopSendingComputerVisionData)(void);
+typedef void (^OnAddImageAnchor)(NSDictionary*);
 
 @interface WebController : NSObject
 
@@ -49,6 +50,7 @@ typedef void (^OnStopSendingComputerVisionData)(void);
 @property(nonatomic, copy) OnResetTrackingButtonTapped onResetTrackingButtonTapped;
 @property(nonatomic, copy) OnStartSendingComputerVisionData onStartSendingComputerVisionData;
 @property(nonatomic, copy) OnStopSendingComputerVisionData onStopSendingComputerVisionData;
+@property(nonatomic, copy) OnAddImageAnchor onAddImageAnchor;
 
 @property (nonatomic, strong) Animator *animator;
 

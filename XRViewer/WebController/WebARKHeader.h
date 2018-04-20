@@ -18,9 +18,11 @@
 #define WEB_AR_HIT_TEST_MESSAGE        @"hitTest"
 #define WEB_AR_ADD_ANCHOR_MESSAGE      @"addAnchor"
 #define WEB_AR_REMOVE_ANCHORS_MESSAGE   @"removeAnchors"
+#define WEB_AR_ADD_IMAGE_ANCHOR_MESSAGE   @"addImageAnchor"
 #define WEB_AR_REQUEST_CV_DATA_MESSAGE @"requestComputerVisionData"
 #define WEB_AR_START_SENDING_CV_DATA_MESSAGE    @"startSendingComputerVisionData"
 #define WEB_AR_STOP_SENDING_CV_DATA_MESSAGE     @"stopSendingComputerVisionData"
+#define WEB_AR_ADD_IMAGE_ANCHOR         @"addImageAnchor"
 
 #define WEB_AR_ON_JS_UPDATE_MESSAGE    @"onUpdate" // reques from JS
 

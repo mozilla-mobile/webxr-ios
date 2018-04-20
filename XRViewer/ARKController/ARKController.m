@@ -390,6 +390,42 @@
     }
 }
 
+- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary {
+    ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
+    
+    NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
+    [currentDetectionImages addObject: referenceImage];
+    [[self configuration] setDetectionImages: currentDetectionImages];
+    
+    [[self session] runWithConfiguration:[self configuration]];
+}
+
+- (ARReferenceImage*)createReferenceImageFromDictionary:(NSDictionary*)referenceImageDictionary {
+    CGFloat physicalWidth = [referenceImageDictionary[@"physicalWidth"] doubleValue];
+    NSString* b64String = referenceImageDictionary[@"buffer"];
+    size_t width = [referenceImageDictionary[@"imageWidth"] intValue];
+    size_t height = [referenceImageDictionary[@"imageHeight"] intValue];
+    size_t bitsPerComponent = 8;
+    size_t bitsPerPixel = 24;
+    size_t bytesPerRow = width * 3;
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    CGBitmapInfo bitmapInfo = 0;
+    NSData *data = [[NSData alloc] initWithBase64EncodedString:b64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    CFDataRef bridgedData  = (__bridge CFDataRef)data;
+    CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(bridgedData);
+    
+    BOOL shouldInterpolate = YES;
+    
+    
+    CGImageRef cgImage = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow,
+                                       colorSpace, bitmapInfo,
+                                       dataProvider, NULL, shouldInterpolate,
+                                       kCGRenderingIntentDefault);
+    ARReferenceImage* result = [[ARReferenceImage alloc] initWithCGImage:cgImage orientation:kCGImagePropertyOrientationUp physicalWidth:physicalWidth];
+    result.name = referenceImageDictionary[@"uid"];
+    return result;
+}
+
 #pragma mark Private
 
 - (void)updateARKDataWithFrame:(ARFrame *)frame
