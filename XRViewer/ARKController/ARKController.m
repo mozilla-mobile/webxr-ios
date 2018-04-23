@@ -952,6 +952,9 @@
         [removedAnchorsSinceLastFrame addObject: anchorID];
         objects[anchorID] = nil;
         arkitGeneratedAnchorIDUserAnchorIDMap[arkitAnchorID] = nil;
+        if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
+            self.detectionImageCompletionMap[((ARImageAnchor *)removedAnchor).referenceImage.name] = nil;
+        }
     }
 
     // Inform up in the calling hierarchy when we have plane anchors removed from the scene
