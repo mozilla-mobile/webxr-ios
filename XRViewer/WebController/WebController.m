@@ -363,8 +363,11 @@ inline static WebCompletion debugCompletion(NSString *name)
         }
     } else if ([[message name] isEqualToString:WEB_AR_ADD_IMAGE_ANCHOR]) {
         NSDictionary *imageAnchorInfoDictionary = [message body];
+        NSString *createImageAnchorCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
         if ([self onAddImageAnchor]) {
-            [self onAddImageAnchor](imageAnchorInfoDictionary);
+            [self onAddImageAnchor](imageAnchorInfoDictionary, ^(NSDictionary *imageAnchor){
+                [blockSelf callWebMethod:createImageAnchorCallback paramJSON:imageAnchor webCompletion:NULL];
+            });
         }
     }
     else

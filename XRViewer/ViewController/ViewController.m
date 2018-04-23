@@ -761,8 +761,8 @@ typedef void (^UICompletion)(void);
         [[[blockSelf stateController] state] setSendComputerVisionData:NO];
     }];
 
-    [[self webController] setOnAddImageAnchor:^(NSDictionary *dictionary) {
-        [[blockSelf arkController] addDetectionImage:dictionary];
+    [[self webController] setOnAddImageAnchor:^(NSDictionary *dictionary, ImageDetectedBlock completion) {
+        [[blockSelf arkController] addDetectionImage:dictionary detectedCompletion:completion];
     }];
 
     if ([[self stateController] wasMemoryWarning])

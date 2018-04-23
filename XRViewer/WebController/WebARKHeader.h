@@ -98,6 +98,7 @@
 #define WEB_AR_PLANE_ID_OPTION         @"plane_id"
 #define WEB_AR_PLANE_GEOMETRY_OPTION   @"geometry"
 #define WEB_AR_SHOW_PLANE_OPTION       @"show_plane"
+#define WEB_AR_IMAGE_NAME_OPTION       @"image_name"
 
 #define WEB_AR_HIT_TEST_RESULT_OPTION  @"hit_test_result"
 #define WEB_AR_HIT_TEST_PLANE_OPTION   @"hit_test_plane"

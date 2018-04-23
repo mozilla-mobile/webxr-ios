@@ -38,6 +38,7 @@ typedef void (^DidChangeTrackingState)(NSString *state);
 typedef void (^DidAddPlaneAnchors)(void);
 typedef void (^DidRemovePlaneAnchors)(void);
 typedef void (^DidUpdateWindowSize)(void);
+typedef void (^DetectedImageCompletionBlock)(NSDictionary*);
 
 @interface ARKController : NSObject
 
@@ -97,6 +98,6 @@ typedef void (^DidUpdateWindowSize)(void);
 
 - (void)runSessionWithAppState:(AppState *)state;
 
-- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary;
+- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary detectedCompletion:(DetectedImageCompletionBlock)completion;
 @end
 

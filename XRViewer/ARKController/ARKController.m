@@ -50,6 +50,7 @@
 
 @property (nonatomic) float computerVisionImageScaleFactor;
 
+@property(nonatomic, strong) NSMutableDictionary* detectionImageCompletionMap;
 @end
 
 @implementation ARKController {
@@ -119,6 +120,8 @@
         self.chromaBase64StringBuffer = nil;
         self.computerVisionImageScaleFactor = 4.0;
         self.lumaBufferSize = CGSizeMake(0.0f, 0.0f);
+
+        self.detectionImageCompletionMap = [NSMutableDictionary new];
     }
     
     return self;
@@ -390,13 +393,14 @@
     }
 }
 
-- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary {
+- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary detectedCompletion:(DetectedImageCompletionBlock)completion {
     ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
     
     NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
     [currentDetectionImages addObject: referenceImage];
     [[self configuration] setDetectionImages: currentDetectionImages];
-    
+
+    self.detectionImageCompletionMap[referenceImage.name] = completion;
     [[self session] runWithConfiguration:[self configuration]];
 }
 
@@ -784,21 +788,6 @@
     return [array copy];
 }
 
-- (NSDictionary *)anchorDictFromAnchor:(ARAnchor *)anchor withName:(NSString *)name
-{
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
-    
-    dict[WEB_AR_UUID_OPTION] = name;
-    dict[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([anchor transform]);
-
-    if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
-        ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)anchor;
-        [self addPlaneAnchorData:planeAnchor toDictionary:dict];
-    }
-    
-    return [dict copy];
-}
-
 - (NSArray *)currentPlanesArray
 {
     ARFrame *currentFrame = [[self session] currentFrame];
@@ -855,6 +844,16 @@
         NSDictionary *addedAnchorDictionary = [self getDictionaryForAnchor:addedAnchor];
         [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
         objects[addedAnchorDictionary[WEB_AR_UUID_OPTION]] = addedAnchorDictionary;
+        
+        if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
+            ARImageAnchor* addedImageAnchor = (ARImageAnchor*)addedAnchor;
+            if ([[self.detectionImageCompletionMap allKeys] containsObject:addedImageAnchor.referenceImage.name]) {
+                // Call the detection image block
+                DetectedImageCompletionBlock block = self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name];
+                block(addedAnchorDictionary);
+                self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name] = nil;
+            }
+        }
     }
 
     // Inform up in the calling hierarchy when we have plane anchors added to the scene
@@ -866,14 +865,27 @@
 }
 
 - (NSDictionary *)getDictionaryForAnchor:(ARAnchor *)addedAnchor {
-    NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[addedAnchor.identifier UUIDString]];
-    NSString *name = userAnchorID? userAnchorID: [addedAnchor.identifier UUIDString];
-    NSMutableDictionary *addedAnchorDictionary = [[self anchorDictFromAnchor:addedAnchor withName:name] mutableCopy];
+    NSMutableDictionary* anchorDictionary = [NSMutableDictionary new];
+    anchorDictionary[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([addedAnchor transform]);
+    
     if ([addedAnchor isKindOfClass:[ARPlaneAnchor class]]) {
+        // ARKit system plane anchor
         ARPlaneAnchor *addedPlaneAnchor = (ARPlaneAnchor *)addedAnchor;
-        [self addPlaneAnchorData:addedPlaneAnchor toDictionary: addedAnchorDictionary];
+        [self addPlaneAnchorData:addedPlaneAnchor toDictionary: anchorDictionary];
+        anchorDictionary[WEB_AR_UUID_OPTION] = [addedAnchor.identifier UUIDString];
+    } else if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
+        // User image anchor
+        ARImageAnchor *addedImageAnchor = (ARImageAnchor *)addedAnchor;
+        arkitGeneratedAnchorIDUserAnchorIDMap[[[addedAnchor identifier] UUIDString]] = addedImageAnchor.referenceImage.name;
+        anchorDictionary[WEB_AR_UUID_OPTION] = addedImageAnchor.referenceImage.name;
+    } else {
+        // Plain ARAnchor
+        NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[addedAnchor.identifier UUIDString]];
+        NSString *name = userAnchorID? userAnchorID: [addedAnchor.identifier UUIDString];
+        anchorDictionary[WEB_AR_UUID_OPTION] = name;
     }
-    return [addedAnchorDictionary copy];
+
+    return [anchorDictionary copy];
 }
 
 -(void)addGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)dictionary {

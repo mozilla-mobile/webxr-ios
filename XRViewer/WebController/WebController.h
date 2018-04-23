@@ -10,6 +10,7 @@ typedef void (^OnUpdateTransfer)(NSDictionary * );
 
 typedef void (^ResultBlock)(NSDictionary *);
 typedef void (^ResultArrayBlock)(NSArray *);
+typedef void (^ImageDetectedBlock)(NSDictionary *);
 
 typedef void (^OnRemoveObjects)(NSArray * );
 typedef NSDictionary * (^OnJSUpdateData)(void);
@@ -26,7 +27,7 @@ typedef void (^OnStopAR)(void);
 typedef void (^OnResetTrackingButtonTapped)(void);
 typedef void (^OnStartSendingComputerVisionData)(void);
 typedef void (^OnStopSendingComputerVisionData)(void);
-typedef void (^OnAddImageAnchor)(NSDictionary*);
+typedef void (^OnAddImageAnchor)(NSDictionary*, ImageDetectedBlock);
 
 @interface WebController : NSObject
 
