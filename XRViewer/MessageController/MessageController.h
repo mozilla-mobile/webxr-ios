@@ -48,4 +48,6 @@ typedef NS_ENUM(NSInteger, ResetTrackigOption) {
 - (void)hideMessages;
 
 - (void)showPermissionsPopup;
+
+- (void)showMessageAboutAccessingWorldSensingData:(void (^)(BOOL))granted;
 @end

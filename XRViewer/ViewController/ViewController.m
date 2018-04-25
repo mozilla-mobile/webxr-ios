@@ -1024,13 +1024,21 @@ typedef void (^UICompletion)(void);
     [[self arkController] setComputerVisionDataEnabled: false];
     [[[self stateController] state] setUserGrantedSendingComputerVisionData:false];
     [[[self stateController] state] setSendComputerVisionData: true];
+    [[[self stateController] state] setUserGrantedSendingWorldSensingData: false];
 
     if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
             [[blockSelf webController] userGrantedComputerVisionData:granted];
             [[blockSelf arkController] setComputerVisionDataEnabled:granted];
             [[[blockSelf stateController] state] setUserGrantedSendingComputerVisionData:granted];
-            //[[[blockSelf stateController] state] setSendComputerVisionData:granted];
+            
+            // Approving computer vision data implicitly approves the world sensing data
+            [[[blockSelf stateController] state] setUserGrantedSendingWorldSensingData:granted];
+        }];
+    } else if ([request[WEB_AR_WORLD_SENSING_DATA_OPTION] boolValue]) {
+        [[self messageController] showMessageAboutAccessingWorldSensingData:^(BOOL granted){
+            [[blockSelf webController] userGrantedSendingWorldSensingData:granted];
+            [[[blockSelf stateController] state] setUserGrantedSendingWorldSensingData:granted];
         }];
     }
 

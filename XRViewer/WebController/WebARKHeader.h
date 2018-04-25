@@ -41,6 +41,7 @@
 
 #define WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE   @"ios_did_receive_memory_warning"
 #define WEB_AR_IOS_USER_GRANTED_CV_DATA         @"userGrantedComputerVisionData"
+#define WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA         @"userGrantedWorldSensingData"
 
 // This message is not being used by the polyfill
 // #define WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"
@@ -112,6 +113,7 @@
 #define WEB_AR_3D_GEOALIGNED_OPTION    @"geoaligned"
 #define WEB_AR_3D_VIDEO_ACCESS_OPTION  @"videoAccess"
 #define WEB_AR_CV_INFORMATION_OPTION   @"computer_vision_data"
+#define WEB_AR_WORLD_SENSING_DATA_OPTION @"worldSensing"
 
 #define WEB_AR_TYPE_OPTION             @"type"
 #define WEB_AR_POSITION_OPTION         @"position"

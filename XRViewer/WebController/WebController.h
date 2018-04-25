@@ -105,5 +105,7 @@ typedef void (^OnAddImageAnchor)(NSDictionary*, ImageDetectedBlock);
 - (BOOL)isDebugButtonSelected;
 
 - (void)sendNativeTime:(NSTimeInterval)nativeTime;
+
+- (void)userGrantedSendingWorldSensingData:(BOOL)granted;
 @end
 

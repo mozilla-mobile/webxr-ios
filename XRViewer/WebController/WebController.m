@@ -260,6 +260,10 @@ inline static WebCompletion debugCompletion(NSString *name)
     return [[self barView] isDebugButtonSelected];
 }
 
+- (void)userGrantedSendingWorldSensingData:(BOOL)granted {
+    [self callWebMethod:WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA paramJSON:@{@"granted": @(granted)} webCompletion:debugCompletion(WEB_AR_IOS_USER_GRANTED_CV_DATA)];
+}
+
 #pragma mark WKScriptMessageHandler
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
