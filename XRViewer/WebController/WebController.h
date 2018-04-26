@@ -11,6 +11,7 @@ typedef void (^OnUpdateTransfer)(NSDictionary * );
 typedef void (^ResultBlock)(NSDictionary *);
 typedef void (^ResultArrayBlock)(NSArray *);
 typedef void (^ImageDetectedBlock)(NSDictionary *);
+typedef void (^BoolParameterCompletionBlock)(BOOL);
 
 typedef void (^OnRemoveObjects)(NSArray * );
 typedef NSDictionary * (^OnJSUpdateData)(void);
@@ -28,6 +29,10 @@ typedef void (^OnResetTrackingButtonTapped)(void);
 typedef void (^OnStartSendingComputerVisionData)(void);
 typedef void (^OnStopSendingComputerVisionData)(void);
 typedef void (^OnAddImageAnchor)(NSDictionary*, ImageDetectedBlock);
+typedef void (^OnActivateDetectionImage)(NSString*, ImageDetectedBlock);
+typedef void (^OnDeactivateDetectionImage)(NSString*, BoolParameterCompletionBlock);
+typedef void (^OnDestroyDetectionImage)(NSString*, BoolParameterCompletionBlock);
+typedef void (^OnCreateDetectionImage)(NSDictionary*, BoolParameterCompletionBlock);
 
 @interface WebController : NSObject
 
@@ -52,6 +57,10 @@ typedef void (^OnAddImageAnchor)(NSDictionary*, ImageDetectedBlock);
 @property(nonatomic, copy) OnStartSendingComputerVisionData onStartSendingComputerVisionData;
 @property(nonatomic, copy) OnStopSendingComputerVisionData onStopSendingComputerVisionData;
 @property(nonatomic, copy) OnAddImageAnchor onAddImageAnchor;
+@property(nonatomic, copy) OnActivateDetectionImage onActivateDetectionImage;
+@property(nonatomic, copy) OnDeactivateDetectionImage onDeactivateDetectionImage;
+@property(nonatomic, copy) OnDestroyDetectionImage onDestroyDetectionImage;
+@property(nonatomic, copy) OnCreateDetectionImage onCreateDetectionImage;
 
 @property (nonatomic, strong) Animator *animator;
 

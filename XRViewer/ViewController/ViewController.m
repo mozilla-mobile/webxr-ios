@@ -765,6 +765,28 @@ typedef void (^UICompletion)(void);
         [[blockSelf arkController] addDetectionImage:dictionary detectedCompletion:completion];
     }];
 
+    [[self webController] setOnActivateDetectionImage:^(NSString *imageName, ImageDetectedBlock completion) {
+        [[blockSelf arkController] activateDetectionImage:imageName detectedCompletion:completion];
+    }];
+
+    [[self webController] setOnDeactivateDetectionImage:^(NSString *imageName, BoolParameterCompletionBlock completion) {
+        BOOL deactivated = NO;
+        deactivated = [[blockSelf arkController] deactivateDetectionImage: imageName];
+        completion(deactivated);
+    }];
+
+    [[self webController] setOnDestroyDetectionImage:^(NSString *imageName, BoolParameterCompletionBlock completion) {
+        BOOL destroyed = NO;
+        destroyed = [[blockSelf arkController] destroyDetectionImage: imageName];
+        completion(destroyed);
+    }];
+
+    [[self webController] setOnCreateDetectionImage:^(NSDictionary *dictionary, BoolParameterCompletionBlock completion) {
+        BOOL created = NO;
+        created = [[blockSelf arkController] createDetectionImage: dictionary];
+        completion(created);
+    }];
+
     if ([[self stateController] wasMemoryWarning])
     {
         [[self stateController] applyOnDidReceiveMemoryAction];

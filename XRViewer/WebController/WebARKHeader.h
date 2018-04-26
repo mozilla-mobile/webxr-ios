@@ -19,6 +19,10 @@
 #define WEB_AR_ADD_ANCHOR_MESSAGE      @"addAnchor"
 #define WEB_AR_REMOVE_ANCHORS_MESSAGE   @"removeAnchors"
 #define WEB_AR_ADD_IMAGE_ANCHOR_MESSAGE   @"addImageAnchor"
+#define WEB_AR_CREATE_IMAGE_ANCHOR_MESSAGE   @"createImageAnchor"
+#define WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE   @"activateDetectionImage"
+#define WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE   @"deactivateDetectionImage"
+#define WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE   @"destroyDetectionImage"
 #define WEB_AR_REQUEST_CV_DATA_MESSAGE @"requestComputerVisionData"
 #define WEB_AR_START_SENDING_CV_DATA_MESSAGE    @"startSendingComputerVisionData"
 #define WEB_AR_STOP_SENDING_CV_DATA_MESSAGE     @"stopSendingComputerVisionData"
@@ -141,6 +145,8 @@
 #define WEB_AR_TRACKING_STATE_LIMITED_MOTION       @"ar_tracking_limited_excessive_motion"
 #define WEB_AR_TRACKING_STATE_LIMITED_FEATURES     @"ar_tracking_limited_insufficient_features"
 #define WEB_AR_TRACKING_STATE_NOT_AVAILABLE        @"ar_tracking_not_available"
+
+#define WEB_AR_DETECTION_IMAGE_NAME_OPTION  @"detectionImageName"
 
 #define AR_CAMERA_PROJECTION_MATRIX_Z_NEAR 0.001f
 #define AR_CAMERA_PROJECTION_MATRIX_Z_FAR 1000.0f

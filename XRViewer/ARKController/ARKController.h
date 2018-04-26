@@ -99,5 +99,14 @@ typedef void (^DetectedImageCompletionBlock)(NSDictionary*);
 - (void)runSessionWithAppState:(AppState *)state;
 
 - (void)addDetectionImage:(NSDictionary *)referenceImageDictionary detectedCompletion:(DetectedImageCompletionBlock)completion;
+
+- (BOOL)createDetectionImage:(NSDictionary *)referenceImageDictionary;
+
+- (void)activateDetectionImage:(NSString *)imageName detectedCompletion:(DetectedImageCompletionBlock)completion;
+
+- (BOOL)deactivateDetectionImage:(NSString *)imageName;
+
+- (BOOL)destroyDetectionImage:(NSString *)imageName;
+
 @end
 

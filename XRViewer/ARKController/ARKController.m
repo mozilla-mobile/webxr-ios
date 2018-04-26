@@ -51,6 +51,7 @@
 @property (nonatomic) float computerVisionImageScaleFactor;
 
 @property(nonatomic, strong) NSMutableDictionary* detectionImageCompletionMap;
+@property(nonatomic, strong) NSMutableDictionary* referenceImageMap;
 @end
 
 @implementation ARKController {
@@ -122,6 +123,7 @@
         self.lumaBufferSize = CGSizeMake(0.0f, 0.0f);
 
         self.detectionImageCompletionMap = [NSMutableDictionary new];
+        self.referenceImageMap = [NSMutableDictionary new];
     }
     
     return self;
@@ -401,7 +403,60 @@
     [[self configuration] setDetectionImages: currentDetectionImages];
 
     self.detectionImageCompletionMap[referenceImage.name] = completion;
+    self.referenceImageMap[referenceImage.name] = referenceImage;
     [[self session] runWithConfiguration:[self configuration]];
+}
+
+
+- (BOOL)createDetectionImage:(NSDictionary *)referenceImageDictionary {
+    ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
+    if (referenceImage) {
+        self.referenceImageMap[referenceImage.name] = referenceImage;
+        return YES;
+    }
+
+    return NO;
+}
+
+- (void)activateDetectionImage:(NSString *)imageName detectedCompletion:(DetectedImageCompletionBlock)completion {
+    ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
+
+    NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
+    if (![currentDetectionImages containsObject:referenceImage]) {
+        [currentDetectionImages addObject: referenceImage];
+        [[self configuration] setDetectionImages: currentDetectionImages];
+
+        self.detectionImageCompletionMap[referenceImage.name] = completion;
+        [[self session] runWithConfiguration:[self configuration]];
+    }
+}
+
+- (BOOL)deactivateDetectionImage:(NSString *)imageName {
+    ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
+
+    NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
+    if ([currentDetectionImages containsObject:referenceImage]) {
+        [currentDetectionImages removeObject: referenceImage];
+        [[self configuration] setDetectionImages: currentDetectionImages];
+
+        self.detectionImageCompletionMap[referenceImage.name] = nil;
+        [[self session] runWithConfiguration:[self configuration]];
+        self.referenceImageMap[imageName] = nil;
+        return YES;
+    }
+
+    return NO;
+}
+
+- (BOOL)destroyDetectionImage:(NSString *)imageName {
+    ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
+    if (referenceImage) {
+        self.referenceImageMap[imageName] = nil;
+        self.detectionImageCompletionMap[imageName] = nil;
+
+        return YES;
+    }
+    return NO;
 }
 
 - (ARReferenceImage*)createReferenceImageFromDictionary:(NSDictionary*)referenceImageDictionary {

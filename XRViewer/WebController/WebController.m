@@ -373,11 +373,45 @@ inline static WebCompletion debugCompletion(NSString *name)
                 [blockSelf callWebMethod:createImageAnchorCallback paramJSON:imageAnchor webCompletion:NULL];
             });
         }
-    }
-    else
-    {
+    } else if ([[message name] isEqualToString:WEB_AR_CREATE_IMAGE_ANCHOR_MESSAGE]) {
+        NSDictionary *imageAnchorInfoDictionary = [message body];
+        NSString *createDetectionImageCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        if ([self onCreateDetectionImage]) {
+            [self onCreateDetectionImage](imageAnchorInfoDictionary, ^(BOOL success) {
+                [blockSelf callWebMethod:createDetectionImageCallback paramJSON:@{@"created": @(success)} webCompletion:NULL];
+            });
+        }
+    } else if ([[message name] isEqualToString:WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE]) {
+        NSDictionary *imageAnchorInfoDictionary = [message body];
+        NSString *imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION];
+        NSString *activateDetectionImageCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        if ([self onActivateDetectionImage]) {
+            [self onActivateDetectionImage](imageName, ^(NSDictionary *imageAnchor) {
+                [blockSelf callWebMethod:activateDetectionImageCallback paramJSON:imageAnchor webCompletion:NULL];
+            });
+        }
+    } else if ([[message name] isEqualToString:WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE]) {
+        NSDictionary *imageAnchorInfoDictionary = [message body];
+        NSString *imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION];
+        NSString *deactivateDetectionImageCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        if ([self onDeactivateDetectionImage]) {
+            [self onDeactivateDetectionImage](imageName, ^(BOOL success) {
+                [blockSelf callWebMethod:deactivateDetectionImageCallback paramJSON:@{@"deactivated": @(success)} webCompletion:NULL];
+            });
+        }
+    } else if ([[message name] isEqualToString:WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE]) {
+        NSDictionary *imageAnchorInfoDictionary = [message body];
+        NSString *imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION];
+        NSString *destroyDetectionImageCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        if ([self onDestroyDetectionImage]) {
+            [self onDestroyDetectionImage](imageName, ^(BOOL success) {
+                [blockSelf callWebMethod:destroyDetectionImageCallback paramJSON:@{@"destroyed": @(success)} webCompletion:NULL];
+            });
+        }
+    } else {
         DDLogError(@"Unknown message: %@ ,for name: %@", [message body], [message name]);
     }
+    
 }
 
 - (void)callWebMethod:(NSString *)name param:(NSString *)param webCompletion:(WebCompletion)completion
@@ -606,6 +640,9 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_STOP_SENDING_CV_DATA_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_REMOVE_ANCHORS_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_ADD_IMAGE_ANCHOR_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE];
 }
 
 - (void)cleanWebContent
@@ -623,6 +660,9 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_STOP_SENDING_CV_DATA_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_REMOVE_ANCHORS_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ADD_IMAGE_ANCHOR_MESSAGE];
+    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE];
+    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE];
+    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE];
 }
 
 - (void)setupWebViewWithRootView:(__autoreleasing UIView*)rootView
