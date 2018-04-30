@@ -130,6 +130,7 @@
 #define WEB_AR_DISTANCE_OPTION         @"distance"
 #define WEB_AR_ELEMENTS_OPTION         @"elements"
 #define WEB_AR_UUID_OPTION             @"uuid"
+#define WEB_AR_MUST_SEND_OPTION        @"mustSend"
 
 #define WEB_AR_LIGHT_INTENSITY_OPTION  @"light_intensity"
 #define WEB_AR_WORLD_ALIGNMENT         @"alignEUS"

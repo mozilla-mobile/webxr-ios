@@ -7,7 +7,6 @@
 #define POPUP_ENABLED_BY_DEFAULT       YES
 #define POPUP_ENABLED_BY_DEFAULT       YES
 #define USER_GRANTED_SENDING_COMPUTER_VISION_DATA_BY_DEFAULT    NO
-#define USER_GRANTED_SENDING_WORLD_SENSING_DATA_BY_DEFAULT    NO
 
 typedef NS_ENUM(NSUInteger, ShowMode)
 {
@@ -70,7 +69,6 @@ typedef NS_ENUM(NSUInteger, RecordState)
 @property(nonatomic) BOOL shouldShowSessionStartedPopup;
 @property(nonatomic) int numberOfTimesSendNativeTimeWasCalled;
 @property(nonatomic) bool userGrantedSendingComputerVisionData;
-@property(nonatomic) bool userGrantedSendingWorldSensingData;
 
 + (instancetype)defaultState;
 

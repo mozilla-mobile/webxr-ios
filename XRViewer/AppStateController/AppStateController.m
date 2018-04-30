@@ -131,7 +131,7 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 
 - (BOOL)shouldSendARKData
 {
-    return [[self state] webXR] && [[self state] aRRequest] && [[self state] userGrantedSendingWorldSensingData];
+    return [[self state] webXR] && [[self state] aRRequest];
 }
 
 - (BOOL)shouldSendCVData {

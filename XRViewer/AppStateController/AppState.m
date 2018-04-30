@@ -19,7 +19,6 @@
     [copy setShouldShowSessionStartedPopup: [self shouldShowSessionStartedPopup]];
     [copy setNumberOfTimesSendNativeTimeWasCalled: [self numberOfTimesSendNativeTimeWasCalled]];
     [copy setUserGrantedSendingComputerVisionData: [self userGrantedSendingComputerVisionData]];
-    [copy setUserGrantedSendingWorldSensingData: [self userGrantedSendingWorldSensingData]];
 
     return copy;
 }
@@ -103,10 +102,6 @@
         return NO;
     }
 
-    if ([self userGrantedSendingWorldSensingData] != [theObject userGrantedSendingWorldSensingData]) {
-        return NO;
-    }
-    
     return YES;
 }
 
@@ -126,7 +121,6 @@
     [state setShouldShowSessionStartedPopup:POPUP_ENABLED_BY_DEFAULT];
     [state setNumberOfTimesSendNativeTimeWasCalled:0];
     [state setUserGrantedSendingComputerVisionData:USER_GRANTED_SENDING_COMPUTER_VISION_DATA_BY_DEFAULT];
-    [state setUserGrantedSendingWorldSensingData:USER_GRANTED_SENDING_WORLD_SENSING_DATA_BY_DEFAULT];
 
     // trackingstate default is nil ?
     

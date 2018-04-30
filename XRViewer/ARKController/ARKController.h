@@ -57,6 +57,8 @@ typedef void (^DetectedImageCompletionBlock)(NSDictionary*);
 
 @property(nonatomic) bool computerVisionDataEnabled;
 
+@property(nonatomic) BOOL userGrantedSendingWorldSensingData;
+
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 - (UIView *)arkView;
 

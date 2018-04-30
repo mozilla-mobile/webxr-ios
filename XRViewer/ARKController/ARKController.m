@@ -837,7 +837,9 @@
     NSMutableArray *array = [NSMutableArray array];
     [objects enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
      {
-         [array addObject:objects[key]];
+         if ([self userGrantedSendingWorldSensingData] || [objects[key][WEB_AR_MUST_SEND_OPTION] boolValue]) {
+             [array addObject:objects[key]];
+         }
      }];
     
     return [array copy];
@@ -896,7 +898,7 @@
 {
     DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* addedAnchor in anchors) {
-        NSDictionary *addedAnchorDictionary = [self getDictionaryForAnchor:addedAnchor];
+        NSMutableDictionary *addedAnchorDictionary = [[self getDictionaryForAnchor:addedAnchor] mutableCopy];
         [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
         objects[addedAnchorDictionary[WEB_AR_UUID_OPTION]] = addedAnchorDictionary;
         
@@ -927,17 +929,20 @@
         // ARKit system plane anchor
         ARPlaneAnchor *addedPlaneAnchor = (ARPlaneAnchor *)addedAnchor;
         [self addPlaneAnchorData:addedPlaneAnchor toDictionary: anchorDictionary];
+        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
         anchorDictionary[WEB_AR_UUID_OPTION] = [addedAnchor.identifier UUIDString];
     } else if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
-        // User image anchor
+        // User generated ARImageAnchor
         ARImageAnchor *addedImageAnchor = (ARImageAnchor *)addedAnchor;
         arkitGeneratedAnchorIDUserAnchorIDMap[[[addedAnchor identifier] UUIDString]] = addedImageAnchor.referenceImage.name;
         anchorDictionary[WEB_AR_UUID_OPTION] = addedImageAnchor.referenceImage.name;
+        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(YES);
     } else {
-        // Plain ARAnchor
+        // Simple, user generated ARAnchor
         NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[addedAnchor.identifier UUIDString]];
         NSString *name = userAnchorID? userAnchorID: [addedAnchor.identifier UUIDString];
         anchorDictionary[WEB_AR_UUID_OPTION] = name;
+        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(YES);
     }
 
     return [anchorDictionary copy];
