@@ -409,12 +409,16 @@
 
 
 - (BOOL)createDetectionImage:(NSDictionary *)referenceImageDictionary {
-    ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
-    if (referenceImage) {
-        self.referenceImageMap[referenceImage.name] = referenceImage;
-        return YES;
+    if (self.userGrantedSendingWorldSensingData) {
+        ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
+        if (referenceImage) {
+            self.referenceImageMap[referenceImage.name] = referenceImage;
+            return YES;
+        }
+    } else {
+        return NO;
     }
-
+    
     return NO;
 }
 
@@ -899,16 +903,18 @@
     DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* addedAnchor in anchors) {
         NSMutableDictionary *addedAnchorDictionary = [[self getDictionaryForAnchor:addedAnchor] mutableCopy];
-        [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
-        objects[addedAnchorDictionary[WEB_AR_UUID_OPTION]] = addedAnchorDictionary;
-        
-        if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
-            ARImageAnchor* addedImageAnchor = (ARImageAnchor*)addedAnchor;
-            if ([[self.detectionImageCompletionMap allKeys] containsObject:addedImageAnchor.referenceImage.name]) {
-                // Call the detection image block
-                DetectedImageCompletionBlock block = self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name];
-                block(addedAnchorDictionary);
-                self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name] = nil;
+        if (addedAnchorDictionary[WEB_AR_MUST_SEND_OPTION] || self.userGrantedSendingWorldSensingData) {
+            [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+            objects[addedAnchorDictionary[WEB_AR_UUID_OPTION]] = addedAnchorDictionary;
+            
+            if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
+                ARImageAnchor* addedImageAnchor = (ARImageAnchor*)addedAnchor;
+                if ([[self.detectionImageCompletionMap allKeys] containsObject:addedImageAnchor.referenceImage.name]) {
+                    // Call the detection image block
+                    DetectedImageCompletionBlock block = self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name];
+                    block(addedAnchorDictionary);
+                    self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name] = nil;
+                }
             }
         }
     }
@@ -1005,15 +1011,14 @@
 {
     DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* removedAnchor in anchors) {
-        NSString* arkitAnchorID = [removedAnchor.identifier UUIDString];
-        NSString* userGeneratedAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[arkitAnchorID];
-        NSString* anchorID = userGeneratedAnchorID? userGeneratedAnchorID: arkitAnchorID;
-
-        [removedAnchorsSinceLastFrame addObject: anchorID];
-        objects[anchorID] = nil;
-        arkitGeneratedAnchorIDUserAnchorIDMap[arkitAnchorID] = nil;
-        if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
-            self.detectionImageCompletionMap[((ARImageAnchor *)removedAnchor).referenceImage.name] = nil;
+        NSDictionary* removedAnchorDictionary = [self getDictionaryForAnchor:removedAnchor];
+        if (removedAnchorDictionary[WEB_AR_MUST_SEND_OPTION] || self.userGrantedSendingWorldSensingData) {
+            [removedAnchorsSinceLastFrame addObject: removedAnchorDictionary[WEB_AR_UUID_OPTION]];
+            objects[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;
+            arkitGeneratedAnchorIDUserAnchorIDMap[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;
+            if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
+                self.detectionImageCompletionMap[((ARImageAnchor *)removedAnchor).referenceImage.name] = nil;
+            }
         }
     }
 
