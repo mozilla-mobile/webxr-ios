@@ -52,6 +52,9 @@
 
 @property(nonatomic, strong) NSMutableDictionary* detectionImageCompletionMap;
 @property(nonatomic, strong) NSMutableDictionary* referenceImageMap;
+@property(nonatomic, strong) NSMutableDictionary* detectionImageCreationCompletionMap;
+
+@property(nonatomic, strong) NSMutableArray *detectionImageCreationRequests;
 @end
 
 @implementation ARKController {
@@ -124,6 +127,10 @@
 
         self.detectionImageCompletionMap = [NSMutableDictionary new];
         self.referenceImageMap = [NSMutableDictionary new];
+        
+        self.sendingWorldSensingDataAuthorizationStatus = SendWorldSensingDataAuthorizationStateNotDetermined;
+        self.detectionImageCreationRequests = [NSMutableArray new];
+        self.detectionImageCreationCompletionMap = [NSMutableDictionary new];
     }
     
     return self;
@@ -395,7 +402,33 @@
     }
 }
 
-- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary detectedCompletion:(DetectedImageCompletionBlock)completion {
+- (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)authorizationStatus {
+    _sendingWorldSensingDataAuthorizationStatus = authorizationStatus;
+    
+    switch (self.sendingWorldSensingDataAuthorizationStatus) {
+        case SendWorldSensingDataAuthorizationStateNotDetermined: {
+            NSLog(@"World sensing auth changed to not determined");
+            break;
+        }
+        case SendWorldSensingDataAuthorizationStateAuthorized: {
+            NSLog(@"World sensing auth changed to authorized");
+            [self createRequestedDetectionImages];
+            break;
+        }
+        case SendWorldSensingDataAuthorizationStateDenied: {
+            NSLog(@"World sensing auth changed to denied");
+            break;
+        }
+    }
+}
+
+- (void)createRequestedDetectionImages {
+    for (NSDictionary* referenceImageDictionary in self.detectionImageCreationRequests) {
+        [self _createDetectionImage:referenceImageDictionary];
+    }
+}
+
+- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary detectedCompletion:(CompletionBlockWithDictionary)completion {
     ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
     
     NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
@@ -408,21 +441,48 @@
 }
 
 
-- (BOOL)createDetectionImage:(NSDictionary *)referenceImageDictionary {
-    if (self.userGrantedSendingWorldSensingData) {
-        ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
-        if (referenceImage) {
-            self.referenceImageMap[referenceImage.name] = referenceImage;
-            return YES;
+- (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion {
+    switch (self.sendingWorldSensingDataAuthorizationStatus) {
+        case SendWorldSensingDataAuthorizationStateAuthorized: {
+            [self _createDetectionImage:referenceImageDictionary];
+            break;
         }
-    } else {
-        return NO;
+        case SendWorldSensingDataAuthorizationStateDenied: {
+            completion(NO);
+            break;
+        }
+
+        case SendWorldSensingDataAuthorizationStateNotDetermined: {
+            NSLog(@"Attempt to create a detection image but world sensing data authorization is not determined, enqueue the request");
+            self.detectionImageCreationCompletionMap[referenceImageDictionary[@"uid"]] = completion;
+            [self.detectionImageCreationRequests addObject: referenceImageDictionary];
+            break;
+        }
     }
-    
-    return NO;
 }
 
-- (void)activateDetectionImage:(NSString *)imageName detectedCompletion:(DetectedImageCompletionBlock)completion {
+
+- (void)_createDetectionImage:(NSDictionary *)referenceImageDictionary {
+    ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
+    DetectionImageCreatedCompletionType block = self.detectionImageCreationCompletionMap[referenceImageDictionary[@"uid"]];
+    if (referenceImage) {
+        self.referenceImageMap[referenceImage.name] = referenceImage;
+        NSLog(@"Detection image created: %@", referenceImage.name);
+        
+        if (block) {
+            block(YES);
+        }
+    } else {
+        NSLog(@"Cannot create detection image from dictionary: %@", referenceImageDictionary[@"uid"]);
+        if (block) {
+            block(NO);
+        }
+    }
+    
+    self.detectionImageCreationCompletionMap[referenceImageDictionary[@"uid"]] = nil;
+}
+
+- (void)activateDetectionImage:(NSString *)imageName detectedCompletion:(CompletionBlockWithDictionary)completion {
     ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
 
     NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
@@ -841,7 +901,7 @@
     NSMutableArray *array = [NSMutableArray array];
     [objects enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
      {
-         if ([self userGrantedSendingWorldSensingData] || [objects[key][WEB_AR_MUST_SEND_OPTION] boolValue]) {
+         if ([self sendingWorldSensingDataAuthorizationStatus] == SendWorldSensingDataAuthorizationStateAuthorized || [objects[key][WEB_AR_MUST_SEND_OPTION] boolValue]) {
              [array addObject:objects[key]];
          }
      }];
@@ -903,7 +963,7 @@
     DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* addedAnchor in anchors) {
         NSMutableDictionary *addedAnchorDictionary = [[self getDictionaryForAnchor:addedAnchor] mutableCopy];
-        if (addedAnchorDictionary[WEB_AR_MUST_SEND_OPTION] || self.userGrantedSendingWorldSensingData) {
+        if (addedAnchorDictionary[WEB_AR_MUST_SEND_OPTION] || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
             [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
             objects[addedAnchorDictionary[WEB_AR_UUID_OPTION]] = addedAnchorDictionary;
             
@@ -911,7 +971,7 @@
                 ARImageAnchor* addedImageAnchor = (ARImageAnchor*)addedAnchor;
                 if ([[self.detectionImageCompletionMap allKeys] containsObject:addedImageAnchor.referenceImage.name]) {
                     // Call the detection image block
-                    DetectedImageCompletionBlock block = self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name];
+                    CompletionBlockWithDictionary block = self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name];
                     block(addedAnchorDictionary);
                     self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name] = nil;
                 }
@@ -1012,7 +1072,7 @@
     DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* removedAnchor in anchors) {
         NSDictionary* removedAnchorDictionary = [self getDictionaryForAnchor:removedAnchor];
-        if (removedAnchorDictionary[WEB_AR_MUST_SEND_OPTION] || self.userGrantedSendingWorldSensingData) {
+        if (removedAnchorDictionary[WEB_AR_MUST_SEND_OPTION] || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
             [removedAnchorsSinceLastFrame addObject: removedAnchorDictionary[WEB_AR_UUID_OPTION]];
             objects[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;
             arkitGeneratedAnchorIDUserAnchorIDMap[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;

@@ -17,6 +17,13 @@
 // World tracking has encountered a fatal error.
 #define WORLD_TRACKING_FAILED_ARKIT_ERROR_CODE 200
 
+typedef NS_ENUM(NSUInteger, SendWorldSensingDataAuthorizationState)
+{
+    SendWorldSensingDataAuthorizationStateNotDetermined,
+    SendWorldSensingDataAuthorizationStateAuthorized,
+    SendWorldSensingDataAuthorizationStateDenied
+};
+
 typedef NS_ENUM(NSUInteger, ARKitSessionState)
 {
     ARKSessionUnknown,
@@ -38,7 +45,8 @@ typedef void (^DidChangeTrackingState)(NSString *state);
 typedef void (^DidAddPlaneAnchors)(void);
 typedef void (^DidRemovePlaneAnchors)(void);
 typedef void (^DidUpdateWindowSize)(void);
-typedef void (^DetectedImageCompletionBlock)(NSDictionary*);
+typedef void (^CompletionBlockWithDictionary)(NSDictionary*);
+typedef void (^DetectionImageCreatedCompletionType)(BOOL success);
 
 @interface ARKController : NSObject
 
@@ -56,8 +64,7 @@ typedef void (^DetectedImageCompletionBlock)(NSDictionary*);
 @property ARKitSessionState arSessionState;
 
 @property(nonatomic) bool computerVisionDataEnabled;
-
-@property(nonatomic) BOOL userGrantedSendingWorldSensingData;
+@property(nonatomic) SendWorldSensingDataAuthorizationState sendingWorldSensingDataAuthorizationStatus;
 
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 - (UIView *)arkView;
@@ -100,15 +107,17 @@ typedef void (^DetectedImageCompletionBlock)(NSDictionary*);
 
 - (void)runSessionWithAppState:(AppState *)state;
 
-- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary detectedCompletion:(DetectedImageCompletionBlock)completion;
+- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary detectedCompletion:(CompletionBlockWithDictionary)completion;
 
-- (BOOL)createDetectionImage:(NSDictionary *)referenceImageDictionary;
+- (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion;
 
-- (void)activateDetectionImage:(NSString *)imageName detectedCompletion:(DetectedImageCompletionBlock)completion;
+- (void)activateDetectionImage:(NSString *)imageName detectedCompletion:(CompletionBlockWithDictionary)completion;
 
 - (BOOL)deactivateDetectionImage:(NSString *)imageName;
 
 - (BOOL)destroyDetectionImage:(NSString *)imageName;
+
+- (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
 
 @end
 

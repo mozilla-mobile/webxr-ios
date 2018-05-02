@@ -335,7 +335,7 @@ typedef void (^UICompletion)(void);
              switch ([[blockSelf arkController] arSessionState]) {
                  case ARKSessionUnknown: {
                      NSLog(@"\n\n*********\n\nARKit is in unknown state, instantiate and start a session\n\n*********");
-                     [blockSelf startNewARKitSessionWithRequest:dict];
+                     [[blockSelf arkController] runSessionWithAppState:[[blockSelf stateController] state]];
                      break;
                  }
                      
@@ -503,14 +503,7 @@ typedef void (^UICompletion)(void);
     
     [self setupRecordController];
     
-    if ([[self recordController] cameraAvailable])
-    {
-        [self setupWebController];
-    }
-    else
-    {
-        [self setupWebController];
-    }
+    [self setupWebController];
     
     [self setupOverlayController];
 }
@@ -782,9 +775,7 @@ typedef void (^UICompletion)(void);
     }];
 
     [[self webController] setOnCreateDetectionImage:^(NSDictionary *dictionary, BoolParameterCompletionBlock completion) {
-        BOOL created = NO;
-        created = [[blockSelf arkController] createDetectionImage: dictionary];
-        completion(created);
+        [[blockSelf arkController] createDetectionImage:dictionary completion:completion];
     }];
 
     if ([[self stateController] wasMemoryWarning])
@@ -1046,7 +1037,7 @@ typedef void (^UICompletion)(void);
     [[self arkController] setComputerVisionDataEnabled: false];
     [[[self stateController] state] setUserGrantedSendingComputerVisionData:false];
     [[[self stateController] state] setSendComputerVisionData: true];
-    [[self arkController] setUserGrantedSendingWorldSensingData: false];
+    [[self arkController] setSendingWorldSensingDataAuthorizationStatus: SendWorldSensingDataAuthorizationStateNotDetermined];
 
     if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
@@ -1055,12 +1046,12 @@ typedef void (^UICompletion)(void);
             [[[blockSelf stateController] state] setUserGrantedSendingComputerVisionData:granted];
             
             // Approving computer vision data implicitly approves the world sensing data
-            [[blockSelf arkController] setUserGrantedSendingWorldSensingData: granted];
+            [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: SendWorldSensingDataAuthorizationStateAuthorized];
         }];
     } else if ([request[WEB_AR_WORLD_SENSING_DATA_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingWorldSensingData:^(BOOL granted){
             [[blockSelf webController] userGrantedSendingWorldSensingData:granted];
-            [[blockSelf arkController] setUserGrantedSendingWorldSensingData: granted];
+            [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: granted ? SendWorldSensingDataAuthorizationStateAuthorized: SendWorldSensingDataAuthorizationStateDenied];
         }];
     }
 

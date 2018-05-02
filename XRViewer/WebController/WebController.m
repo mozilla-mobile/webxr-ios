@@ -640,6 +640,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_STOP_SENDING_CV_DATA_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_REMOVE_ANCHORS_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_ADD_IMAGE_ANCHOR_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_CREATE_IMAGE_ANCHOR_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE];
@@ -660,6 +661,7 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_STOP_SENDING_CV_DATA_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_REMOVE_ANCHORS_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ADD_IMAGE_ANCHOR_MESSAGE];
+    [[self contentController] removeScriptMessageHandlerForName:WEB_AR_CREATE_IMAGE_ANCHOR_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE];
     [[self contentController] removeScriptMessageHandlerForName:WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE];
