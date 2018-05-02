@@ -444,6 +444,7 @@
 - (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion {
     switch (self.sendingWorldSensingDataAuthorizationStatus) {
         case SendWorldSensingDataAuthorizationStateAuthorized: {
+            self.detectionImageCreationCompletionMap[referenceImageDictionary[@"uid"]] = completion;
             [self _createDetectionImage:referenceImageDictionary];
             break;
         }
