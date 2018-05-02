@@ -11,8 +11,8 @@ typedef void (^OnUpdateTransfer)(NSDictionary * );
 typedef void (^ResultBlock)(NSDictionary *);
 typedef void (^ResultArrayBlock)(NSArray *);
 typedef void (^ImageDetectedBlock)(NSDictionary *);
-typedef void (^BoolParameterCompletionBlock)(BOOL);
-
+typedef void (^CreateDetectionImageCompletionBlock)(BOOL success, NSString* errorString);
+// BoolParameterCompletionBlock
 typedef void (^OnRemoveObjects)(NSArray * );
 typedef NSDictionary * (^OnJSUpdateData)(void);
 typedef void (^OnLoadURL)(NSString *);
@@ -29,10 +29,10 @@ typedef void (^OnResetTrackingButtonTapped)(void);
 typedef void (^OnStartSendingComputerVisionData)(void);
 typedef void (^OnStopSendingComputerVisionData)(void);
 typedef void (^OnAddImageAnchor)(NSDictionary*, ImageDetectedBlock);
-typedef void (^OnActivateDetectionImage)(NSString*, ImageDetectedBlock);
-typedef void (^OnDeactivateDetectionImage)(NSString*, BoolParameterCompletionBlock);
-typedef void (^OnDestroyDetectionImage)(NSString*, BoolParameterCompletionBlock);
-typedef void (^OnCreateDetectionImage)(NSDictionary*, BoolParameterCompletionBlock);
+typedef void (^OnActivateDetectionImage)(NSString*, CreateDetectionImageCompletionBlock);
+typedef void (^OnDeactivateDetectionImage)(NSString*, CreateDetectionImageCompletionBlock);
+typedef void (^OnDestroyDetectionImage)(NSString*, CreateDetectionImageCompletionBlock);
+typedef void (^OnCreateDetectionImage)(NSDictionary*, CreateDetectionImageCompletionBlock);
 
 @interface WebController : NSObject
 

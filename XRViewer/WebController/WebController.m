@@ -377,8 +377,13 @@ inline static WebCompletion debugCompletion(NSString *name)
         NSDictionary *imageAnchorInfoDictionary = [message body];
         NSString *createDetectionImageCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
         if ([self onCreateDetectionImage]) {
-            [self onCreateDetectionImage](imageAnchorInfoDictionary, ^(BOOL success) {
-                [blockSelf callWebMethod:createDetectionImageCallback paramJSON:@{@"created": @(success)} webCompletion:NULL];
+            [self onCreateDetectionImage](imageAnchorInfoDictionary, ^(BOOL success, NSString* errorString) {
+                NSMutableDictionary* responseDictionary = [NSMutableDictionary new];
+                responseDictionary[@"created"] = @(success);
+                if (errorString) {
+                    responseDictionary[@"error"] = errorString;
+                }
+                [blockSelf callWebMethod:createDetectionImageCallback paramJSON:responseDictionary webCompletion:NULL];
             });
         }
     } else if ([[message name] isEqualToString:WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE]) {
@@ -386,8 +391,13 @@ inline static WebCompletion debugCompletion(NSString *name)
         NSString *imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION];
         NSString *activateDetectionImageCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
         if ([self onActivateDetectionImage]) {
-            [self onActivateDetectionImage](imageName, ^(NSDictionary *imageAnchor) {
-                [blockSelf callWebMethod:activateDetectionImageCallback paramJSON:imageAnchor webCompletion:NULL];
+            [self onActivateDetectionImage](imageName, ^(BOOL success, NSString* errorString) {
+                NSMutableDictionary* responseDictionary = [NSMutableDictionary new];
+                responseDictionary[@"activated"] = @(success);
+                if (errorString) {
+                    responseDictionary[@"error"] = errorString;
+                }
+                [blockSelf callWebMethod:activateDetectionImageCallback paramJSON:responseDictionary webCompletion:NULL];
             });
         }
     } else if ([[message name] isEqualToString:WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE]) {
@@ -395,8 +405,13 @@ inline static WebCompletion debugCompletion(NSString *name)
         NSString *imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION];
         NSString *deactivateDetectionImageCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
         if ([self onDeactivateDetectionImage]) {
-            [self onDeactivateDetectionImage](imageName, ^(BOOL success) {
-                [blockSelf callWebMethod:deactivateDetectionImageCallback paramJSON:@{@"deactivated": @(success)} webCompletion:NULL];
+            [self onDeactivateDetectionImage](imageName, ^(BOOL success, NSString* errorString) {
+                NSMutableDictionary* responseDictionary = [NSMutableDictionary new];
+                responseDictionary[@"deactivated"] = @(success);
+                if (errorString) {
+                    responseDictionary[@"error"] = errorString;
+                }
+                [blockSelf callWebMethod:deactivateDetectionImageCallback paramJSON:responseDictionary webCompletion:NULL];
             });
         }
     } else if ([[message name] isEqualToString:WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE]) {
@@ -404,8 +419,13 @@ inline static WebCompletion debugCompletion(NSString *name)
         NSString *imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION];
         NSString *destroyDetectionImageCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
         if ([self onDestroyDetectionImage]) {
-            [self onDestroyDetectionImage](imageName, ^(BOOL success) {
-                [blockSelf callWebMethod:destroyDetectionImageCallback paramJSON:@{@"destroyed": @(success)} webCompletion:NULL];
+            [self onDestroyDetectionImage](imageName, ^(BOOL success, NSString* errorString) {
+                NSMutableDictionary* responseDictionary = [NSMutableDictionary new];
+                responseDictionary[@"destroyed"] = @(success);
+                if (errorString) {
+                    responseDictionary[@"error"] = errorString;
+                }
+                [blockSelf callWebMethod:destroyDetectionImageCallback paramJSON:responseDictionary webCompletion:NULL];
             });
         }
     } else {

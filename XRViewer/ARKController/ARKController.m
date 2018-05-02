@@ -449,7 +449,7 @@
             break;
         }
         case SendWorldSensingDataAuthorizationStateDenied: {
-            completion(NO);
+            completion(NO, @"The user denied access to world sensing data");
             break;
         }
 
@@ -471,19 +471,19 @@
         NSLog(@"Detection image created: %@", referenceImage.name);
         
         if (block) {
-            block(YES);
+            block(YES, nil);
         }
     } else {
         NSLog(@"Cannot create detection image from dictionary: %@", referenceImageDictionary[@"uid"]);
         if (block) {
-            block(NO);
+            block(NO, @"Error creating the ARReferenceImage");
         }
     }
     
     self.detectionImageCreationCompletionMap[referenceImageDictionary[@"uid"]] = nil;
 }
 
-- (void)activateDetectionImage:(NSString *)imageName detectedCompletion:(CompletionBlockWithDictionary)completion {
+- (void)activateDetectionImage:(NSString *)imageName detectedCompletion:(DetectionImageCreatedCompletionType)completion {
     ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
 
     NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
@@ -496,7 +496,7 @@
     }
 }
 
-- (BOOL)deactivateDetectionImage:(NSString *)imageName {
+- (void)deactivateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion {
     ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
 
     NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
@@ -507,21 +507,22 @@
         self.detectionImageCompletionMap[referenceImage.name] = nil;
         [[self session] runWithConfiguration:[self configuration]];
         self.referenceImageMap[imageName] = nil;
-        return YES;
+        completion(YES, nil);
+    } else {
+        completion(NO, @"The image trying to deactivate doesn't exist");
     }
-
-    return NO;
 }
 
-- (BOOL)destroyDetectionImage:(NSString *)imageName {
+- (void)destroyDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion {
     ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
     if (referenceImage) {
         self.referenceImageMap[imageName] = nil;
         self.detectionImageCompletionMap[imageName] = nil;
 
-        return YES;
+        completion(YES, nil);
+    } else {
+        completion(NO, @"The image doesn't exist");
     }
-    return NO;
 }
 
 - (ARReferenceImage*)createReferenceImageFromDictionary:(NSDictionary*)referenceImageDictionary {

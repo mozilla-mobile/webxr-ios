@@ -46,7 +46,7 @@ typedef void (^DidAddPlaneAnchors)(void);
 typedef void (^DidRemovePlaneAnchors)(void);
 typedef void (^DidUpdateWindowSize)(void);
 typedef void (^CompletionBlockWithDictionary)(NSDictionary*);
-typedef void (^DetectionImageCreatedCompletionType)(BOOL success);
+typedef void (^DetectionImageCreatedCompletionType)(BOOL success, NSString* errorString);
 
 @interface ARKController : NSObject
 
@@ -107,15 +107,15 @@ typedef void (^DetectionImageCreatedCompletionType)(BOOL success);
 
 - (void)runSessionWithAppState:(AppState *)state;
 
-- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary detectedCompletion:(CompletionBlockWithDictionary)completion;
+- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary completion:(CompletionBlockWithDictionary)completion;
 
 - (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion;
 
-- (void)activateDetectionImage:(NSString *)imageName detectedCompletion:(CompletionBlockWithDictionary)completion;
+- (void)activateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
 
-- (BOOL)deactivateDetectionImage:(NSString *)imageName;
+- (void)deactivateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
 
-- (BOOL)destroyDetectionImage:(NSString *)imageName;
+- (void)destroyDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
 
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
 

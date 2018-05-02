@@ -755,26 +755,22 @@ typedef void (^UICompletion)(void);
     }];
 
     [[self webController] setOnAddImageAnchor:^(NSDictionary *dictionary, ImageDetectedBlock completion) {
-        [[blockSelf arkController] addDetectionImage:dictionary detectedCompletion:completion];
+        [[blockSelf arkController] addDetectionImage:dictionary completion:completion];
     }];
 
-    [[self webController] setOnActivateDetectionImage:^(NSString *imageName, ImageDetectedBlock completion) {
-        [[blockSelf arkController] activateDetectionImage:imageName detectedCompletion:completion];
+    [[self webController] setOnActivateDetectionImage:^(NSString *imageName, CreateDetectionImageCompletionBlock completion) {
+        [[blockSelf arkController] activateDetectionImage:imageName completion:completion];
     }];
 
-    [[self webController] setOnDeactivateDetectionImage:^(NSString *imageName, BoolParameterCompletionBlock completion) {
-        BOOL deactivated = NO;
-        deactivated = [[blockSelf arkController] deactivateDetectionImage: imageName];
-        completion(deactivated);
+    [[self webController] setOnDeactivateDetectionImage:^(NSString *imageName, CreateDetectionImageCompletionBlock completion) {
+        [[blockSelf arkController] deactivateDetectionImage:imageName completion:completion];
     }];
 
-    [[self webController] setOnDestroyDetectionImage:^(NSString *imageName, BoolParameterCompletionBlock completion) {
-        BOOL destroyed = NO;
-        destroyed = [[blockSelf arkController] destroyDetectionImage: imageName];
-        completion(destroyed);
+    [[self webController] setOnDestroyDetectionImage:^(NSString *imageName, CreateDetectionImageCompletionBlock completion) {
+        [[blockSelf arkController] destroyDetectionImage:imageName completion:completion];
     }];
 
-    [[self webController] setOnCreateDetectionImage:^(NSDictionary *dictionary, BoolParameterCompletionBlock completion) {
+    [[self webController] setOnCreateDetectionImage:^(NSDictionary *dictionary, CreateDetectionImageCompletionBlock completion) {
         [[blockSelf arkController] createDetectionImage:dictionary completion:completion];
     }];
 
