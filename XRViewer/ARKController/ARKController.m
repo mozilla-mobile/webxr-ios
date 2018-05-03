@@ -483,16 +483,21 @@
     self.detectionImageCreationCompletionMap[referenceImageDictionary[@"uid"]] = nil;
 }
 
-- (void)activateDetectionImage:(NSString *)imageName detectedCompletion:(DetectionImageCreatedCompletionType)completion {
+- (void)activateDetectionImage:(NSString *)imageName completion:(ActivateDetectionImageCompletionBlock)completion {
     ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
-
-    NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
-    if (![currentDetectionImages containsObject:referenceImage]) {
-        [currentDetectionImages addObject: referenceImage];
-        [[self configuration] setDetectionImages: currentDetectionImages];
-
-        self.detectionImageCompletionMap[referenceImage.name] = completion;
-        [[self session] runWithConfiguration:[self configuration]];
+    if (referenceImage) {
+        NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
+        if (![currentDetectionImages containsObject:referenceImage]) {
+            [currentDetectionImages addObject: referenceImage];
+            [[self configuration] setDetectionImages: currentDetectionImages];
+            
+            self.detectionImageCompletionMap[referenceImage.name] = completion;
+            [[self session] runWithConfiguration:[self configuration]];
+        } else {
+            completion(NO, [NSString stringWithFormat:@"The image %@ has already been activated", imageName], nil);
+        }
+    } else {
+        completion(NO, [NSString stringWithFormat:@"The image %@ doesn't exist", imageName], nil);
     }
 }
 
@@ -973,8 +978,8 @@
                 ARImageAnchor* addedImageAnchor = (ARImageAnchor*)addedAnchor;
                 if ([[self.detectionImageCompletionMap allKeys] containsObject:addedImageAnchor.referenceImage.name]) {
                     // Call the detection image block
-                    CompletionBlockWithDictionary block = self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name];
-                    block(addedAnchorDictionary);
+                    ActivateDetectionImageCompletionBlock block = self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name];
+                    block(YES, nil, addedAnchorDictionary);
                     self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name] = nil;
                 }
             }

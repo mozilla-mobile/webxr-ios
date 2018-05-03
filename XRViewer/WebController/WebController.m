@@ -391,11 +391,13 @@ inline static WebCompletion debugCompletion(NSString *name)
         NSString *imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION];
         NSString *activateDetectionImageCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
         if ([self onActivateDetectionImage]) {
-            [self onActivateDetectionImage](imageName, ^(BOOL success, NSString* errorString) {
+            [self onActivateDetectionImage](imageName, ^(BOOL success, NSString* errorString, NSDictionary* imageAnchor) {
                 NSMutableDictionary* responseDictionary = [NSMutableDictionary new];
                 responseDictionary[@"activated"] = @(success);
                 if (errorString) {
                     responseDictionary[@"error"] = errorString;
+                } else {
+                    responseDictionary[@"imageAnchor"] = imageAnchor;
                 }
                 [blockSelf callWebMethod:activateDetectionImageCallback paramJSON:responseDictionary webCompletion:NULL];
             });

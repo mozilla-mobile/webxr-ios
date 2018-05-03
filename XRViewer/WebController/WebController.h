@@ -11,8 +11,9 @@ typedef void (^OnUpdateTransfer)(NSDictionary * );
 typedef void (^ResultBlock)(NSDictionary *);
 typedef void (^ResultArrayBlock)(NSArray *);
 typedef void (^ImageDetectedBlock)(NSDictionary *);
+typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* detectedImageAnchor);
 typedef void (^CreateDetectionImageCompletionBlock)(BOOL success, NSString* errorString);
-// BoolParameterCompletionBlock
+
 typedef void (^OnRemoveObjects)(NSArray * );
 typedef NSDictionary * (^OnJSUpdateData)(void);
 typedef void (^OnLoadURL)(NSString *);
@@ -29,7 +30,7 @@ typedef void (^OnResetTrackingButtonTapped)(void);
 typedef void (^OnStartSendingComputerVisionData)(void);
 typedef void (^OnStopSendingComputerVisionData)(void);
 typedef void (^OnAddImageAnchor)(NSDictionary*, ImageDetectedBlock);
-typedef void (^OnActivateDetectionImage)(NSString*, CreateDetectionImageCompletionBlock);
+typedef void (^OnActivateDetectionImage)(NSString*, ActivateDetectionImageCompletionBlock);
 typedef void (^OnDeactivateDetectionImage)(NSString*, CreateDetectionImageCompletionBlock);
 typedef void (^OnDestroyDetectionImage)(NSString*, CreateDetectionImageCompletionBlock);
 typedef void (^OnCreateDetectionImage)(NSDictionary*, CreateDetectionImageCompletionBlock);

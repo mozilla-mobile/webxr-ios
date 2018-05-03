@@ -758,7 +758,7 @@ typedef void (^UICompletion)(void);
         [[blockSelf arkController] addDetectionImage:dictionary completion:completion];
     }];
 
-    [[self webController] setOnActivateDetectionImage:^(NSString *imageName, CreateDetectionImageCompletionBlock completion) {
+    [[self webController] setOnActivateDetectionImage:^(NSString *imageName, ActivateDetectionImageCompletionBlock completion) {
         [[blockSelf arkController] activateDetectionImage:imageName completion:completion];
     }];
 

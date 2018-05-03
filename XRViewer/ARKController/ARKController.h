@@ -47,6 +47,7 @@ typedef void (^DidRemovePlaneAnchors)(void);
 typedef void (^DidUpdateWindowSize)(void);
 typedef void (^CompletionBlockWithDictionary)(NSDictionary*);
 typedef void (^DetectionImageCreatedCompletionType)(BOOL success, NSString* errorString);
+typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* detectedImageAnchor);
 
 @interface ARKController : NSObject
 
@@ -111,7 +112,7 @@ typedef void (^DetectionImageCreatedCompletionType)(BOOL success, NSString* erro
 
 - (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion;
 
-- (void)activateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
+- (void)activateDetectionImage:(NSString *)imageName completion:(ActivateDetectionImageCompletionBlock)completion;
 
 - (void)deactivateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
 
