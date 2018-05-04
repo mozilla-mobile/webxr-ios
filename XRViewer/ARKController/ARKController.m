@@ -511,7 +511,6 @@
 
         self.detectionImageCompletionMap[referenceImage.name] = nil;
         [[self session] runWithConfiguration:[self configuration]];
-        self.referenceImageMap[imageName] = nil;
         completion(YES, nil);
     } else {
         completion(NO, @"The image trying to deactivate doesn't exist");
