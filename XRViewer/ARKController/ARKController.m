@@ -494,7 +494,21 @@
             self.detectionImageCompletionMap[referenceImage.name] = completion;
             [[self session] runWithConfiguration:[self configuration]];
         } else {
-            completion(NO, [NSString stringWithFormat:@"The image %@ has already been activated", imageName], nil);
+            if (self.detectionImageCompletionMap[referenceImage.name]) {
+                // Trying to activate an image that hasn't been activated yet, return an error on the second promise, but keep the first
+                completion(NO, @"Trying to activate an image that's already activated but not found yet", nil);
+                return;
+            } else {
+                // Activating an already activated and found image, remove the anchor from the scene
+                // so it can be detected again
+                for(ARAnchor* anchor in self.session.currentFrame.anchors) {
+                    if ([anchor.identifier.UUIDString isEqualToString:imageName]) {
+                        self.detectionImageCompletionMap[referenceImage.name] = completion;
+                        [self.session removeAnchor: anchor];
+                        return;
+                    }
+                }
+            }
         }
     } else {
         completion(NO, [NSString stringWithFormat:@"The image %@ doesn't exist", imageName], nil);
@@ -506,6 +520,15 @@
 
     NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
     if ([currentDetectionImages containsObject:referenceImage]) {
+        if (self.detectionImageCompletionMap[referenceImage.name]) {
+            NSLog(@"The image trying to deactivate is activated and hasn't been found yet, return error");
+            // The image trying to deactivate hasn't been found yet, return an error on the activation block and remove it
+            ActivateDetectionImageCompletionBlock activationBlock = self.detectionImageCompletionMap[referenceImage.name];
+            activationBlock(NO, @"The image has been deactivated", nil);
+            self.detectionImageCompletionMap[referenceImage.name] = nil;
+            return;
+        }
+        
         [currentDetectionImages removeObject: referenceImage];
         [[self configuration] setDetectionImages: currentDetectionImages];
 
