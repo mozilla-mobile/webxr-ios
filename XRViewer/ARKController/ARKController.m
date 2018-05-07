@@ -1001,20 +1001,24 @@
         // ARKit system plane anchor
         ARPlaneAnchor *addedPlaneAnchor = (ARPlaneAnchor *)addedAnchor;
         [self addPlaneAnchorData:addedPlaneAnchor toDictionary: anchorDictionary];
+#if SEND_PLANES_BY_DEFAULT
+        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(YES);
+#else
         anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
+#endif
         anchorDictionary[WEB_AR_UUID_OPTION] = [addedAnchor.identifier UUIDString];
     } else if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
         // User generated ARImageAnchor
         ARImageAnchor *addedImageAnchor = (ARImageAnchor *)addedAnchor;
         arkitGeneratedAnchorIDUserAnchorIDMap[[[addedAnchor identifier] UUIDString]] = addedImageAnchor.referenceImage.name;
         anchorDictionary[WEB_AR_UUID_OPTION] = addedImageAnchor.referenceImage.name;
-        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(YES);
+        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
     } else {
         // Simple, user generated ARAnchor
         NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[addedAnchor.identifier UUIDString]];
         NSString *name = userAnchorID? userAnchorID: [addedAnchor.identifier UUIDString];
         anchorDictionary[WEB_AR_UUID_OPTION] = name;
-        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(YES);
+        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
     }
 
     return [anchorDictionary copy];
