@@ -638,6 +638,9 @@ typedef void (^UICompletion)(void);
     [[self webController] setAnimator:[self animator]];
     [[self webController] setOnStartLoad:^
      {
+         if ([blockSelf arkController]) {
+             [[blockSelf arkController] removeDetectionImages];
+         }
          [[blockSelf stateController] setWebXR:NO];
      }];
     

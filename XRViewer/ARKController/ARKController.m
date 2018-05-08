@@ -50,10 +50,13 @@
 
 @property (nonatomic) float computerVisionImageScaleFactor;
 
-@property(nonatomic, strong) NSMutableDictionary* detectionImageCompletionMap;
+/// Dictionary holding ARReferenceImages by name
 @property(nonatomic, strong) NSMutableDictionary* referenceImageMap;
-@property(nonatomic, strong) NSMutableDictionary* detectionImageCreationCompletionMap;
-
+/// Dictionary holding completion blocks by image name
+@property(nonatomic, strong) NSMutableDictionary* detectionImageActivationPromises;
+/// Dictionary holding completion blocks by image name
+@property(nonatomic, strong) NSMutableDictionary* detectionImageCreationPromises;
+/// Array holding dictionaries representing detection image data
 @property(nonatomic, strong) NSMutableArray *detectionImageCreationRequests;
 @end
 
@@ -125,12 +128,11 @@
         self.computerVisionImageScaleFactor = 4.0;
         self.lumaBufferSize = CGSizeMake(0.0f, 0.0f);
 
-        self.detectionImageCompletionMap = [NSMutableDictionary new];
-        self.referenceImageMap = [NSMutableDictionary new];
-        
         self.sendingWorldSensingDataAuthorizationStatus = SendWorldSensingDataAuthorizationStateNotDetermined;
+        self.detectionImageActivationPromises = [NSMutableDictionary new];
+        self.referenceImageMap = [NSMutableDictionary new];
         self.detectionImageCreationRequests = [NSMutableArray new];
-        self.detectionImageCreationCompletionMap = [NSMutableDictionary new];
+        self.detectionImageCreationPromises = [NSMutableDictionary new];
     }
     
     return self;
@@ -357,6 +359,13 @@
     return anchor;
 }
 
+- (void)removeDetectionImages {
+    self.detectionImageActivationPromises = [NSMutableDictionary new];
+    self.referenceImageMap = [NSMutableDictionary new];
+    self.detectionImageCreationRequests = [NSMutableArray new];
+    self.detectionImageCreationPromises = [NSMutableDictionary new];
+}
+
 - (void)removeDistantAnchors {
     matrix_float4x4 cameraTransform = [[[self.session currentFrame] camera] transform];
     float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:distantAnchorsDistanceKey];
@@ -435,7 +444,7 @@
     [currentDetectionImages addObject: referenceImage];
     [[self configuration] setDetectionImages: currentDetectionImages];
 
-    self.detectionImageCompletionMap[referenceImage.name] = completion;
+    self.detectionImageActivationPromises[referenceImage.name] = completion;
     self.referenceImageMap[referenceImage.name] = referenceImage;
     [[self session] runWithConfiguration:[self configuration]];
 }
@@ -444,7 +453,7 @@
 - (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion {
     switch (self.sendingWorldSensingDataAuthorizationStatus) {
         case SendWorldSensingDataAuthorizationStateAuthorized: {
-            self.detectionImageCreationCompletionMap[referenceImageDictionary[@"uid"]] = completion;
+            self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = completion;
             [self _createDetectionImage:referenceImageDictionary];
             break;
         }
@@ -455,7 +464,7 @@
 
         case SendWorldSensingDataAuthorizationStateNotDetermined: {
             NSLog(@"Attempt to create a detection image but world sensing data authorization is not determined, enqueue the request");
-            self.detectionImageCreationCompletionMap[referenceImageDictionary[@"uid"]] = completion;
+            self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = completion;
             [self.detectionImageCreationRequests addObject: referenceImageDictionary];
             break;
         }
@@ -465,7 +474,7 @@
 
 - (void)_createDetectionImage:(NSDictionary *)referenceImageDictionary {
     ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
-    DetectionImageCreatedCompletionType block = self.detectionImageCreationCompletionMap[referenceImageDictionary[@"uid"]];
+    DetectionImageCreatedCompletionType block = self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]];
     if (referenceImage) {
         self.referenceImageMap[referenceImage.name] = referenceImage;
         NSLog(@"Detection image created: %@", referenceImage.name);
@@ -480,7 +489,7 @@
         }
     }
     
-    self.detectionImageCreationCompletionMap[referenceImageDictionary[@"uid"]] = nil;
+    self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = nil;
 }
 
 - (void)activateDetectionImage:(NSString *)imageName completion:(ActivateDetectionImageCompletionBlock)completion {
@@ -491,10 +500,10 @@
             [currentDetectionImages addObject: referenceImage];
             [[self configuration] setDetectionImages: currentDetectionImages];
             
-            self.detectionImageCompletionMap[referenceImage.name] = completion;
+            self.detectionImageActivationPromises[referenceImage.name] = completion;
             [[self session] runWithConfiguration:[self configuration]];
         } else {
-            if (self.detectionImageCompletionMap[referenceImage.name]) {
+            if (self.detectionImageActivationPromises[referenceImage.name]) {
                 // Trying to activate an image that hasn't been activated yet, return an error on the second promise, but keep the first
                 completion(NO, @"Trying to activate an image that's already activated but not found yet", nil);
                 return;
@@ -503,7 +512,7 @@
                 // so it can be detected again
                 for(ARAnchor* anchor in self.session.currentFrame.anchors) {
                     if ([anchor.identifier.UUIDString isEqualToString:imageName]) {
-                        self.detectionImageCompletionMap[referenceImage.name] = completion;
+                        self.detectionImageActivationPromises[referenceImage.name] = completion;
                         [self.session removeAnchor: anchor];
                         return;
                     }
@@ -520,19 +529,19 @@
 
     NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
     if ([currentDetectionImages containsObject:referenceImage]) {
-        if (self.detectionImageCompletionMap[referenceImage.name]) {
+        if (self.detectionImageActivationPromises[referenceImage.name]) {
             NSLog(@"The image trying to deactivate is activated and hasn't been found yet, return error");
             // The image trying to deactivate hasn't been found yet, return an error on the activation block and remove it
-            ActivateDetectionImageCompletionBlock activationBlock = self.detectionImageCompletionMap[referenceImage.name];
+            ActivateDetectionImageCompletionBlock activationBlock = self.detectionImageActivationPromises[referenceImage.name];
             activationBlock(NO, @"The image has been deactivated", nil);
-            self.detectionImageCompletionMap[referenceImage.name] = nil;
+            self.detectionImageActivationPromises[referenceImage.name] = nil;
             return;
         }
         
         [currentDetectionImages removeObject: referenceImage];
         [[self configuration] setDetectionImages: currentDetectionImages];
 
-        self.detectionImageCompletionMap[referenceImage.name] = nil;
+        self.detectionImageActivationPromises[referenceImage.name] = nil;
         [[self session] runWithConfiguration:[self configuration]];
         completion(YES, nil);
     } else {
@@ -544,7 +553,7 @@
     ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
     if (referenceImage) {
         self.referenceImageMap[imageName] = nil;
-        self.detectionImageCompletionMap[imageName] = nil;
+        self.detectionImageActivationPromises[imageName] = nil;
 
         completion(YES, nil);
     } else {
@@ -998,11 +1007,11 @@
             
             if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
                 ARImageAnchor* addedImageAnchor = (ARImageAnchor*)addedAnchor;
-                if ([[self.detectionImageCompletionMap allKeys] containsObject:addedImageAnchor.referenceImage.name]) {
+                if ([[self.detectionImageActivationPromises allKeys] containsObject:addedImageAnchor.referenceImage.name]) {
                     // Call the detection image block
-                    ActivateDetectionImageCompletionBlock block = self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name];
+                    ActivateDetectionImageCompletionBlock block = self.detectionImageActivationPromises[addedImageAnchor.referenceImage.name];
                     block(YES, nil, addedAnchorDictionary);
-                    self.detectionImageCompletionMap[addedImageAnchor.referenceImage.name] = nil;
+                    self.detectionImageActivationPromises[addedImageAnchor.referenceImage.name] = nil;
                 }
             }
         }
@@ -1110,7 +1119,7 @@
             objects[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;
             arkitGeneratedAnchorIDUserAnchorIDMap[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;
             if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
-                self.detectionImageCompletionMap[((ARImageAnchor *)removedAnchor).referenceImage.name] = nil;
+                self.detectionImageActivationPromises[((ARImageAnchor *)removedAnchor).referenceImage.name] = nil;
             }
         }
     }

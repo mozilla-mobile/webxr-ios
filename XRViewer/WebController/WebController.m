@@ -268,7 +268,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    DDLogDebug(@"Received message: %@ , body: %@", [message name], [message body]);
+    //DDLogDebug(@"Received message: %@ , body: %@", [message name], [message body]);
     
     __weak typeof (self) blockSelf = self;
     
