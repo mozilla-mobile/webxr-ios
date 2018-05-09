@@ -58,6 +58,9 @@
 @property(nonatomic, strong) NSMutableDictionary* detectionImageCreationPromises;
 /// Array holding dictionaries representing detection image data
 @property(nonatomic, strong) NSMutableArray *detectionImageCreationRequests;
+// Dictionary holding completion blocks by image name: when an image anchor is removed,
+// if the name exsist in this dictionary, call activate again using the callback stored here.
+@property(nonatomic, strong) NSMutableDictionary* detectionImageActivationAfterRemovalPromises;
 @end
 
 @implementation ARKController {
@@ -133,6 +136,7 @@
         self.referenceImageMap = [NSMutableDictionary new];
         self.detectionImageCreationRequests = [NSMutableArray new];
         self.detectionImageCreationPromises = [NSMutableDictionary new];
+        self.detectionImageActivationAfterRemovalPromises = [NSMutableDictionary new];
     }
     
     return self;
@@ -364,6 +368,7 @@
     self.referenceImageMap = [NSMutableDictionary new];
     self.detectionImageCreationRequests = [NSMutableArray new];
     self.detectionImageCreationPromises = [NSMutableDictionary new];
+    self.detectionImageActivationAfterRemovalPromises = [NSMutableDictionary new];
 }
 
 - (void)removeDistantAnchors {
@@ -437,19 +442,6 @@
     }
 }
 
-- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary detectedCompletion:(CompletionBlockWithDictionary)completion {
-    ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
-    
-    NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
-    [currentDetectionImages addObject: referenceImage];
-    [[self configuration] setDetectionImages: currentDetectionImages];
-
-    self.detectionImageActivationPromises[referenceImage.name] = completion;
-    self.referenceImageMap[referenceImage.name] = referenceImage;
-    [[self session] runWithConfiguration:[self configuration]];
-}
-
-
 - (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion {
     switch (self.sendingWorldSensingDataAuthorizationStatus) {
         case SendWorldSensingDataAuthorizationStateAuthorized: {
@@ -511,11 +503,23 @@
                 // Activating an already activated and found image, remove the anchor from the scene
                 // so it can be detected again
                 for(ARAnchor* anchor in self.session.currentFrame.anchors) {
-                    if ([anchor.identifier.UUIDString isEqualToString:imageName]) {
-                        self.detectionImageActivationPromises[referenceImage.name] = completion;
-                        [self.session removeAnchor: anchor];
-                        return;
+                    if ([anchor isKindOfClass:[ARImageAnchor class]]) {
+                        ARImageAnchor* imageAnchor = (ARImageAnchor*)anchor;
+                        if ([imageAnchor.referenceImage.name isEqualToString:imageName]) {
+                            // Remove the reference image fromt he session configuration and run again
+                            [currentDetectionImages removeObject:referenceImage];
+                            [[self configuration] setDetectionImages: currentDetectionImages];
+                            [[self session] runWithConfiguration:[self configuration]];
+                            
+                            // When the anchor is removed and didRemoveAnchor callback gets called, look in this map
+                            // and see if there is a promise for the recently removed image anchor. If so, call
+                            // activateDetectionImage again with the image name of the removed anchor, and the completion set here
+                            self.detectionImageActivationAfterRemovalPromises[referenceImage.name] = completion;
+                            [self.session removeAnchor: anchor];
+                            return;
+                        }
                     }
+                    
                 }
             }
         }
@@ -1119,7 +1123,12 @@
             objects[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;
             arkitGeneratedAnchorIDUserAnchorIDMap[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;
             if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
-                self.detectionImageActivationPromises[((ARImageAnchor *)removedAnchor).referenceImage.name] = nil;
+                ARImageAnchor* imageAnchor = (ARImageAnchor*)removedAnchor;
+                ActivateDetectionImageCompletionBlock completion = self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name];
+                if (completion) {
+                    [self activateDetectionImage:imageAnchor.referenceImage.name completion:completion];
+                    self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name] = nil;
+                }
             }
         }
     }

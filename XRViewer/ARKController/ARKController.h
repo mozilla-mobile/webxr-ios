@@ -108,8 +108,6 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
 
 - (void)runSessionWithAppState:(AppState *)state;
 
-- (void)addDetectionImage:(NSDictionary *)referenceImageDictionary completion:(CompletionBlockWithDictionary)completion;
-
 - (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion;
 
 - (void)activateDetectionImage:(NSString *)imageName completion:(ActivateDetectionImageCompletionBlock)completion;
