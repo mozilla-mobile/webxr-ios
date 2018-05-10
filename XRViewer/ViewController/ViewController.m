@@ -772,6 +772,10 @@ typedef void (^UICompletion)(void);
     [[self webController] setOnCreateDetectionImage:^(NSDictionary *dictionary, CreateDetectionImageCompletionBlock completion) {
         [[blockSelf arkController] createDetectionImage:dictionary completion:completion];
     }];
+    
+    [[self webController] setOnSwitchCameraButtonTapped:^{
+        [[blockSelf arkController] switchCameraButtonTapped];
+    }];
 
     if ([[self stateController] wasMemoryWarning])
     {

@@ -27,6 +27,7 @@ typedef void (^OnWatchAR)(NSDictionary *);
 typedef void (^OnComputerVisionDataRequested)(void);
 typedef void (^OnStopAR)(void);
 typedef void (^OnResetTrackingButtonTapped)(void);
+typedef void (^OnSwitchCameraButtonTapped)(void);
 typedef void (^OnStartSendingComputerVisionData)(void);
 typedef void (^OnStopSendingComputerVisionData)(void);
 typedef void (^OnAddImageAnchor)(NSDictionary*, ImageDetectedBlock);
@@ -55,6 +56,7 @@ typedef void (^OnCreateDetectionImage)(NSDictionary*, CreateDetectionImageComple
 @property(nonatomic, copy) OnComputerVisionDataRequested onComputerVisionDataRequested;
 @property(nonatomic, copy) OnStopAR onStopAR;
 @property(nonatomic, copy) OnResetTrackingButtonTapped onResetTrackingButtonTapped;
+@property(nonatomic, copy) OnSwitchCameraButtonTapped onSwitchCameraButtonTapped;
 @property(nonatomic, copy) OnStartSendingComputerVisionData onStartSendingComputerVisionData;
 @property(nonatomic, copy) OnStopSendingComputerVisionData onStopSendingComputerVisionData;
 @property(nonatomic, copy) OnAddImageAnchor onAddImageAnchor;

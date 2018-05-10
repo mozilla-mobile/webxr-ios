@@ -119,5 +119,8 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
 
 - (void)removeDetectionImages;
+
+- (void)switchCameraButtonTapped;
+
 @end
 

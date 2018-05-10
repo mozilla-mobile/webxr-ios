@@ -645,6 +645,12 @@ inline static WebCompletion debugCompletion(NSString *name)
             [blockSelf onResetTrackingButtonTapped]();
         }
     }];
+    
+    [barView setSwitchCameraActionBlock:^{
+        if ([blockSelf onSwitchCameraButtonTapped]) {
+            [blockSelf onSwitchCameraButtonTapped]();
+        }
+    }];
 }
 
 - (void)setupWebContent

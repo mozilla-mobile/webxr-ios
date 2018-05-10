@@ -24,7 +24,7 @@
 @property (nonatomic, copy) NSDictionary *request;
 @property (nonatomic, strong) ARSession *session;
 
-@property (nonatomic, strong) ARWorldTrackingConfiguration *configuration;
+@property (nonatomic, strong) ARConfiguration *configuration;
 
 @property (nonatomic, strong) AVCaptureDevice *device;
 
@@ -106,9 +106,12 @@
          By finding feature points in the scene, world tracking enables performing hit-tests against the frame.
          Tracking can no longer be resumed once the session is paused.
          */
-        [self setConfiguration:[ARWorldTrackingConfiguration new]];
-        [[self configuration] setPlaneDetection:ARPlaneDetectionHorizontal | ARPlaneDetectionVertical];
-        [[self configuration] setWorldAlignment:ARWorldAlignmentGravityAndHeading];
+        
+        ARWorldTrackingConfiguration* worldTrackingConfiguration = [ARWorldTrackingConfiguration new];
+        
+        [worldTrackingConfiguration setPlaneDetection:ARPlaneDetectionHorizontal | ARPlaneDetectionVertical];
+        [worldTrackingConfiguration setWorldAlignment:ARWorldAlignmentGravityAndHeading];
+        [self setConfiguration: worldTrackingConfiguration];
         
         Class cls = (type == ARKMetal) ? [ARKMetalController class] : [ARKSceneKitController class];
         id<ARKControllerProtocol> controller = [[cls alloc] initWithSesion:[self session] size:[rootView bounds].size];
@@ -485,12 +488,18 @@
 }
 
 - (void)activateDetectionImage:(NSString *)imageName completion:(ActivateDetectionImageCompletionBlock)completion {
+    if ([[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+        completion(NO, @"Cannot activate a detection image when using the front facing camera", nil);
+        return;
+    }
+    
+    ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
     ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
     if (referenceImage) {
-        NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
+        NSMutableSet* currentDetectionImages = [worldTrackingConfiguration detectionImages] != nil ? [[worldTrackingConfiguration detectionImages] mutableCopy] : [NSMutableSet new];
         if (![currentDetectionImages containsObject:referenceImage]) {
             [currentDetectionImages addObject: referenceImage];
-            [[self configuration] setDetectionImages: currentDetectionImages];
+            [worldTrackingConfiguration setDetectionImages: currentDetectionImages];
             
             self.detectionImageActivationPromises[referenceImage.name] = completion;
             [[self session] runWithConfiguration:[self configuration]];
@@ -508,7 +517,7 @@
                         if ([imageAnchor.referenceImage.name isEqualToString:imageName]) {
                             // Remove the reference image fromt he session configuration and run again
                             [currentDetectionImages removeObject:referenceImage];
-                            [[self configuration] setDetectionImages: currentDetectionImages];
+                            [worldTrackingConfiguration setDetectionImages: currentDetectionImages];
                             [[self session] runWithConfiguration:[self configuration]];
                             
                             // When the anchor is removed and didRemoveAnchor callback gets called, look in this map
@@ -529,9 +538,15 @@
 }
 
 - (void)deactivateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion {
+    if ([[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+        completion(NO, @"Cannot deactivate a detection image when using the front facing camera");
+        return;
+    }
+    
+    ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
     ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
 
-    NSMutableSet* currentDetectionImages = [[self configuration] detectionImages] != nil ? [[[self configuration] detectionImages] mutableCopy] : [NSMutableSet new];
+    NSMutableSet* currentDetectionImages = [worldTrackingConfiguration detectionImages] != nil ? [[worldTrackingConfiguration detectionImages] mutableCopy] : [NSMutableSet new];
     if ([currentDetectionImages containsObject:referenceImage]) {
         if (self.detectionImageActivationPromises[referenceImage.name]) {
             NSLog(@"The image trying to deactivate is activated and hasn't been found yet, return error");
@@ -543,7 +558,7 @@
         }
         
         [currentDetectionImages removeObject: referenceImage];
-        [[self configuration] setDetectionImages: currentDetectionImages];
+        [worldTrackingConfiguration setDetectionImages: currentDetectionImages];
 
         self.detectionImageActivationPromises[referenceImage.name] = nil;
         [[self session] runWithConfiguration:[self configuration]];
@@ -592,6 +607,18 @@
     CGDataProviderRelease(dataProvider);
     CGColorSpaceRelease(colorSpace);
     return result;
+}
+
+- (void)switchCameraButtonTapped {
+    for (ARAnchor* anchor in self.session.currentFrame.anchors) {
+        [self.session removeAnchor: anchor];
+    }
+    
+    if (![[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+        ARFaceTrackingConfiguration* faceTrackingConfiguration = [ARFaceTrackingConfiguration new];
+        self.configuration = faceTrackingConfiguration;
+        [self.session runWithConfiguration: self.configuration];
+    }
 }
 
 #pragma mark Private
@@ -1043,21 +1070,34 @@
         anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
 #endif
         anchorDictionary[WEB_AR_UUID_OPTION] = [addedAnchor.identifier UUIDString];
+        anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"plane";
     } else if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
         // User generated ARImageAnchor
         ARImageAnchor *addedImageAnchor = (ARImageAnchor *)addedAnchor;
         arkitGeneratedAnchorIDUserAnchorIDMap[[[addedAnchor identifier] UUIDString]] = addedImageAnchor.referenceImage.name;
         anchorDictionary[WEB_AR_UUID_OPTION] = addedImageAnchor.referenceImage.name;
         anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
+        anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"image";
+    } else if ([addedAnchor isKindOfClass:[ARFaceAnchor class]]) {
+        // System generated ARFaceAnchor
+        ARFaceAnchor *faceAnchor = (ARFaceAnchor *)addedAnchor;
+        [self addFaceAnchorData:faceAnchor toDictionary: anchorDictionary];
+        anchorDictionary[WEB_AR_UUID_OPTION] = [faceAnchor.identifier UUIDString];
+        anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"face";
     } else {
         // Simple, user generated ARAnchor
         NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[addedAnchor.identifier UUIDString]];
         NSString *name = userAnchorID? userAnchorID: [addedAnchor.identifier UUIDString];
         anchorDictionary[WEB_AR_UUID_OPTION] = name;
         anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
+        anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"anchor";
     }
 
     return [anchorDictionary copy];
+}
+
+- (void)addFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)dictionary {
+
 }
 
 -(void)addGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)dictionary {

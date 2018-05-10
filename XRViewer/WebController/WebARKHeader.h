@@ -75,6 +75,7 @@
 #define WEB_AR_UI_WARNINGS_OPTION     @"warnings"
 #define WEB_AR_UI_ANCHORS_OPTION       @"anchors"
 
+#define WEB_AR_ANCHOR_TYPE             @"type"
 #define WEB_AR_ANCHOR_TRANSFORM_OPTION @"anchor_transform"
 #define WEB_AR_ANCHOR_CENTER_OPTION    @"anchor_center"
 #define WEB_AR_ANCHOR_EXTENT_OPTION    @"anchor_extent"

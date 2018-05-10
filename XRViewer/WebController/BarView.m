@@ -17,6 +17,7 @@
 @property (nonatomic, weak) UIButton *cancelBtn;
 @property (nonatomic, weak) UIActivityIndicatorView *ai;
 @property (weak, nonatomic) IBOutlet UIButton *restartTrackingBtn;
+@property (weak, nonatomic) IBOutlet UIButton *switchCameraBtn;
 
 @end
 
@@ -141,6 +142,15 @@
         [[self restartTrackingBtn] setImage:streetViewImage forState:UIControlStateNormal];
         [[self restartTrackingBtn] setTintColor:[UIColor grayColor]];
     }
+    
+    FAKFontAwesome *undoViewIcon = [FAKFontAwesome  iconWithIdentifier:@"fa-undo" size:24 error:&error];
+    if (error != nil) {
+        NSLog(@"%@", [error localizedDescription]);
+    } else {
+        UIImage* undoViewImage = [undoViewIcon imageWithSize:CGSizeMake(24, 24)];
+        [[self switchCameraBtn] setImage:undoViewImage forState:UIControlStateNormal];
+        [[self switchCameraBtn] setTintColor:[UIColor grayColor]];
+    }
 }
 
 - (IBAction)backAction:(id)sender
@@ -216,6 +226,12 @@
 - (IBAction)restartTrackingAction:(id)sender {
     if ([self restartTrackingActionBlock]) {
         [self restartTrackingActionBlock]();
+    }
+}
+
+- (IBAction)switchCameraAction:(id)sender {
+    if ([self switchCameraActionBlock]) {
+        [self switchCameraActionBlock]();
     }
 }
 

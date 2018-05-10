@@ -11,6 +11,7 @@ typedef void (^GoAction)(NSString *url);
 typedef void (^DebugButtonToggledAction)(BOOL selected);
 typedef void (^SettingsAction)(void);
 typedef void (^ResetTrackingAction)(void);
+typedef void (^SwitchCameraAction)(void);
 
 
 @interface BarView : UIView
@@ -24,6 +25,7 @@ typedef void (^ResetTrackingAction)(void);
 @property (nonatomic, copy) DebugButtonToggledAction debugButtonToggledAction;
 @property (nonatomic, copy) SettingsAction settingsActionBlock;
 @property (nonatomic, copy) ResetTrackingAction restartTrackingActionBlock;
+@property (nonatomic, copy) SwitchCameraAction switchCameraActionBlock;
 
 - (NSString *)urlFieldText;
 
