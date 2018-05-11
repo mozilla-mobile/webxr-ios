@@ -1162,8 +1162,8 @@
     }
     geometryDictionary[@"vertices"] = vertices;
 
-    NSMutableDictionary *blendShapesDictionary = faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION];
-    [self setBlendShapes:faceAnchor.blendShapes toDictionary:blendShapesDictionary];
+    NSMutableArray *blendShapesDictionary = faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION];
+    [self setBlendShapes:faceAnchor.blendShapes toArray:blendShapesDictionary];
 
     // Remove the rest of the geometry data, since it doesn't change
     geometryDictionary[@"vertexCount"] = nil;
@@ -1174,9 +1174,9 @@
 }
 
 - (void)addFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
-    NSMutableDictionary *blendShapesDictionary = [NSMutableDictionary new];
-    [self setBlendShapes:faceAnchor.blendShapes toDictionary:blendShapesDictionary];
-    faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION] = blendShapesDictionary;
+    NSMutableArray *blendShapesArray = [NSMutableArray new];
+    [self setBlendShapes:faceAnchor.blendShapes toArray:blendShapesArray];
+    faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION] = blendShapesArray;
 
     NSMutableDictionary *geometryDictionary = [NSMutableDictionary new];
     [self addFaceGeometryData: faceAnchor.geometry toDictionary:geometryDictionary];
@@ -1208,10 +1208,58 @@
     geometryDictionary[@"triangleIndices"] = triangleIndices;
 }
 
--(void)setBlendShapes:(NSDictionary<ARBlendShapeLocation, NSNumber*> *)blendShapes toDictionary:(NSMutableDictionary*)blendShapesDictionary {
-    [blendShapes enumerateKeysAndObjectsUsingBlock:^(ARBlendShapeLocation key, NSNumber *obj, BOOL *stop) {
-        blendShapesDictionary[key] = obj;
-    }];
+-(void)setBlendShapes:(NSDictionary<ARBlendShapeLocation, NSNumber*> *)blendShapes toArray:(NSMutableArray*)blendShapesArray {
+    blendShapesArray[0] = blendShapes[ARBlendShapeLocationBrowDownLeft];
+    blendShapesArray[1] = blendShapes[ARBlendShapeLocationBrowDownRight];
+    blendShapesArray[2] = blendShapes[ARBlendShapeLocationBrowInnerUp];
+    blendShapesArray[3] = blendShapes[ARBlendShapeLocationBrowOuterUpLeft];
+    blendShapesArray[4] = blendShapes[ARBlendShapeLocationBrowOuterUpRight];
+    blendShapesArray[5] = blendShapes[ARBlendShapeLocationCheekPuff];
+    blendShapesArray[6] = blendShapes[ARBlendShapeLocationCheekSquintLeft];
+    blendShapesArray[7] = blendShapes[ARBlendShapeLocationCheekSquintRight];
+    blendShapesArray[8] = blendShapes[ARBlendShapeLocationEyeBlinkLeft];
+    blendShapesArray[9] = blendShapes[ARBlendShapeLocationEyeBlinkRight];
+    blendShapesArray[10] = blendShapes[ARBlendShapeLocationEyeLookDownLeft];
+    blendShapesArray[11] = blendShapes[ARBlendShapeLocationEyeLookDownRight];
+    blendShapesArray[12] = blendShapes[ARBlendShapeLocationEyeLookInLeft];
+    blendShapesArray[13] = blendShapes[ARBlendShapeLocationEyeLookInRight];
+    blendShapesArray[14] = blendShapes[ARBlendShapeLocationEyeLookOutLeft];
+    blendShapesArray[15] = blendShapes[ARBlendShapeLocationEyeLookOutRight];
+    blendShapesArray[16] = blendShapes[ARBlendShapeLocationEyeLookUpLeft];
+    blendShapesArray[17] = blendShapes[ARBlendShapeLocationEyeLookUpRight];
+    blendShapesArray[18] = blendShapes[ARBlendShapeLocationEyeSquintLeft];
+    blendShapesArray[19] = blendShapes[ARBlendShapeLocationEyeSquintRight];
+    blendShapesArray[20] = blendShapes[ARBlendShapeLocationEyeWideLeft];
+    blendShapesArray[21] = blendShapes[ARBlendShapeLocationEyeWideRight];
+    blendShapesArray[22] = blendShapes[ARBlendShapeLocationJawForward];
+    blendShapesArray[23] = blendShapes[ARBlendShapeLocationJawLeft];
+    blendShapesArray[24] = blendShapes[ARBlendShapeLocationJawOpen];
+    blendShapesArray[25] = blendShapes[ARBlendShapeLocationJawRight];
+    blendShapesArray[26] = blendShapes[ARBlendShapeLocationMouthClose];
+    blendShapesArray[27] = blendShapes[ARBlendShapeLocationMouthDimpleLeft];
+    blendShapesArray[28] = blendShapes[ARBlendShapeLocationMouthDimpleRight];
+    blendShapesArray[29] = blendShapes[ARBlendShapeLocationMouthFrownLeft];
+    blendShapesArray[30] = blendShapes[ARBlendShapeLocationMouthFrownRight];
+    blendShapesArray[31] = blendShapes[ARBlendShapeLocationMouthFunnel];
+    blendShapesArray[32] = blendShapes[ARBlendShapeLocationMouthLeft];
+    blendShapesArray[33] = blendShapes[ARBlendShapeLocationMouthLowerDownLeft];
+    blendShapesArray[34] = blendShapes[ARBlendShapeLocationMouthLowerDownRight];
+    blendShapesArray[35] = blendShapes[ARBlendShapeLocationMouthPressLeft];
+    blendShapesArray[36] = blendShapes[ARBlendShapeLocationMouthPressRight];
+    blendShapesArray[37] = blendShapes[ARBlendShapeLocationMouthPucker];
+    blendShapesArray[38] = blendShapes[ARBlendShapeLocationMouthRight];
+    blendShapesArray[39] = blendShapes[ARBlendShapeLocationMouthRollLower];
+    blendShapesArray[40] = blendShapes[ARBlendShapeLocationMouthRollUpper];
+    blendShapesArray[41] = blendShapes[ARBlendShapeLocationMouthShrugLower];
+    blendShapesArray[42] = blendShapes[ARBlendShapeLocationMouthShrugUpper];
+    blendShapesArray[43] = blendShapes[ARBlendShapeLocationMouthSmileLeft];
+    blendShapesArray[44] = blendShapes[ARBlendShapeLocationMouthSmileRight];
+    blendShapesArray[45] = blendShapes[ARBlendShapeLocationMouthStretchLeft];
+    blendShapesArray[46] = blendShapes[ARBlendShapeLocationMouthStretchRight];
+    blendShapesArray[47] = blendShapes[ARBlendShapeLocationMouthUpperUpLeft];
+    blendShapesArray[48] = blendShapes[ARBlendShapeLocationMouthUpperUpRight];
+    blendShapesArray[49] = blendShapes[ARBlendShapeLocationNoseSneerLeft];
+    blendShapesArray[50] = blendShapes[ARBlendShapeLocationNoseSneerRight];
 }
 
 -(void)updatePlaneGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)planeGeometryDictionary {
