@@ -1145,6 +1145,13 @@
         [vertices addObject:dictFromVector3(faceAnchor.geometry.vertices[i])];
     }
     geometryDictionary[@"vertices"] = vertices;
+
+    // Remove the rest of the geometry data, since it doesn't change
+    geometryDictionary[@"vertexCount"] = nil;
+    geometryDictionary[@"textureCoordinateCount"] = nil;
+    geometryDictionary[@"textureCoordinates"] = nil;
+    geometryDictionary[@"triangleCount"] = nil;
+    geometryDictionary[@"triangleIndices"] = nil;
 }
 
 - (void)addFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
