@@ -977,7 +977,7 @@
          if ([self sendingWorldSensingDataAuthorizationStatus] == SendWorldSensingDataAuthorizationStateAuthorized || [objects[key][WEB_AR_MUST_SEND_OPTION] boolValue]) {
              
              if ([objects[key][WEB_AR_ANCHOR_TYPE] isEqualToString:@"face"]) {
-                 if (self.numberOfFramesWithoutSendingFaceGeometry < 10) {
+                 if (self.numberOfFramesWithoutSendingFaceGeometry < 1) {
                      self.numberOfFramesWithoutSendingFaceGeometry++;
                      NSMutableDictionary* mutableDict = [objects[key] mutableCopy];
                      [mutableDict removeObjectForKey:WEB_AR_GEOMETRY_OPTION];
@@ -1047,10 +1047,10 @@
 {
     DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* addedAnchor in anchors) {
-        NSMutableDictionary *addedAnchorDictionary = [[self getDictionaryForAnchor:addedAnchor] mutableCopy];
-        if (addedAnchorDictionary[WEB_AR_MUST_SEND_OPTION] || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
+        NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
+        if ([self shouldSendAnchor:addedAnchor] || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
             [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
-            objects[addedAnchorDictionary[WEB_AR_UUID_OPTION]] = addedAnchorDictionary;
+            objects[[self anchorIDForAnchor:addedAnchor]] = addedAnchorDictionary;
             
             if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
                 ARImageAnchor* addedImageAnchor = (ARImageAnchor*)addedAnchor;
@@ -1072,7 +1072,29 @@
     }
 }
 
-- (NSDictionary *)getDictionaryForAnchor:(ARAnchor *)addedAnchor {
+- (void) updateDictionaryForAnchor:(ARAnchor *)updatedAnchor {
+    NSString* anchorID = [self anchorIDForAnchor:updatedAnchor];
+    NSMutableDictionary* anchorDictionary = objects[anchorID];
+    anchorDictionary[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([updatedAnchor transform]);
+
+    if ([updatedAnchor isKindOfClass:[ARPlaneAnchor class]]) {
+        // ARKit system plane anchor
+        ARPlaneAnchor *updatedPlaneAnchor = (ARPlaneAnchor *)updatedAnchor;
+        [self updatePlaneAnchorData:updatedPlaneAnchor toDictionary: anchorDictionary];
+    } else if ([updatedAnchor isKindOfClass:[ARImageAnchor class]]) {
+        // User generated ARImageAnchor, do nothing more than updating the transform
+        return;
+    } else if ([updatedAnchor isKindOfClass:[ARFaceAnchor class]]) {
+        // System generated ARFaceAnchor
+        ARFaceAnchor *faceAnchor = (ARFaceAnchor *)updatedAnchor;
+        [self updateFaceAnchorData:faceAnchor toDictionary: anchorDictionary];
+    } else {
+        // Simple, user generated ARAnchor, do nothing more than updating the transform
+        return;
+    }
+}
+
+- (NSDictionary *)createDictionaryForAnchor:(ARAnchor *)addedAnchor {
     NSMutableDictionary* anchorDictionary = [NSMutableDictionary new];
     anchorDictionary[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([addedAnchor transform]);
     
@@ -1112,69 +1134,94 @@
     return [anchorDictionary copy];
 }
 
-- (void)addFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)dictionary {
-    NSMutableDictionary *geometryDictionary = [NSMutableDictionary new];
-
-    geometryDictionary[@"vertexCount"] = @(faceAnchor.geometry.vertexCount);
-
+- (void)updateFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
+    NSMutableDictionary *geometryDictionary = faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION];
+    if (!geometryDictionary) {
+        geometryDictionary = [NSMutableDictionary new];
+        faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
+    }
     NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.vertexCount];
     for (int i = 0; i < faceAnchor.geometry.vertexCount; i++) {
         [vertices addObject:dictFromVector3(faceAnchor.geometry.vertices[i])];
     }
     geometryDictionary[@"vertices"] = vertices;
+}
 
-    NSMutableArray* textureCoordinates = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.textureCoordinateCount];
-    geometryDictionary[@"textureCoordinateCount"] = @(faceAnchor.geometry.textureCoordinateCount);
-    for (int i = 0; i < faceAnchor.geometry.textureCoordinateCount; i++) {
-        [textureCoordinates addObject: dictFromVector2(faceAnchor.geometry.textureCoordinates[i])];
+- (void)addFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
+    NSMutableDictionary *blendShapesDictionary = [NSMutableDictionary new];
+    [self addBlendShapes:faceAnchor.blendShapes toDictionary:blendShapesDictionary];
+    faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION] = blendShapesDictionary;
+
+    NSMutableDictionary *geometryDictionary = [NSMutableDictionary new];
+    [self addFaceGeometryData: faceAnchor.geometry toDictionary:geometryDictionary];
+    faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
+}
+
+-(void)addFaceGeometryData:(ARFaceGeometry *)faceGeometry toDictionary: (NSMutableDictionary*)geometryDictionary {
+    geometryDictionary[@"vertexCount"] = @(faceGeometry.vertexCount);
+
+    NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:faceGeometry.vertexCount];
+    for (int i = 0; i < faceGeometry.vertexCount; i++) {
+        [vertices addObject:dictFromVector3(faceGeometry.vertices[i])];
+    }
+    geometryDictionary[@"vertices"] = vertices;
+
+    NSMutableArray* textureCoordinates = [NSMutableArray arrayWithCapacity:faceGeometry.textureCoordinateCount];
+    geometryDictionary[@"textureCoordinateCount"] = @(faceGeometry.textureCoordinateCount);
+    for (int i = 0; i < faceGeometry.textureCoordinateCount; i++) {
+        [textureCoordinates addObject: dictFromVector2(faceGeometry.textureCoordinates[i])];
     }
     geometryDictionary[@"textureCoordinates"] = textureCoordinates;
 
-    geometryDictionary[@"triangleCount"] = @(faceAnchor.geometry.triangleCount);
+    geometryDictionary[@"triangleCount"] = @(faceGeometry.triangleCount);
 
-    NSMutableArray* triangleIndices = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.triangleCount*3];
-    for (int i = 0; i < faceAnchor.geometry.triangleCount*3; i++) {
-        [triangleIndices addObject:@(faceAnchor.geometry.triangleIndices[i])];
+    NSMutableArray* triangleIndices = [NSMutableArray arrayWithCapacity:faceGeometry.triangleCount*3];
+    for (int i = 0; i < faceGeometry.triangleCount*3; i++) {
+        [triangleIndices addObject:@(faceGeometry.triangleIndices[i])];
     }
     geometryDictionary[@"triangleIndices"] = triangleIndices;
-
-    dictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
 }
 
--(void)addGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)dictionary {
-    NSMutableDictionary* geometryDictionary = [NSMutableDictionary new];
-    
-    geometryDictionary[@"vertexCount"] = [NSNumber numberWithInteger:planeGeometry.vertexCount];
-    
+-(void)addBlendShapes:(NSDictionary<ARBlendShapeLocation, NSNumber*> *)blendShapes toDictionary:(NSMutableDictionary*)blendShapesDictionary {
+
+}
+
+-(void)updatePlaneGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)planeGeometryDictionary {
+    planeGeometryDictionary[@"vertexCount"] = [NSNumber numberWithInteger:planeGeometry.vertexCount];
+
     NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:planeGeometry.vertexCount];
     for (int i = 0; i < planeGeometry.vertexCount; i++) {
         [vertices addObject:dictFromVector3(planeGeometry.vertices[i])];
     }
-    geometryDictionary[@"vertices"] = vertices;
-    
+    planeGeometryDictionary[@"vertices"] = vertices;
+
     NSMutableArray* textureCoordinates = [NSMutableArray arrayWithCapacity:planeGeometry.textureCoordinateCount];
-    geometryDictionary[@"textureCoordinateCount"] = [NSNumber numberWithInteger:planeGeometry.textureCoordinateCount];
+    planeGeometryDictionary[@"textureCoordinateCount"] = [NSNumber numberWithInteger:planeGeometry.textureCoordinateCount];
     for (int i = 0; i < planeGeometry.textureCoordinateCount; i++) {
         [textureCoordinates addObject: dictFromVector2(planeGeometry.textureCoordinates[i])];
     }
-    geometryDictionary[@"textureCoordinates"] = textureCoordinates;
-    
-    geometryDictionary[@"triangleCount"] = [NSNumber numberWithInteger:planeGeometry.triangleCount];
-    
+    planeGeometryDictionary[@"textureCoordinates"] = textureCoordinates;
+
+    planeGeometryDictionary[@"triangleCount"] = [NSNumber numberWithInteger:planeGeometry.triangleCount];
+
     NSMutableArray* triangleIndices = [NSMutableArray arrayWithCapacity:planeGeometry.triangleCount*3];
     for (int i = 0; i < planeGeometry.triangleCount*3; i++) {
         [triangleIndices addObject: [NSNumber numberWithInteger:planeGeometry.triangleIndices[i]]];
     }
-    geometryDictionary[@"triangleIndices"] = triangleIndices;
-    
-    geometryDictionary[@"boundaryVertexCount"] = [NSNumber numberWithInteger:planeGeometry.boundaryVertexCount];
-    
+    planeGeometryDictionary[@"triangleIndices"] = triangleIndices;
+
+    planeGeometryDictionary[@"boundaryVertexCount"] = [NSNumber numberWithInteger:planeGeometry.boundaryVertexCount];
+
     NSMutableArray* boundaryVertices = [NSMutableArray arrayWithCapacity:planeGeometry.boundaryVertexCount];
     for (int i = 0; i < planeGeometry.boundaryVertexCount; i ++) {
         [boundaryVertices addObject: dictFromVector3(planeGeometry.boundaryVertices[i])];
     }
-    geometryDictionary[@"boundaryVertices"] = boundaryVertices;
-    
+    planeGeometryDictionary[@"boundaryVertices"] = boundaryVertices;
+}
+
+-(void)addGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)dictionary {
+    NSMutableDictionary* geometryDictionary = [NSMutableDictionary new];
+    [self updatePlaneGeometryData:planeGeometry toDictionary:geometryDictionary];
     dictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
 }
 
@@ -1185,12 +1232,18 @@
     [self addGeometryData:[planeAnchor geometry] toDictionary:dictionary];
 }
 
+- (void)updatePlaneAnchorData:(ARPlaneAnchor *)planeAnchor toDictionary:(NSMutableDictionary *)planeAnchorDictionary {
+    planeAnchorDictionary[WEB_AR_PLANE_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
+    planeAnchorDictionary[WEB_AR_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
+    planeAnchorDictionary[WEB_AR_PLANE_ALIGNMENT_OPTION] = @([planeAnchor alignment]);
+    [self updatePlaneGeometryData:[planeAnchor geometry] toDictionary:planeAnchorDictionary[WEB_AR_GEOMETRY_OPTION]];
+}
+
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
 {
     DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* updatedAnchor in anchors) {
-        NSDictionary *updatedAnchorDictionary = [self getDictionaryForAnchor:updatedAnchor];
-        objects[updatedAnchorDictionary[WEB_AR_UUID_OPTION]] = updatedAnchorDictionary;
+        [self updateDictionaryForAnchor:updatedAnchor];
     }
 }
 
@@ -1198,7 +1251,83 @@
 {
     DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* removedAnchor in anchors) {
-        NSDictionary* removedAnchorDictionary = [self getDictionaryForAnchor:removedAnchor];
+        BOOL mustSendAnchor = [self shouldSendAnchor: removedAnchor];
+        if (mustSendAnchor || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
+            NSString* anchorID = [self anchorIDForAnchor: removedAnchor];
+
+            [removedAnchorsSinceLastFrame addObject: anchorID];
+            objects[anchorID] = nil;
+            arkitGeneratedAnchorIDUserAnchorIDMap[anchorID] = nil;
+            if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
+                ARImageAnchor* imageAnchor = (ARImageAnchor*)removedAnchor;
+                ActivateDetectionImageCompletionBlock completion = self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name];
+                if (completion) {
+                    [self activateDetectionImage:imageAnchor.referenceImage.name completion:completion];
+                    self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name] = nil;
+                }
+            }
+        }
+    }
+
+    // Inform up in the calling hierarchy when we have plane anchors removed from the scene
+    if ([self didRemovePlaneAnchors]) {
+        if ([self anyPlaneAnchor:anchors]) {
+            [self didRemovePlaneAnchors]();
+        }
+    }
+}
+
+- (NSString *)anchorIDForAnchor:(ARAnchor *)anchor {
+    NSString* anchorID;
+    if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
+        // ARKit system plane anchor
+        anchorID = [anchor.identifier UUIDString];
+    } else if ([anchor isKindOfClass:[ARImageAnchor class]]) {
+        // User generated ARImageAnchor
+        ARImageAnchor *imageAnchor = (ARImageAnchor *)anchor;
+        anchorID = imageAnchor.referenceImage.name;
+    } else if ([anchor isKindOfClass:[ARFaceAnchor class]]) {
+        // System generated ARFaceAnchor
+        anchorID = [anchor.identifier UUIDString];
+    } else {
+        // Simple, user generated ARAnchor
+        NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[anchor.identifier UUIDString]];
+        NSString *name = userAnchorID? userAnchorID: [anchor.identifier UUIDString];
+        anchorID = name;
+    }
+
+    return anchorID;
+}
+
+- (BOOL)shouldSendAnchor:(ARAnchor *)anchor {
+    BOOL shouldSend;
+    if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
+        // ARKit system plane anchor
+#if SEND_PLANES_BY_DEFAULT
+        shouldSend = YES;
+#else
+        shouldSend = NO;
+#endif
+    } else if ([anchor isKindOfClass:[ARImageAnchor class]]) {
+        // User generated ARImageAnchor
+        shouldSend = NO;
+    } else if ([anchor isKindOfClass:[ARFaceAnchor class]]) {
+        shouldSend = NO;
+        // System generated ARFaceAnchor
+    } else {
+        // Simple, user generated ARAnchor
+        shouldSend = NO;
+    }
+
+    return shouldSend;
+}
+
+/*
+- (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors
+{
+    DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
+    for (ARAnchor* removedAnchor in anchors) {
+        NSDictionary* removedAnchorDictionary = [self createDictionaryForAnchor:removedAnchor];
         if (removedAnchorDictionary[WEB_AR_MUST_SEND_OPTION] || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
             [removedAnchorsSinceLastFrame addObject: removedAnchorDictionary[WEB_AR_UUID_OPTION]];
             objects[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;
@@ -1221,6 +1350,7 @@
         }
     }
 }
+ */
 
 - (BOOL)anyPlaneAnchor:(NSArray<ARAnchor *> *)anchorArray {
     BOOL anyPlaneAnchor = NO;
