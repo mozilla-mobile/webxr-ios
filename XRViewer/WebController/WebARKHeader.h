@@ -134,7 +134,12 @@
 #define WEB_AR_UUID_OPTION             @"uuid"
 #define WEB_AR_MUST_SEND_OPTION        @"mustSend"
 
+#define WEB_AR_LIGHT_OBJECT_OPTION     @"light"
 #define WEB_AR_LIGHT_INTENSITY_OPTION  @"light_intensity"
+#define WEB_AR_LIGHT_AMBIENT_OPTION    @"light_ambient"
+#define WEB_AR_PRIMARY_LIGHT_DIRECTION_OPTION    @"primary_light_direction"
+#define WEB_AR_PRIMARY_LIGHT_INTENSITY_OPTION @"primary_light_intensity"
+#define WEB_AR_LIGHT_AMBIENT_COLOR_TEMPERATURE_OPTION @"ambient_color_temperature"
 #define WEB_AR_WORLD_ALIGNMENT         @"alignEUS"
 
 #define WEB_AR_CAMERA_OPTION           @"camera"

@@ -644,6 +644,22 @@
             if ([[self request][WEB_AR_LIGHT_INTENSITY_OPTION] boolValue])
             {
                 newData[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
+                
+                NSMutableDictionary* lightDictionary = [NSMutableDictionary new];
+                lightDictionary[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
+                lightDictionary[WEB_AR_LIGHT_AMBIENT_COLOR_TEMPERATURE_OPTION] = @([[frame lightEstimate] ambientColorTemperature]);
+                
+                if ([[frame lightEstimate] isKindOfClass:[ARDirectionalLightEstimate class]]) {
+                    ARDirectionalLightEstimate* directionalLightEstimate = (ARDirectionalLightEstimate*)[frame lightEstimate];
+                    lightDictionary[WEB_AR_PRIMARY_LIGHT_DIRECTION_OPTION] = @{
+                                                                               @"x": @(directionalLightEstimate.primaryLightDirection[0]),
+                                                                               @"y": @(directionalLightEstimate.primaryLightDirection[1]),
+                                                                               @"z": @(directionalLightEstimate.primaryLightDirection[2])
+                                                                               };
+                    lightDictionary[WEB_AR_PRIMARY_LIGHT_INTENSITY_OPTION] = @(directionalLightEstimate.primaryLightIntensity);
+                    
+                }
+                newData[WEB_AR_LIGHT_OBJECT_OPTION] = lightDictionary;
             }
             if ([[self request][WEB_AR_CAMERA_OPTION] boolValue])
             {
@@ -1146,6 +1162,9 @@
     }
     geometryDictionary[@"vertices"] = vertices;
 
+    NSMutableDictionary *blendShapesDictionary = faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION];
+    [self setBlendShapes:faceAnchor.blendShapes toDictionary:blendShapesDictionary];
+
     // Remove the rest of the geometry data, since it doesn't change
     geometryDictionary[@"vertexCount"] = nil;
     geometryDictionary[@"textureCoordinateCount"] = nil;
@@ -1156,7 +1175,7 @@
 
 - (void)addFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
     NSMutableDictionary *blendShapesDictionary = [NSMutableDictionary new];
-    [self addBlendShapes:faceAnchor.blendShapes toDictionary:blendShapesDictionary];
+    [self setBlendShapes:faceAnchor.blendShapes toDictionary:blendShapesDictionary];
     faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION] = blendShapesDictionary;
 
     NSMutableDictionary *geometryDictionary = [NSMutableDictionary new];
@@ -1189,8 +1208,10 @@
     geometryDictionary[@"triangleIndices"] = triangleIndices;
 }
 
--(void)addBlendShapes:(NSDictionary<ARBlendShapeLocation, NSNumber*> *)blendShapes toDictionary:(NSMutableDictionary*)blendShapesDictionary {
-
+-(void)setBlendShapes:(NSDictionary<ARBlendShapeLocation, NSNumber*> *)blendShapes toDictionary:(NSMutableDictionary*)blendShapesDictionary {
+    [blendShapes enumerateKeysAndObjectsUsingBlock:^(ARBlendShapeLocation key, NSNumber *obj, BOOL *stop) {
+        blendShapesDictionary[key] = obj;
+    }];
 }
 
 -(void)updatePlaneGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)planeGeometryDictionary {
