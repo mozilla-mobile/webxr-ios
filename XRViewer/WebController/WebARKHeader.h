@@ -102,7 +102,7 @@
 #define WEB_AR_PLANE_EXTENT_OPTION     @"plane_extent"
 #define WEB_AR_PLANE_ALIGNMENT_OPTION  @"plane_alignment"
 #define WEB_AR_PLANE_ID_OPTION         @"plane_id"
-#define WEB_AR_PLANE_GEOMETRY_OPTION   @"geometry"
+#define WEB_AR_GEOMETRY_OPTION         @"geometry"
 #define WEB_AR_SHOW_PLANE_OPTION       @"show_plane"
 #define WEB_AR_IMAGE_NAME_OPTION       @"image_name"
 

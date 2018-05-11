@@ -61,6 +61,7 @@
 // Dictionary holding completion blocks by image name: when an image anchor is removed,
 // if the name exsist in this dictionary, call activate again using the callback stored here.
 @property(nonatomic, strong) NSMutableDictionary* detectionImageActivationAfterRemovalPromises;
+@property int numberOfFramesWithoutSendingFaceGeometry;
 @end
 
 @implementation ARKController {
@@ -140,6 +141,8 @@
         self.detectionImageCreationRequests = [NSMutableArray new];
         self.detectionImageCreationPromises = [NSMutableDictionary new];
         self.detectionImageActivationAfterRemovalPromises = [NSMutableDictionary new];
+        
+        self.numberOfFramesWithoutSendingFaceGeometry = 0;
     }
     
     return self;
@@ -659,7 +662,8 @@
             }
             if ([[self request][WEB_AR_3D_OBJECTS_OPTION] boolValue])
             {
-                newData[WEB_AR_3D_OBJECTS_OPTION] = [self currentAnchorsArray];
+                NSArray* anchorsArray = [self currentAnchorsArray];
+                newData[WEB_AR_3D_OBJECTS_OPTION] = anchorsArray;
                 
                 // Prepare the objectsRemoved array
                 NSArray *removedObjects = [removedAnchorsSinceLastFrame copy];
@@ -971,6 +975,18 @@
     [objects enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
      {
          if ([self sendingWorldSensingDataAuthorizationStatus] == SendWorldSensingDataAuthorizationStateAuthorized || [objects[key][WEB_AR_MUST_SEND_OPTION] boolValue]) {
+             
+             if ([objects[key][WEB_AR_ANCHOR_TYPE] isEqualToString:@"face"]) {
+                 if (self.numberOfFramesWithoutSendingFaceGeometry < 10) {
+                     self.numberOfFramesWithoutSendingFaceGeometry++;
+                     NSMutableDictionary* mutableDict = [objects[key] mutableCopy];
+                     [mutableDict removeObjectForKey:WEB_AR_GEOMETRY_OPTION];
+                     objects[key] = mutableDict;
+                 } else {
+                     self.numberOfFramesWithoutSendingFaceGeometry = 0;
+                 }
+             }
+             
              [array addObject:objects[key]];
          }
      }];
@@ -1097,7 +1113,32 @@
 }
 
 - (void)addFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)dictionary {
+    NSMutableDictionary *geometryDictionary = [NSMutableDictionary new];
 
+    geometryDictionary[@"vertexCount"] = @(faceAnchor.geometry.vertexCount);
+
+    NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.vertexCount];
+    for (int i = 0; i < faceAnchor.geometry.vertexCount; i++) {
+        [vertices addObject:dictFromVector3(faceAnchor.geometry.vertices[i])];
+    }
+    geometryDictionary[@"vertices"] = vertices;
+
+    NSMutableArray* textureCoordinates = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.textureCoordinateCount];
+    geometryDictionary[@"textureCoordinateCount"] = @(faceAnchor.geometry.textureCoordinateCount);
+    for (int i = 0; i < faceAnchor.geometry.textureCoordinateCount; i++) {
+        [textureCoordinates addObject: dictFromVector2(faceAnchor.geometry.textureCoordinates[i])];
+    }
+    geometryDictionary[@"textureCoordinates"] = textureCoordinates;
+
+    geometryDictionary[@"triangleCount"] = @(faceAnchor.geometry.triangleCount);
+
+    NSMutableArray* triangleIndices = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.triangleCount*3];
+    for (int i = 0; i < faceAnchor.geometry.triangleCount*3; i++) {
+        [triangleIndices addObject:@(faceAnchor.geometry.triangleIndices[i])];
+    }
+    geometryDictionary[@"triangleIndices"] = triangleIndices;
+
+    dictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
 }
 
 -(void)addGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)dictionary {
@@ -1134,7 +1175,7 @@
     }
     geometryDictionary[@"boundaryVertices"] = boundaryVertices;
     
-    dictionary[WEB_AR_PLANE_GEOMETRY_OPTION] = geometryDictionary;
+    dictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
 }
 
 - (void)addPlaneAnchorData:(ARPlaneAnchor *)planeAnchor toDictionary:(NSMutableDictionary *)dictionary {
