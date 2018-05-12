@@ -336,8 +336,8 @@
 }
 
 - (void)showMessageAboutAccessingWorldSensingData:(void (^)(BOOL))granted {
-    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"World data access"
-                                                    message:@"WebXR Viewer will give the web page information about things it detects around you, such as planes, faces, and images. Allow?"
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Access to World Sensing"
+                                                    message:@"The web page would like to be able to ask iOS to look for things around you in the world, such faces and pictures. Allow?"
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
