@@ -50,12 +50,14 @@
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" textContentType="url"/>
                         </textField>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1FE-vv-bxo" userLabel="Switch Camera Btn">
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1FE-vv-bxo" userLabel="Switch Camera Btn">
                             <rect key="frame" x="167" y="0.0" width="40" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="40" id="UkG-je-1mY"/>
                                 <constraint firstAttribute="width" constant="40" id="h2P-8t-A1Q"/>
                             </constraints>
+                            <inset key="imageEdgeInsets" minX="5" minY="5" maxX="5" maxY="5"/>
+                            <state key="normal" image="camFlip"/>
                             <connections>
                                 <action selector="switchCameraAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="heF-0T-bOr"/>
                             </connections>
@@ -139,6 +141,7 @@
     </objects>
     <resources>
         <image name="backSelected" width="10" height="18"/>
+        <image name="camFlip" width="56" height="51"/>
         <image name="debugOff" width="56" height="56"/>
         <image name="forwardSelected" width="10" height="18"/>
         <image name="gear_settings" width="56" height="56"/>

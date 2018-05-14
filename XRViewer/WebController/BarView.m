@@ -143,14 +143,14 @@
         [[self restartTrackingBtn] setTintColor:[UIColor grayColor]];
     }
     
-    FAKFontAwesome *undoViewIcon = [FAKFontAwesome  iconWithIdentifier:@"fa-undo" size:24 error:&error];
-    if (error != nil) {
-        NSLog(@"%@", [error localizedDescription]);
-    } else {
-        UIImage* undoViewImage = [undoViewIcon imageWithSize:CGSizeMake(24, 24)];
-        [[self switchCameraBtn] setImage:undoViewImage forState:UIControlStateNormal];
-        [[self switchCameraBtn] setTintColor:[UIColor grayColor]];
-    }
+//    FAKFontAwesome *undoViewIcon = [FAKFontAwesome  iconWithIdentifier:@"fa-undo" size:24 error:&error];
+//    if (error != nil) {
+//        NSLog(@"%@", [error localizedDescription]);
+//    } else {
+//        UIImage* undoViewImage = [undoViewIcon imageWithSize:CGSizeMake(24, 24)];
+//        [[self switchCameraBtn] setImage:undoViewImage forState:UIControlStateNormal];
+//        [[self switchCameraBtn] setTintColor:[UIColor grayColor]];
+//    }
 }
 
 - (void)hideCameraFlipButton {
