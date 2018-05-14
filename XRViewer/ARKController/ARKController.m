@@ -625,6 +625,18 @@
         ARWorldTrackingConfiguration* worldTrackingConfiguration = [ARWorldTrackingConfiguration new];
         [worldTrackingConfiguration setPlaneDetection:ARPlaneDetectionHorizontal | ARPlaneDetectionVertical];
         [worldTrackingConfiguration setWorldAlignment:ARWorldAlignmentGravityAndHeading];
+
+        // Configure all the active images that weren't detected in the previous back camera session
+        NSArray *notDetectedImageNames = [self.detectionImageActivationPromises allKeys];
+        NSMutableSet* newDetectionImages = [NSMutableSet new];
+        for (NSString* imageName in notDetectedImageNames) {
+            ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
+            if (referenceImage) {
+                [newDetectionImages addObject:referenceImage];
+            }
+        }
+        worldTrackingConfiguration.detectionImages = [newDetectionImages copy];
+
         self.configuration = worldTrackingConfiguration;
         [self.session runWithConfiguration: self.configuration];
     }
