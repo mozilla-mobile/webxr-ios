@@ -432,6 +432,13 @@
         }
         case SendWorldSensingDataAuthorizationStateAuthorized: {
             NSLog(@"World sensing auth changed to authorized");
+            
+            NSArray *anchors = [[[self session] currentFrame] anchors];
+            for (ARAnchor* addedAnchor in anchors) {
+                NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
+                [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+            }
+            
             [self createRequestedDetectionImages];
             break;
         }
