@@ -621,6 +621,12 @@
         ARFaceTrackingConfiguration* faceTrackingConfiguration = [ARFaceTrackingConfiguration new];
         self.configuration = faceTrackingConfiguration;
         [self.session runWithConfiguration: self.configuration];
+    } else {
+        ARWorldTrackingConfiguration* worldTrackingConfiguration = [ARWorldTrackingConfiguration new];
+        [worldTrackingConfiguration setPlaneDetection:ARPlaneDetectionHorizontal | ARPlaneDetectionVertical];
+        [worldTrackingConfiguration setWorldAlignment:ARWorldAlignmentGravityAndHeading];
+        self.configuration = worldTrackingConfiguration;
+        [self.session runWithConfiguration: self.configuration];
     }
 }
 
