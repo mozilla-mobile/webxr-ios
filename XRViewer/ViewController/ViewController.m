@@ -635,6 +635,9 @@ typedef void (^UICompletion)(void);
     __weak typeof (self) blockSelf = self;
     
     [self setWebController:[[WebController alloc] initWithRootView:[self webLayerView]]];
+    if (![ARKController supportsARFaceTrackingConfiguration]) {
+        [[self webController] hideCameraFlipButton];
+    }
     [[self webController] setAnimator:[self animator]];
     [[self webController] setOnStartLoad:^
      {

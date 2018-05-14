@@ -256,6 +256,10 @@ inline static WebCompletion debugCompletion(NSString *name)
     [self callWebMethod:WEB_AR_IOS_USER_GRANTED_CV_DATA paramJSON:@{@"granted": @(granted)} webCompletion:debugCompletion(WEB_AR_IOS_USER_GRANTED_CV_DATA)];
 }
 
+- (void)hideCameraFlipButton {
+    [[self barView] hideCameraFlipButton];
+}
+
 - (BOOL)isDebugButtonSelected {
     return [[self barView] isDebugButtonSelected];
 }

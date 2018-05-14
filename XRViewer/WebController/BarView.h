@@ -43,4 +43,6 @@ typedef void (^SwitchCameraAction)(void);
 - (void)hideKeyboard;
 
 - (BOOL)isDebugButtonSelected;
+
+- (void)hideCameraFlipButton;
 @end

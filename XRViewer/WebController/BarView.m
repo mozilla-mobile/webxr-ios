@@ -153,6 +153,10 @@
     }
 }
 
+- (void)hideCameraFlipButton {
+    [self.switchCameraBtn removeFromSuperview];
+}
+
 - (IBAction)backAction:(id)sender
 {
     DDLogDebug(@"backAction");

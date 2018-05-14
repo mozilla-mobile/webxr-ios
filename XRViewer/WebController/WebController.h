@@ -119,5 +119,7 @@ typedef void (^OnCreateDetectionImage)(NSDictionary*, CreateDetectionImageComple
 - (void)sendNativeTime:(NSTimeInterval)nativeTime;
 
 - (void)userGrantedSendingWorldSensingData:(BOOL)granted;
+
+- (void)hideCameraFlipButton;
 @end
 

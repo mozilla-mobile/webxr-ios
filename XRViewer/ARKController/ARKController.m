@@ -630,6 +630,10 @@
     }
 }
 
++ (BOOL)supportsARFaceTrackingConfiguration {
+    return [ARFaceTrackingConfiguration isSupported];
+}
+
 #pragma mark Private
 
 - (void)updateARKDataWithFrame:(ARFrame *)frame

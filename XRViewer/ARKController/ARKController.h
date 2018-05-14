@@ -122,5 +122,7 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
 
 - (void)switchCameraButtonTapped;
 
++ (BOOL)supportsARFaceTrackingConfiguration;
+
 @end
 
