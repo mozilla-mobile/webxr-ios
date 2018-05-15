@@ -14,6 +14,11 @@
 #define MEMORY_ERROR_MESSAGE    @"Memory warning received"
 
 
+/**
+ The main view controller of the app. It's the holder of the other controllers.
+ It listens to events happening on the controllers and passes them to the ones
+ interested on them.
+ */
 @interface ViewController : UIViewController<UIGestureRecognizerDelegate>
 
 @end

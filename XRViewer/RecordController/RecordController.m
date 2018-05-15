@@ -336,7 +336,7 @@
     {
         AudioServicesPlaySystemSound(END_RECORDING_SOUND_ID);
         
-        [[AnalyticsManager sharedInstance] sendEventWithCategory:EventCategoryAction method:EventMethodTap object:EventObjectRelaseVideoButton];
+        [[AnalyticsManager sharedInstance] sendEventWithCategory:EventCategoryAction method:EventMethodTap object:EventObjectReleaseVideoButton];
         [[self recorder] stopRecordingWithHandler:^(RPPreviewViewController * _Nullable previewViewController, NSError * _Nullable error)
          {
              dispatch_async(dispatch_get_main_queue(), ^

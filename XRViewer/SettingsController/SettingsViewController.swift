@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A view controller to handle the settings of the app
 class SettingsViewController: UIViewController {
     let privacyNoticeURL = "https://github.com/mozilla-mobile/webxr-ios/blob/master/PrivacyNotice.md"
     let viewControllerTitle = "XRViewer"

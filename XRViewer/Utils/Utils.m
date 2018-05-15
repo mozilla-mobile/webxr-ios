@@ -8,6 +8,7 @@
 @implementation Utils {
 
 }
+
 + (UIInterfaceOrientation)getInterfaceOrientationFromDeviceOrientation {
     UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
     UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationLandscapeLeft;

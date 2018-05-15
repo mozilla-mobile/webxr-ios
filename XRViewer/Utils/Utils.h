@@ -7,5 +7,10 @@
 #import <UIKit/UIKit.h>
 
 @interface Utils: NSObject
+/**
+ Gets the interface orientation taking the device orientation as input
+ 
+ @return the UIInterfaceOrientation of the app
+ */
 + (UIInterfaceOrientation)getInterfaceOrientationFromDeviceOrientation;
 @end
