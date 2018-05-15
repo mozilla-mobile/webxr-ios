@@ -56,7 +56,7 @@
                                 <constraint firstAttribute="height" constant="40" id="UkG-je-1mY"/>
                                 <constraint firstAttribute="width" constant="40" id="h2P-8t-A1Q"/>
                             </constraints>
-                            <inset key="imageEdgeInsets" minX="5" minY="5" maxX="5" maxY="5"/>
+                            <inset key="imageEdgeInsets" minX="7" minY="7" maxX="7" maxY="7"/>
                             <state key="normal" image="camFlip"/>
                             <connections>
                                 <action selector="switchCameraAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="heF-0T-bOr"/>
@@ -141,7 +141,7 @@
     </objects>
     <resources>
         <image name="backSelected" width="10" height="18"/>
-        <image name="camFlip" width="56" height="51"/>
+        <image name="camFlip" width="56" height="56"/>
         <image name="debugOff" width="56" height="56"/>
         <image name="forwardSelected" width="10" height="18"/>
         <image name="gear_settings" width="56" height="56"/>
