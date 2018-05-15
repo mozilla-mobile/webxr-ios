@@ -9,6 +9,11 @@
 import Foundation
 import MozillaTelemetry
 
+/**
+Category of the event being tracked
+- action
+- api
+*/
 @objc enum EventCategory: Int {
     case action
     case api
@@ -21,6 +26,13 @@ import MozillaTelemetry
     }
 }
 
+/**
+Method of the event being tracked
+- tap: when the user taps on anything within the app
+- webXR: when there is an action initiated by the webXR API
+- foreground: when the app goes to foreground
+- background: when the app goes to background
+*/
 @objc enum EventMethod: Int {
     case tap
     case webXR
@@ -37,10 +49,18 @@ import MozillaTelemetry
     }
 }
 
+/**
+Event being tracked
+- recordVideoButton: when there is an event related with the record video button
+- recordPictureButton: when there is an event related with the record picture button
+- releaseVideoButton: when the user releases the video button
+- initialize: when the app initializes
+- app: when there is an event related with the app
+*/
 @objc enum EventObject: Int {
     case recordVideoButton
     case recordPictureButton
-    case relaseVideoButton
+    case releaseVideoButton
     case initialize
     case app
     
@@ -48,18 +68,22 @@ import MozillaTelemetry
         switch self {
         case .recordVideoButton: return "record_video_button"
         case .recordPictureButton: return "record_picture_button"
-        case .relaseVideoButton: return "release_video_button"
+        case .releaseVideoButton: return "release_video_button"
         case .initialize: return "init"
         case .app: return "app"
         }
     }
 }
 
+/// A class managing the tracking of the events within the app
 public class AnalyticsManager: NSObject {
     @objc public static let sharedInstance = AnalyticsManager()
     
     override private init() {}
-    
+
+    /// Initializes the telemetry framework
+    ///
+    /// - Parameter sendUsageData: whether we want to send user data
     @objc func initialize(sendUsageData: Bool) {
 #if USE_ANALYTICS
         let telemetryConfig = Telemetry.default.configuration
@@ -73,7 +97,13 @@ public class AnalyticsManager: NSObject {
         Telemetry.default.add(pingBuilderType: MobileEventPingBuilder.self)
 #endif
     }
-    
+
+    /// Sends an event to telemetry
+    ///
+    /// - Parameters:
+    ///   - category: The category of the event. See EventCategory.
+    ///   - method: The method of the event. See EventMethod.
+    ///   - object: The object of the event. See EventObject.
     @objc func sendEvent(category: EventCategory, method: EventMethod, object: EventObject) {
 #if USE_ANALYTICS
         let event = TelemetryEvent(category: category.name(), method: method.name(), object: object.name())
