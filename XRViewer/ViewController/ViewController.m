@@ -56,16 +56,22 @@ typedef void (^UICompletion)(void);
 {
     [super viewDidLoad];
     
+    /// This causes UIKit to call preferredScreenEdgesDeferringSystemGestures,
+    /// so we can say what edges we want our gestures to take precedence over the system gestures
     [self setNeedsUpdateOfScreenEdgesDeferringSystemGestures];
     
     [self setupCommonControllers];
     
+    /// Apparently, this is called async in the main queue because we need viewDidLoad to finish
+    /// its execution before doing anything on the subviews. This also could have been called from
+    /// viewDidAppear
     dispatch_async(dispatch_get_main_queue(), ^
                    {
                        [self setupTargetControllers];
                    });
     
     
+    /// Swipe from edge gesture recognizer setup
     UIScreenEdgePanGestureRecognizer * gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(swipeFromEdge:)];
     [gestureRecognizer setEdges:UIRectEdgeTop];
     gestureRecognizer.delegate = self;
@@ -76,6 +82,7 @@ typedef void (^UICompletion)(void);
     swipeGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:swipeGestureRecognizer];
     
+    /// Show the permissions popup if we have never shown it
     if ([[NSUserDefaults standardUserDefaults] boolForKey:permissionsUIAlreadyShownKey] == NO &&
         ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined ||
          [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == kCLAuthorizationStatusNotDetermined)) {
