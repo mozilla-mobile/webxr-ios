@@ -593,7 +593,7 @@ typedef void (^UICompletion)(void);
         });
      }];
     
-    [[self arkController] setDidInterupt:^(BOOL interruption)
+    [[self arkController] setDidInterrupt:^(BOOL interruption)
      {
          [[blockSelf stateController] setARInterruption:interruption];
      }];

@@ -163,12 +163,6 @@
     return self;
 }
 
-- (instancetype)updatedWithTrackingState:(NSString *)state
-{
-    [self setTrackingState:state];
-    return self;
-}
-
 - (instancetype)updatedWithInterruption:(BOOL)interruption
 {
     [self setInterruption:interruption];

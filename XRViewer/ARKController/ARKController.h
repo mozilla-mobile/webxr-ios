@@ -54,19 +54,18 @@ typedef NS_ENUM(NSUInteger, ARKType)
 @class ARKController;
 typedef void (^DidUpdate)(ARKController *);
 typedef void (^DidFailSession)(NSError *);
-typedef void (^DidInterupt)(BOOL);
+typedef void (^DidInterrupt)(BOOL);
 typedef void (^DidChangeTrackingState)(NSString *state);
 typedef void (^DidAddPlaneAnchors)(void);
 typedef void (^DidRemovePlaneAnchors)(void);
 typedef void (^DidUpdateWindowSize)(void);
-typedef void (^CompletionBlockWithDictionary)(NSDictionary*);
 typedef void (^DetectionImageCreatedCompletionType)(BOOL success, NSString* errorString);
 typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* detectedImageAnchor);
 
 @interface ARKController : NSObject
 
 @property(copy) DidUpdate didUpdate;
-@property(copy) DidInterupt didInterupt;
+@property(copy) DidInterrupt didInterrupt;
 @property(copy) DidFailSession didFailSession;
 @property(copy) DidChangeTrackingState didChangeTrackingState;
 @property(copy) DidAddPlaneAnchors didAddPlaneAnchors;
@@ -99,7 +98,6 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
 @property(nonatomic) SendWorldSensingDataAuthorizationState sendingWorldSensingDataAuthorizationStatus;
 
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
-- (UIView *)arkView;
 
 - (void)viewWillTransitionToSize:(CGSize)size;
 

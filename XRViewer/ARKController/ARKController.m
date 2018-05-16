@@ -211,11 +211,6 @@
     self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
 }
 
-- (UIView *)arkView
-{
-    return [[self controller] renderView];
-}
-
 - (void)pauseSession
 {
     [[self session] pause];
@@ -398,7 +393,7 @@
     float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:distantAnchorsDistanceKey];
     
     for (ARAnchor *anchor in [[self.session currentFrame] anchors]) {
-        if ([anchor isKindOfClass:[ARPlaneAnchor self]]) {
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
             ARPlaneAnchor* planeAnchor = (ARPlaneAnchor*)anchor;
             matrix_float4x4 cameraMatrixInAnchorCoordinates = matrix_multiply(matrix_invert(anchor.transform), cameraTransform);
             simd_float4 cameraPositionInAnchorCoordinates = cameraMatrixInAnchorCoordinates.columns[3];
@@ -609,13 +604,13 @@
 - (ARReferenceImage*)createReferenceImageFromDictionary:(NSDictionary*)referenceImageDictionary {
     CGFloat physicalWidth = [referenceImageDictionary[@"physicalWidth"] doubleValue];
     NSString* b64String = referenceImageDictionary[@"buffer"];
-    size_t width = [referenceImageDictionary[@"imageWidth"] intValue];
-    size_t height = [referenceImageDictionary[@"imageHeight"] intValue];
+    size_t width = (size_t) [referenceImageDictionary[@"imageWidth"] intValue];
+    size_t height = (size_t) [referenceImageDictionary[@"imageHeight"] intValue];
     size_t bitsPerComponent = 8;
     size_t bitsPerPixel = 32;
     size_t bytesPerRow = width * 4;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    CGBitmapInfo bitmapInfo = 0;
+    CGBitmapInfo bitmapInfo = (CGBitmapInfo) 0;
     NSData *data = [[NSData alloc] initWithBase64EncodedString:b64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
     CFDataRef bridgedData  = (__bridge CFDataRef)data;
     CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(bridgedData);
@@ -683,7 +678,7 @@
         if (frame)
         {
             NSMutableDictionary *newData = [NSMutableDictionary dictionaryWithCapacity:3]; // max request object
-            NSInteger ts = [frame timestamp] * 1000.0;
+            NSInteger ts = (NSInteger) ([frame timestamp] * 1000.0);
             newData[@"timestamp"] = @(ts);
 
             if ([[self request][WEB_AR_LIGHT_INTENSITY_OPTION] boolValue])
@@ -697,7 +692,7 @@
                 if ([[frame lightEstimate] isKindOfClass:[ARDirectionalLightEstimate class]]) {
                     ARDirectionalLightEstimate* directionalLightEstimate = (ARDirectionalLightEstimate*)[frame lightEstimate];
                     lightDictionary[WEB_AR_PRIMARY_LIGHT_DIRECTION_OPTION] = @{
-                                                                               @"x": @(directionalLightEstimate.primaryLightDirection[0]),
+                                                                               @"x": @(directionalLightEstimate.primaryLightDirwection[0]),
                                                                                @"y": @(directionalLightEstimate.primaryLightDirection[1]),
                                                                                @"z": @(directionalLightEstimate.primaryLightDirection[2])
                                                                                };
@@ -725,7 +720,7 @@
             {
                 NSArray* anchorsArray = [self currentAnchorsArray];
                 newData[WEB_AR_3D_OBJECTS_OPTION] = anchorsArray;
-                
+
                 // Prepare the objectsRemoved array
                 NSArray *removedObjects = [removedAnchorsSinceLastFrame copy];
                 [removedAnchorsSinceLastFrame removeAllObjects];
@@ -776,7 +771,7 @@
                 
                 NSMutableDictionary *cvInformation = [NSMutableDictionary new];
                 NSMutableDictionary *frameInformation = [NSMutableDictionary new];
-                NSInteger timestamp = [frame timestamp] * 1000.0;
+                NSInteger timestamp = (NSInteger) ([frame timestamp] * 1000.0);
                 frameInformation[@"timestamp"] = @(timestamp);
                 
                 // TODO: prepare depth data
@@ -815,17 +810,9 @@
                 computerVisionData = [cvInformation copy];
                 os_unfair_lock_unlock(&(lock));
             }
-            
-            if ([[self configuration] worldAlignment] == ARWorldAlignmentGravityAndHeading) {
-                newData[WEB_AR_3D_GEOALIGNED_OPTION] = [NSNumber numberWithBool:YES];
-            } else {
-                newData[WEB_AR_3D_GEOALIGNED_OPTION] = [NSNumber numberWithBool:NO];
-            }
-            if ([self computerVisionDataEnabled]) {
-                newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = [NSNumber numberWithBool:YES];
-            } else {
-                newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = [NSNumber numberWithBool:NO];
-            }
+
+            newData[WEB_AR_3D_GEOALIGNED_OPTION] = @([[self configuration] worldAlignment] == ARWorldAlignmentGravityAndHeading ? YES : NO);
+            newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = @([self computerVisionDataEnabled] ? YES : NO);
             
             os_unfair_lock_lock(&(lock));
             arkData = [newData copy];
@@ -1514,9 +1501,9 @@
 {
     DDLogError(@"Session WasInterrupted");
     
-    if ([self didInterupt])
+    if ([self didInterrupt])
     {
-        [self didInterupt](YES);
+        [self didInterrupt](YES);
     }
 }
 
@@ -1524,9 +1511,9 @@
 {
     DDLogError(@"Session InterruptionEnded");
     
-    if ([self didInterupt])
+    if ([self didInterrupt])
     {
-        [self didInterupt](NO);
+        [self didInterrupt](NO);
     }
 }
 

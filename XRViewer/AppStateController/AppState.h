@@ -115,7 +115,6 @@ typedef NS_ENUM(NSUInteger, RecordState)
 - (instancetype)updatedWebXR:(BOOL)webXR;
 - (instancetype)updatedWithARRequest:(NSDictionary *)dict;
 - (instancetype)updatedWithMicEnabled:(BOOL)enabled;
-- (instancetype)updatedWithTrackingState:(NSString *)state;
 - (instancetype)updatedWithInterruption:(BOOL)interruption;
 
 @end
