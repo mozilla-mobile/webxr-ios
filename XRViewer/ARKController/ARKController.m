@@ -692,7 +692,7 @@
                 if ([[frame lightEstimate] isKindOfClass:[ARDirectionalLightEstimate class]]) {
                     ARDirectionalLightEstimate* directionalLightEstimate = (ARDirectionalLightEstimate*)[frame lightEstimate];
                     lightDictionary[WEB_AR_PRIMARY_LIGHT_DIRECTION_OPTION] = @{
-                                                                               @"x": @(directionalLightEstimate.primaryLightDirwection[0]),
+                                                                               @"x": @(directionalLightEstimate.primaryLightDirection[0]),
                                                                                @"y": @(directionalLightEstimate.primaryLightDirection[1]),
                                                                                @"z": @(directionalLightEstimate.primaryLightDirection[2])
                                                                                };
