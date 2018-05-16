@@ -36,18 +36,30 @@
  We hold different data structures, like accelerate, NSData, and NSString buffers,
  to avoid allocating/deallocating a huge amount of memory on each frame
  */
+/// Luma buffer
 @property vImage_Buffer lumaBuffer;
+/// A temporary luma buffer used by the Accelerate framework in the buffer scale opration
 @property void* lumaScaleTemporaryBuffer;
+/// The luma buffer size that's being sent to JS
 @property CGSize lumaBufferSize;
+/// A data buffer holding the luma information. It's created only onced reused on every frame
+/// by means of the replaceBytesInRange method
 @property(nonatomic, strong) NSMutableData* lumaDataBuffer;
+/// The luma string buffer being sent to JS
 @property(nonatomic, strong) NSMutableString* lumaBase64StringBuffer;
-
+/*
+ The same properties for luma are used for chroma
+ */
 @property vImage_Buffer chromaBuffer;
 @property void* chromaScaleTemporaryBuffer;
 @property CGSize chromaBufferSize;
 @property(nonatomic, strong) NSMutableData* chromaDataBuffer;
 @property(nonatomic, strong) NSMutableString* chromaBase64StringBuffer;
 
+/// The CV image being sent to JS is downscaled using the metho
+/// downscaleByFactorOf2UntilLargestSideIsLessThan512AvoidingFractionalSides
+/// This call has a side effect on computerVisionImageScaleFactor, that's later used
+/// in order to scale the intrinsics of the camera
 @property (nonatomic) float computerVisionImageScaleFactor;
 
 /// Dictionary holding ARReferenceImages by name
@@ -58,9 +70,13 @@
 @property(nonatomic, strong) NSMutableDictionary* detectionImageCreationPromises;
 /// Array holding dictionaries representing detection image data
 @property(nonatomic, strong) NSMutableArray *detectionImageCreationRequests;
-// Dictionary holding completion blocks by image name: when an image anchor is removed,
-// if the name exsist in this dictionary, call activate again using the callback stored here.
+/// Dictionary holding completion blocks by image name: when an image anchor is removed,
+/// if the name exsist in this dictionary, call activate again using the callback stored here.
 @property(nonatomic, strong) NSMutableDictionary* detectionImageActivationAfterRemovalPromises;
+/**
+ We don't send the face geometry on every frame, for performance reasons. This number indicates the
+ current number of frames without sending the face geometry
+ */
 @property int numberOfFramesWithoutSendingFaceGeometry;
 @end
 

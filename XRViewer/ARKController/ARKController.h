@@ -17,6 +17,13 @@
 // World tracking has encountered a fatal error.
 #define WORLD_TRACKING_FAILED_ARKIT_ERROR_CODE 200
 
+/**
+ Enum representing the world sensing authorization status
+ 
+ - SendWorldSensingDataAuthorizationStateNotDetermined: The user didn't say anything about the world sensing
+ - SendWorldSensingDataAuthorizationStateAuthorized: The user allowed sending wold sensing data
+ - SendWorldSensingDataAuthorizationStateDenied: The user denied sending world sensing data
+ */
 typedef NS_ENUM(NSUInteger, SendWorldSensingDataAuthorizationState)
 {
     SendWorldSensingDataAuthorizationStateNotDetermined,
@@ -24,6 +31,13 @@ typedef NS_ENUM(NSUInteger, SendWorldSensingDataAuthorizationState)
     SendWorldSensingDataAuthorizationStateDenied
 };
 
+/**
+ An enum representing the ARKit session state
+
+ - ARKSessionUnknown: We don't know about the session state, probably it's been initiated but not ran yet
+ - ARKSessionPaused: The session is paused
+ - ARKSessionRunning: The session is running
+ */
 typedef NS_ENUM(NSUInteger, ARKitSessionState)
 {
     ARKSessionUnknown,
@@ -60,11 +74,28 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
 @property(copy) DidUpdateWindowSize didUpdateWindowSize;
 @property UIInterfaceOrientation interfaceOrientation;
 
+/**
+ Flag indicating if we should inform the JS side about a window size update
+ within the current AR Frame update. It's set to YES when the device orientation changes.
+ The idea is to only send this kind of update once a Frame.
+ */
 @property(nonatomic) BOOL shouldUpdateWindowSize;
 
+/**
+ Enum indicating the AR session state
+ @see ARKitSessionState
+ */
 @property ARKitSessionState arSessionState;
 
+/**
+ A flag representing whether the user allowed the app to send computer vision data to the web page
+ */
 @property(nonatomic) bool computerVisionDataEnabled;
+
+/**
+ Enum representing the world sensing data sending authorization status
+ @see SendWorldSensingDataAuthorizationState
+ */
 @property(nonatomic) SendWorldSensingDataAuthorizationState sendingWorldSensingDataAuthorizationStatus;
 
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
@@ -76,10 +107,23 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
 
 - (void)resumeSessionWithAppState: (AppState*)state;
 
+/**
+ Pauses the AR session and sets the arSessionState to paused
+ */
 - (void)pauseSession;
 
+/**
+ ARKit data creates a copy of the current AR data and returns it
+
+ @return the dictionary that's going to be sent to JS
+ */
 - (NSDictionary *)arkData;
 
+/**
+ computer vision data creates a copy of the current CV data and returns it
+
+ @return the dictionary of CV data that's going to be sent to JS
+ */
 - (NSDictionary*)computerVisionData;
 
 - (NSTimeInterval)currentFrameTimeInMilliseconds;
