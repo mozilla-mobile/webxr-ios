@@ -1417,6 +1417,13 @@
     return anchorID;
 }
 
+/**
+ By default, set NO to all the ARAnchor types considered "World sensing data", so they
+ won't be sent to JS unless the user allows for that.
+
+ @param anchor The anchor to be analyzed
+ @return A boolean indicating whether the anchor should be sent to JS or not
+ */
 - (BOOL)shouldSendAnchor:(ARAnchor *)anchor {
     BOOL shouldSend;
     if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
@@ -1439,36 +1446,6 @@
 
     return shouldSend;
 }
-
-/*
-- (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors
-{
-    DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
-    for (ARAnchor* removedAnchor in anchors) {
-        NSDictionary* removedAnchorDictionary = [self createDictionaryForAnchor:removedAnchor];
-        if (removedAnchorDictionary[WEB_AR_MUST_SEND_OPTION] || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
-            [removedAnchorsSinceLastFrame addObject: removedAnchorDictionary[WEB_AR_UUID_OPTION]];
-            objects[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;
-            arkitGeneratedAnchorIDUserAnchorIDMap[removedAnchorDictionary[WEB_AR_UUID_OPTION]] = nil;
-            if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
-                ARImageAnchor* imageAnchor = (ARImageAnchor*)removedAnchor;
-                ActivateDetectionImageCompletionBlock completion = self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name];
-                if (completion) {
-                    [self activateDetectionImage:imageAnchor.referenceImage.name completion:completion];
-                    self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name] = nil;
-                }
-            }
-        }
-    }
-
-    // Inform up in the calling hierarchy when we have plane anchors removed from the scene
-    if ([self didRemovePlaneAnchors]) {
-        if ([self anyPlaneAnchor:anchors]) {
-            [self didRemovePlaneAnchors]();
-        }
-    }
-}
- */
 
 - (BOOL)anyPlaneAnchor:(NSArray<ARAnchor *> *)anchorArray {
     BOOL anyPlaneAnchor = NO;
