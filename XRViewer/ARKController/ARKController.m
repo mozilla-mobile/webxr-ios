@@ -1095,6 +1095,11 @@
 {
     DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* addedAnchor in anchors) {
+        if ([addedAnchor isKindOfClass:[ARFaceAnchor class]] && ![self.configuration isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+            NSLog(@"Trying to add a face anchor to a session configuration that's not ARFaceTrackingConfiguration");
+            continue;
+        }
+        
         NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
         if ([self shouldSendAnchor:addedAnchor] || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
             [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
@@ -1351,6 +1356,11 @@
 {
     DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* updatedAnchor in anchors) {
+        if ([updatedAnchor isKindOfClass:[ARFaceAnchor class]] && ![self.configuration isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+            NSLog(@"Trying to update a face anchor in a session configuration that's not ARFaceTrackingConfiguration");
+            continue;
+        }
+        
         [self updateDictionaryForAnchor:updatedAnchor];
     }
 }
