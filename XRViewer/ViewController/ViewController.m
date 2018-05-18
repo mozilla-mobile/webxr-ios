@@ -649,7 +649,13 @@ typedef void (^UICompletion)(void);
     [[self webController] setOnStartLoad:^
      {
          if ([blockSelf arkController]) {
-             [[blockSelf arkController] removeDetectionImages];
+             NSString *lastURL = [[blockSelf webController] lastURL];
+             NSString *currentURL = [[[[blockSelf webController] webView] URL] absoluteString];
+
+             if ([lastURL isEqualToString:currentURL]) {
+                 // Page reload
+                 [[blockSelf arkController] removeAllAnchorsExceptPlanes];
+             } 
          }
          [[blockSelf stateController] setWebXR:NO];
      }];
