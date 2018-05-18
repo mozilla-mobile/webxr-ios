@@ -13,7 +13,7 @@
 
 @interface ARKController () <ARSessionDelegate>
 {
-    NSDictionary *arkData;
+    //NSDictionary *arkData;
     os_unfair_lock lock;
     NSMutableDictionary *objects; // key - JS anchor name : value - ARAnchor NSUUID string
     NSDictionary* computerVisionData;
@@ -78,6 +78,10 @@
  current number of frames without sending the face geometry
  */
 @property int numberOfFramesWithoutSendingFaceGeometry;
+
+@property(nonatomic, strong) NSMutableDictionary *frameData;
+@property(nonatomic, strong) NSMutableArray *frameObjectsArray;
+
 @end
 
 @implementation ARKController {
@@ -105,6 +109,8 @@
     
     if (self)
     {
+        self.frameData = [NSMutableDictionary new];
+        self.frameObjectsArray = [NSMutableArray new];
         lock = OS_UNFAIR_LOCK_INIT;
         objects = [NSMutableDictionary new];
         addedAnchorsSinceLastFrame = [NSMutableArray new];
@@ -222,7 +228,7 @@
     NSDictionary *data;
     
     os_unfair_lock_lock(&(lock));
-    data = arkData;
+    data = self.frameData;
     os_unfair_lock_unlock(&(lock));
     
     return [data copy];
@@ -677,13 +683,14 @@
         
         if (frame)
         {
-            NSMutableDictionary *newData = [NSMutableDictionary dictionaryWithCapacity:3]; // max request object
+            //NSMutableDictionary *newData = [NSMutableDictionary new]; // max request object
+            [self.frameData removeAllObjects];
             NSInteger ts = (NSInteger) ([frame timestamp] * 1000.0);
-            newData[@"timestamp"] = @(ts);
+            self.frameData[@"timestamp"] = @(ts);
 
             if ([[self request][WEB_AR_LIGHT_INTENSITY_OPTION] boolValue])
             {
-                newData[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
+                self.frameData[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
                 
                 NSMutableDictionary* lightDictionary = [NSMutableDictionary new];
                 lightDictionary[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
@@ -699,7 +706,7 @@
                     lightDictionary[WEB_AR_PRIMARY_LIGHT_INTENSITY_OPTION] = @(directionalLightEstimate.primaryLightIntensity);
                     
                 }
-                newData[WEB_AR_LIGHT_OBJECT_OPTION] = lightDictionary;
+                self.frameData[WEB_AR_LIGHT_OBJECT_OPTION] = lightDictionary;
             }
             if ([[self request][WEB_AR_CAMERA_OPTION] boolValue])
             {
@@ -708,28 +715,28 @@
                                                                                viewportSize:size
                                                                                       zNear:AR_CAMERA_PROJECTION_MATRIX_Z_NEAR
                                                                                        zFar:AR_CAMERA_PROJECTION_MATRIX_Z_FAR];
-                newData[WEB_AR_PROJ_CAMERA_OPTION] = arrayFromMatrix4x4(projectionMatrix);
+                self.frameData[WEB_AR_PROJ_CAMERA_OPTION] = arrayFromMatrix4x4(projectionMatrix);
              
                 matrix_float4x4 viewMatrix = [frame.camera viewMatrixForOrientation:self.interfaceOrientation];
                 matrix_float4x4 modelMatrix = matrix_invert(viewMatrix);
                 
-                newData[WEB_AR_CAMERA_TRANSFORM_OPTION] = arrayFromMatrix4x4(modelMatrix);
-                newData[WEB_AR_CAMERA_VIEW_OPTION] = arrayFromMatrix4x4(viewMatrix);
+                self.frameData[WEB_AR_CAMERA_TRANSFORM_OPTION] = arrayFromMatrix4x4(modelMatrix);
+                self.frameData[WEB_AR_CAMERA_VIEW_OPTION] = arrayFromMatrix4x4(viewMatrix);
             }
             if ([[self request][WEB_AR_3D_OBJECTS_OPTION] boolValue])
             {
-                NSArray* anchorsArray = [self currentAnchorsArray];
-                newData[WEB_AR_3D_OBJECTS_OPTION] = anchorsArray;
+                [self updateCurrentAnchorsArray];
+                self.frameData[WEB_AR_3D_OBJECTS_OPTION] = self.frameObjectsArray;
 
                 // Prepare the objectsRemoved array
                 NSArray *removedObjects = [removedAnchorsSinceLastFrame copy];
                 [removedAnchorsSinceLastFrame removeAllObjects];
-                newData[WEB_AR_3D_REMOVED_OBJECTS_OPTION] = removedObjects;
+                self.frameData[WEB_AR_3D_REMOVED_OBJECTS_OPTION] = removedObjects;
                 
                 // Prepare the newObjects array
                 NSArray *newObjects = [addedAnchorsSinceLastFrame copy];
                 [addedAnchorsSinceLastFrame removeAllObjects];
-                newData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
+                self.frameData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
             }
             if ([self computerVisionDataEnabled]) {
                 NSMutableDictionary *cameraInformation = [NSMutableDictionary new];
@@ -811,12 +818,12 @@
                 os_unfair_lock_unlock(&(lock));
             }
 
-            newData[WEB_AR_3D_GEOALIGNED_OPTION] = @([[self configuration] worldAlignment] == ARWorldAlignmentGravityAndHeading ? YES : NO);
-            newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = @([self computerVisionDataEnabled] ? YES : NO);
+            self.frameData[WEB_AR_3D_GEOALIGNED_OPTION] = @([[self configuration] worldAlignment] == ARWorldAlignmentGravityAndHeading ? YES : NO);
+            self.frameData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = @([self computerVisionDataEnabled] ? YES : NO);
             
-            os_unfair_lock_lock(&(lock));
-            arkData = [newData copy];
-            os_unfair_lock_unlock(&(lock));
+//            os_unfair_lock_lock(&(lock));
+//            arkData = [self.newData copy];
+//            os_unfair_lock_unlock(&(lock));
         }
     }
 }
@@ -1017,9 +1024,9 @@
     }
 }
 
-- (NSArray *)currentAnchorsArray
+- (void) updateCurrentAnchorsArray
 {
-    NSMutableArray *array = [NSMutableArray array];
+    [self.frameObjectsArray removeAllObjects];
     [objects enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
      {
          if ([self sendingWorldSensingDataAuthorizationStatus] == SendWorldSensingDataAuthorizationStateAuthorized || [objects[key][WEB_AR_MUST_SEND_OPTION] boolValue]) {
@@ -1035,11 +1042,9 @@
                  }
              }
              
-             [array addObject:objects[key]];
+             [self.frameObjectsArray addObject:objects[key]];
          }
      }];
-    
-    return [array copy];
 }
 
 - (NSArray *)currentPlanesArray
