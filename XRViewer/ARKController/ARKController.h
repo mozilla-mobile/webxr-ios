@@ -185,6 +185,8 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
 
 - (void)removeAllAnchors;
 
+- (void)removeAllAnchorsExceptPlanes;
+
 /**
  Updates the internal AR request dictionary.
  Creates a AR configuration object based on the request.
@@ -259,9 +261,6 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
 - (void)destroyDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
 
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
-
-- (void)removeDetectionImages;
-
 
 /**
  Removes all the anchors in the curren session.

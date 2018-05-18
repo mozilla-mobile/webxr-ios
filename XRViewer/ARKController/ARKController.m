@@ -432,10 +432,32 @@
 }
 
 - (void)removeAllAnchors {
+    [self clearImageDetectionDictionaries];
+
     ARFrame *currentFrame = [[self session] currentFrame];
 
     for (ARAnchor *anchor in [currentFrame anchors]) {
         [[self session] removeAnchor:anchor];
+    }
+}
+
+- (void)clearImageDetectionDictionaries {
+    [self.detectionImageActivationPromises removeAllObjects];
+    [self.referenceImageMap removeAllObjects];
+    [self.detectionImageCreationRequests removeAllObjects];
+    [self.detectionImageCreationPromises removeAllObjects];
+    [self.detectionImageActivationAfterRemovalPromises removeAllObjects];
+}
+
+- (void)removeAllAnchorsExceptPlanes {
+    [self clearImageDetectionDictionaries];
+
+    ARFrame *currentFrame = [[self session] currentFrame];
+
+    for (ARAnchor *anchor in [currentFrame anchors]) {
+        if (![anchor isKindOfClass:[ARPlaneAnchor class]]) {
+            [[self session] removeAnchor:anchor];
+        }
     }
 }
 
