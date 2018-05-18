@@ -386,14 +386,6 @@
     return anchor;
 }
 
-- (void)removeDetectionImages {
-    self.detectionImageActivationPromises = [NSMutableDictionary new];
-    self.referenceImageMap = [NSMutableDictionary new];
-    self.detectionImageCreationRequests = [NSMutableArray new];
-    self.detectionImageCreationPromises = [NSMutableDictionary new];
-    self.detectionImageActivationAfterRemovalPromises = [NSMutableDictionary new];
-}
-
 - (void)removeDistantAnchors {
     matrix_float4x4 cameraTransform = [[[self.session currentFrame] camera] transform];
     float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:distantAnchorsDistanceKey];
@@ -705,7 +697,6 @@
         
         if (frame)
         {
-            //NSMutableDictionary *newData = [NSMutableDictionary new]; // max request object
             [self.frameData removeAllObjects];
             NSInteger ts = (NSInteger) ([frame timestamp] * 1000.0);
             self.frameData[@"timestamp"] = @(ts);
@@ -713,7 +704,8 @@
             if ([[self request][WEB_AR_LIGHT_INTENSITY_OPTION] boolValue])
             {
                 self.frameData[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
-                
+
+                // TODO: Reuse a lightDictionary instead of creating a new one on every frame
                 NSMutableDictionary* lightDictionary = [NSMutableDictionary new];
                 lightDictionary[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
                 lightDictionary[WEB_AR_LIGHT_AMBIENT_COLOR_TEMPERATURE_OPTION] = @([[frame lightEstimate] ambientColorTemperature]);
@@ -751,16 +743,19 @@
                 self.frameData[WEB_AR_3D_OBJECTS_OPTION] = self.frameObjectsArray;
 
                 // Prepare the objectsRemoved array
+                // TODO: Reuse the same array on every frame instead of creating a new one
                 NSArray *removedObjects = [removedAnchorsSinceLastFrame copy];
                 [removedAnchorsSinceLastFrame removeAllObjects];
                 self.frameData[WEB_AR_3D_REMOVED_OBJECTS_OPTION] = removedObjects;
                 
                 // Prepare the newObjects array
+                // TODO: Reuse the same array on every frame instead of creating a new one
                 NSArray *newObjects = [addedAnchorsSinceLastFrame copy];
                 [addedAnchorsSinceLastFrame removeAllObjects];
                 self.frameData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
             }
             if ([self computerVisionDataEnabled]) {
+                // TODO: Reuse the same camera dictionary on every frame instead of creating a new one
                 NSMutableDictionary *cameraInformation = [NSMutableDictionary new];
                 CGSize cameraImageResolution = [[frame camera] imageResolution];
                 cameraInformation[@"cameraImageResolution"] = @{
@@ -798,7 +793,9 @@
                 // Send also the interface orientation
                 cameraInformation[@"interfaceOrientation"] = @(self.interfaceOrientation);
                 
+                // TODO: Reuse the same dictionary on every frame instead of creating a new one
                 NSMutableDictionary *cvInformation = [NSMutableDictionary new];
+                // TODO: Reuse the same dictionary on every frame instead of creating a new one
                 NSMutableDictionary *frameInformation = [NSMutableDictionary new];
                 NSInteger timestamp = (NSInteger) ([frame timestamp] * 1000.0);
                 frameInformation[@"timestamp"] = @(timestamp);
@@ -810,6 +807,7 @@
                 // Computer vision data
                 [self updateBase64BuffersFromPixelBuffer:frame.capturedImage];
                 
+                // TODO: Reuse the same dictionary on every frame instead of creating a new one
                 NSMutableDictionary *lumaBufferDictionary = [NSMutableDictionary new];
                 lumaBufferDictionary[@"size"] = @{
                                         @"width": @(self.lumaBufferSize.width),
@@ -819,7 +817,7 @@
                                         };
                 lumaBufferDictionary[@"buffer"] = self.lumaBase64StringBuffer;
                 
-                
+                // TODO: Reuse the same dictionary on every frame instead of creating a new one
                 NSMutableDictionary *chromaBufferDictionary = [NSMutableDictionary new];
                 chromaBufferDictionary[@"size"] = @{
                                         @"width": @(self.chromaBufferSize.width),
@@ -842,10 +840,6 @@
 
             self.frameData[WEB_AR_3D_GEOALIGNED_OPTION] = @([[self configuration] worldAlignment] == ARWorldAlignmentGravityAndHeading ? YES : NO);
             self.frameData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = @([self computerVisionDataEnabled] ? YES : NO);
-            
-//            os_unfair_lock_lock(&(lock));
-//            arkData = [self.newData copy];
-//            os_unfair_lock_unlock(&(lock));
         }
     }
 }
@@ -1329,12 +1323,14 @@
 -(void)updatePlaneGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)planeGeometryDictionary {
     planeGeometryDictionary[@"vertexCount"] = [NSNumber numberWithInteger:planeGeometry.vertexCount];
 
+    // TODO: Reuse the same array here instead of creating a new one (ask first if it exists, otherwise create)
     NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:planeGeometry.vertexCount];
     for (int i = 0; i < planeGeometry.vertexCount; i++) {
         [vertices addObject:dictFromVector3(planeGeometry.vertices[i])];
     }
     planeGeometryDictionary[@"vertices"] = vertices;
 
+    // TODO: Reuse the same array here instead of creating a new one (ask first if it exists, otherwise create)
     NSMutableArray* textureCoordinates = [NSMutableArray arrayWithCapacity:planeGeometry.textureCoordinateCount];
     planeGeometryDictionary[@"textureCoordinateCount"] = [NSNumber numberWithInteger:planeGeometry.textureCoordinateCount];
     for (int i = 0; i < planeGeometry.textureCoordinateCount; i++) {
@@ -1344,6 +1340,7 @@
 
     planeGeometryDictionary[@"triangleCount"] = [NSNumber numberWithInteger:planeGeometry.triangleCount];
 
+    // TODO: Reuse the same array here instead of creating a new one (ask first if it exists, otherwise create)
     NSMutableArray* triangleIndices = [NSMutableArray arrayWithCapacity:planeGeometry.triangleCount*3];
     for (int i = 0; i < planeGeometry.triangleCount*3; i++) {
         [triangleIndices addObject: [NSNumber numberWithInteger:planeGeometry.triangleIndices[i]]];
@@ -1352,6 +1349,7 @@
 
     planeGeometryDictionary[@"boundaryVertexCount"] = [NSNumber numberWithInteger:planeGeometry.boundaryVertexCount];
 
+    // TODO: Reuse the same array here instead of creating a new one (ask first if it exists, otherwise create)
     NSMutableArray* boundaryVertices = [NSMutableArray arrayWithCapacity:planeGeometry.boundaryVertexCount];
     for (int i = 0; i < planeGeometry.boundaryVertexCount; i ++) {
         [boundaryVertices addObject: dictFromVector3(planeGeometry.boundaryVertices[i])];
