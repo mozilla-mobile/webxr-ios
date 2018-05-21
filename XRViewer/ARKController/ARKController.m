@@ -477,6 +477,16 @@
         }
         case SendWorldSensingDataAuthorizationStateDenied: {
             NSLog(@"World sensing auth changed to denied");
+
+            // still need to send the "required" anchors
+            NSArray *anchors = [[[self session] currentFrame] anchors];
+            for (ARAnchor* addedAnchor in anchors) {
+                if ([self shouldSendAnchor: addedAnchor]) {
+                    NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
+                    [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+                }
+            }
+            
             break;
         }
     }
