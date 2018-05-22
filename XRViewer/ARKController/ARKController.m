@@ -1386,7 +1386,7 @@
 
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
 {
-    DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
+    //DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* updatedAnchor in anchors) {
         if ([updatedAnchor isKindOfClass:[ARFaceAnchor class]] && ![self.configuration isKindOfClass:[ARFaceTrackingConfiguration class]]) {
             NSLog(@"Trying to update a face anchor in a session configuration that's not ARFaceTrackingConfiguration");

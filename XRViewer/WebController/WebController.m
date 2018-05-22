@@ -338,7 +338,7 @@ inline static WebCompletion debugCompletion(NSString *name)
         
         [self onHitTest](type, x, y, ^(NSArray *results)
                          {
-                             DDLogDebug(@"Hit test - %@", [results debugDescription]);
+                             //DDLogDebug(@"Hit test - %@", [results debugDescription]);
                              [blockSelf callWebMethod:hitCallback paramJSON:results webCompletion:debugCompletion(@"onHitTest")];
                          });
     }
