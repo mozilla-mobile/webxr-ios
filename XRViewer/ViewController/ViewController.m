@@ -14,6 +14,8 @@
 #import "XRViewer-Swift.h"
 #import "Constants.h"
 
+#import "GCDWebServer.h"
+
 #define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
 #define WAITING_TIME_ON_MEMORY_WARNING .5f
@@ -22,7 +24,7 @@ typedef void (^UICompletion)(void);
 #define RUN_UI_COMPLETION_ASYNC_MAIN(c) if(c){ dispatch_async(dispatch_get_main_queue(), ^{ c();}); }
 
 
-@interface ViewController ()
+@interface ViewController ()  <GCDWebServerDelegate>
 
 @property (nonatomic, weak) IBOutlet LayerView *splashLayerView;
 @property (nonatomic, weak) IBOutlet LayerView *arkLayerView;
@@ -43,7 +45,12 @@ typedef void (^UICompletion)(void);
 @end
 
 
-@implementation ViewController
+@implementation ViewController {
+@private
+    //GCDWebUploader* _webServer;
+    GCDWebServer* _webServer;
+}
+
 
 #pragma mark UI
 
@@ -91,6 +98,37 @@ typedef void (^UICompletion)(void);
                 [[self messageController] showPermissionsPopup];
             });
     }
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    NSMutableDictionary* options = [NSMutableDictionary dictionary];
+    [options setObject:@8080 forKey:GCDWebServerOption_Port];
+    [options setObject:@NO forKey:GCDWebServerOption_AutomaticallySuspendInBackground];
+    
+    NSString *documentsPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Web"];
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:documentsPath]) {
+        _webServer = [[GCDWebServer alloc] init];
+        [_webServer addGETHandlerForBasePath:@"/" directoryPath:documentsPath indexFilename:nil cacheAge:0 allowRangeRequests:YES];
+        
+        _webServer.delegate = self;
+        if ([_webServer startWithOptions:options error:NULL]) {
+            NSLog(@"GCDWebServer running locally on port %i", (int)_webServer.port);
+        } else {
+            NSLog(@"GCDWebServer not running!");
+        }
+    } else {
+        NSLog(@"No Web directory, GCDWebServer not running!");
+    }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    [_webServer stop];
+    _webServer = nil;
 }
 
 - (void)swipeFromEdge: (UISwipeGestureRecognizer*)recognizer {
