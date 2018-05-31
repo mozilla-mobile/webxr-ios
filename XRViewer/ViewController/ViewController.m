@@ -111,7 +111,7 @@ typedef void (^UICompletion)(void);
 
     if ([[NSFileManager defaultManager] fileExistsAtPath:documentsPath]) {
         _webServer = [[GCDWebServer alloc] init];
-        [_webServer addGETHandlerForBasePath:@"/" directoryPath:documentsPath indexFilename:nil cacheAge:0 allowRangeRequests:YES];
+        [_webServer addGETHandlerForBasePath:@"/" directoryPath:documentsPath indexFilename:@"index.html" cacheAge:0 allowRangeRequests:YES];
         
         _webServer.delegate = self;
         if ([_webServer startWithOptions:options error:NULL]) {
