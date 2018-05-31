@@ -105,7 +105,7 @@ typedef void (^UICompletion)(void);
     
     NSMutableDictionary* options = [NSMutableDictionary dictionary];
     [options setObject:@8080 forKey:GCDWebServerOption_Port];
-    [options setObject:@NO forKey:GCDWebServerOption_AutomaticallySuspendInBackground];
+    //[options setObject:@NO forKey:GCDWebServerOption_AutomaticallySuspendInBackground];
     
     NSString *documentsPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Web"];
 
