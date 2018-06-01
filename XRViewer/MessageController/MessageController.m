@@ -337,7 +337,7 @@
 
 - (void)showMessageAboutAccessingWorldSensingData:(void (^)(BOOL))granted {
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Access to World Sensing"
-                                                    message:@"The web page would like to be able to ask iOS to look for things around you in the world, such faces and pictures. Allow?"
+                                                    message:@"This webpage wants to use your camera to look for faces and things in the real world. (For details, see our Privacy Notice in Settings.) Allow?"
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
