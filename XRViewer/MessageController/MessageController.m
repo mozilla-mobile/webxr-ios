@@ -335,6 +335,32 @@
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
 
+- (void)showMessageAboutAccessingWorldSensingData:(void (^)(BOOL))granted {
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Access to World Sensing"
+                                                    message:@"This webpage wants to use your camera to look for faces and things in the real world. (For details, see our Privacy Notice in Settings.) Allow?"
+                                                      image:nil
+                                            buttonAlignment:UILayoutConstraintAxisHorizontal
+                                            transitionStyle:PopupDialogTransitionStyleBounceUp
+                                             preferredWidth:340.0
+                                           gestureDismissal:NO
+                                              hideStatusBar:TRUE
+                                                 completion:^{}
+    ];
+
+    DestructiveButton *ok = [[DestructiveButton alloc] initWithTitle:@"YES" height:40 dismissOnTap:YES action:^{
+        granted(true);
+    }];
+    ok.titleColor = UIColor.blueColor;
+
+    DefaultButton *cancel = [[DefaultButton alloc] initWithTitle:@"NO" height:40 dismissOnTap:YES action:^{
+        granted(false);
+    }];
+
+    [popup addButtons: @[cancel, ok]];
+
+    [[self viewController] presentViewController:popup animated:YES completion:nil];
+}
+
 - (void)hideMessages {
     [[[self viewController] presentedViewController] dismissViewControllerAnimated:YES completion:nil];
 }

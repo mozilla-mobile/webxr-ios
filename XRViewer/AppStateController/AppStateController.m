@@ -8,7 +8,7 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
     ExclusiveStateMessage,
     ExclusiveStateMemory,
     ExclusiveStateBackground,
-    ExclusiveStateReachbility
+    ExclusiveStateReachability
 };
 
 
@@ -225,12 +225,12 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
 
 - (void)saveNotReachableOnURL:(NSString *)url
 {
-    [self saveOnType:ExclusiveStateReachbility url:url mode:0];
+    [self saveOnType:ExclusiveStateReachability url:url mode:0];
 }
 
 - (void)applyOnReachableAction
 {
-    [self applyOnType:ExclusiveStateReachbility];
+    [self applyOnType:ExclusiveStateReachability];
 }
 
 #pragma mark Private
@@ -277,7 +277,7 @@ typedef NS_ENUM(NSUInteger, ExclusiveStateType)
              }];
             break;
         }
-        case ExclusiveStateReachbility:
+        case ExclusiveStateReachability:
         {
             [state setAction:^
              {

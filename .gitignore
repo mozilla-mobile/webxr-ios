@@ -12,3 +12,4 @@ coverage*.xml
 *.gcno
 test-results
 Pods/
+Web/

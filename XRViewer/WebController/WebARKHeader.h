@@ -18,9 +18,15 @@
 #define WEB_AR_HIT_TEST_MESSAGE        @"hitTest"
 #define WEB_AR_ADD_ANCHOR_MESSAGE      @"addAnchor"
 #define WEB_AR_REMOVE_ANCHORS_MESSAGE   @"removeAnchors"
+#define WEB_AR_ADD_IMAGE_ANCHOR_MESSAGE   @"addImageAnchor"
+#define WEB_AR_CREATE_IMAGE_ANCHOR_MESSAGE   @"createImageAnchor"
+#define WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE   @"activateDetectionImage"
+#define WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE   @"deactivateDetectionImage"
+#define WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE   @"destroyDetectionImage"
 #define WEB_AR_REQUEST_CV_DATA_MESSAGE @"requestComputerVisionData"
 #define WEB_AR_START_SENDING_CV_DATA_MESSAGE    @"startSendingComputerVisionData"
 #define WEB_AR_STOP_SENDING_CV_DATA_MESSAGE     @"stopSendingComputerVisionData"
+#define WEB_AR_ADD_IMAGE_ANCHOR         @"addImageAnchor"
 
 #define WEB_AR_ON_JS_UPDATE_MESSAGE    @"onUpdate" // reques from JS
 
@@ -39,6 +45,7 @@
 
 #define WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE   @"ios_did_receive_memory_warning"
 #define WEB_AR_IOS_USER_GRANTED_CV_DATA         @"userGrantedComputerVisionData"
+#define WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA         @"userGrantedWorldSensingData"
 
 // This message is not being used by the polyfill
 // #define WEB_AR_IOS_VIEW_WILL_TRANSITION_TO_SIZE_MESSAGE   @"ios_view_will_transition_to_size"
@@ -68,6 +75,7 @@
 #define WEB_AR_UI_WARNINGS_OPTION     @"warnings"
 #define WEB_AR_UI_ANCHORS_OPTION       @"anchors"
 
+#define WEB_AR_ANCHOR_TYPE             @"type"
 #define WEB_AR_ANCHOR_TRANSFORM_OPTION @"anchor_transform"
 #define WEB_AR_ANCHOR_CENTER_OPTION    @"anchor_center"
 #define WEB_AR_ANCHOR_EXTENT_OPTION    @"anchor_extent"
@@ -94,8 +102,10 @@
 #define WEB_AR_PLANE_EXTENT_OPTION     @"plane_extent"
 #define WEB_AR_PLANE_ALIGNMENT_OPTION  @"plane_alignment"
 #define WEB_AR_PLANE_ID_OPTION         @"plane_id"
-#define WEB_AR_PLANE_GEOMETRY_OPTION   @"geometry"
+#define WEB_AR_GEOMETRY_OPTION         @"geometry"
+#define WEB_AR_BLEND_SHAPES_OPTION     @"blendShapes"
 #define WEB_AR_SHOW_PLANE_OPTION       @"show_plane"
+#define WEB_AR_IMAGE_NAME_OPTION       @"image_name"
 
 #define WEB_AR_HIT_TEST_RESULT_OPTION  @"hit_test_result"
 #define WEB_AR_HIT_TEST_PLANE_OPTION   @"hit_test_plane"
@@ -109,6 +119,7 @@
 #define WEB_AR_3D_GEOALIGNED_OPTION    @"geoaligned"
 #define WEB_AR_3D_VIDEO_ACCESS_OPTION  @"videoAccess"
 #define WEB_AR_CV_INFORMATION_OPTION   @"computer_vision_data"
+#define WEB_AR_WORLD_SENSING_DATA_OPTION @"worldSensing"
 
 #define WEB_AR_TYPE_OPTION             @"type"
 #define WEB_AR_POSITION_OPTION         @"position"
@@ -121,8 +132,14 @@
 #define WEB_AR_DISTANCE_OPTION         @"distance"
 #define WEB_AR_ELEMENTS_OPTION         @"elements"
 #define WEB_AR_UUID_OPTION             @"uuid"
+#define WEB_AR_MUST_SEND_OPTION        @"mustSend"
 
+#define WEB_AR_LIGHT_OBJECT_OPTION     @"light"
 #define WEB_AR_LIGHT_INTENSITY_OPTION  @"light_intensity"
+#define WEB_AR_LIGHT_AMBIENT_OPTION    @"light_ambient"
+#define WEB_AR_PRIMARY_LIGHT_DIRECTION_OPTION    @"primary_light_direction"
+#define WEB_AR_PRIMARY_LIGHT_INTENSITY_OPTION @"primary_light_intensity"
+#define WEB_AR_LIGHT_AMBIENT_COLOR_TEMPERATURE_OPTION @"ambient_color_temperature"
 #define WEB_AR_WORLD_ALIGNMENT         @"alignEUS"
 
 #define WEB_AR_CAMERA_OPTION           @"camera"
@@ -136,6 +153,8 @@
 #define WEB_AR_TRACKING_STATE_LIMITED_MOTION       @"ar_tracking_limited_excessive_motion"
 #define WEB_AR_TRACKING_STATE_LIMITED_FEATURES     @"ar_tracking_limited_insufficient_features"
 #define WEB_AR_TRACKING_STATE_NOT_AVAILABLE        @"ar_tracking_not_available"
+
+#define WEB_AR_DETECTION_IMAGE_NAME_OPTION  @"uid"
 
 #define AR_CAMERA_PROJECTION_MATRIX_Z_NEAR 0.001f
 #define AR_CAMERA_PROJECTION_MATRIX_Z_FAR 1000.0f

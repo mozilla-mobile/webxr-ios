@@ -1,8 +1,6 @@
 #import "Animator.h"
 #import <pop/POP.h>
 
-#define TRANSLATION_KOEF 2
-
 #define ANIMATION_PULSE_KEY @"pulse"
 #define ANIMATION_FRAME_KEY @"frame"
 #define ANIMATION_COLOR_KEY @"color"

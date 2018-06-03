@@ -12,6 +12,7 @@ import CoreLocation
 import AVFoundation
 import Photos
 
+/// A view controller that requests the requiered permissions to properly use the app
 class RequestPermissionsViewController: UIViewController {
 
     @IBOutlet weak var buttonGPS: UIButton!

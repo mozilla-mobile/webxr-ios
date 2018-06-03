@@ -24,7 +24,7 @@
 @property (nonatomic, copy) NSDictionary *request;
 @property (nonatomic, strong) ARSession *session;
 
-@property (nonatomic, strong) ARWorldTrackingConfiguration *configuration;
+@property (nonatomic, strong) ARConfiguration *configuration;
 
 @property (nonatomic, strong) AVCaptureDevice *device;
 
@@ -36,20 +36,48 @@
  We hold different data structures, like accelerate, NSData, and NSString buffers,
  to avoid allocating/deallocating a huge amount of memory on each frame
  */
+/// Luma buffer
 @property vImage_Buffer lumaBuffer;
+/// A temporary luma buffer used by the Accelerate framework in the buffer scale opration
 @property void* lumaScaleTemporaryBuffer;
+/// The luma buffer size that's being sent to JS
 @property CGSize lumaBufferSize;
+/// A data buffer holding the luma information. It's created only onced reused on every frame
+/// by means of the replaceBytesInRange method
 @property(nonatomic, strong) NSMutableData* lumaDataBuffer;
+/// The luma string buffer being sent to JS
 @property(nonatomic, strong) NSMutableString* lumaBase64StringBuffer;
-
+/*
+ The same properties for luma are used for chroma
+ */
 @property vImage_Buffer chromaBuffer;
 @property void* chromaScaleTemporaryBuffer;
 @property CGSize chromaBufferSize;
 @property(nonatomic, strong) NSMutableData* chromaDataBuffer;
 @property(nonatomic, strong) NSMutableString* chromaBase64StringBuffer;
 
+/// The CV image being sent to JS is downscaled using the metho
+/// downscaleByFactorOf2UntilLargestSideIsLessThan512AvoidingFractionalSides
+/// This call has a side effect on computerVisionImageScaleFactor, that's later used
+/// in order to scale the intrinsics of the camera
 @property (nonatomic) float computerVisionImageScaleFactor;
 
+/// Dictionary holding ARReferenceImages by name
+@property(nonatomic, strong) NSMutableDictionary* referenceImageMap;
+/// Dictionary holding completion blocks by image name
+@property(nonatomic, strong) NSMutableDictionary* detectionImageActivationPromises;
+/// Dictionary holding completion blocks by image name
+@property(nonatomic, strong) NSMutableDictionary* detectionImageCreationPromises;
+/// Array holding dictionaries representing detection image data
+@property(nonatomic, strong) NSMutableArray *detectionImageCreationRequests;
+/// Dictionary holding completion blocks by image name: when an image anchor is removed,
+/// if the name exsist in this dictionary, call activate again using the callback stored here.
+@property(nonatomic, strong) NSMutableDictionary* detectionImageActivationAfterRemovalPromises;
+/**
+ We don't send the face geometry on every frame, for performance reasons. This number indicates the
+ current number of frames without sending the face geometry
+ */
+@property int numberOfFramesWithoutSendingFaceGeometry;
 @end
 
 @implementation ARKController {
@@ -95,9 +123,12 @@
          By finding feature points in the scene, world tracking enables performing hit-tests against the frame.
          Tracking can no longer be resumed once the session is paused.
          */
-        [self setConfiguration:[ARWorldTrackingConfiguration new]];
-        [[self configuration] setPlaneDetection:ARPlaneDetectionHorizontal | ARPlaneDetectionVertical];
-        [[self configuration] setWorldAlignment:ARWorldAlignmentGravityAndHeading];
+        
+        ARWorldTrackingConfiguration* worldTrackingConfiguration = [ARWorldTrackingConfiguration new];
+        
+        [worldTrackingConfiguration setPlaneDetection:ARPlaneDetectionHorizontal | ARPlaneDetectionVertical];
+        [worldTrackingConfiguration setWorldAlignment:ARWorldAlignmentGravityAndHeading];
+        [self setConfiguration: worldTrackingConfiguration];
         
         Class cls = (type == ARKMetal) ? [ARKMetalController class] : [ARKSceneKitController class];
         id<ARKControllerProtocol> controller = [[cls alloc] initWithSesion:[self session] size:[rootView bounds].size];
@@ -119,6 +150,15 @@
         self.chromaBase64StringBuffer = nil;
         self.computerVisionImageScaleFactor = 4.0;
         self.lumaBufferSize = CGSizeMake(0.0f, 0.0f);
+
+        self.sendingWorldSensingDataAuthorizationStatus = SendWorldSensingDataAuthorizationStateNotDetermined;
+        self.detectionImageActivationPromises = [NSMutableDictionary new];
+        self.referenceImageMap = [NSMutableDictionary new];
+        self.detectionImageCreationRequests = [NSMutableArray new];
+        self.detectionImageCreationPromises = [NSMutableDictionary new];
+        self.detectionImageActivationAfterRemovalPromises = [NSMutableDictionary new];
+        
+        self.numberOfFramesWithoutSendingFaceGeometry = 0;
     }
     
     return self;
@@ -169,11 +209,6 @@
 {
     [[self controller] setHitTestFocusPoint:CGPointMake(size.width / 2, size.height / 2)];
     self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
-}
-
-- (UIView *)arkView
-{
-    return [[self controller] renderView];
 }
 
 - (void)pauseSession
@@ -345,12 +380,20 @@
     return anchor;
 }
 
+- (void)removeDetectionImages {
+    self.detectionImageActivationPromises = [NSMutableDictionary new];
+    self.referenceImageMap = [NSMutableDictionary new];
+    self.detectionImageCreationRequests = [NSMutableArray new];
+    self.detectionImageCreationPromises = [NSMutableDictionary new];
+    self.detectionImageActivationAfterRemovalPromises = [NSMutableDictionary new];
+}
+
 - (void)removeDistantAnchors {
     matrix_float4x4 cameraTransform = [[[self.session currentFrame] camera] transform];
     float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:distantAnchorsDistanceKey];
     
     for (ARAnchor *anchor in [[self.session currentFrame] anchors]) {
-        if ([anchor isKindOfClass:[ARPlaneAnchor self]]) {
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
             ARPlaneAnchor* planeAnchor = (ARPlaneAnchor*)anchor;
             matrix_float4x4 cameraMatrixInAnchorCoordinates = matrix_multiply(matrix_invert(anchor.transform), cameraTransform);
             simd_float4 cameraPositionInAnchorCoordinates = cameraMatrixInAnchorCoordinates.columns[3];
@@ -383,11 +426,274 @@
 }
 
 - (void)removeAllAnchors {
+    [self clearImageDetectionDictionaries];
+
     ARFrame *currentFrame = [[self session] currentFrame];
 
     for (ARAnchor *anchor in [currentFrame anchors]) {
         [[self session] removeAnchor:anchor];
     }
+}
+
+- (void)clearImageDetectionDictionaries {
+    [self.detectionImageActivationPromises removeAllObjects];
+    [self.referenceImageMap removeAllObjects];
+    [self.detectionImageCreationRequests removeAllObjects];
+    [self.detectionImageCreationPromises removeAllObjects];
+    [self.detectionImageActivationAfterRemovalPromises removeAllObjects];
+}
+
+- (void)removeAllAnchorsExceptPlanes {
+    [self clearImageDetectionDictionaries];
+
+    ARFrame *currentFrame = [[self session] currentFrame];
+
+    for (ARAnchor *anchor in [currentFrame anchors]) {
+        if (![anchor isKindOfClass:[ARPlaneAnchor class]]) {
+            [[self session] removeAnchor:anchor];
+        }
+    }
+}
+
+- (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)authorizationStatus {
+    _sendingWorldSensingDataAuthorizationStatus = authorizationStatus;
+    
+    switch (self.sendingWorldSensingDataAuthorizationStatus) {
+        case SendWorldSensingDataAuthorizationStateNotDetermined: {
+            NSLog(@"World sensing auth changed to not determined");
+            break;
+        }
+        case SendWorldSensingDataAuthorizationStateAuthorized: {
+            NSLog(@"World sensing auth changed to authorized");
+            
+            NSArray *anchors = [[[self session] currentFrame] anchors];
+            for (ARAnchor* addedAnchor in anchors) {
+                NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
+                [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+            }
+            
+            [self createRequestedDetectionImages];
+            break;
+        }
+        case SendWorldSensingDataAuthorizationStateDenied: {
+            NSLog(@"World sensing auth changed to denied");
+
+            // still need to send the "required" anchors
+            NSArray *anchors = [[[self session] currentFrame] anchors];
+            for (ARAnchor* addedAnchor in anchors) {
+                if ([self shouldSendAnchor: addedAnchor]) {
+                    NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
+                    [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+                }
+            }
+            
+            break;
+        }
+    }
+}
+
+- (void)createRequestedDetectionImages {
+    for (NSDictionary* referenceImageDictionary in self.detectionImageCreationRequests) {
+        [self _createDetectionImage:referenceImageDictionary];
+    }
+}
+
+- (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion {
+    switch (self.sendingWorldSensingDataAuthorizationStatus) {
+        case SendWorldSensingDataAuthorizationStateAuthorized: {
+            self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = completion;
+            [self _createDetectionImage:referenceImageDictionary];
+            break;
+        }
+        case SendWorldSensingDataAuthorizationStateDenied: {
+            completion(NO, @"The user denied access to world sensing data");
+            break;
+        }
+
+        case SendWorldSensingDataAuthorizationStateNotDetermined: {
+            NSLog(@"Attempt to create a detection image but world sensing data authorization is not determined, enqueue the request");
+            self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = completion;
+            [self.detectionImageCreationRequests addObject: referenceImageDictionary];
+            break;
+        }
+    }
+}
+
+
+- (void)_createDetectionImage:(NSDictionary *)referenceImageDictionary {
+    ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
+    DetectionImageCreatedCompletionType block = self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]];
+    if (referenceImage) {
+        self.referenceImageMap[referenceImage.name] = referenceImage;
+        NSLog(@"Detection image created: %@", referenceImage.name);
+        
+        if (block) {
+            block(YES, nil);
+        }
+    } else {
+        NSLog(@"Cannot create detection image from dictionary: %@", referenceImageDictionary[@"uid"]);
+        if (block) {
+            block(NO, @"Error creating the ARReferenceImage");
+        }
+    }
+    
+    self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = nil;
+}
+
+- (void)activateDetectionImage:(NSString *)imageName completion:(ActivateDetectionImageCompletionBlock)completion {
+    if ([[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+        completion(NO, @"Cannot activate a detection image when using the front facing camera", nil);
+        return;
+    }
+    
+    ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
+    ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
+    if (referenceImage) {
+        NSMutableSet* currentDetectionImages = [worldTrackingConfiguration detectionImages] != nil ? [[worldTrackingConfiguration detectionImages] mutableCopy] : [NSMutableSet new];
+        if (![currentDetectionImages containsObject:referenceImage]) {
+            [currentDetectionImages addObject: referenceImage];
+            [worldTrackingConfiguration setDetectionImages: currentDetectionImages];
+            
+            self.detectionImageActivationPromises[referenceImage.name] = completion;
+            [[self session] runWithConfiguration:[self configuration]];
+        } else {
+            if (self.detectionImageActivationPromises[referenceImage.name]) {
+                // Trying to activate an image that hasn't been activated yet, return an error on the second promise, but keep the first
+                completion(NO, @"Trying to activate an image that's already activated but not found yet", nil);
+                return;
+            } else {
+                // Activating an already activated and found image, remove the anchor from the scene
+                // so it can be detected again
+                for(ARAnchor* anchor in self.session.currentFrame.anchors) {
+                    if ([anchor isKindOfClass:[ARImageAnchor class]]) {
+                        ARImageAnchor* imageAnchor = (ARImageAnchor*)anchor;
+                        if ([imageAnchor.referenceImage.name isEqualToString:imageName]) {
+                            // Remove the reference image fromt he session configuration and run again
+                            [currentDetectionImages removeObject:referenceImage];
+                            [worldTrackingConfiguration setDetectionImages: currentDetectionImages];
+                            [[self session] runWithConfiguration:[self configuration]];
+                            
+                            // When the anchor is removed and didRemoveAnchor callback gets called, look in this map
+                            // and see if there is a promise for the recently removed image anchor. If so, call
+                            // activateDetectionImage again with the image name of the removed anchor, and the completion set here
+                            self.detectionImageActivationAfterRemovalPromises[referenceImage.name] = completion;
+                            [self.session removeAnchor: anchor];
+                            return;
+                        }
+                    }
+                    
+                }
+            }
+        }
+    } else {
+        completion(NO, [NSString stringWithFormat:@"The image %@ doesn't exist", imageName], nil);
+    }
+}
+
+- (void)deactivateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion {
+    if ([[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+        completion(NO, @"Cannot deactivate a detection image when using the front facing camera");
+        return;
+    }
+    
+    ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
+    ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
+
+    NSMutableSet* currentDetectionImages = [worldTrackingConfiguration detectionImages] != nil ? [[worldTrackingConfiguration detectionImages] mutableCopy] : [NSMutableSet new];
+    if ([currentDetectionImages containsObject:referenceImage]) {
+        if (self.detectionImageActivationPromises[referenceImage.name]) {
+            NSLog(@"The image trying to deactivate is activated and hasn't been found yet, return error");
+            // The image trying to deactivate hasn't been found yet, return an error on the activation block and remove it
+            ActivateDetectionImageCompletionBlock activationBlock = self.detectionImageActivationPromises[referenceImage.name];
+            activationBlock(NO, @"The image has been deactivated", nil);
+            self.detectionImageActivationPromises[referenceImage.name] = nil;
+            return;
+        }
+        
+        [currentDetectionImages removeObject: referenceImage];
+        [worldTrackingConfiguration setDetectionImages: currentDetectionImages];
+
+        self.detectionImageActivationPromises[referenceImage.name] = nil;
+        [[self session] runWithConfiguration:[self configuration]];
+        completion(YES, nil);
+    } else {
+        completion(NO, @"The image trying to deactivate doesn't exist");
+    }
+}
+
+- (void)destroyDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion {
+    ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
+    if (referenceImage) {
+        self.referenceImageMap[imageName] = nil;
+        self.detectionImageActivationPromises[imageName] = nil;
+
+        completion(YES, nil);
+    } else {
+        completion(NO, @"The image doesn't exist");
+    }
+}
+
+- (ARReferenceImage*)createReferenceImageFromDictionary:(NSDictionary*)referenceImageDictionary {
+    CGFloat physicalWidth = [referenceImageDictionary[@"physicalWidth"] doubleValue];
+    NSString* b64String = referenceImageDictionary[@"buffer"];
+    size_t width = (size_t) [referenceImageDictionary[@"imageWidth"] intValue];
+    size_t height = (size_t) [referenceImageDictionary[@"imageHeight"] intValue];
+    size_t bitsPerComponent = 8;
+    size_t bitsPerPixel = 32;
+    size_t bytesPerRow = width * 4;
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    CGBitmapInfo bitmapInfo = (CGBitmapInfo) 0;
+    NSData *data = [[NSData alloc] initWithBase64EncodedString:b64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    CFDataRef bridgedData  = (__bridge CFDataRef)data;
+    CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(bridgedData);
+    
+    BOOL shouldInterpolate = YES;
+    
+    
+    CGImageRef cgImage = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow,
+                                       colorSpace, bitmapInfo,
+                                       dataProvider, NULL, shouldInterpolate,
+                                       kCGRenderingIntentDefault);
+    ARReferenceImage* result = [[ARReferenceImage alloc] initWithCGImage:cgImage orientation:kCGImagePropertyOrientationUp physicalWidth:physicalWidth];
+    result.name = referenceImageDictionary[@"uid"];
+    
+    CGDataProviderRelease(dataProvider);
+    CGColorSpaceRelease(colorSpace);
+    return result;
+}
+
+- (void)switchCameraButtonTapped {
+    for (ARAnchor* anchor in self.session.currentFrame.anchors) {
+        [self.session removeAnchor: anchor];
+    }
+    
+    if (![[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+        ARFaceTrackingConfiguration* faceTrackingConfiguration = [ARFaceTrackingConfiguration new];
+        self.configuration = faceTrackingConfiguration;
+        [self.session runWithConfiguration: self.configuration];
+    } else {
+        ARWorldTrackingConfiguration* worldTrackingConfiguration = [ARWorldTrackingConfiguration new];
+        [worldTrackingConfiguration setPlaneDetection:ARPlaneDetectionHorizontal | ARPlaneDetectionVertical];
+        [worldTrackingConfiguration setWorldAlignment:ARWorldAlignmentGravityAndHeading];
+
+        // Configure all the active images that weren't detected in the previous back camera session
+        NSArray *notDetectedImageNames = [self.detectionImageActivationPromises allKeys];
+        NSMutableSet* newDetectionImages = [NSMutableSet new];
+        for (NSString* imageName in notDetectedImageNames) {
+            ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
+            if (referenceImage) {
+                [newDetectionImages addObject:referenceImage];
+            }
+        }
+        worldTrackingConfiguration.detectionImages = [newDetectionImages copy];
+
+        self.configuration = worldTrackingConfiguration;
+        [self.session runWithConfiguration: self.configuration];
+    }
+}
+
++ (BOOL)supportsARFaceTrackingConfiguration {
+    return [ARFaceTrackingConfiguration isSupported];
 }
 
 #pragma mark Private
@@ -404,12 +710,28 @@
         if (frame)
         {
             NSMutableDictionary *newData = [NSMutableDictionary dictionaryWithCapacity:3]; // max request object
-            NSInteger ts = [frame timestamp] * 1000.0;
+            NSInteger ts = (NSInteger) ([frame timestamp] * 1000.0);
             newData[@"timestamp"] = @(ts);
 
             if ([[self request][WEB_AR_LIGHT_INTENSITY_OPTION] boolValue])
             {
                 newData[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
+                
+                NSMutableDictionary* lightDictionary = [NSMutableDictionary new];
+                lightDictionary[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
+                lightDictionary[WEB_AR_LIGHT_AMBIENT_COLOR_TEMPERATURE_OPTION] = @([[frame lightEstimate] ambientColorTemperature]);
+                
+                if ([[frame lightEstimate] isKindOfClass:[ARDirectionalLightEstimate class]]) {
+                    ARDirectionalLightEstimate* directionalLightEstimate = (ARDirectionalLightEstimate*)[frame lightEstimate];
+                    lightDictionary[WEB_AR_PRIMARY_LIGHT_DIRECTION_OPTION] = @{
+                                                                               @"x": @(directionalLightEstimate.primaryLightDirection[0]),
+                                                                               @"y": @(directionalLightEstimate.primaryLightDirection[1]),
+                                                                               @"z": @(directionalLightEstimate.primaryLightDirection[2])
+                                                                               };
+                    lightDictionary[WEB_AR_PRIMARY_LIGHT_INTENSITY_OPTION] = @(directionalLightEstimate.primaryLightIntensity);
+                    
+                }
+                newData[WEB_AR_LIGHT_OBJECT_OPTION] = lightDictionary;
             }
             if ([[self request][WEB_AR_CAMERA_OPTION] boolValue])
             {
@@ -428,8 +750,9 @@
             }
             if ([[self request][WEB_AR_3D_OBJECTS_OPTION] boolValue])
             {
-                newData[WEB_AR_3D_OBJECTS_OPTION] = [self currentAnchorsArray];
-                
+                NSArray* anchorsArray = [self currentAnchorsArray];
+                newData[WEB_AR_3D_OBJECTS_OPTION] = anchorsArray;
+
                 // Prepare the objectsRemoved array
                 NSArray *removedObjects = [removedAnchorsSinceLastFrame copy];
                 [removedAnchorsSinceLastFrame removeAllObjects];
@@ -480,7 +803,7 @@
                 
                 NSMutableDictionary *cvInformation = [NSMutableDictionary new];
                 NSMutableDictionary *frameInformation = [NSMutableDictionary new];
-                NSInteger timestamp = [frame timestamp] * 1000.0;
+                NSInteger timestamp = (NSInteger) ([frame timestamp] * 1000.0);
                 frameInformation[@"timestamp"] = @(timestamp);
                 
                 // TODO: prepare depth data
@@ -519,17 +842,9 @@
                 computerVisionData = [cvInformation copy];
                 os_unfair_lock_unlock(&(lock));
             }
-            
-            if ([[self configuration] worldAlignment] == ARWorldAlignmentGravityAndHeading) {
-                newData[WEB_AR_3D_GEOALIGNED_OPTION] = [NSNumber numberWithBool:YES];
-            } else {
-                newData[WEB_AR_3D_GEOALIGNED_OPTION] = [NSNumber numberWithBool:NO];
-            }
-            if ([self computerVisionDataEnabled]) {
-                newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = [NSNumber numberWithBool:YES];
-            } else {
-                newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = [NSNumber numberWithBool:NO];
-            }
+
+            newData[WEB_AR_3D_GEOALIGNED_OPTION] = @([[self configuration] worldAlignment] == ARWorldAlignmentGravityAndHeading ? YES : NO);
+            newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = @([self computerVisionDataEnabled] ? YES : NO);
             
             os_unfair_lock_lock(&(lock));
             arkData = [newData copy];
@@ -739,25 +1054,24 @@
     NSMutableArray *array = [NSMutableArray array];
     [objects enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
      {
-         [array addObject:objects[key]];
+         if ([self sendingWorldSensingDataAuthorizationStatus] == SendWorldSensingDataAuthorizationStateAuthorized || [objects[key][WEB_AR_MUST_SEND_OPTION] boolValue]) {
+             
+             if ([objects[key][WEB_AR_ANCHOR_TYPE] isEqualToString:@"face"]) {
+                 if (self.numberOfFramesWithoutSendingFaceGeometry < 1) {
+                     self.numberOfFramesWithoutSendingFaceGeometry++;
+                     NSMutableDictionary* mutableDict = [objects[key] mutableCopy];
+                     [mutableDict removeObjectForKey:WEB_AR_GEOMETRY_OPTION];
+                     objects[key] = mutableDict;
+                 } else {
+                     self.numberOfFramesWithoutSendingFaceGeometry = 0;
+                 }
+             }
+             
+             [array addObject:objects[key]];
+         }
      }];
     
     return [array copy];
-}
-
-- (NSDictionary *)anchorDictFromAnchor:(ARAnchor *)anchor withName:(NSString *)name
-{
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
-    
-    dict[WEB_AR_UUID_OPTION] = name;
-    dict[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([anchor transform]);
-
-    if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
-        ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)anchor;
-        [self addPlaneAnchorData:planeAnchor toDictionary:dict];
-    }
-    
-    return [dict copy];
 }
 
 - (NSArray *)currentPlanesArray
@@ -813,9 +1127,26 @@
 {
     DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* addedAnchor in anchors) {
-        NSDictionary *addedAnchorDictionary = [self getDictionaryForAnchor:addedAnchor];
-        [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
-        objects[addedAnchorDictionary[WEB_AR_UUID_OPTION]] = addedAnchorDictionary;
+        if ([addedAnchor isKindOfClass:[ARFaceAnchor class]] && ![self.configuration isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+            NSLog(@"Trying to add a face anchor to a session configuration that's not ARFaceTrackingConfiguration");
+            continue;
+        }
+        
+        NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
+        if ([self shouldSendAnchor:addedAnchor] || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
+            [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+            objects[[self anchorIDForAnchor:addedAnchor]] = addedAnchorDictionary;
+            
+            if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
+                ARImageAnchor* addedImageAnchor = (ARImageAnchor*)addedAnchor;
+                if ([[self.detectionImageActivationPromises allKeys] containsObject:addedImageAnchor.referenceImage.name]) {
+                    // Call the detection image block
+                    ActivateDetectionImageCompletionBlock block = self.detectionImageActivationPromises[addedImageAnchor.referenceImage.name];
+                    block(YES, nil, addedAnchorDictionary);
+                    self.detectionImageActivationPromises[addedImageAnchor.referenceImage.name] = nil;
+                }
+            }
+        }
     }
 
     // Inform up in the calling hierarchy when we have plane anchors added to the scene
@@ -826,52 +1157,217 @@
     }
 }
 
-- (NSDictionary *)getDictionaryForAnchor:(ARAnchor *)addedAnchor {
-    NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[addedAnchor.identifier UUIDString]];
-    NSString *name = userAnchorID? userAnchorID: [addedAnchor.identifier UUIDString];
-    NSMutableDictionary *addedAnchorDictionary = [[self anchorDictFromAnchor:addedAnchor withName:name] mutableCopy];
-    if ([addedAnchor isKindOfClass:[ARPlaneAnchor class]]) {
-        ARPlaneAnchor *addedPlaneAnchor = (ARPlaneAnchor *)addedAnchor;
-        [self addPlaneAnchorData:addedPlaneAnchor toDictionary: addedAnchorDictionary];
+- (void) updateDictionaryForAnchor:(ARAnchor *)updatedAnchor {
+    NSString* anchorID = [self anchorIDForAnchor:updatedAnchor];
+    NSMutableDictionary* anchorDictionary = objects[anchorID];
+    anchorDictionary[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([updatedAnchor transform]);
+
+    if ([updatedAnchor isKindOfClass:[ARPlaneAnchor class]]) {
+        // ARKit system plane anchor
+        ARPlaneAnchor *updatedPlaneAnchor = (ARPlaneAnchor *)updatedAnchor;
+        [self updatePlaneAnchorData:updatedPlaneAnchor toDictionary: anchorDictionary];
+    } else if ([updatedAnchor isKindOfClass:[ARImageAnchor class]]) {
+        // User generated ARImageAnchor, do nothing more than updating the transform
+        return;
+    } else if ([updatedAnchor isKindOfClass:[ARFaceAnchor class]]) {
+        // System generated ARFaceAnchor
+        ARFaceAnchor *faceAnchor = (ARFaceAnchor *)updatedAnchor;
+        [self updateFaceAnchorData:faceAnchor toDictionary: anchorDictionary];
+    } else {
+        // Simple, user generated ARAnchor, do nothing more than updating the transform
+        return;
     }
-    return [addedAnchorDictionary copy];
 }
 
--(void)addGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)dictionary {
-    NSMutableDictionary* geometryDictionary = [NSMutableDictionary new];
+- (NSDictionary *)createDictionaryForAnchor:(ARAnchor *)addedAnchor {
+    NSMutableDictionary* anchorDictionary = [NSMutableDictionary new];
+    anchorDictionary[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([addedAnchor transform]);
     
-    geometryDictionary[@"vertexCount"] = [NSNumber numberWithInteger:planeGeometry.vertexCount];
-    
+    if ([addedAnchor isKindOfClass:[ARPlaneAnchor class]]) {
+        // ARKit system plane anchor
+        ARPlaneAnchor *addedPlaneAnchor = (ARPlaneAnchor *)addedAnchor;
+        [self addPlaneAnchorData:addedPlaneAnchor toDictionary: anchorDictionary];
+#if SEND_PLANES_BY_DEFAULT
+        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(YES);
+#else
+        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
+#endif
+        anchorDictionary[WEB_AR_UUID_OPTION] = [addedAnchor.identifier UUIDString];
+        anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"plane";
+    } else if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
+        // User generated ARImageAnchor
+        ARImageAnchor *addedImageAnchor = (ARImageAnchor *)addedAnchor;
+        arkitGeneratedAnchorIDUserAnchorIDMap[[[addedAnchor identifier] UUIDString]] = addedImageAnchor.referenceImage.name;
+        anchorDictionary[WEB_AR_UUID_OPTION] = addedImageAnchor.referenceImage.name;
+        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
+        anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"image";
+    } else if ([addedAnchor isKindOfClass:[ARFaceAnchor class]]) {
+        // System generated ARFaceAnchor
+        ARFaceAnchor *faceAnchor = (ARFaceAnchor *)addedAnchor;
+        [self addFaceAnchorData:faceAnchor toDictionary: anchorDictionary];
+        anchorDictionary[WEB_AR_UUID_OPTION] = [faceAnchor.identifier UUIDString];
+        anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"face";
+    } else {
+        // Simple, user generated ARAnchor
+        NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[addedAnchor.identifier UUIDString]];
+        NSString *name = userAnchorID? userAnchorID: [addedAnchor.identifier UUIDString];
+        anchorDictionary[WEB_AR_UUID_OPTION] = name;
+        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
+        anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"anchor";
+    }
+
+    return [anchorDictionary copy];
+}
+
+- (void)updateFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
+    NSMutableDictionary *geometryDictionary = faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION];
+    if (!geometryDictionary) {
+        geometryDictionary = [NSMutableDictionary new];
+        faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
+    }
+    NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.vertexCount];
+    for (int i = 0; i < faceAnchor.geometry.vertexCount; i++) {
+        [vertices addObject:dictFromVector3(faceAnchor.geometry.vertices[i])];
+    }
+    geometryDictionary[@"vertices"] = vertices;
+
+    NSMutableArray *blendShapesDictionary = faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION];
+    [self setBlendShapes:faceAnchor.blendShapes toArray:blendShapesDictionary];
+
+    // Remove the rest of the geometry data, since it doesn't change
+    geometryDictionary[@"vertexCount"] = nil;
+    geometryDictionary[@"textureCoordinateCount"] = nil;
+    geometryDictionary[@"textureCoordinates"] = nil;
+    geometryDictionary[@"triangleCount"] = nil;
+    geometryDictionary[@"triangleIndices"] = nil;
+}
+
+- (void)addFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
+    NSMutableArray *blendShapesArray = [NSMutableArray new];
+    [self setBlendShapes:faceAnchor.blendShapes toArray:blendShapesArray];
+    faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION] = blendShapesArray;
+
+    NSMutableDictionary *geometryDictionary = [NSMutableDictionary new];
+    [self addFaceGeometryData: faceAnchor.geometry toDictionary:geometryDictionary];
+    faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
+}
+
+-(void)addFaceGeometryData:(ARFaceGeometry *)faceGeometry toDictionary: (NSMutableDictionary*)geometryDictionary {
+    geometryDictionary[@"vertexCount"] = @(faceGeometry.vertexCount);
+
+    NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:faceGeometry.vertexCount];
+    for (int i = 0; i < faceGeometry.vertexCount; i++) {
+        [vertices addObject:dictFromVector3(faceGeometry.vertices[i])];
+    }
+    geometryDictionary[@"vertices"] = vertices;
+
+    NSMutableArray* textureCoordinates = [NSMutableArray arrayWithCapacity:faceGeometry.textureCoordinateCount];
+    geometryDictionary[@"textureCoordinateCount"] = @(faceGeometry.textureCoordinateCount);
+    for (int i = 0; i < faceGeometry.textureCoordinateCount; i++) {
+        [textureCoordinates addObject: dictFromVector2(faceGeometry.textureCoordinates[i])];
+    }
+    geometryDictionary[@"textureCoordinates"] = textureCoordinates;
+
+    geometryDictionary[@"triangleCount"] = @(faceGeometry.triangleCount);
+
+    NSMutableArray* triangleIndices = [NSMutableArray arrayWithCapacity:faceGeometry.triangleCount*3];
+    for (int i = 0; i < faceGeometry.triangleCount*3; i++) {
+        [triangleIndices addObject:@(faceGeometry.triangleIndices[i])];
+    }
+    geometryDictionary[@"triangleIndices"] = triangleIndices;
+}
+
+-(void)setBlendShapes:(NSDictionary<ARBlendShapeLocation, NSNumber*> *)blendShapes toArray:(NSMutableArray*)blendShapesArray {
+    blendShapesArray[0] = blendShapes[ARBlendShapeLocationBrowDownLeft];
+    blendShapesArray[1] = blendShapes[ARBlendShapeLocationBrowDownRight];
+    blendShapesArray[2] = blendShapes[ARBlendShapeLocationBrowInnerUp];
+    blendShapesArray[3] = blendShapes[ARBlendShapeLocationBrowOuterUpLeft];
+    blendShapesArray[4] = blendShapes[ARBlendShapeLocationBrowOuterUpRight];
+    blendShapesArray[5] = blendShapes[ARBlendShapeLocationCheekPuff];
+    blendShapesArray[6] = blendShapes[ARBlendShapeLocationCheekSquintLeft];
+    blendShapesArray[7] = blendShapes[ARBlendShapeLocationCheekSquintRight];
+    blendShapesArray[8] = blendShapes[ARBlendShapeLocationEyeBlinkLeft];
+    blendShapesArray[9] = blendShapes[ARBlendShapeLocationEyeBlinkRight];
+    blendShapesArray[10] = blendShapes[ARBlendShapeLocationEyeLookDownLeft];
+    blendShapesArray[11] = blendShapes[ARBlendShapeLocationEyeLookDownRight];
+    blendShapesArray[12] = blendShapes[ARBlendShapeLocationEyeLookInLeft];
+    blendShapesArray[13] = blendShapes[ARBlendShapeLocationEyeLookInRight];
+    blendShapesArray[14] = blendShapes[ARBlendShapeLocationEyeLookOutLeft];
+    blendShapesArray[15] = blendShapes[ARBlendShapeLocationEyeLookOutRight];
+    blendShapesArray[16] = blendShapes[ARBlendShapeLocationEyeLookUpLeft];
+    blendShapesArray[17] = blendShapes[ARBlendShapeLocationEyeLookUpRight];
+    blendShapesArray[18] = blendShapes[ARBlendShapeLocationEyeSquintLeft];
+    blendShapesArray[19] = blendShapes[ARBlendShapeLocationEyeSquintRight];
+    blendShapesArray[20] = blendShapes[ARBlendShapeLocationEyeWideLeft];
+    blendShapesArray[21] = blendShapes[ARBlendShapeLocationEyeWideRight];
+    blendShapesArray[22] = blendShapes[ARBlendShapeLocationJawForward];
+    blendShapesArray[23] = blendShapes[ARBlendShapeLocationJawLeft];
+    blendShapesArray[24] = blendShapes[ARBlendShapeLocationJawOpen];
+    blendShapesArray[25] = blendShapes[ARBlendShapeLocationJawRight];
+    blendShapesArray[26] = blendShapes[ARBlendShapeLocationMouthClose];
+    blendShapesArray[27] = blendShapes[ARBlendShapeLocationMouthDimpleLeft];
+    blendShapesArray[28] = blendShapes[ARBlendShapeLocationMouthDimpleRight];
+    blendShapesArray[29] = blendShapes[ARBlendShapeLocationMouthFrownLeft];
+    blendShapesArray[30] = blendShapes[ARBlendShapeLocationMouthFrownRight];
+    blendShapesArray[31] = blendShapes[ARBlendShapeLocationMouthFunnel];
+    blendShapesArray[32] = blendShapes[ARBlendShapeLocationMouthLeft];
+    blendShapesArray[33] = blendShapes[ARBlendShapeLocationMouthLowerDownLeft];
+    blendShapesArray[34] = blendShapes[ARBlendShapeLocationMouthLowerDownRight];
+    blendShapesArray[35] = blendShapes[ARBlendShapeLocationMouthPressLeft];
+    blendShapesArray[36] = blendShapes[ARBlendShapeLocationMouthPressRight];
+    blendShapesArray[37] = blendShapes[ARBlendShapeLocationMouthPucker];
+    blendShapesArray[38] = blendShapes[ARBlendShapeLocationMouthRight];
+    blendShapesArray[39] = blendShapes[ARBlendShapeLocationMouthRollLower];
+    blendShapesArray[40] = blendShapes[ARBlendShapeLocationMouthRollUpper];
+    blendShapesArray[41] = blendShapes[ARBlendShapeLocationMouthShrugLower];
+    blendShapesArray[42] = blendShapes[ARBlendShapeLocationMouthShrugUpper];
+    blendShapesArray[43] = blendShapes[ARBlendShapeLocationMouthSmileLeft];
+    blendShapesArray[44] = blendShapes[ARBlendShapeLocationMouthSmileRight];
+    blendShapesArray[45] = blendShapes[ARBlendShapeLocationMouthStretchLeft];
+    blendShapesArray[46] = blendShapes[ARBlendShapeLocationMouthStretchRight];
+    blendShapesArray[47] = blendShapes[ARBlendShapeLocationMouthUpperUpLeft];
+    blendShapesArray[48] = blendShapes[ARBlendShapeLocationMouthUpperUpRight];
+    blendShapesArray[49] = blendShapes[ARBlendShapeLocationNoseSneerLeft];
+    blendShapesArray[50] = blendShapes[ARBlendShapeLocationNoseSneerRight];
+}
+
+-(void)updatePlaneGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)planeGeometryDictionary {
+    planeGeometryDictionary[@"vertexCount"] = [NSNumber numberWithInteger:planeGeometry.vertexCount];
+
     NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:planeGeometry.vertexCount];
     for (int i = 0; i < planeGeometry.vertexCount; i++) {
         [vertices addObject:dictFromVector3(planeGeometry.vertices[i])];
     }
-    geometryDictionary[@"vertices"] = vertices;
-    
+    planeGeometryDictionary[@"vertices"] = vertices;
+
     NSMutableArray* textureCoordinates = [NSMutableArray arrayWithCapacity:planeGeometry.textureCoordinateCount];
-    geometryDictionary[@"textureCoordinateCount"] = [NSNumber numberWithInteger:planeGeometry.textureCoordinateCount];
+    planeGeometryDictionary[@"textureCoordinateCount"] = [NSNumber numberWithInteger:planeGeometry.textureCoordinateCount];
     for (int i = 0; i < planeGeometry.textureCoordinateCount; i++) {
         [textureCoordinates addObject: dictFromVector2(planeGeometry.textureCoordinates[i])];
     }
-    geometryDictionary[@"textureCoordinates"] = textureCoordinates;
-    
-    geometryDictionary[@"triangleCount"] = [NSNumber numberWithInteger:planeGeometry.triangleCount];
-    
+    planeGeometryDictionary[@"textureCoordinates"] = textureCoordinates;
+
+    planeGeometryDictionary[@"triangleCount"] = [NSNumber numberWithInteger:planeGeometry.triangleCount];
+
     NSMutableArray* triangleIndices = [NSMutableArray arrayWithCapacity:planeGeometry.triangleCount*3];
     for (int i = 0; i < planeGeometry.triangleCount*3; i++) {
         [triangleIndices addObject: [NSNumber numberWithInteger:planeGeometry.triangleIndices[i]]];
     }
-    geometryDictionary[@"triangleIndices"] = triangleIndices;
-    
-    geometryDictionary[@"boundaryVertexCount"] = [NSNumber numberWithInteger:planeGeometry.boundaryVertexCount];
-    
+    planeGeometryDictionary[@"triangleIndices"] = triangleIndices;
+
+    planeGeometryDictionary[@"boundaryVertexCount"] = [NSNumber numberWithInteger:planeGeometry.boundaryVertexCount];
+
     NSMutableArray* boundaryVertices = [NSMutableArray arrayWithCapacity:planeGeometry.boundaryVertexCount];
     for (int i = 0; i < planeGeometry.boundaryVertexCount; i ++) {
         [boundaryVertices addObject: dictFromVector3(planeGeometry.boundaryVertices[i])];
     }
-    geometryDictionary[@"boundaryVertices"] = boundaryVertices;
-    
-    dictionary[WEB_AR_PLANE_GEOMETRY_OPTION] = geometryDictionary;
+    planeGeometryDictionary[@"boundaryVertices"] = boundaryVertices;
+}
+
+-(void)addGeometryData:(ARPlaneGeometry*)planeGeometry toDictionary:(NSMutableDictionary*)dictionary {
+    NSMutableDictionary* geometryDictionary = [NSMutableDictionary new];
+    [self updatePlaneGeometryData:planeGeometry toDictionary:geometryDictionary];
+    dictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
 }
 
 - (void)addPlaneAnchorData:(ARPlaneAnchor *)planeAnchor toDictionary:(NSMutableDictionary *)dictionary {
@@ -881,12 +1377,23 @@
     [self addGeometryData:[planeAnchor geometry] toDictionary:dictionary];
 }
 
+- (void)updatePlaneAnchorData:(ARPlaneAnchor *)planeAnchor toDictionary:(NSMutableDictionary *)planeAnchorDictionary {
+    planeAnchorDictionary[WEB_AR_PLANE_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
+    planeAnchorDictionary[WEB_AR_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
+    planeAnchorDictionary[WEB_AR_PLANE_ALIGNMENT_OPTION] = @([planeAnchor alignment]);
+    [self updatePlaneGeometryData:[planeAnchor geometry] toDictionary:planeAnchorDictionary[WEB_AR_GEOMETRY_OPTION]];
+}
+
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
 {
-    DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
+    //DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* updatedAnchor in anchors) {
-        NSDictionary *updatedAnchorDictionary = [self getDictionaryForAnchor:updatedAnchor];
-        objects[updatedAnchorDictionary[WEB_AR_UUID_OPTION]] = updatedAnchorDictionary;
+        if ([updatedAnchor isKindOfClass:[ARFaceAnchor class]] && ![self.configuration isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+            NSLog(@"Trying to update a face anchor in a session configuration that's not ARFaceTrackingConfiguration");
+            continue;
+        }
+        
+        [self updateDictionaryForAnchor:updatedAnchor];
     }
 }
 
@@ -894,13 +1401,22 @@
 {
     DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* removedAnchor in anchors) {
-        NSString* arkitAnchorID = [removedAnchor.identifier UUIDString];
-        NSString* userGeneratedAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[arkitAnchorID];
-        NSString* anchorID = userGeneratedAnchorID? userGeneratedAnchorID: arkitAnchorID;
+        BOOL mustSendAnchor = [self shouldSendAnchor: removedAnchor];
+        if (mustSendAnchor || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
+            NSString* anchorID = [self anchorIDForAnchor: removedAnchor];
 
-        [removedAnchorsSinceLastFrame addObject: anchorID];
-        objects[anchorID] = nil;
-        arkitGeneratedAnchorIDUserAnchorIDMap[arkitAnchorID] = nil;
+            [removedAnchorsSinceLastFrame addObject: anchorID];
+            objects[anchorID] = nil;
+            arkitGeneratedAnchorIDUserAnchorIDMap[anchorID] = nil;
+            if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
+                ARImageAnchor* imageAnchor = (ARImageAnchor*)removedAnchor;
+                ActivateDetectionImageCompletionBlock completion = self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name];
+                if (completion) {
+                    [self activateDetectionImage:imageAnchor.referenceImage.name completion:completion];
+                    self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name] = nil;
+                }
+            }
+        }
     }
 
     // Inform up in the calling hierarchy when we have plane anchors removed from the scene
@@ -909,6 +1425,58 @@
             [self didRemovePlaneAnchors]();
         }
     }
+}
+
+- (NSString *)anchorIDForAnchor:(ARAnchor *)anchor {
+    NSString* anchorID;
+    if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
+        // ARKit system plane anchor
+        anchorID = [anchor.identifier UUIDString];
+    } else if ([anchor isKindOfClass:[ARImageAnchor class]]) {
+        // User generated ARImageAnchor
+        ARImageAnchor *imageAnchor = (ARImageAnchor *)anchor;
+        anchorID = imageAnchor.referenceImage.name;
+    } else if ([anchor isKindOfClass:[ARFaceAnchor class]]) {
+        // System generated ARFaceAnchor
+        anchorID = [anchor.identifier UUIDString];
+    } else {
+        // Simple, user generated ARAnchor
+        NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[anchor.identifier UUIDString]];
+        NSString *name = userAnchorID? userAnchorID: [anchor.identifier UUIDString];
+        anchorID = name;
+    }
+
+    return anchorID;
+}
+
+/**
+ By default, set NO to all the ARAnchor types considered "World sensing data", so they
+ won't be sent to JS unless the user allows for that.
+
+ @param anchor The anchor to be analyzed
+ @return A boolean indicating whether the anchor should be sent to JS or not
+ */
+- (BOOL)shouldSendAnchor:(ARAnchor *)anchor {
+    BOOL shouldSend;
+    if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
+        // ARKit system plane anchor
+#if SEND_PLANES_BY_DEFAULT
+        shouldSend = YES;
+#else
+        shouldSend = NO;
+#endif
+    } else if ([anchor isKindOfClass:[ARImageAnchor class]]) {
+        // User generated ARImageAnchor
+        shouldSend = NO;
+    } else if ([anchor isKindOfClass:[ARFaceAnchor class]]) {
+        shouldSend = NO;
+        // System generated ARFaceAnchor
+    } else {
+        // Simple, user generated ARAnchor
+        shouldSend = NO;
+    }
+
+    return shouldSend;
 }
 
 - (BOOL)anyPlaneAnchor:(NSArray<ARAnchor *> *)anchorArray {
@@ -952,9 +1520,9 @@
 {
     DDLogError(@"Session WasInterrupted");
     
-    if ([self didInterupt])
+    if ([self didInterrupt])
     {
-        [self didInterupt](YES);
+        [self didInterrupt](YES);
     }
 }
 
@@ -962,9 +1530,9 @@
 {
     DDLogError(@"Session InterruptionEnded");
     
-    if ([self didInterupt])
+    if ([self didInterrupt])
     {
-        [self didInterupt](NO);
+        [self didInterrupt](NO);
     }
 }
 

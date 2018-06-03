@@ -18,6 +18,7 @@
     [copy setSendComputerVisionData:[self sendComputerVisionData]];
     [copy setShouldShowSessionStartedPopup: [self shouldShowSessionStartedPopup]];
     [copy setNumberOfTimesSendNativeTimeWasCalled: [self numberOfTimesSendNativeTimeWasCalled]];
+    [copy setUserGrantedSendingComputerVisionData: [self userGrantedSendingComputerVisionData]];
 
     return copy;
 }
@@ -96,7 +97,11 @@
     if ([self numberOfTimesSendNativeTimeWasCalled] != [theObject numberOfTimesSendNativeTimeWasCalled]) {
         return NO;
     }
-    
+
+    if ([self userGrantedSendingComputerVisionData] != [theObject userGrantedSendingComputerVisionData]) {
+        return NO;
+    }
+
     return YES;
 }
 
@@ -115,7 +120,8 @@
     [state setMicEnabled:MICROPHONE_ENABLED_BY_DEFAULT];
     [state setShouldShowSessionStartedPopup:POPUP_ENABLED_BY_DEFAULT];
     [state setNumberOfTimesSendNativeTimeWasCalled:0];
-    
+    [state setUserGrantedSendingComputerVisionData:USER_GRANTED_SENDING_COMPUTER_VISION_DATA_BY_DEFAULT];
+
     // trackingstate default is nil ?
     
     return state;
@@ -154,12 +160,6 @@
 - (instancetype)updatedWithMicEnabled:(BOOL)enabled
 {
     [self setMicEnabled:enabled];
-    return self;
-}
-
-- (instancetype)updatedWithTrackingState:(NSString *)state
-{
-    [self setTrackingState:state];
     return self;
 }
 

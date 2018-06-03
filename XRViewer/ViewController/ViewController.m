@@ -14,6 +14,8 @@
 #import "XRViewer-Swift.h"
 #import "Constants.h"
 
+#import "GCDWebServer.h"
+
 #define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
 #define WAITING_TIME_ON_MEMORY_WARNING .5f
@@ -22,7 +24,7 @@ typedef void (^UICompletion)(void);
 #define RUN_UI_COMPLETION_ASYNC_MAIN(c) if(c){ dispatch_async(dispatch_get_main_queue(), ^{ c();}); }
 
 
-@interface ViewController ()
+@interface ViewController ()  <GCDWebServerDelegate>
 
 @property (nonatomic, weak) IBOutlet LayerView *splashLayerView;
 @property (nonatomic, weak) IBOutlet LayerView *arkLayerView;
@@ -43,7 +45,12 @@ typedef void (^UICompletion)(void);
 @end
 
 
-@implementation ViewController
+@implementation ViewController {
+@private
+    //GCDWebUploader* _webServer;
+    GCDWebServer* _webServer;
+}
+
 
 #pragma mark UI
 
@@ -56,16 +63,22 @@ typedef void (^UICompletion)(void);
 {
     [super viewDidLoad];
     
+    /// This causes UIKit to call preferredScreenEdgesDeferringSystemGestures,
+    /// so we can say what edges we want our gestures to take precedence over the system gestures
     [self setNeedsUpdateOfScreenEdgesDeferringSystemGestures];
     
     [self setupCommonControllers];
     
+    /// Apparently, this is called async in the main queue because we need viewDidLoad to finish
+    /// its execution before doing anything on the subviews. This also could have been called from
+    /// viewDidAppear
     dispatch_async(dispatch_get_main_queue(), ^
                    {
                        [self setupTargetControllers];
                    });
     
     
+    /// Swipe from edge gesture recognizer setup
     UIScreenEdgePanGestureRecognizer * gestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(swipeFromEdge:)];
     [gestureRecognizer setEdges:UIRectEdgeTop];
     gestureRecognizer.delegate = self;
@@ -76,6 +89,7 @@ typedef void (^UICompletion)(void);
     swipeGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:swipeGestureRecognizer];
     
+    /// Show the permissions popup if we have never shown it
     if ([[NSUserDefaults standardUserDefaults] boolForKey:permissionsUIAlreadyShownKey] == NO &&
         ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined ||
          [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == kCLAuthorizationStatusNotDetermined)) {
@@ -84,6 +98,37 @@ typedef void (^UICompletion)(void);
                 [[self messageController] showPermissionsPopup];
             });
     }
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    NSMutableDictionary* options = [NSMutableDictionary dictionary];
+    [options setObject:@8080 forKey:GCDWebServerOption_Port];
+    //[options setObject:@NO forKey:GCDWebServerOption_AutomaticallySuspendInBackground];
+    
+    NSString *documentsPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Web"];
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:documentsPath]) {
+        _webServer = [[GCDWebServer alloc] init];
+        [_webServer addGETHandlerForBasePath:@"/" directoryPath:documentsPath indexFilename:@"index.html" cacheAge:0 allowRangeRequests:YES];
+        
+        _webServer.delegate = self;
+        if ([_webServer startWithOptions:options error:NULL]) {
+            NSLog(@"GCDWebServer running locally on port %i", (int)_webServer.port);
+        } else {
+            NSLog(@"GCDWebServer not running!");
+        }
+    } else {
+        NSLog(@"No Web directory, GCDWebServer not running!");
+    }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    [_webServer stop];
+    _webServer = nil;
 }
 
 - (void)swipeFromEdge: (UISwipeGestureRecognizer*)recognizer {
@@ -335,7 +380,7 @@ typedef void (^UICompletion)(void);
              switch ([[blockSelf arkController] arSessionState]) {
                  case ARKSessionUnknown: {
                      NSLog(@"\n\n*********\n\nARKit is in unknown state, instantiate and start a session\n\n*********");
-                     [blockSelf startNewARKitSessionWithRequest:dict];
+                     [[blockSelf arkController] runSessionWithAppState:[[blockSelf stateController] state]];
                      break;
                  }
                      
@@ -503,14 +548,7 @@ typedef void (^UICompletion)(void);
     
     [self setupRecordController];
     
-    if ([[self recordController] cameraAvailable])
-    {
-        [self setupWebController];
-    }
-    else
-    {
-        [self setupWebController];
-    }
+    [self setupWebController];
     
     [self setupOverlayController];
 }
@@ -593,7 +631,7 @@ typedef void (^UICompletion)(void);
         });
      }];
     
-    [[self arkController] setDidInterupt:^(BOOL interruption)
+    [[self arkController] setDidInterrupt:^(BOOL interruption)
      {
          [[blockSelf stateController] setARInterruption:interruption];
      }];
@@ -642,9 +680,21 @@ typedef void (^UICompletion)(void);
     __weak typeof (self) blockSelf = self;
     
     [self setWebController:[[WebController alloc] initWithRootView:[self webLayerView]]];
+    if (![ARKController supportsARFaceTrackingConfiguration]) {
+        [[self webController] hideCameraFlipButton];
+    }
     [[self webController] setAnimator:[self animator]];
     [[self webController] setOnStartLoad:^
      {
+         if ([blockSelf arkController]) {
+             NSString *lastURL = [[blockSelf webController] lastURL];
+             NSString *currentURL = [[[[blockSelf webController] webView] URL] absoluteString];
+
+             if ([lastURL isEqualToString:currentURL]) {
+                 // Page reload
+                 [[blockSelf arkController] removeAllAnchorsExceptPlanes];
+             } 
+         }
          [[blockSelf stateController] setWebXR:NO];
      }];
     
@@ -759,6 +809,26 @@ typedef void (^UICompletion)(void);
 
     [[self webController] setOnStopSendingComputerVisionData:^{
         [[[blockSelf stateController] state] setSendComputerVisionData:NO];
+    }];
+
+    [[self webController] setOnActivateDetectionImage:^(NSString *imageName, ActivateDetectionImageCompletionBlock completion) {
+        [[blockSelf arkController] activateDetectionImage:imageName completion:completion];
+    }];
+
+    [[self webController] setOnDeactivateDetectionImage:^(NSString *imageName, CreateDetectionImageCompletionBlock completion) {
+        [[blockSelf arkController] deactivateDetectionImage:imageName completion:completion];
+    }];
+
+    [[self webController] setOnDestroyDetectionImage:^(NSString *imageName, CreateDetectionImageCompletionBlock completion) {
+        [[blockSelf arkController] destroyDetectionImage:imageName completion:completion];
+    }];
+
+    [[self webController] setOnCreateDetectionImage:^(NSDictionary *dictionary, CreateDetectionImageCompletionBlock completion) {
+        [[blockSelf arkController] createDetectionImage:dictionary completion:completion];
+    }];
+    
+    [[self webController] setOnSwitchCameraButtonTapped:^{
+        [[blockSelf arkController] switchCameraButtonTapped];
     }];
 
     if ([[self stateController] wasMemoryWarning])
@@ -1020,14 +1090,25 @@ typedef void (^UICompletion)(void);
     [[self arkController] setComputerVisionDataEnabled: false];
     [[[self stateController] state] setUserGrantedSendingComputerVisionData:false];
     [[[self stateController] state] setSendComputerVisionData: true];
+    [[self arkController] setSendingWorldSensingDataAuthorizationStatus: SendWorldSensingDataAuthorizationStateNotDetermined];
 
     if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
             [[blockSelf webController] userGrantedComputerVisionData:granted];
             [[blockSelf arkController] setComputerVisionDataEnabled:granted];
             [[[blockSelf stateController] state] setUserGrantedSendingComputerVisionData:granted];
-            //[[[blockSelf stateController] state] setSendComputerVisionData:granted];
+            
+            // Approving computer vision data implicitly approves the world sensing data
+            [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: SendWorldSensingDataAuthorizationStateAuthorized];
         }];
+    } else if ([request[WEB_AR_WORLD_SENSING_DATA_OPTION] boolValue]) {
+        [[self messageController] showMessageAboutAccessingWorldSensingData:^(BOOL granted){
+            [[blockSelf webController] userGrantedSendingWorldSensingData:granted];
+            [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: granted ? SendWorldSensingDataAuthorizationStateAuthorized: SendWorldSensingDataAuthorizationStateDenied];
+        }];
+    } else {
+        // if neither is requested, we'll actually set it to denied!
+        [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: SendWorldSensingDataAuthorizationStateDenied];
     }
 
     [[self stateController] setARRequest:request];
