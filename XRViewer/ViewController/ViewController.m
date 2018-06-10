@@ -14,7 +14,10 @@
 #import "XRViewer-Swift.h"
 #import "Constants.h"
 
+// #define WEBSERVER
+#ifdef WEBSERVER
 #import "GCDWebServer.h"
+#endif
 
 #define CLEAN_VIEW(v) [[v subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)]
 
@@ -23,8 +26,11 @@
 typedef void (^UICompletion)(void);
 #define RUN_UI_COMPLETION_ASYNC_MAIN(c) if(c){ dispatch_async(dispatch_get_main_queue(), ^{ c();}); }
 
-
+#ifdef WEBSERVER
 @interface ViewController ()  <GCDWebServerDelegate>
+#else
+@interface ViewController ()
+#endif
 
 @property (nonatomic, weak) IBOutlet LayerView *splashLayerView;
 @property (nonatomic, weak) IBOutlet LayerView *arkLayerView;
@@ -46,9 +52,10 @@ typedef void (^UICompletion)(void);
 
 
 @implementation ViewController {
+#ifdef WEBSERVER
 @private
-    //GCDWebUploader* _webServer;
     GCDWebServer* _webServer;
+#endif
 }
 
 
@@ -100,6 +107,8 @@ typedef void (^UICompletion)(void);
     }
 }
 
+#ifdef WEBSERVER
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
@@ -124,11 +133,15 @@ typedef void (^UICompletion)(void);
     }
 }
 
+#endif
+
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
     
+#ifdef WEBSERVER
     [_webServer stop];
     _webServer = nil;
+#endif
 }
 
 - (void)swipeFromEdge: (UISwipeGestureRecognizer*)recognizer {
