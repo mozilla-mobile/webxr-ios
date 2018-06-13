@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if USE_ANALYTICS
 import MozillaTelemetry
+#endif
 
 /**
 Category of the event being tracked
