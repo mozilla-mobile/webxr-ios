@@ -1,6 +1,6 @@
 # WebXR Viewer Privacy Notice
  
-### _Effective February 5, 2018_
+### _Effective June 1, 2018_
  
 At Mozilla, we adhere to the practices outlined in the Mozilla [Privacy Policy](https://www.mozilla.org/privacy/) for how we receive, handle and share information we collect from the WebXR Viewer.
 
