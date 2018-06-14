@@ -49,5 +49,5 @@ typedef NS_ENUM(NSInteger, ResetTrackigOption) {
 
 - (void)showPermissionsPopup;
 
-- (void)showMessageAboutAccessingWorldSensingData:(void (^)(BOOL))granted;
+- (void)showMessageAboutAccessingWorldSensingData:(void (^)(BOOL))granted url:(NSURL*)url;
 @end

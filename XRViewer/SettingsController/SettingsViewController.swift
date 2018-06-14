@@ -60,7 +60,7 @@ extension SettingsViewController: UITableViewDataSource {
         if section == 0 {
             return 1
         } else if section == 1 {
-            return 5
+            return 6
         } else {
             return 1
         }
@@ -115,6 +115,13 @@ extension SettingsViewController: UITableViewDataSource {
                 switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
                 switchInputCell.switchControl.tag = 4
                 cell = switchInputCell
+            case 5:
+                let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
+                switchInputCell.labelTitle?.text = "Reset Allowed World Sensing"
+                switchInputCell.switchControl.isOn = UserDefaults.standard.object(forKey: allowedWorldSensingSitesKey) == nil && !UserDefaults.standard.bool(forKey: alwaysAllowWorldSensingKey);
+                switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
+                switchInputCell.switchControl.tag = 5
+                cell = switchInputCell
             default:
                 fatalError("Cell not registered for indexPath: \(indexPath)")
             }
@@ -139,6 +146,12 @@ extension SettingsViewController: UITableViewDataSource {
             UserDefaults.standard.set(switchControl.isOn, forKey: useAnalyticsKey)
         } else if switchControl.tag == 4 {
             UserDefaults.standard.set(switchControl.isOn, forKey: alwaysAllowWorldSensingKey)
+        } else if switchControl.tag == 5 {
+            // Forget any sites remembered
+            UserDefaults.standard.removeObject(forKey: allowedWorldSensingSitesKey)
+            // Assume that if they are resetting, should NOT be always-on.
+            // FIXME: This doesn't update the always-on switch control?
+            UserDefaults.standard.set(false, forKey: alwaysAllowWorldSensingKey)
         }
     }
 }
