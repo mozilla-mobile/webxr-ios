@@ -2,6 +2,8 @@
 #import "XRViewer-Swift.h"
 #import <PopupDialog/PopupDialog-Swift.h>
 
+#include "Constants.h"
+
 #warning LOCALIZATION
 
 @interface MessageController ()
@@ -336,6 +338,11 @@
 }
 
 - (void)showMessageAboutAccessingWorldSensingData:(void (^)(BOOL))granted {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:alwaysAllowWorldSensingKey]) {
+        granted(true);
+        return;
+    }
+    
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Access to World Sensing"
                                                     message:@"This webpage wants to use your camera to look for faces and things in the real world. (For details, see our Privacy Notice in Settings.) Allow?"
                                                       image:nil
@@ -346,6 +353,11 @@
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
+    
+    DestructiveButton *always = [[DestructiveButton alloc] initWithTitle:@"ALWAYS" height:40 dismissOnTap:YES action:^{
+        [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:alwaysAllowWorldSensingKey];
+        granted(true);
+    }];
 
     DestructiveButton *ok = [[DestructiveButton alloc] initWithTitle:@"YES" height:40 dismissOnTap:YES action:^{
         granted(true);
@@ -356,7 +368,7 @@
         granted(false);
     }];
 
-    [popup addButtons: @[cancel, ok]];
+    [popup addButtons: @[cancel, ok, always]];
 
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
