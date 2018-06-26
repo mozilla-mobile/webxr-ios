@@ -39,4 +39,11 @@ FOUNDATION_EXPORT NSString *const backgroundOrPausedDateKey;
 /// anchors on the next session run
 FOUNDATION_EXPORT double const pauseTimeInSecondsToRemoveAnchors;
 
+/// The NSUserDefaults key for the boolean that tells us whether
+/// the allow world sensing dialog should be shown (globally)
+FOUNDATION_EXPORT NSString *const alwaysAllowWorldSensingKey;
+/// The NSUserDefaults key for the boolean that tells us whether
+/// the allow world sensing dialog should be shown for sites
+FOUNDATION_EXPORT NSString *const allowedWorldSensingSitesKey;
+
 #endif /* Constants_h */

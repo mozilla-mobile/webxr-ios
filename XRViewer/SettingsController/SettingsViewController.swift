@@ -60,7 +60,7 @@ extension SettingsViewController: UITableViewDataSource {
         if section == 0 {
             return 1
         } else if section == 1 {
-            return 4
+            return 6
         } else {
             return 1
         }
@@ -87,8 +87,10 @@ extension SettingsViewController: UITableViewDataSource {
                 cell = textInputCell
             case 1:
                 let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
+                switchInputCell.labelTitle?.text = "Send Tech and Interaction Data"
                 switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: useAnalyticsKey)
                 switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
+                switchInputCell.switchControl.tag = 1
                 cell = switchInputCell
             case 2:
                 let textInputCell = tableView.dequeueReusableCell(withIdentifier: "TextInputTableViewCell", for: indexPath) as! TextInputTableViewCell
@@ -106,6 +108,20 @@ extension SettingsViewController: UITableViewDataSource {
                 textInputCell.textField.delegate = self
                 textInputCell.textField.tag = 3
                 cell = textInputCell
+            case 4:
+                let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
+                switchInputCell.labelTitle?.text = "Always Allow World Sensing"
+                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: alwaysAllowWorldSensingKey)
+                switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
+                switchInputCell.switchControl.tag = 4
+                cell = switchInputCell
+            case 5:
+                let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
+                switchInputCell.labelTitle?.text = "Reset Allowed World Sensing"
+                switchInputCell.switchControl.isOn = UserDefaults.standard.object(forKey: allowedWorldSensingSitesKey) == nil && !UserDefaults.standard.bool(forKey: alwaysAllowWorldSensingKey);
+                switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
+                switchInputCell.switchControl.tag = 5
+                cell = switchInputCell
             default:
                 fatalError("Cell not registered for indexPath: \(indexPath)")
             }
@@ -126,7 +142,17 @@ extension SettingsViewController: UITableViewDataSource {
     }
     
     @objc func switchValueChanged(switchControl: UISwitch) {
-        UserDefaults.standard.set(switchControl.isOn, forKey: useAnalyticsKey)
+        if switchControl.tag == 1 {
+            UserDefaults.standard.set(switchControl.isOn, forKey: useAnalyticsKey)
+        } else if switchControl.tag == 4 {
+            UserDefaults.standard.set(switchControl.isOn, forKey: alwaysAllowWorldSensingKey)
+        } else if switchControl.tag == 5 {
+            // Forget any sites remembered
+            UserDefaults.standard.removeObject(forKey: allowedWorldSensingSitesKey)
+            // Assume that if they are resetting, should NOT be always-on.
+            // FIXME: This doesn't update the always-on switch control?
+            UserDefaults.standard.set(false, forKey: alwaysAllowWorldSensingKey)
+        }
     }
 }
 

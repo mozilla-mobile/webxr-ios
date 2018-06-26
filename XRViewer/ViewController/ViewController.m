@@ -1118,7 +1118,7 @@ typedef void (^UICompletion)(void);
         [[self messageController] showMessageAboutAccessingWorldSensingData:^(BOOL granted){
             [[blockSelf webController] userGrantedSendingWorldSensingData:granted];
             [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: granted ? SendWorldSensingDataAuthorizationStateAuthorized: SendWorldSensingDataAuthorizationStateDenied];
-        }];
+        } url:[[[self webController] webView] URL]];
     } else {
         // if neither is requested, we'll actually set it to denied!
         [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: SendWorldSensingDataAuthorizationStateDenied];
