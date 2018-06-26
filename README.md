@@ -2,11 +2,11 @@
 
 Help Mozilla Research by taking part in Project WebXR Viewer, an augmented reality viewer that lets you navigate to AR experiences just like websites, using Apple/iOS ARKit for it's AR capabilities.  
 
-The master branch of this repository is built and availble in the iOS App Store as the [WebXR Viewer](https://itunes.apple.com/us/app/webxr-viewer/id1295998056?mt=8)
+The master branch of this repository is built and availble in the iOS App Store as the [WebXR Viewer](https://itunes.apple.com/us/app/webxr-viewer/id1295998056?mt=8).
 
-## Experimental Exploration of the Future of WebXR
+## WARNING: Experimental Exploration of the Future of WebXR
 
-This experimental browser lets your navigate to websites written using [our non-standard, experimental version of WebXR](https://github.com/mozilla/webxr-polyfill/).  The "WebXR" API implemented by this application (the the javascript library) is based on a [proposed draft proposal for WebXR](https://github.com/mozilla/webxr-api) we created as a starting point for discussing WebXR in the fall of 2017, to explore what it might mean to expand WebVR to include AR/MR capabilities.
+This experimental browser lets your navigate to websites written using [our non-standard, experimental version of the WebXR API](https://github.com/mozilla/webxr-polyfill/).  The version of WebXR implemented by this application (the javascript library) is based on a [proposed draft proposal for WebXR](https://github.com/mozilla/webxr-api) we created as a starting point for discussing WebXR in the fall of 2017, to explore what it might mean to expand WebVR to include AR/MR capabilities.
 
 The WebVR community has shifted from WebVR to WebXR, and is now called the [Immersive Web Community Group](https://github.com/immersive-web/), with the WebVR specification becoming the [WebXR Device API](https://github.com/immersive-web/webxr). You should consider that spec as ground-truth for the future of WebXR, and it is what you will likely see appearing in browsers through the rest of 2018 and into 2019.
 
