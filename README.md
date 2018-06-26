@@ -8,13 +8,13 @@ The master branch of this repository is built and availble in the iOS App Store 
 
 This experimental browser lets your navigate to websites written using [our non-standard, experimental version of the WebXR API](https://github.com/mozilla/webxr-polyfill/).  The version of WebXR implemented by this application (the javascript library) is based on a [proposed draft proposal for WebXR](https://github.com/mozilla/webxr-api) we created as a starting point for discussing WebXR in the fall of 2017, to explore what it might mean to expand WebVR to include AR/MR capabilities.
 
-The WebVR community has shifted from WebVR to WebXR, and is now called the [Immersive Web Community Group](https://github.com/immersive-web/), with the WebVR specification becoming the [WebXR Device API](https://github.com/immersive-web/webxr). You should consider that spec as ground-truth for the future of WebXR, and it is what you will likely see appearing in browsers through the rest of 2018 and into 2019.
+The WebVR community has shifted from WebVR to WebXR, and is now called the [Immersive Web Community Group](https://github.com/immersive-web/), with the WebVR specification becoming the [WebXR Device API](https://github.com/immersive-web/webxr). You should consider that spec as ground-truth for the future of WebXR, and it is what you will likely see appearing in browsers through the rest of 2018 and into 2019. 
 
 When the spec has settled and is more mature, we will shift this app and [our version of WebXR](https://github.com/mozilla/webxr-polyfill/) to align with it.  
 
 To learn more about the WebXR Viewer and other ways Mozilla is working to bring augmented reality, virtual reality, and mixed reality to the web, visit our website at [mixedreality.mozilla.org](https://mixedreality.mozilla.org/).
 
-## WARNING
+## WARNING: Not a full-featured Browser
 
 This application is *not* intended to replace a fully featured web browser. It is meant only for experimenting with experimenting with WebXR applications on iOS.
 
