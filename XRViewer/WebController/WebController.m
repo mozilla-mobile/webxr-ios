@@ -702,7 +702,17 @@ inline static WebCompletion debugCompletion(NSString *name)
 - (void)setupWebViewWithRootView:(__autoreleasing UIView*)rootView
 {
     WKWebViewConfiguration *conf = [[WKWebViewConfiguration alloc] init];
+    NSBundle *scriptBundle = [NSBundle bundleForClass:[self class]];
+    NSString *scriptURL = [scriptBundle pathForResource:@"webxr" ofType:@"js"];
+    NSString *scriptContent = [[NSString alloc] initWithContentsOfFile:scriptURL encoding:NSUTF8StringEncoding error: nil];
+
+    NSLog(@"size of webxr.js: %ld", [scriptContent length]);
+
+    WKUserScript *userScript = [[WKUserScript alloc] initWithSource:scriptContent injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:true];
+
     WKUserContentController *contentController = [WKUserContentController new];
+    [contentController addUserScript:userScript];
+
     [conf setUserContentController:contentController];
     [self setContentController:contentController];
     
