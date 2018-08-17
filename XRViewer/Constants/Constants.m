@@ -20,3 +20,4 @@ double const pauseTimeInSecondsToRemoveAnchors = 10.0;
 
 NSString *const alwaysAllowWorldSensingKey = @"alwaysAllowWorldSensingKey";
 NSString *const allowedWorldSensingSitesKey = @"allowedWorldSensingSitesKey";
+NSString *const exposeWebXRAPI = @"exposeWebXRAPI";

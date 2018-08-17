@@ -46,4 +46,8 @@ FOUNDATION_EXPORT NSString *const alwaysAllowWorldSensingKey;
 /// the allow world sensing dialog should be shown for sites
 FOUNDATION_EXPORT NSString *const allowedWorldSensingSitesKey;
 
+/// The NSUserDefaults key for the boolean that tells us whether
+/// we should preload the webxr.js file to expose a WebXR API
+FOUNDATION_EXPORT NSString *const exposeWebXRAPI;
+
 #endif /* Constants_h */
