@@ -1222,16 +1222,16 @@ var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 
 
 
 function unwrapExports (x) {
-	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
 
 function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
+    return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
 
 var cardboardVrDisplay = createCommonjsModule(function (module, exports) {
 (function (global, factory) {
-	module.exports = factory();
+    module.exports = factory();
 }(commonjsGlobal, (function () { var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -2895,9 +2895,9 @@ var format = 1;
 var last_updated = "2018-02-20T22:55:10Z";
 var devices = [{"type":"android","rules":[{"mdmh":"asus/*/Nexus 7/*"},{"ua":"Nexus 7"}],"dpi":[320.8,323],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"asus/*/ASUS_Z00AD/*"},{"ua":"ASUS_Z00AD"}],"dpi":[403,404.6],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"Google/*/Pixel XL/*"},{"ua":"Pixel XL"}],"dpi":[537.9,533],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"Google/*/Pixel/*"},{"ua":"Pixel"}],"dpi":[432.6,436.7],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"HTC/*/HTC6435LVW/*"},{"ua":"HTC6435LVW"}],"dpi":[449.7,443.3],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"HTC/*/HTC One XL/*"},{"ua":"HTC One XL"}],"dpi":[315.3,314.6],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"htc/*/Nexus 9/*"},{"ua":"Nexus 9"}],"dpi":289,"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"HTC/*/HTC One M9/*"},{"ua":"HTC One M9"}],"dpi":[442.5,443.3],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"HTC/*/HTC One_M8/*"},{"ua":"HTC One_M8"}],"dpi":[449.7,447.4],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"HTC/*/HTC One/*"},{"ua":"HTC One"}],"dpi":472.8,"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"Huawei/*/Nexus 6P/*"},{"ua":"Nexus 6P"}],"dpi":[515.1,518],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"LENOVO/*/Lenovo PB2-690Y/*"},{"ua":"Lenovo PB2-690Y"}],"dpi":[457.2,454.713],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"LGE/*/Nexus 5X/*"},{"ua":"Nexus 5X"}],"dpi":[422,419.9],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"LGE/*/LGMS345/*"},{"ua":"LGMS345"}],"dpi":[221.7,219.1],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"LGE/*/LG-D800/*"},{"ua":"LG-D800"}],"dpi":[422,424.1],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"LGE/*/LG-D850/*"},{"ua":"LG-D850"}],"dpi":[537.9,541.9],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"LGE/*/VS985 4G/*"},{"ua":"VS985 4G"}],"dpi":[537.9,535.6],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"LGE/*/Nexus 5/*"},{"ua":"Nexus 5 B"}],"dpi":[442.4,444.8],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"LGE/*/Nexus 4/*"},{"ua":"Nexus 4"}],"dpi":[319.8,318.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"LGE/*/LG-P769/*"},{"ua":"LG-P769"}],"dpi":[240.6,247.5],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"LGE/*/LGMS323/*"},{"ua":"LGMS323"}],"dpi":[206.6,204.6],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"LGE/*/LGLS996/*"},{"ua":"LGLS996"}],"dpi":[403.4,401.5],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"Micromax/*/4560MMX/*"},{"ua":"4560MMX"}],"dpi":[240,219.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"Micromax/*/A250/*"},{"ua":"Micromax A250"}],"dpi":[480,446.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"Micromax/*/Micromax AQ4501/*"},{"ua":"Micromax AQ4501"}],"dpi":240,"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"motorola/*/G5/*"},{"ua":"Moto G (5) Plus"}],"dpi":[403.4,403],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"motorola/*/DROID RAZR/*"},{"ua":"DROID RAZR"}],"dpi":[368.1,256.7],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"motorola/*/XT830C/*"},{"ua":"XT830C"}],"dpi":[254,255.9],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"motorola/*/XT1021/*"},{"ua":"XT1021"}],"dpi":[254,256.7],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"motorola/*/XT1023/*"},{"ua":"XT1023"}],"dpi":[254,256.7],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"motorola/*/XT1028/*"},{"ua":"XT1028"}],"dpi":[326.6,327.6],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"motorola/*/XT1034/*"},{"ua":"XT1034"}],"dpi":[326.6,328.4],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"motorola/*/XT1053/*"},{"ua":"XT1053"}],"dpi":[315.3,316.1],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"motorola/*/XT1562/*"},{"ua":"XT1562"}],"dpi":[403.4,402.7],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"motorola/*/Nexus 6/*"},{"ua":"Nexus 6 B"}],"dpi":[494.3,489.7],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"motorola/*/XT1063/*"},{"ua":"XT1063"}],"dpi":[295,296.6],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"motorola/*/XT1064/*"},{"ua":"XT1064"}],"dpi":[295,295.6],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"motorola/*/XT1092/*"},{"ua":"XT1092"}],"dpi":[422,424.1],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"motorola/*/XT1095/*"},{"ua":"XT1095"}],"dpi":[422,423.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"motorola/*/G4/*"},{"ua":"Moto G (4)"}],"dpi":401,"bw":4,"ac":1000},{"type":"android","rules":[{"mdmh":"OnePlus/*/A0001/*"},{"ua":"A0001"}],"dpi":[403.4,401],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"OnePlus/*/ONE E1005/*"},{"ua":"ONE E1005"}],"dpi":[442.4,441.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"OnePlus/*/ONE A2005/*"},{"ua":"ONE A2005"}],"dpi":[391.9,405.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"OnePlus/*/ONEPLUS A5000/*"},{"ua":"ONEPLUS A5000 "}],"dpi":[403.411,399.737],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"OnePlus/*/ONE A5010/*"},{"ua":"ONEPLUS A5010"}],"dpi":[403,400],"bw":2,"ac":1000},{"type":"android","rules":[{"mdmh":"OPPO/*/X909/*"},{"ua":"X909"}],"dpi":[442.4,444.1],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/GT-I9082/*"},{"ua":"GT-I9082"}],"dpi":[184.7,185.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G360P/*"},{"ua":"SM-G360P"}],"dpi":[196.7,205.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/Nexus S/*"},{"ua":"Nexus S"}],"dpi":[234.5,229.8],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/GT-I9300/*"},{"ua":"GT-I9300"}],"dpi":[304.8,303.9],"bw":5,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SM-T230NU/*"},{"ua":"SM-T230NU"}],"dpi":216,"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SGH-T399/*"},{"ua":"SGH-T399"}],"dpi":[217.7,231.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SGH-M919/*"},{"ua":"SGH-M919"}],"dpi":[440.8,437.7],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-N9005/*"},{"ua":"SM-N9005"}],"dpi":[386.4,387],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SAMSUNG-SM-N900A/*"},{"ua":"SAMSUNG-SM-N900A"}],"dpi":[386.4,387.7],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/GT-I9500/*"},{"ua":"GT-I9500"}],"dpi":[442.5,443.3],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/GT-I9505/*"},{"ua":"GT-I9505"}],"dpi":439.4,"bw":4,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G900F/*"},{"ua":"SM-G900F"}],"dpi":[415.6,431.6],"bw":5,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G900M/*"},{"ua":"SM-G900M"}],"dpi":[415.6,431.6],"bw":5,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G800F/*"},{"ua":"SM-G800F"}],"dpi":326.8,"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G906S/*"},{"ua":"SM-G906S"}],"dpi":[562.7,572.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/GT-I9300/*"},{"ua":"GT-I9300"}],"dpi":[306.7,304.8],"bw":5,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-T535/*"},{"ua":"SM-T535"}],"dpi":[142.6,136.4],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SM-N920C/*"},{"ua":"SM-N920C"}],"dpi":[515.1,518.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-N920P/*"},{"ua":"SM-N920P"}],"dpi":[386.3655,390.144],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-N920W8/*"},{"ua":"SM-N920W8"}],"dpi":[515.1,518.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/GT-I9300I/*"},{"ua":"GT-I9300I"}],"dpi":[304.8,305.8],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/GT-I9195/*"},{"ua":"GT-I9195"}],"dpi":[249.4,256.7],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SPH-L520/*"},{"ua":"SPH-L520"}],"dpi":[249.4,255.9],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SAMSUNG-SGH-I717/*"},{"ua":"SAMSUNG-SGH-I717"}],"dpi":285.8,"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SPH-D710/*"},{"ua":"SPH-D710"}],"dpi":[217.7,204.2],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/GT-N7100/*"},{"ua":"GT-N7100"}],"dpi":265.1,"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SCH-I605/*"},{"ua":"SCH-I605"}],"dpi":265.1,"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/Galaxy Nexus/*"},{"ua":"Galaxy Nexus"}],"dpi":[315.3,314.2],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-N910H/*"},{"ua":"SM-N910H"}],"dpi":[515.1,518],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-N910C/*"},{"ua":"SM-N910C"}],"dpi":[515.2,520.2],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G130M/*"},{"ua":"SM-G130M"}],"dpi":[165.9,164.8],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G928I/*"},{"ua":"SM-G928I"}],"dpi":[515.1,518.4],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G920F/*"},{"ua":"SM-G920F"}],"dpi":580.6,"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G920P/*"},{"ua":"SM-G920P"}],"dpi":[522.5,577],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G925F/*"},{"ua":"SM-G925F"}],"dpi":580.6,"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G925V/*"},{"ua":"SM-G925V"}],"dpi":[522.5,576.6],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G930F/*"},{"ua":"SM-G930F"}],"dpi":576.6,"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G935F/*"},{"ua":"SM-G935F"}],"dpi":533,"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G950F/*"},{"ua":"SM-G950F"}],"dpi":[562.707,565.293],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"samsung/*/SM-G955U/*"},{"ua":"SM-G955U"}],"dpi":[522.514,525.762],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"Sony/*/C6903/*"},{"ua":"C6903"}],"dpi":[442.5,443.3],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"Sony/*/D6653/*"},{"ua":"D6653"}],"dpi":[428.6,427.6],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"Sony/*/E6653/*"},{"ua":"E6653"}],"dpi":[428.6,425.7],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"Sony/*/E6853/*"},{"ua":"E6853"}],"dpi":[403.4,401.9],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"Sony/*/SGP321/*"},{"ua":"SGP321"}],"dpi":[224.7,224.1],"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"TCT/*/ALCATEL ONE TOUCH Fierce/*"},{"ua":"ALCATEL ONE TOUCH Fierce"}],"dpi":[240,247.5],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"THL/*/thl 5000/*"},{"ua":"thl 5000"}],"dpi":[480,443.3],"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"Fly/*/IQ4412/*"},{"ua":"IQ4412"}],"dpi":307.9,"bw":3,"ac":1000},{"type":"android","rules":[{"mdmh":"ZTE/*/ZTE Blade L2/*"},{"ua":"ZTE Blade L2"}],"dpi":240,"bw":3,"ac":500},{"type":"android","rules":[{"mdmh":"BENEVE/*/VR518/*"},{"ua":"VR518"}],"dpi":480,"bw":3,"ac":500},{"type":"ios","rules":[{"res":[640,960]}],"dpi":[325.1,328.4],"bw":4,"ac":1000},{"type":"ios","rules":[{"res":[640,1136]}],"dpi":[317.1,320.2],"bw":3,"ac":1000},{"type":"ios","rules":[{"res":[750,1334]}],"dpi":326.4,"bw":4,"ac":1000},{"type":"ios","rules":[{"res":[1242,2208]}],"dpi":[453.6,458.4],"bw":4,"ac":1000},{"type":"ios","rules":[{"res":[1125,2001]}],"dpi":[410.9,415.4],"bw":4,"ac":1000},{"type":"ios","rules":[{"res":[1125,2436]}],"dpi":458,"bw":4,"ac":1000}];
 var DPDB_CACHE = {
-	format: format,
-	last_updated: last_updated,
-	devices: devices
+    format: format,
+    last_updated: last_updated,
+    devices: devices
 };
 function Dpdb(url, onDeviceParamsUpdated) {
   this.dpdb = DPDB_CACHE;
@@ -3686,51 +3686,51 @@ ViewerSelector.prototype.createButton_ = function (label, onclick) {
 };
 var commonjsGlobal$$1 = typeof window !== 'undefined' ? window : typeof commonjsGlobal !== 'undefined' ? commonjsGlobal : typeof self !== 'undefined' ? self : {};
 function unwrapExports$$1 (x) {
-	return x && x.__esModule ? x['default'] : x;
+    return x && x.__esModule ? x['default'] : x;
 }
 function createCommonjsModule$$1(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
+    return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
 var NoSleep = createCommonjsModule$$1(function (module, exports) {
 (function webpackUniversalModuleDefinition(root, factory) {
-	module.exports = factory();
+    module.exports = factory();
 })(commonjsGlobal$$1, function() {
 return          (function(modules) {
-         	var installedModules = {};
-         	function __webpack_require__(moduleId) {
-         		if(installedModules[moduleId]) {
-         			return installedModules[moduleId].exports;
-         		}
-         		var module = installedModules[moduleId] = {
-         			i: moduleId,
-         			l: false,
-         			exports: {}
-         		};
-         		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-         		module.l = true;
-         		return module.exports;
-         	}
-         	__webpack_require__.m = modules;
-         	__webpack_require__.c = installedModules;
-         	__webpack_require__.d = function(exports, name, getter) {
-         		if(!__webpack_require__.o(exports, name)) {
-         			Object.defineProperty(exports, name, {
-         				configurable: false,
-         				enumerable: true,
-         				get: getter
-         			});
-         		}
-         	};
-         	__webpack_require__.n = function(module) {
-         		var getter = module && module.__esModule ?
-         			function getDefault() { return module['default']; } :
-         			function getModuleExports() { return module; };
-         		__webpack_require__.d(getter, 'a', getter);
-         		return getter;
-         	};
-         	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-         	__webpack_require__.p = "";
-         	return __webpack_require__(__webpack_require__.s = 0);
+            var installedModules = {};
+            function __webpack_require__(moduleId) {
+                if(installedModules[moduleId]) {
+                    return installedModules[moduleId].exports;
+                }
+                var module = installedModules[moduleId] = {
+                    i: moduleId,
+                    l: false,
+                    exports: {}
+                };
+                modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+                module.l = true;
+                return module.exports;
+            }
+            __webpack_require__.m = modules;
+            __webpack_require__.c = installedModules;
+            __webpack_require__.d = function(exports, name, getter) {
+                if(!__webpack_require__.o(exports, name)) {
+                    Object.defineProperty(exports, name, {
+                        configurable: false,
+                        enumerable: true,
+                        get: getter
+                    });
+                }
+            };
+            __webpack_require__.n = function(module) {
+                var getter = module && module.__esModule ?
+                    function getDefault() { return module['default']; } :
+                    function getModuleExports() { return module; };
+                __webpack_require__.d(getter, 'a', getter);
+                return getter;
+            };
+            __webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+            __webpack_require__.p = "";
+            return __webpack_require__(__webpack_require__.s = 0);
          })
          ([
       (function(module, exports, __webpack_require__) {
@@ -5374,505 +5374,505 @@ class WebXRPolyfill {
 }
 
 class XRHitResult {
-	constructor(hitMatrix=null){
-		this._hitMatrix = hitMatrix || new Float32Array(16);
-	}
-	get hitMatrix(){
-		return this._hitMatrix
-	}
+    constructor(hitMatrix=null){
+        this._hitMatrix = hitMatrix || new Float32Array(16);
+    }
+    get hitMatrix(){
+        return this._hitMatrix
+    }
 }
 
 let throttle = function(func, wait, leading=true, trailing=true) {
-	var timeout, context, args, result;
-	var previous = 0;
-	var later = function() {
-		previous = leading === false ? 0 : Date.now();
-		timeout = null;
-		result = func.apply(context, args);
-		if (!timeout) context = args = null;
-	};
-	var throttled = function() {
-		var now = Date.now();
-		if (!previous && leading === false) previous = now;
-		var remaining = wait - (now - previous);
-		context = this;
-		args = arguments;
-		if (remaining <= 0 || remaining > wait) {
-		if (timeout) {
-			clearTimeout(timeout);
-			timeout = null;
-		}
-		previous = now;
-		result = func.apply(context, args);
-		if (!timeout) context = args = null;
-		} else if (!timeout && trailing !== false) {
-		timeout = setTimeout(later, remaining);
-		}
-		return result
-	};
-	throttled.cancel = function() {
-		clearTimeout(timeout);
-		previous = 0;
-		timeout = context = args = null;
-	};
-	return throttled
+    var timeout, context, args, result;
+    var previous = 0;
+    var later = function() {
+        previous = leading === false ? 0 : Date.now();
+        timeout = null;
+        result = func.apply(context, args);
+        if (!timeout) context = args = null;
+    };
+    var throttled = function() {
+        var now = Date.now();
+        if (!previous && leading === false) previous = now;
+        var remaining = wait - (now - previous);
+        context = this;
+        args = arguments;
+        if (remaining <= 0 || remaining > wait) {
+        if (timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+        }
+        previous = now;
+        result = func.apply(context, args);
+        if (!timeout) context = args = null;
+        } else if (!timeout && trailing !== false) {
+        timeout = setTimeout(later, remaining);
+        }
+        return result
+    };
+    throttled.cancel = function() {
+        clearTimeout(timeout);
+        previous = 0;
+        timeout = context = args = null;
+    };
+    return throttled
 };
 let throttledConsoleLog = throttle(function(...params){
-	console.log(...params);
+    console.log(...params);
 }, 1000);
 
 const VRHit = class {
-	constructor(){
-		this.modelMatrix = new Float32Array(16);
-	}
+    constructor(){
+        this.modelMatrix = new Float32Array(16);
+    }
 };
 function hitTestNoAnchor(x, y, planes, projectionMatrix, viewMatrix) {
-	if (x < 0 || x > 1 || y < 0 || y > 1) {
-		throw new Error("hitTest - x and y values must be normalized [0,1]!")
-	}
-	var hits = [];
-	if (!planes || planes.length == 0) {
-		return hits;
-	}
-	set$1(hitVars.rayStart, 2 * x - 1, 2 * (1 - y) - 1, 0);
-	set$1(hitVars.rayEnd, 2 * x - 1, 2 * (1 - y) - 1, 1);
-	setMat4FromArray(hitVars.projectionMatrix, projectionMatrix);
-	setMat4FromArray(hitVars.modelViewMatrix, viewMatrix);
-	multiply(
-		hitVars.projViewMatrix,
-		hitVars.projectionMatrix,
-		hitVars.modelViewMatrix
-	);
-	invert(hitVars.projViewMatrix, hitVars.projViewMatrix);
-	transformMat4(
-		hitVars.worldRayStart,
-		hitVars.rayStart,
-		hitVars.projViewMatrix
-	);
-	transformMat4(
-		hitVars.worldRayEnd,
-		hitVars.rayEnd,
-		hitVars.projViewMatrix
-	);
-	subtract$1(
-		hitVars.worldRayDir,
-		hitVars.worldRayEnd,
-		hitVars.worldRayStart
-	);
-	normalize(hitVars.worldRayDir, hitVars.worldRayDir);
-	for (var i = 0; i < planes.length; i++) {
-		var plane = planes[i];
-		setMat4FromArray(hitVars.planeMatrix, plane.modelMatrix);
-		set$1(
-			hitVars.planeCenter,
-			plane.center.x,
-			plane.center.y,
-			plane.center.z
-		);
-		transformMat4(
-			hitVars.planePosition,
-			hitVars.planeCenter,
-			hitVars.planeMatrix
-		);
-		hitVars.planeAlignment = plane.alignment;
-		if (hitVars.planeAlignment === 0) {
-			set$1(hitVars.planeNormal, 0, 1, 0);
-		} else {
-			set$1(hitVars.planeNormal, hitVars.planeMatrix[4], hitVars.planeMatrix[5], hitVars.planeMatrix[6]);
-		}
-		var t = rayIntersectsPlane(
-			hitVars.planeNormal,
-			hitVars.planePosition,
-			hitVars.worldRayStart,
-			hitVars.worldRayDir
-		);
-		if (t < 0) {
-			continue;
-		}
-		scale$1(hitVars.planeIntersection, hitVars.worldRayDir, t);
-		add$1(
-			hitVars.planeIntersection,
-			hitVars.worldRayStart,
-			hitVars.planeIntersection
-		);
-		set$1(hitVars.planeExtent, plane.extent[0], 0, plane.extent[1]);
-		getRotation(hitVars.planeQuaternion, hitVars.planeMatrix);
-		invert(hitVars.planeMatrix, hitVars.planeMatrix);
-		transformMat4(
-			hitVars.planeIntersectionLocal,
-			hitVars.planeIntersection,
-			hitVars.planeMatrix
-		);
-		var tolerance = 0.0075;
-		if (
-			Math.abs(hitVars.planeIntersectionLocal[0]) >
-			hitVars.planeExtent[0] / 2 + tolerance
-		) {
-			continue;
-		}
-		if (
-			Math.abs(hitVars.planeIntersectionLocal[2]) >
-			hitVars.planeExtent[2] / 2 + tolerance
-		) {
-			continue;
-		}
-		fromRotationTranslation(hitVars.planeHit, hitVars.planeQuaternion, hitVars.planeIntersection);
-		var hit = new VRHit();
-		for (var j = 0; j < 16; j++) {
-			hit.modelMatrix[j] = hitVars.planeHit[j];
-		}
-		hit.i = i;
-		hits.push(hit);
-	}
-	hits.sort(sortFunction);
-	return hits;
+    if (x < 0 || x > 1 || y < 0 || y > 1) {
+        throw new Error("hitTest - x and y values must be normalized [0,1]!")
+    }
+    var hits = [];
+    if (!planes || planes.length == 0) {
+        return hits;
+    }
+    set$1(hitVars.rayStart, 2 * x - 1, 2 * (1 - y) - 1, 0);
+    set$1(hitVars.rayEnd, 2 * x - 1, 2 * (1 - y) - 1, 1);
+    setMat4FromArray(hitVars.projectionMatrix, projectionMatrix);
+    setMat4FromArray(hitVars.modelViewMatrix, viewMatrix);
+    multiply(
+        hitVars.projViewMatrix,
+        hitVars.projectionMatrix,
+        hitVars.modelViewMatrix
+    );
+    invert(hitVars.projViewMatrix, hitVars.projViewMatrix);
+    transformMat4(
+        hitVars.worldRayStart,
+        hitVars.rayStart,
+        hitVars.projViewMatrix
+    );
+    transformMat4(
+        hitVars.worldRayEnd,
+        hitVars.rayEnd,
+        hitVars.projViewMatrix
+    );
+    subtract$1(
+        hitVars.worldRayDir,
+        hitVars.worldRayEnd,
+        hitVars.worldRayStart
+    );
+    normalize(hitVars.worldRayDir, hitVars.worldRayDir);
+    for (var i = 0; i < planes.length; i++) {
+        var plane = planes[i];
+        setMat4FromArray(hitVars.planeMatrix, plane.modelMatrix);
+        set$1(
+            hitVars.planeCenter,
+            plane.center.x,
+            plane.center.y,
+            plane.center.z
+        );
+        transformMat4(
+            hitVars.planePosition,
+            hitVars.planeCenter,
+            hitVars.planeMatrix
+        );
+        hitVars.planeAlignment = plane.alignment;
+        if (hitVars.planeAlignment === 0) {
+            set$1(hitVars.planeNormal, 0, 1, 0);
+        } else {
+            set$1(hitVars.planeNormal, hitVars.planeMatrix[4], hitVars.planeMatrix[5], hitVars.planeMatrix[6]);
+        }
+        var t = rayIntersectsPlane(
+            hitVars.planeNormal,
+            hitVars.planePosition,
+            hitVars.worldRayStart,
+            hitVars.worldRayDir
+        );
+        if (t < 0) {
+            continue;
+        }
+        scale$1(hitVars.planeIntersection, hitVars.worldRayDir, t);
+        add$1(
+            hitVars.planeIntersection,
+            hitVars.worldRayStart,
+            hitVars.planeIntersection
+        );
+        set$1(hitVars.planeExtent, plane.extent[0], 0, plane.extent[1]);
+        getRotation(hitVars.planeQuaternion, hitVars.planeMatrix);
+        invert(hitVars.planeMatrix, hitVars.planeMatrix);
+        transformMat4(
+            hitVars.planeIntersectionLocal,
+            hitVars.planeIntersection,
+            hitVars.planeMatrix
+        );
+        var tolerance = 0.0075;
+        if (
+            Math.abs(hitVars.planeIntersectionLocal[0]) >
+            hitVars.planeExtent[0] / 2 + tolerance
+        ) {
+            continue;
+        }
+        if (
+            Math.abs(hitVars.planeIntersectionLocal[2]) >
+            hitVars.planeExtent[2] / 2 + tolerance
+        ) {
+            continue;
+        }
+        fromRotationTranslation(hitVars.planeHit, hitVars.planeQuaternion, hitVars.planeIntersection);
+        var hit = new VRHit();
+        for (var j = 0; j < 16; j++) {
+            hit.modelMatrix[j] = hitVars.planeHit[j];
+        }
+        hit.i = i;
+        hits.push(hit);
+    }
+    hits.sort(sortFunction);
+    return hits;
 }
 const hitVars = {
-	rayStart: create$1(),
-	rayEnd: create$1(),
-	cameraPosition: create$1(),
-	cameraQuaternion: create$4(),
-	modelViewMatrix: create(),
-	projectionMatrix: create(),
-	projViewMatrix: create(),
-	worldRayStart: create$1(),
-	worldRayEnd: create$1(),
-	worldRayDir: create$1(),
-	planeMatrix: create(),
-	planeExtent: create$1(),
-	planePosition: create$1(),
-	planeCenter: create$1(),
-	planeNormal: create$1(),
-	planeIntersection: create$1(),
-	planeIntersectionLocal: create$1(),
-	planeHit: create(),
-	planeQuaternion: create$4()
+    rayStart: create$1(),
+    rayEnd: create$1(),
+    cameraPosition: create$1(),
+    cameraQuaternion: create$4(),
+    modelViewMatrix: create(),
+    projectionMatrix: create(),
+    projViewMatrix: create(),
+    worldRayStart: create$1(),
+    worldRayEnd: create$1(),
+    worldRayDir: create$1(),
+    planeMatrix: create(),
+    planeExtent: create$1(),
+    planePosition: create$1(),
+    planeCenter: create$1(),
+    planeNormal: create$1(),
+    planeIntersection: create$1(),
+    planeIntersectionLocal: create$1(),
+    planeHit: create(),
+    planeQuaternion: create$4()
 };
 const setMat4FromArray = function(m, a) {
  set(m, ...a);
 };
 function rayIntersectsPlane(planeNormal, planePosition, rayOrigin, rayDirection){
-	const rayToPlane = create$1();
-	const denom = dot(planeNormal, rayDirection);
-	subtract$1(rayToPlane, planePosition, rayOrigin);
-	return dot(rayToPlane, planeNormal) / denom;
+    const rayToPlane = create$1();
+    const denom = dot(planeNormal, rayDirection);
+    subtract$1(rayToPlane, planePosition, rayOrigin);
+    return dot(rayToPlane, planeNormal) / denom;
 }
 function sortFunction(a, b) {
-	setMat4FromArray(hitVars.planeMatrix, a.modelMatrix);
-	getTranslation(hitVars.planeIntersection, hitVars.planeMatrix);
-	var distA = distance(
-		hitVars.planeIntersection,
-		hitVars.cameraPosition
-	);
-	setMat4FromArray(hitVars.planeMatrix, b.modelMatrix);
-	getTranslation(hitVars.planeIntersection, hitVars.planeMatrix);
-	var distB = distance(
-		hitVars.planeIntersection,
-		hitVars.cameraPosition
-	);
-	return distA < distB ? -1 : 1;
+    setMat4FromArray(hitVars.planeMatrix, a.modelMatrix);
+    getTranslation(hitVars.planeIntersection, hitVars.planeMatrix);
+    var distA = distance(
+        hitVars.planeIntersection,
+        hitVars.cameraPosition
+    );
+    setMat4FromArray(hitVars.planeMatrix, b.modelMatrix);
+    getTranslation(hitVars.planeIntersection, hitVars.planeMatrix);
+    var distB = distance(
+        hitVars.planeIntersection,
+        hitVars.cameraPosition
+    );
+    return distA < distB ? -1 : 1;
 }
 
 class base64 {
-	static decodeLength(input)  {
-		return (input.length/4) * 3;
-	}
-	static decodeArrayBuffer(input, buffer) {
-		var bytes = (input.length/4) * 3;
-		if (!buffer || buffer.byteLength != bytes) {
-			buffer = new ArrayBuffer(bytes);
-		}
-		this.decode(input, buffer);
-		return buffer;
-	}
-	static removePaddingChars(input){
-		var lkey = this._keyStr.indexOf(input.charAt(input.length - 1));
-		if(lkey == 64){
-			return input.substring(0,input.length - 1);
-		}
-		return input;
-	}
-	static decode(input, arrayBuffer) {
-		input = this.removePaddingChars(input);
-		input = this.removePaddingChars(input);
-		var bytes = parseInt((input.length / 4) * 3, 10);
-		var uarray;
-		var chr1, chr2, chr3;
-		var enc1, enc2, enc3, enc4;
-		var i = 0;
-		var j = 0;
-		if (arrayBuffer)
-			uarray = new Uint8Array(arrayBuffer);
-		else
-			uarray = new Uint8Array(bytes);
-		input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-		for (i=0; i<bytes; i+=3) {
-			enc1 = this._keyStr.indexOf(input.charAt(j++));
-			enc2 = this._keyStr.indexOf(input.charAt(j++));
-			enc3 = this._keyStr.indexOf(input.charAt(j++));
-			enc4 = this._keyStr.indexOf(input.charAt(j++));
-			chr1 = (enc1 << 2) | (enc2 >> 4);
-			chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-			chr3 = ((enc3 & 3) << 6) | enc4;
-			uarray[i] = chr1;
-			if (enc3 != 64) uarray[i+1] = chr2;
-			if (enc4 != 64) uarray[i+2] = chr3;
-		}
-		return uarray;
-	}
+    static decodeLength(input)  {
+        return (input.length/4) * 3;
+    }
+    static decodeArrayBuffer(input, buffer) {
+        var bytes = (input.length/4) * 3;
+        if (!buffer || buffer.byteLength != bytes) {
+            buffer = new ArrayBuffer(bytes);
+        }
+        this.decode(input, buffer);
+        return buffer;
+    }
+    static removePaddingChars(input){
+        var lkey = this._keyStr.indexOf(input.charAt(input.length - 1));
+        if(lkey == 64){
+            return input.substring(0,input.length - 1);
+        }
+        return input;
+    }
+    static decode(input, arrayBuffer) {
+        input = this.removePaddingChars(input);
+        input = this.removePaddingChars(input);
+        var bytes = parseInt((input.length / 4) * 3, 10);
+        var uarray;
+        var chr1, chr2, chr3;
+        var enc1, enc2, enc3, enc4;
+        var i = 0;
+        var j = 0;
+        if (arrayBuffer)
+            uarray = new Uint8Array(arrayBuffer);
+        else
+            uarray = new Uint8Array(bytes);
+        input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+        for (i=0; i<bytes; i+=3) {
+            enc1 = this._keyStr.indexOf(input.charAt(j++));
+            enc2 = this._keyStr.indexOf(input.charAt(j++));
+            enc3 = this._keyStr.indexOf(input.charAt(j++));
+            enc4 = this._keyStr.indexOf(input.charAt(j++));
+            chr1 = (enc1 << 2) | (enc2 >> 4);
+            chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+            chr3 = ((enc3 & 3) << 6) | enc4;
+            uarray[i] = chr1;
+            if (enc3 != 64) uarray[i+1] = chr2;
+            if (enc4 != 64) uarray[i+2] = chr3;
+        }
+        return uarray;
+    }
     static encode(buffer) {
-	    var base64    = '';
-  		var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-		var bytes      = buffer;
-		if (buffer instanceof ArrayBuffer) {
-			bytes = new Uint8Array(arrayBuffer);
-		} else if (buffer instanceof ImageData) {
-			bytes = buffer.data;
-		}
-		var byteLength    = buffer.length;
-		var byteRemainder = byteLength % 3;
-		var mainLength    = byteLength - byteRemainder;
-		var a, b, c, d;
-		var chunk;
-		for (var i = 0; i < mainLength; i = i + 3) {
-			chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
-			a = (chunk & 16515072) >> 18;
-			b = (chunk & 258048)   >> 12;
-			c = (chunk & 4032)     >>  6;
-			d = chunk & 63;
-			base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d];
-		}
-		if (byteRemainder == 1) {
-			chunk = bytes[mainLength];
-			a = (chunk & 252) >> 2;
-			b = (chunk & 3)   << 4;
-			base64 += encodings[a] + encodings[b] + '==';
-		} else if (byteRemainder == 2) {
-			chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1];
-			a = (chunk & 64512) >> 10;
-			b = (chunk & 1008)  >>  4;
-			c = (chunk & 15)    <<  2;
-			base64 += encodings[a] + encodings[b] + encodings[c] + '=';
-		}
-		return base64
-	}
+        var base64    = '';
+        var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+        var bytes      = buffer;
+        if (buffer instanceof ArrayBuffer) {
+            bytes = new Uint8Array(arrayBuffer);
+        } else if (buffer instanceof ImageData) {
+            bytes = buffer.data;
+        }
+        var byteLength    = buffer.length;
+        var byteRemainder = byteLength % 3;
+        var mainLength    = byteLength - byteRemainder;
+        var a, b, c, d;
+        var chunk;
+        for (var i = 0; i < mainLength; i = i + 3) {
+            chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
+            a = (chunk & 16515072) >> 18;
+            b = (chunk & 258048)   >> 12;
+            c = (chunk & 4032)     >>  6;
+            d = chunk & 63;
+            base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d];
+        }
+        if (byteRemainder == 1) {
+            chunk = bytes[mainLength];
+            a = (chunk & 252) >> 2;
+            b = (chunk & 3)   << 4;
+            base64 += encodings[a] + encodings[b] + '==';
+        } else if (byteRemainder == 2) {
+            chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1];
+            a = (chunk & 64512) >> 10;
+            b = (chunk & 1008)  >>  4;
+            c = (chunk & 15)    <<  2;
+            base64 += encodings[a] + encodings[b] + encodings[c] + '=';
+        }
+        return base64
+    }
 }
 base64._keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 const PI_OVER_180 = Math.PI / 180.0;
 class ARKitWrapper extends EventTarget {
-	constructor(){
-		super();
-		if(ARKitWrapper.HasARKit() === false){
-			throw new Error('ARKitWrapper will only work in Mozilla\'s ARDemo test app')
-		}
-		if(typeof ARKitWrapper.GLOBAL_INSTANCE !== 'undefined'){
-			throw new Error('ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the global instance.')
-		}
-		this._timestamp = 0;
-		this._lightIntensity = 1000;
-		this._deviceId = null;
-		this._isWatching = false;
-		this._isInitialized = false;
-		this._rawARData = null;
-		this._projectionMatrix = new Float32Array(16);
-		this._viewMatrix = new Float32Array(16);
-		this._planes = new Map();
-		this._anchors = new Map();
-		this._timeOffsets = [];
-		this._timeOffset = 0;
-		this._timeOffsetComputed = false;
-		this._globalCallbacksMap = {};
-		let callbackNames = ['onInit', 'onWatch'];
-		for(let i=0; i < callbackNames.length; i++){
-			this._generateGlobalCallback(callbackNames[i], i);
-		}
-		this._defaultOptions = {
-			location: true,
-			camera: true,
-			objects: true,
-			light_intensity: true,
-			computer_vision_data: false
-		};
-		this._m90 = fromZRotation(create(), 90*PI_OVER_180);
-		this._m90neg = fromZRotation(create(), -90*PI_OVER_180);
-		this._m180 = fromZRotation(create(), 180*PI_OVER_180);
-		this._mTemp = create();
-		let eventCallbacks = [
-			['arkitStartRecording', ARKitWrapper.RECORD_START_EVENT],
-			['arkitStopRecording', ARKitWrapper.RECORD_STOP_EVENT],
-			['arkitDidMoveBackground', ARKitWrapper.DID_MOVE_BACKGROUND_EVENT],
-			['arkitWillEnterForeground', ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT],
-			['arkitInterrupted', ARKitWrapper.INTERRUPTED_EVENT],
-			['arkitInterruptionEnded', ARKitWrapper.INTERRUPTION_ENDED_EVENT],
-			['arkitShowDebug', ARKitWrapper.SHOW_DEBUG_EVENT],
-			['arkitWindowResize', ARKitWrapper.WINDOW_RESIZE_EVENT],
-			['onError', ARKitWrapper.ON_ERROR],
-			['arTrackingChanged', ARKitWrapper.AR_TRACKING_CHANGED],
-			['userGrantedComputerVisionData', ARKitWrapper.USER_GRANTED_COMPUTER_VISION_DATA],
-			['userGrantedWorldSensingData', ARKitWrapper.USER_GRANTED_WORLD_SENSING_DATA]
-		];
-		for(let i=0; i < eventCallbacks.length; i++){
-			window[eventCallbacks[i][0]] = (detail) => {
-				detail = detail || null;
-				try {
-					this.dispatchEvent(
-						eventCallbacks[i][1],
-						new CustomEvent(
-							eventCallbacks[i][1],
-							{
-								source: this,
-								detail: detail
-							}
-						)
-					);
-				} catch(e) {
-					console.error(eventCallbacks[i][0] + ' callback error', e);
-				}
-			};
-		}
-		window['onComputerVisionData'] = (detail) => {
-			this._onComputerVisionData(detail);
-		};
-		window['setNativeTime'] = (detail) => {
-			this._timeOffsets.push (( performance || Date ).now() - detail.nativeTime);
-			this._timeOffsetComputed = true;
-			this._timeOffset = 0;
-			for (var i = 0; i < this._timeOffsets.length; i++) {
-				this._timeOffset += this._timeOffsets[i];
-			}
-			this._timeOffset = this._timeOffset / this._timeOffsets.length;
-		};
-	}
-	static GetOrCreate(options=null){
-		if(typeof ARKitWrapper.GLOBAL_INSTANCE === 'undefined'){
-			ARKitWrapper.GLOBAL_INSTANCE = new ARKitWrapper();
-			options = (options && typeof(options) == 'object') ? options : {};
-			let defaultUIOptions = {
-				browser: true,
-				points: true,
-				focus: false,
-				rec: true,
-				rec_time: true,
-				mic: false,
-				build: false,
-				plane: true,
-				warnings: true,
-				anchors: false,
-				debug: true,
-				statistics: false
-			};
-			let uiOptions = (typeof(options.ui) == 'object') ? options.ui : {};
-			options.ui = Object.assign(defaultUIOptions, uiOptions);
-			ARKitWrapper.GLOBAL_INSTANCE._sendInit(options);
-		}
-		return ARKitWrapper.GLOBAL_INSTANCE
-	}
-	static HasARKit(){
-		return typeof window.webkit !== 'undefined'
-	}
-	get deviceId(){ return this._deviceId }
-	get isWatching(){ return this._isWatching }
-	get isInitialized(){ return this._isInitialized }
-	get hasData(){ return this._rawARData !== null }
-	waitForInit(){
-		return new Promise((resolve, reject) => {
-			if(this._isInitialized){
-				resolve();
-				return
-			}
-			const callback = () => {
-				this.removeEventListener(ARKitWrapper.INIT_EVENT, callback, false);
-				resolve();
-			};
-			this.addEventListener(ARKitWrapper.INIT_EVENT, callback, false);
-		})
-	}
-	getPlanes() {
-		return Array.from(this._planes.values())
-	}
-	getData(key=null){
-		if (key === null){
-			return this._rawARData
-		}
-		if(this._rawARData && typeof this._rawARData[key] !== 'undefined'){
-			return this._rawARData[key]
-		}
-		return null
-	}
-	getObject(uuid){
-		if (!this._isInitialized){
-			return null
-		}
-		const objects = this.getKey('objects');
-		if(objects === null) return null
-		for(const object of objects){
-			if(object.uuid === uuid){
-				return object
-			}
-		}
-		return null
-	}
-	hitTest(x, y, types=ARKitWrapper.HIT_TEST_TYPE_ALL){
-		return new Promise((resolve, reject) => {
-			if (!this._isInitialized){
-				reject(new Error('ARKit is not initialized'));
-				return;
-			}
-			window.webkit.messageHandlers.hitTest.postMessage({
-				x: x,
-				y: y,
-				type: types,
-				callback: this._createPromiseCallback('hitTest', resolve)
-			});
-		})
-	}
-	hitTestNoAnchor(x, y){
-		return hitTestNoAnchor(x, y, this.getPlanes(), this._projectionMatrix, this._viewMatrix)
-	}
-	pickBestHit(hits){
-		if(hits.length === 0) return null
-		let planeResults = hits.filter(
-			hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT
-		);
-		let planeExistingUsingExtentResults = planeResults.filter(
-			hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
-		);
-		let planeExistingResults = planeResults.filter(
-			hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE
-		);
-		if (planeExistingUsingExtentResults.length) {
-			planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort((a, b) => a.distance - b.distance);
-			return planeExistingUsingExtentResults[0]
-		} else if (planeExistingResults.length) {
-			planeExistingResults = planeExistingResults.sort((a, b) => a.distance - b.distance);
-			return planeExistingResults[0]
-		} else if (planeResults.length) {
-			planeResults = planeResults.sort((a, b) => a.distance - b.distance);
-			return planeResults[0]
-		} else {
-			return hits[0]
-		}
-		return null
-	}
+    constructor(){
+        super();
+        if(ARKitWrapper.HasARKit() === false){
+            throw new Error('ARKitWrapper will only work in Mozilla\'s ARDemo test app')
+        }
+        if(typeof ARKitWrapper.GLOBAL_INSTANCE !== 'undefined'){
+            throw new Error('ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the global instance.')
+        }
+        this._timestamp = 0;
+        this._lightIntensity = 1000;
+        this._deviceId = null;
+        this._isWatching = false;
+        this._isInitialized = false;
+        this._rawARData = null;
+        this._projectionMatrix = new Float32Array(16);
+        this._viewMatrix = new Float32Array(16);
+        this._planes = new Map();
+        this._anchors = new Map();
+        this._timeOffsets = [];
+        this._timeOffset = 0;
+        this._timeOffsetComputed = false;
+        this._globalCallbacksMap = {};
+        let callbackNames = ['onInit', 'onWatch'];
+        for(let i=0; i < callbackNames.length; i++){
+            this._generateGlobalCallback(callbackNames[i], i);
+        }
+        this._defaultOptions = {
+            location: true,
+            camera: true,
+            objects: true,
+            light_intensity: true,
+            computer_vision_data: false
+        };
+        this._m90 = fromZRotation(create(), 90*PI_OVER_180);
+        this._m90neg = fromZRotation(create(), -90*PI_OVER_180);
+        this._m180 = fromZRotation(create(), 180*PI_OVER_180);
+        this._mTemp = create();
+        let eventCallbacks = [
+            ['arkitStartRecording', ARKitWrapper.RECORD_START_EVENT],
+            ['arkitStopRecording', ARKitWrapper.RECORD_STOP_EVENT],
+            ['arkitDidMoveBackground', ARKitWrapper.DID_MOVE_BACKGROUND_EVENT],
+            ['arkitWillEnterForeground', ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT],
+            ['arkitInterrupted', ARKitWrapper.INTERRUPTED_EVENT],
+            ['arkitInterruptionEnded', ARKitWrapper.INTERRUPTION_ENDED_EVENT],
+            ['arkitShowDebug', ARKitWrapper.SHOW_DEBUG_EVENT],
+            ['arkitWindowResize', ARKitWrapper.WINDOW_RESIZE_EVENT],
+            ['onError', ARKitWrapper.ON_ERROR],
+            ['arTrackingChanged', ARKitWrapper.AR_TRACKING_CHANGED],
+            ['userGrantedComputerVisionData', ARKitWrapper.USER_GRANTED_COMPUTER_VISION_DATA],
+            ['userGrantedWorldSensingData', ARKitWrapper.USER_GRANTED_WORLD_SENSING_DATA]
+        ];
+        for(let i=0; i < eventCallbacks.length; i++){
+            window[eventCallbacks[i][0]] = (detail) => {
+                detail = detail || null;
+                try {
+                    this.dispatchEvent(
+                        eventCallbacks[i][1],
+                        new CustomEvent(
+                            eventCallbacks[i][1],
+                            {
+                                source: this,
+                                detail: detail
+                            }
+                        )
+                    );
+                } catch(e) {
+                    console.error(eventCallbacks[i][0] + ' callback error', e);
+                }
+            };
+        }
+        window['onComputerVisionData'] = (detail) => {
+            this._onComputerVisionData(detail);
+        };
+        window['setNativeTime'] = (detail) => {
+            this._timeOffsets.push (( performance || Date ).now() - detail.nativeTime);
+            this._timeOffsetComputed = true;
+            this._timeOffset = 0;
+            for (var i = 0; i < this._timeOffsets.length; i++) {
+                this._timeOffset += this._timeOffsets[i];
+            }
+            this._timeOffset = this._timeOffset / this._timeOffsets.length;
+        };
+    }
+    static GetOrCreate(options=null){
+        if(typeof ARKitWrapper.GLOBAL_INSTANCE === 'undefined'){
+            ARKitWrapper.GLOBAL_INSTANCE = new ARKitWrapper();
+            options = (options && typeof(options) == 'object') ? options : {};
+            let defaultUIOptions = {
+                browser: true,
+                points: true,
+                focus: false,
+                rec: true,
+                rec_time: true,
+                mic: false,
+                build: false,
+                plane: true,
+                warnings: true,
+                anchors: false,
+                debug: true,
+                statistics: false
+            };
+            let uiOptions = (typeof(options.ui) == 'object') ? options.ui : {};
+            options.ui = Object.assign(defaultUIOptions, uiOptions);
+            ARKitWrapper.GLOBAL_INSTANCE._sendInit(options);
+        }
+        return ARKitWrapper.GLOBAL_INSTANCE
+    }
+    static HasARKit(){
+        return typeof window.webkit !== 'undefined'
+    }
+    get deviceId(){ return this._deviceId }
+    get isWatching(){ return this._isWatching }
+    get isInitialized(){ return this._isInitialized }
+    get hasData(){ return this._rawARData !== null }
+    waitForInit(){
+        return new Promise((resolve, reject) => {
+            if(this._isInitialized){
+                resolve();
+                return
+            }
+            const callback = () => {
+                this.removeEventListener(ARKitWrapper.INIT_EVENT, callback, false);
+                resolve();
+            };
+            this.addEventListener(ARKitWrapper.INIT_EVENT, callback, false);
+        })
+    }
+    getPlanes() {
+        return Array.from(this._planes.values())
+    }
+    getData(key=null){
+        if (key === null){
+            return this._rawARData
+        }
+        if(this._rawARData && typeof this._rawARData[key] !== 'undefined'){
+            return this._rawARData[key]
+        }
+        return null
+    }
+    getObject(uuid){
+        if (!this._isInitialized){
+            return null
+        }
+        const objects = this.getKey('objects');
+        if(objects === null) return null
+        for(const object of objects){
+            if(object.uuid === uuid){
+                return object
+            }
+        }
+        return null
+    }
+    hitTest(x, y, types=ARKitWrapper.HIT_TEST_TYPE_ALL){
+        return new Promise((resolve, reject) => {
+            if (!this._isInitialized){
+                reject(new Error('ARKit is not initialized'));
+                return;
+            }
+            window.webkit.messageHandlers.hitTest.postMessage({
+                x: x,
+                y: y,
+                type: types,
+                callback: this._createPromiseCallback('hitTest', resolve)
+            });
+        })
+    }
+    hitTestNoAnchor(x, y){
+        return hitTestNoAnchor(x, y, this.getPlanes(), this._projectionMatrix, this._viewMatrix)
+    }
+    pickBestHit(hits){
+        if(hits.length === 0) return null
+        let planeResults = hits.filter(
+            hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT
+        );
+        let planeExistingUsingExtentResults = planeResults.filter(
+            hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
+        );
+        let planeExistingResults = planeResults.filter(
+            hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE
+        );
+        if (planeExistingUsingExtentResults.length) {
+            planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort((a, b) => a.distance - b.distance);
+            return planeExistingUsingExtentResults[0]
+        } else if (planeExistingResults.length) {
+            planeExistingResults = planeExistingResults.sort((a, b) => a.distance - b.distance);
+            return planeExistingResults[0]
+        } else if (planeResults.length) {
+            planeResults = planeResults.sort((a, b) => a.distance - b.distance);
+            return planeResults[0]
+        } else {
+            return hits[0]
+        }
+        return null
+    }
     addAnchor(uid, transform){
-		return new Promise((resolve, reject) => {
-			if (!this._isInitialized){
-				reject(new Error('ARKit is not initialized'));
-				return;
-			}
-			window.webkit.messageHandlers.addAnchor.postMessage({
-				uuid: uid,
-				transform: transform,
-				callback: this._createPromiseCallback('addAnchor', resolve)
-			});
-		})
-	}
-	removeAnchor(uid) {
-		window.webkit.messageHandlers.removeAnchors.postMessage([uid]);
-	}
+        return new Promise((resolve, reject) => {
+            if (!this._isInitialized){
+                reject(new Error('ARKit is not initialized'));
+                return;
+            }
+            window.webkit.messageHandlers.addAnchor.postMessage({
+                uuid: uid,
+                transform: transform,
+                callback: this._createPromiseCallback('addAnchor', resolve)
+            });
+        })
+    }
+    removeAnchor(uid) {
+        window.webkit.messageHandlers.removeAnchors.postMessage([uid]);
+    }
     createImageAnchor(uid, buffer, width, height, physicalWidthInMeters) {
-		return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             if (!this._isInitialized){
                 reject(new Error('ARKit is not initialized'));
                 return;
@@ -5884,11 +5884,11 @@ class ARKitWrapper extends EventTarget {
                 imageWidth: width,
                 imageHeight: height,
                 physicalWidth: physicalWidthInMeters,
-				callback: this._createPromiseCallback('createImageAnchor', resolve)
+                callback: this._createPromiseCallback('createImageAnchor', resolve)
             });
-		})
-	}
-	activateDetectionImage(uid) {
+        })
+    }
+    activateDetectionImage(uid) {
         return new Promise((resolve, reject) => {
             if (!this._isInitialized){
                 reject(new Error('ARKit is not initialized'));
@@ -5899,240 +5899,240 @@ class ARKitWrapper extends EventTarget {
                 callback: this._createPromiseCallback('activateDetectionImage', resolve)
             });
         })
-	}
-	stop(){
-		return new Promise((resolve, reject) => {
-			if (!this._isWatching){
-				resolve();
-				return;
-			}
-			console.log('----STOP');
-			window.webkit.messageHandlers.stopAR.postMessage({
-				callback: this._createPromiseCallback('stop', resolve)
-			});
-		})
-	}
-	watch(options=null){
-		if (!this._isInitialized){
-			return false
-		}
-		if(this._isWatching){
-			return true
-		}
-		this._isWatching = true;
-		const newO = Object.assign({}, this._defaultOptions, options);
-		if (newO.videoFrames) {
-			delete newO.videoFrames;
-			newO.computer_vision_data = true;
-		}
-		const data = {
-			options: newO,
-			callback: this._globalCallbacksMap.onWatch
-		};
-		console.log('----WATCH');
-		window.webkit.messageHandlers.watchAR.postMessage(data);
-		return true
-	}
-	setUIOptions(options){
-		window.webkit.messageHandlers.setUIOptions.postMessage(options);
-	}
-	_sendInit(options){
-		console.log('----INIT');
-		window.webkit.messageHandlers.initAR.postMessage({
-			options: options,
-			callback: this._globalCallbacksMap.onInit
-		});
-	}
-	_onInit(deviceId){
-		this._deviceId = deviceId;
-		this._isInitialized = true;
-		try {
-			this.dispatchEvent(
-				ARKitWrapper.INIT_EVENT,
-				new CustomEvent(ARKitWrapper.INIT_EVENT, {
-					source: this
-				})
-			);
+    }
+    stop(){
+        return new Promise((resolve, reject) => {
+            if (!this._isWatching){
+                resolve();
+                return;
+            }
+            console.log('----STOP');
+            window.webkit.messageHandlers.stopAR.postMessage({
+                callback: this._createPromiseCallback('stop', resolve)
+            });
+        })
+    }
+    watch(options=null){
+        if (!this._isInitialized){
+            return false
+        }
+        if(this._isWatching){
+            return true
+        }
+        this._isWatching = true;
+        const newO = Object.assign({}, this._defaultOptions, options);
+        if (newO.videoFrames) {
+            delete newO.videoFrames;
+            newO.computer_vision_data = true;
+        }
+        const data = {
+            options: newO,
+            callback: this._globalCallbacksMap.onWatch
+        };
+        console.log('----WATCH');
+        window.webkit.messageHandlers.watchAR.postMessage(data);
+        return true
+    }
+    setUIOptions(options){
+        window.webkit.messageHandlers.setUIOptions.postMessage(options);
+    }
+    _sendInit(options){
+        console.log('----INIT');
+        window.webkit.messageHandlers.initAR.postMessage({
+            options: options,
+            callback: this._globalCallbacksMap.onInit
+        });
+    }
+    _onInit(deviceId){
+        this._deviceId = deviceId;
+        this._isInitialized = true;
+        try {
+            this.dispatchEvent(
+                ARKitWrapper.INIT_EVENT,
+                new CustomEvent(ARKitWrapper.INIT_EVENT, {
+                    source: this
+                })
+            );
         } catch(e) {
             console.error('INIT_EVENT event error', e);
         }
-	}
-	_onWatch(data){
-		this._rawARData = data;
-		try {
-			this.dispatchEvent(
-				ARKitWrapper.WATCH_EVENT,
-				new CustomEvent(ARKitWrapper.WATCH_EVENT, {
-					source: this,
-					detail: this._rawARData
-				})
-			);
+    }
+    _onWatch(data){
+        this._rawARData = data;
+        try {
+            this.dispatchEvent(
+                ARKitWrapper.WATCH_EVENT,
+                new CustomEvent(ARKitWrapper.WATCH_EVENT, {
+                    source: this,
+                    detail: this._rawARData
+                })
+            );
         } catch(e) {
             console.error('WATCH_EVENT event error', e);
         }
-		this._timestamp = this._adjustARKitTime(data.timestamp);
-		this._lightIntensity = data.light_intensity;
-		this._viewMatrix = data.camera_view;
-		this._projectionMatrix = data.projection_camera;
-		if(data.newObjects.length){
-			for (let i = 0; i < data.newObjects.length; i++) {
-				const element = data.newObjects[i];
-				if(element.plane_center){
-					this._planes.set(element.uuid, {
-						id: element.uuid,
-						center: element.plane_center,
-						extent: [element.plane_extent.x, element.plane_extent.z],
-						modelMatrix: element.transform,
-						alignment: element.plane_alignment
-					});
-				}else{
-					this._anchors.set(element.uuid, {
-						id: element.uuid,
-						modelMatrix: element.transform
-					});
-				}
-			}
-		}
-		if(data.removedObjects.length){
-			for (let i = 0; i < data.removedObjects.length; i++) {
-				const element = data.removedObjects[i];
-				if(this._planes.get(element)){
-					this._planes.delete(element);
-				}else{
-					this._anchors.delete(element);
-				}
-			}
-		}
-		if(data.objects.length){
-			for (let i = 0; i < data.objects.length; i++) {
-				const element = data.objects[i];
-				if(element.plane_center){
-					var plane = this._planes.get(element.uuid);
-					if(!plane){
-						this._planes.set(element.uuid, {
-							id: element.uuid,
-							center: element.plane_center,
-							extent: [element.plane_extent.x, element.plane_extent.z],
-							modelMatrix: element.transform,
-							alignment: element.plane_alignment
-						});
-					} else {
-						plane.center = element.plane_center;
-						plane.extent[0] = element.plane_extent.x;
-						plane.extent[1] = element.plane_extent.y;
-						plane.modelMatrix = element.transform;
-						plane.alignment = element.plane_alignment;
-					}
-				}else{
-					var anchor = this._anchors.get(element.uuid);
-					if(!anchor){
-						this._anchors.set(element.uuid, {
-							id: element.uuid,
-							modelMatrix: element.transform
-						});
-					}else{
-						anchor.modelMatrix = element.transform;
-					}
-				}
-			}
-		}
-	}
-	_onStop(){
-		this._isWatching = false;
-	}
-	_adjustARKitTime(time) {
-		if (this._timeOffsetComputed) {
-			return time + this._timeOffset;
-		} else {
-			return ( performance || Date ).now()
-		}
-	}
-	_createPromiseCallback(action, resolve){
-		const callbackName = this._generateCallbackUID(action);
-		window[callbackName] = (data) => {
-			delete window[callbackName];
-			const wrapperCallbackName = '_on' + action[0].toUpperCase() +
-				action.slice(1);
-			if (typeof(this[wrapperCallbackName]) == 'function'){
-				this[wrapperCallbackName](data);
-			}
-			resolve(data);
-		};
-		return callbackName;
-	}
-	_generateCallbackUID(prefix){
-		return 'arkitCallback_' + prefix + '_' + new Date().getTime() +
-			'_' + Math.floor((Math.random() * Number.MAX_SAFE_INTEGER))
-	}
-	_generateGlobalCallback(callbackName, num){
-		const name = 'arkitCallback' + num;
-		this._globalCallbacksMap[callbackName] = name;
-		const self = this;
-		window[name] = function(deviceData){
-			self['_' + callbackName](deviceData);
-		};
-	}
-	_onComputerVisionData(detail) {
-		if (!detail) {
-			console.error("detail passed to _onComputerVisionData is null");
-			this._requestComputerVisionData();
-			return;
-		}
-		if (!detail.frame || !detail.frame.buffers || detail.frame.buffers.length <= 0) {
-			console.error("detail passed to _onComputerVisionData is bad, no buffers");
-			this._requestComputerVisionData();
-			return;
-		}
-		detail.camera.arCamera = true;
-		var orientation = detail.camera.interfaceOrientation;
-		detail.camera.viewMatrix = detail.camera.inverse_viewMatrix;
+        this._timestamp = this._adjustARKitTime(data.timestamp);
+        this._lightIntensity = data.light_intensity;
+        this._viewMatrix = data.camera_view;
+        this._projectionMatrix = data.projection_camera;
+        if(data.newObjects.length){
+            for (let i = 0; i < data.newObjects.length; i++) {
+                const element = data.newObjects[i];
+                if(element.plane_center){
+                    this._planes.set(element.uuid, {
+                        id: element.uuid,
+                        center: element.plane_center,
+                        extent: [element.plane_extent.x, element.plane_extent.z],
+                        modelMatrix: element.transform,
+                        alignment: element.plane_alignment
+                    });
+                }else{
+                    this._anchors.set(element.uuid, {
+                        id: element.uuid,
+                        modelMatrix: element.transform
+                    });
+                }
+            }
+        }
+        if(data.removedObjects.length){
+            for (let i = 0; i < data.removedObjects.length; i++) {
+                const element = data.removedObjects[i];
+                if(this._planes.get(element)){
+                    this._planes.delete(element);
+                }else{
+                    this._anchors.delete(element);
+                }
+            }
+        }
+        if(data.objects.length){
+            for (let i = 0; i < data.objects.length; i++) {
+                const element = data.objects[i];
+                if(element.plane_center){
+                    var plane = this._planes.get(element.uuid);
+                    if(!plane){
+                        this._planes.set(element.uuid, {
+                            id: element.uuid,
+                            center: element.plane_center,
+                            extent: [element.plane_extent.x, element.plane_extent.z],
+                            modelMatrix: element.transform,
+                            alignment: element.plane_alignment
+                        });
+                    } else {
+                        plane.center = element.plane_center;
+                        plane.extent[0] = element.plane_extent.x;
+                        plane.extent[1] = element.plane_extent.y;
+                        plane.modelMatrix = element.transform;
+                        plane.alignment = element.plane_alignment;
+                    }
+                }else{
+                    var anchor = this._anchors.get(element.uuid);
+                    if(!anchor){
+                        this._anchors.set(element.uuid, {
+                            id: element.uuid,
+                            modelMatrix: element.transform
+                        });
+                    }else{
+                        anchor.modelMatrix = element.transform;
+                    }
+                }
+            }
+        }
+    }
+    _onStop(){
+        this._isWatching = false;
+    }
+    _adjustARKitTime(time) {
+        if (this._timeOffsetComputed) {
+            return time + this._timeOffset;
+        } else {
+            return ( performance || Date ).now()
+        }
+    }
+    _createPromiseCallback(action, resolve){
+        const callbackName = this._generateCallbackUID(action);
+        window[callbackName] = (data) => {
+            delete window[callbackName];
+            const wrapperCallbackName = '_on' + action[0].toUpperCase() +
+                action.slice(1);
+            if (typeof(this[wrapperCallbackName]) == 'function'){
+                this[wrapperCallbackName](data);
+            }
+            resolve(data);
+        };
+        return callbackName;
+    }
+    _generateCallbackUID(prefix){
+        return 'arkitCallback_' + prefix + '_' + new Date().getTime() +
+            '_' + Math.floor((Math.random() * Number.MAX_SAFE_INTEGER))
+    }
+    _generateGlobalCallback(callbackName, num){
+        const name = 'arkitCallback' + num;
+        this._globalCallbacksMap[callbackName] = name;
+        const self = this;
+        window[name] = function(deviceData){
+            self['_' + callbackName](deviceData);
+        };
+    }
+    _onComputerVisionData(detail) {
+        if (!detail) {
+            console.error("detail passed to _onComputerVisionData is null");
+            this._requestComputerVisionData();
+            return;
+        }
+        if (!detail.frame || !detail.frame.buffers || detail.frame.buffers.length <= 0) {
+            console.error("detail passed to _onComputerVisionData is bad, no buffers");
+            this._requestComputerVisionData();
+            return;
+        }
+        detail.camera.arCamera = true;
+        var orientation = detail.camera.interfaceOrientation;
+        detail.camera.viewMatrix = detail.camera.inverse_viewMatrix;
         switch (orientation) {
-			case 1:
-				detail.camera.cameraOrientation = -90;
-				break;
-			case 2:
-				detail.camera.cameraOrientation = 90;
-				break;
-			case 3:
-				detail.camera.cameraOrientation = 0;
-				break;
-			case 4:
-				detail.camera.cameraOrientation = 180;
-				break;
-		}
-		switch(detail.frame.pixelFormatType) {
-			case "kCVPixelFormatType_420YpCbCr8BiPlanarFullRange":
-				detail.frame.pixelFormat = "YUV420P";
-				break;
-			default:
-				detail.frame.pixelFormat = detail.frame.pixelFormatType;
-				break;
-		}
-		var xrVideoFrame = new XRVideoFrame(detail.frame.buffers, detail.frame.pixelFormat, this._adjustARKitTime(detail.frame.timestamp), detail.camera );
-		try {
-			this.dispatchEvent(
-				ARKitWrapper.COMPUTER_VISION_DATA,
-				new CustomEvent(
-					ARKitWrapper.COMPUTER_VISION_DATA,
-					{
-						source: this,
-						detail: xrVideoFrame
-					}
-				)
-			);
-		} catch(e) {
-			console.error('COMPUTER_VISION_DATA event error', e);
-		}
-	}
+            case 1:
+                detail.camera.cameraOrientation = -90;
+                break;
+            case 2:
+                detail.camera.cameraOrientation = 90;
+                break;
+            case 3:
+                detail.camera.cameraOrientation = 0;
+                break;
+            case 4:
+                detail.camera.cameraOrientation = 180;
+                break;
+        }
+        switch(detail.frame.pixelFormatType) {
+            case "kCVPixelFormatType_420YpCbCr8BiPlanarFullRange":
+                detail.frame.pixelFormat = "YUV420P";
+                break;
+            default:
+                detail.frame.pixelFormat = detail.frame.pixelFormatType;
+                break;
+        }
+        var xrVideoFrame = new XRVideoFrame(detail.frame.buffers, detail.frame.pixelFormat, this._adjustARKitTime(detail.frame.timestamp), detail.camera );
+        try {
+            this.dispatchEvent(
+                ARKitWrapper.COMPUTER_VISION_DATA,
+                new CustomEvent(
+                    ARKitWrapper.COMPUTER_VISION_DATA,
+                    {
+                        source: this,
+                        detail: xrVideoFrame
+                    }
+                )
+            );
+        } catch(e) {
+            console.error('COMPUTER_VISION_DATA event error', e);
+        }
+    }
     _requestComputerVisionData() {
         window.webkit.messageHandlers.requestComputerVisionData.postMessage({});
-	}
+    }
     _startSendingComputerVisionData() {
         window.webkit.messageHandlers.startSendingComputerVisionData.postMessage({});
-	}
+    }
     _stopSendingComputerVisionData() {
         window.webkit.messageHandlers.stopSendingComputerVisionData.postMessage({});
-	}
+    }
 }
 ARKitWrapper.INIT_EVENT = 'arkit-init';
 ARKitWrapper.WATCH_EVENT = 'arkit-watch';
@@ -6164,207 +6164,208 @@ ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE = 8;
 ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT = 16;
 ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_GEOMETRY = 32;
 ARKitWrapper.HIT_TEST_TYPE_ALL = ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT |
-	ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE |
-	ARKitWrapper.HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE |
-	ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT;
+    ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE |
+    ARKitWrapper.HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE |
+    ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT;
 ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANES = ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE |
-	ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT;
+    ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT;
 ARKitWrapper.ANCHOR_TYPE_PLANE = 'plane';
 ARKitWrapper.ANCHOR_TYPE_FACE = 'face';
 ARKitWrapper.ANCHOR_TYPE_ANCHOR = 'anchor';
 ARKitWrapper.ANCHOR_TYPE_IMAGE = 'image';
 
 class ARKitWatcher {
-	constructor(arKitWrapper){
-		this._subscribed = false;
-		this._arKitWrapper = arKitWrapper;
-		this.subscribe();
-	}
-	subscribe(){
-		if(this._subscribed) return
-		this._subscribed = true;
-		this._arKitWrapper.addEventListener(ARKitWrapper.INIT_EVENT, this.handleARKitInit.bind(this));
-		this._arKitWrapper.addEventListener(ARKitWrapper.WATCH_EVENT, this.handleARKitUpdate.bind(this));
-		this._arKitWrapper.addEventListener(ARKitWrapper.WINDOW_RESIZE_EVENT, this.handleARKitWindowResize.bind(this));
-		this._arKitWrapper.addEventListener(ARKitWrapper.ON_ERROR, this.handleOnError.bind(this));
-		this._arKitWrapper.addEventListener(ARKitWrapper.AR_TRACKING_CHANGED, this.handleArTrackingChanged.bind(this));
-		this._arKitWrapper.addEventListener(ARKitWrapper.COMPUTER_VISION_DATA, this.handleComputerVisionData.bind(this));
-	}
-	handleARKitInit(){}
-	handleARKitUpdate(){}
-	handleARKitWindowResize(){}
-	handleOnError(){}
-	handleArTrackingChanged(){}
-	handleComputerVisionData(){}
+    constructor(arKitWrapper){
+        this._subscribed = false;
+        this._arKitWrapper = arKitWrapper;
+        this.subscribe();
+    }
+    subscribe(){
+        if(this._subscribed) return
+        this._subscribed = true;
+        this._arKitWrapper.addEventListener(ARKitWrapper.INIT_EVENT, this.handleARKitInit.bind(this));
+        this._arKitWrapper.addEventListener(ARKitWrapper.WATCH_EVENT, this.handleARKitUpdate.bind(this));
+        this._arKitWrapper.addEventListener(ARKitWrapper.WINDOW_RESIZE_EVENT, this.handleARKitWindowResize.bind(this));
+        this._arKitWrapper.addEventListener(ARKitWrapper.ON_ERROR, this.handleOnError.bind(this));
+        this._arKitWrapper.addEventListener(ARKitWrapper.AR_TRACKING_CHANGED, this.handleArTrackingChanged.bind(this));
+        this._arKitWrapper.addEventListener(ARKitWrapper.COMPUTER_VISION_DATA, this.handleComputerVisionData.bind(this));
+    }
+    handleARKitInit(){}
+    handleARKitUpdate(){}
+    handleARKitWindowResize(){}
+    handleOnError(){}
+    handleArTrackingChanged(){}
+    handleComputerVisionData(){}
 }
 
 class ARKitDevice extends PolyfilledXRDevice {
-	constructor(global){
-		super(global);
-		this._throttledLogPose = throttle(this.logPose, 1000);
-		this._sessions = new Map();
-		this._activeSession = null;
-		this._wrapperDiv = document.createElement('div');
-		this._wrapperDiv.setAttribute('class', 'arkit-device-wrapper');
-		document.addEventListener('DOMContentLoaded', ev => {
-			document.body.insertBefore(this._wrapperDiv, document.body.firstChild || null);
-		});
-		this._headModelMatrix = create();
-		this._projectionMatrix = create();
-		this._eyeLevelMatrix = identity(create());
-		this._stageMatrix = identity(create());
-		this._stageMatrix[13] = -1.3;
-		this._depthNear = 0.1;
-		this._depthFar = 1000;
-		try{
-			this._arKitWrapper = ARKitWrapper.GetOrCreate();
-			this._arWatcher = new ARWatcher(this._arKitWrapper, this);
-		} catch (e){
-			console.error('Error initializing the ARKit wrapper', e);
-			this._arKitWrapper = null;
-			this._arWatcher = null;
-		}
-	}
-	get depthNear(){ return this._depthNear }
-	set depthNear(val){ this._depthNear = val; }
-	get depthFar(){ return this._depthFar }
-	set depthFar(val){ this._depthFar = val; }
-	supportsSession(options={}){
-		return options.immersive === false
-	}
-	async requestSession(options={}){
-		if(!this.supportsSession(options)){
-			console.error('Invalid session options', options);
-			return Promise.reject()
-		}
-		if(!this._arKitWrapper){
-			console.error('Session requested without an ARKitWrapper');
-			return Promise.reject()
-		}
-		if(this._activeSession !== null){
-			console.error('Tried to start a second active session');
-			return Promise.reject()
-		}
-		const session = new Session$1(options.outputContext || null);
-		this._sessions.set(session.id, session);
-		this._activeSession = session;
-		this._arKitWrapper.waitForInit().then(() => {
-			this._arKitWrapper.watch();
-		});
-		return Promise.resolve(session.id)
-	}
-	onBaseLayerSet(sessionId, layer){
-		this._sessions.get(sessionId).baseLayer = layer;
-		this._wrapperDiv.appendChild(layer.context.canvas);
-	}
-	requestAnimationFrame(callback){
-		return window.requestAnimationFrame(callback)
-	}
-	cancelAnimationFrame(handle){
-		return window.cancelAnimationFrame(handle)
-	}
-	onFrameStart(sessionId){
-	}
-	onFrameEnd(sessionId){
-	}
-	logPose(){
-		console.log('pose',
-			getTranslation(new Float32Array(3), this._headModelMatrix),
-			getRotation(new Float32Array(4), this._headModelMatrix)
-		);
-	}
-	async requestFrameOfReferenceTransform(type, options){
-		switch(type){
-			case 'head-model':
-				return this._headModelMatrix
-			case 'eye-level':
-				return this._eyeLevelMatrix
-			case 'stage':
-				return this._stageMatrix
-			default:
-				throw new Error('Unsupported frame of reference type', type)
-		}
-	}
-	endSession(sessionId){
-		const session = this._sessions.get(sessionId);
-		if (session.ended) return
-		session.ended = true;
-		if(this._activeSession === session){
-			this._activeSession = null;
-			this._arKitWrapper.stop();
-		}
-		if(session.baseLayer !== null){
-			this._wrapperDiv.removeChild(session.baseLayer.context.canvas);
-		}
-	}
-	getViewport(sessionId, eye, layer, target){
-		const { width, height } = layer.context.canvas;
-		target.x = 0;
-		target.y = 0;
-		target.width = width;
-		target.height = height;
-		return true
-	}
-	getProjectionMatrix(eye){
-		return this._projectionMatrix
-	}
-	setProjectionMatrix(matrix){
-		copy(this._projectionMatrix, matrix);
-	}
-	getBasePoseMatrix(){
-		return this._headModelMatrix
-	}
-	getBaseViewMatrix(eye){
-		return this._headModelMatrix
-	}
-	setBaseViewMatrix(matrix){
-		copy(this._headModelMatrix, matrix);
-	}
-	requestStageBounds(){
-		return null
-	}
-	getInputSources(){
-		return []
-	}
-	getInputPose(inputSource, coordinateSystem){
-		return null
-	}
-	onWindowResize(){}
+    constructor(global){
+        super(global);
+        this._throttledLogPose = throttle(this.logPose, 1000);
+        this._sessions = new Map();
+        this._activeSession = null;
+        this._wrapperDiv = document.createElement('div');
+        this._wrapperDiv.setAttribute('class', 'arkit-device-wrapper');
+        document.addEventListener('DOMContentLoaded', ev => {
+            document.body.insertBefore(this._wrapperDiv, document.body.firstChild || null);
+        });
+        this._headModelMatrix = create();
+        this._projectionMatrix = create();
+        this._eyeLevelMatrix = identity(create());
+        this._stageMatrix = identity(create());
+        this._stageMatrix[13] = -1.3;
+        this._depthNear = 0.1;
+        this._depthFar = 1000;
+        try{
+            this._arKitWrapper = ARKitWrapper.GetOrCreate();
+            this._arWatcher = new ARWatcher(this._arKitWrapper, this);
+        } catch (e){
+            console.error('Error initializing the ARKit wrapper', e);
+            this._arKitWrapper = null;
+            this._arWatcher = null;
+        }
+    }
+    get depthNear(){ return this._depthNear }
+    set depthNear(val){ this._depthNear = val; }
+    get depthFar(){ return this._depthFar }
+    set depthFar(val){ this._depthFar = val; }
+    supportsSession(options={}){
+        return options.immersive === false
+    }
+    async requestSession(options={}){
+        if(!this.supportsSession(options)){
+            console.error('Invalid session options', options);
+            return Promise.reject()
+        }
+        if(!this._arKitWrapper){
+            console.error('Session requested without an ARKitWrapper');
+            return Promise.reject()
+        }
+        if(this._activeSession !== null){
+            console.error('Tried to start a second active session');
+            return Promise.reject()
+        }
+        const session = new Session$1(options.outputContext || null);
+        this._sessions.set(session.id, session);
+        this._activeSession = session;
+        this._arKitWrapper.waitForInit().then(() => {
+            this._arKitWrapper.watch();
+        });
+        return Promise.resolve(session.id)
+    }
+    onBaseLayerSet(sessionId, layer){
+        this._sessions.get(sessionId).baseLayer = layer;
+        this._wrapperDiv.appendChild(layer.context.canvas);
+    }
+    requestAnimationFrame(callback){
+        return window.requestAnimationFrame(callback)
+    }
+    cancelAnimationFrame(handle){
+        return window.cancelAnimationFrame(handle)
+    }
+    onFrameStart(sessionId){
+    }
+    onFrameEnd(sessionId){
+    }
+    logPose(){
+        console.log('pose',
+            getTranslation(new Float32Array(3), this._headModelMatrix),
+            getRotation(new Float32Array(4), this._headModelMatrix)
+        );
+    }
+    async requestFrameOfReferenceTransform(type, options){
+        switch(type){
+            case 'head-model':
+                return this._headModelMatrix
+            case 'eye-level':
+                return this._eyeLevelMatrix
+            case 'stage':
+                return this._stageMatrix
+            default:
+                throw new Error('Unsupported frame of reference type', type)
+        }
+    }
+    endSession(sessionId){
+        const session = this._sessions.get(sessionId);
+        if (session.ended) return
+        session.ended = true;
+        if(this._activeSession === session){
+            this._activeSession = null;
+            this._arKitWrapper.stop();
+        }
+        if(session.baseLayer !== null){
+            this._wrapperDiv.removeChild(session.baseLayer.context.canvas);
+        }
+    }
+    getViewport(sessionId, eye, layer, target){
+        const { width, height } = layer.context.canvas;
+        target.x = 0;
+        target.y = 0;
+        target.width = width;
+        target.height = height;
+        return true
+    }
+    getProjectionMatrix(eye){
+        return this._projectionMatrix
+    }
+    setProjectionMatrix(matrix){
+        copy(this._projectionMatrix, matrix);
+    }
+    getBasePoseMatrix(){
+        return this._headModelMatrix
+    }
+    getBaseViewMatrix(eye){
+        return this._headModelMatrix
+    }
+    setBaseViewMatrix(matrix){
+        copy(this._headModelMatrix, matrix);
+    }
+    requestStageBounds(){
+        return null
+    }
+    getInputSources(){
+        return []
+    }
+    getInputPose(inputSource, coordinateSystem){
+        return null
+    }
+    onWindowResize(){}
 }
 let SESSION_ID$1 = 100;
 class Session$1 {
-	constructor(outputContext){
-		this.ended = null;
-		this.outputContext = outputContext;
-		this.baseLayer = null;
-		this.id = ++SESSION_ID$1;
-	}
+    constructor(outputContext){
+        this.ended = null;
+        this.outputContext = outputContext;
+        this.baseLayer = null;
+        this.id = ++SESSION_ID$1;
+    }
 }
 class ARWatcher extends ARKitWatcher {
-	constructor(arKitWrapper, arKitDevice){
-		super(arKitWrapper);
-		this._arKitDevice = arKitDevice;
-	}
-	handleARKitUpdate(event){
-		const cameraTransformMatrix = this._arKitWrapper.getData('camera_transform');
-		if (cameraTransformMatrix) {
-			this._arKitDevice.setBaseViewMatrix(cameraTransformMatrix);
-		} else {
-			console.log('no camera transform', this._arKitWrapper.rawARData);
-		}
-		const cameraProjectionMatrix = this._arKitWrapper.getData('projection_camera');
-		if(cameraProjectionMatrix){
-			this._arKitDevice.setProjectionMatrix(cameraProjectionMatrix);
-		} else {
-			console.log('no projection camera', this._arKitWrapper.rawARData);
-		}
-	}
-	handleOnError(...args){
-		console.error('ARKit error', ...args);
-	}
+    constructor(arKitWrapper, arKitDevice){
+        super(arKitWrapper);
+        this._arKitDevice = arKitDevice;
+    }
+    handleARKitUpdate(event){
+        const cameraTransformMatrix = this._arKitWrapper.getData('camera_transform');
+        if (cameraTransformMatrix) {
+            this._arKitDevice.setBaseViewMatrix(cameraTransformMatrix);
+        } else {
+            console.log('no camera transform', this._arKitWrapper.rawARData);
+        }
+        const cameraProjectionMatrix = this._arKitWrapper.getData('projection_camera');
+        if(cameraProjectionMatrix){
+            this._arKitDevice.setProjectionMatrix(cameraProjectionMatrix);
+        } else {
+            console.log('no projection camera', this._arKitWrapper.rawARData);
+        }
+    }
+    handleOnError(...args){
+        console.error('ARKit error', ...args);
+    }
 }
 
-const workingMatrix = create();
+const _workingMatrix = create();
+const PI_OVER_180$1 = Math.PI / 180;
 WebXRPolyfill.prototype._patchRequestDevice = function(){
     this.xr = new XR(new XRDevice(new ARKitDevice(this.global)));
     Object.defineProperty(this.global.navigator, 'xr', {
@@ -6373,55 +6374,59 @@ WebXRPolyfill.prototype._patchRequestDevice = function(){
     });
 };
 const xrPolyfill = new WebXRPolyfill(null, {
-	webvr: false,
-	cardboard: false
+    webvr: false,
+    cardboard: false
 });
-function xrFrameOfReferenceGetTransformTo(otherFoR){
-	invert(workingMatrix, otherFoR[PRIVATE$9].transform);
-	let out = identity(create());
-	multiply(out, workingMatrix, out);
-	return multiply(out, this[PRIVATE$9].transform, out)
+function _xrFrameOfReferenceGetTransformTo(otherFoR){
+    return _getTransformTo(this[PRIVATE$9].transform, otherFoR[PRIVATE$9].transform)
 }
-const arKitWrapper = ARKitWrapper.GetOrCreate();
-async function xrSessionRequestHitTest(origin, direction, coordinateSystem) {
-	if(coordinateSystem.type !== 'head-model'){
-		return Promise.reject('Only head-model hit testing is supported')
-	}
-	return new Promise((resolve, reject) => {
-		const normalizedScreenCoordinates = convertRayOriginToScreenCoordinates(origin, 0.1, 0.7853981633974483);
-		arKitWrapper.hitTest(...normalizedScreenCoordinates, ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANES).then(hits => {
-			this.requestFrameOfReference('eye-level').then(eyeLevelFrameOfReference => {
-				const csTransform = eyeLevelFrameOfReference.getTransformTo(coordinateSystem);
-				resolve(hits.map(hit => {
-					return new XRHitResult(multiply(create(), hit.world_transform, csTransform))
-				}));
-			});
-		}).catch((...params) => {
-			console.error('Error testing for hits', ...params);
-			reject();
-		});
-	})
+function _getTransformTo(sourceMatrix, destinationMatrix){
+    invert(_workingMatrix, destinationMatrix);
+    let out = identity(create());
+    multiply(out, _workingMatrix, out);
+    return multiply(out, sourceMatrix, out)
 }
-function convertRayOriginToScreenCoordinates(rayOrigin, near, fov){
-	const nearLengthFromCenter = near * Math.tan(fov / 2);
-	let x = rayOrigin[0] / nearLengthFromCenter;
-	let y = rayOrigin[1] / nearLengthFromCenter;
-	const width = document.documentElement.offsetWidth;
-	const height = document.documentElement.offsetHeight;
-	if(width < height){
-		x *= height / width;
-	} else {
-		y *= width / height;
-	}
-	return [x, y]
+const _arKitWrapper = ARKitWrapper.GetOrCreate();
+async function _xrSessionRequestHitTest(origin, direction, coordinateSystem) {
+    if(coordinateSystem.type !== 'head-model'){
+        return Promise.reject('Only head-model hit testing is supported')
+    }
+    if(origin[0] != 0.0 && origin[1] != 0.0 && origin[2] != 0.0) {
+        return Promise.reject('Platform only supports hit testing with ray origin = [0,0,0]')
+    }
+    return new Promise((resolve, reject) => {
+        const normalizedScreenCoordinates = _convertRayToARKitScreenCoordinates(direction, _arKitWrapper._projectionMatrix);
+        console.log('and back', ...normalizedScreenCoordinates);
+        _arKitWrapper.hitTest(...normalizedScreenCoordinates, ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_GEOMETRY).then(hits => {
+            if(hits.length === 0) resolve([]);
+            this.requestFrameOfReference('eye-level').then(eyeLevelFrameOfReference => {
+                const csTransform = eyeLevelFrameOfReference.getTransformTo(coordinateSystem);
+                resolve(hits.map(hit => {
+                    const hitInHeadMatrix = multiply(create(), hit.world_transform, csTransform);
+                    console.log('world transform', getTranslation(create$1(), hit.world_transform), getRotation(new Float32Array(4), hit.world_transform));
+                    return new XRHitResult(hitInHeadMatrix)
+                }));
+            });
+        }).catch((...params) => {
+            console.error('Error testing for hits', ...params);
+            reject();
+        });
+    })
 }
-function installExtensions(){
-	if(!navigator.xr) return
-	if(window.XRSession){
-		XRSession.prototype.requestHitTest = xrSessionRequestHitTest;
-	}
-	if(window.XRFrameOfReference){
-		XRFrameOfReference.prototype.getTransformTo = xrFrameOfReferenceGetTransformTo;
-	}
+function _convertRayToARKitScreenCoordinates(ray, projectionMatrix){
+    var proj = transformMat4(create$1(), ray, projectionMatrix);
+    console.log('project', ...proj);
+    let x = (proj[0] + 1)/2;
+    let y = (-proj[1] + 1)/2;
+    return [x, y]
 }
-installExtensions();
+function _installExtensions(){
+    if(!navigator.xr) return
+    if(window.XRSession){
+        XRSession.prototype.requestHitTest = _xrSessionRequestHitTest;
+    }
+    if(window.XRFrameOfReference){
+        XRFrameOfReference.prototype.getTransformTo = _xrFrameOfReferenceGetTransformTo;
+    }
+}
+_installExtensions();
