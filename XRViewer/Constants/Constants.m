@@ -8,16 +8,16 @@
 
 #import "Constants.h"
 
-NSString *const permissionsUIAlreadyShownKey = @"permissionsUIAlreadyShownKey";
+NSString *const permissionsUIAlreadyShownKey = @"permissionsUIAlreadyShown";
 NSString *const useAnalyticsKey = @"useAnalytics";
 NSString *const homeURLKey = @"homeURL";
-NSString *const secondsInBackgroundKey = @"secondsInBackgroundKey";
-NSString *const distantAnchorsDistanceKey = @"distantAnchorsDistanceKey";
-NSString *const backgroundOrPausedDateKey = @"backgroundOrPausedDateKey";
+NSString *const secondsInBackgroundKey = @"secondsInBackground";
+NSString *const distantAnchorsDistanceKey = @"distantAnchorsDistance";
+NSString *const backgroundOrPausedDateKey = @"backgroundOrPausedDate";
 int const sessionInBackgroundDefaultTimeInSeconds = 60;
 float const distantAnchorsDefaultDistanceInMeters = 3.0;
 double const pauseTimeInSecondsToRemoveAnchors = 10.0;
 
-NSString *const alwaysAllowWorldSensingKey = @"alwaysAllowWorldSensingKey";
-NSString *const allowedWorldSensingSitesKey = @"allowedWorldSensingSitesKey";
-NSString *const exposeWebXRAPI = @"exposeWebXRAPI";
+NSString *const alwaysAllowWorldSensingKey = @"alwaysAllowWorldSensing";
+NSString *const allowedWorldSensingSitesKey = @"allowedWorldSensingSites";
+NSString *const exposeWebXRAPIKey = @"exposeWebXRAPI";

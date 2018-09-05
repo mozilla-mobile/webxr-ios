@@ -125,7 +125,7 @@ extension SettingsViewController: UITableViewDataSource {
             case 6:
                 let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
                 switchInputCell.labelTitle?.text = "Expose WebXR API (restart required)"
-                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: exposeWebXRAPI);
+                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: exposeWebXRAPIKey);
                 switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
                 switchInputCell.switchControl.tag = 6
                 cell = switchInputCell
@@ -160,7 +160,7 @@ extension SettingsViewController: UITableViewDataSource {
             // FIXME: This doesn't update the always-on switch control?
             UserDefaults.standard.set(false, forKey: alwaysAllowWorldSensingKey)
         } else if switchControl.tag == 6 {
-            UserDefaults.standard.set(switchControl.isOn, forKey: exposeWebXRAPI)
+            UserDefaults.standard.set(switchControl.isOn, forKey: exposeWebXRAPIKey)
         }
     }
 }

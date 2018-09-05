@@ -48,6 +48,6 @@ FOUNDATION_EXPORT NSString *const allowedWorldSensingSitesKey;
 
 /// The NSUserDefaults key for the boolean that tells us whether
 /// we should preload the webxr.js file to expose a WebXR API
-FOUNDATION_EXPORT NSString *const exposeWebXRAPI;
+FOUNDATION_EXPORT NSString *const exposeWebXRAPIKey;
 
 #endif /* Constants_h */

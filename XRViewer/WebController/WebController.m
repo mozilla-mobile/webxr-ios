@@ -706,7 +706,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 
     NSUserDefaults* standardUserDefaults = [NSUserDefaults standardUserDefaults];
     // Check if we are supposed to be exposing WebXR.
-    if ([standardUserDefaults boolForKey:exposeWebXRAPI]) {
+    if ([standardUserDefaults boolForKey:exposeWebXRAPIKey]) {
         NSBundle *scriptBundle = [NSBundle bundleForClass:[self class]];
         NSString *scriptURL = [scriptBundle pathForResource:@"webxr" ofType:@"js"];
         NSString *scriptContent = [[NSString alloc] initWithContentsOfFile:scriptURL encoding:NSUTF8StringEncoding error: nil];
