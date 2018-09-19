@@ -60,7 +60,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
                           ];
@@ -96,7 +97,8 @@
                                                 buttonAlignment:UILayoutConstraintAxisHorizontal
                                                 transitionStyle:PopupDialogTransitionStyleBounceUp
                                                  preferredWidth:200.0
-                                               gestureDismissal:NO
+                                            tapGestureDismissal:NO
+                                            panGestureDismissal:NO
                                                   hideStatusBar:TRUE
                                                      completion:^{}
                               ];
@@ -124,7 +126,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleZoomIn
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
                           ];
@@ -144,7 +147,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
@@ -174,7 +178,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
                           ];
@@ -204,7 +209,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
                           ];
@@ -236,7 +242,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
                           ];
@@ -262,7 +269,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
@@ -288,7 +296,8 @@
                                             buttonAlignment:UILayoutConstraintAxisVertical
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
@@ -318,7 +327,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:340.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
@@ -362,7 +372,8 @@
                                             buttonAlignment:UILayoutConstraintAxisVertical // Horizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:340.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
@@ -412,7 +423,8 @@
                                                       buttonAlignment:UILayoutConstraintAxisVertical
                                                       transitionStyle:PopupDialogTransitionStyleBounceUp
                                                        preferredWidth:UIScreen.mainScreen.bounds.size.width/2.0
-                                                     gestureDismissal:NO
+                                                  tapGestureDismissal:NO
+                                                  panGestureDismissal:NO
                                                         hideStatusBar:YES
                                                            completion:^{}];
     
