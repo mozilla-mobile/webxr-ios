@@ -10,9 +10,9 @@ target 'XRViewer' do
     pod 'CocoaLumberjack'
     pod 'PopupDialog'
     pod 'pop'
-    pod 'MozillaTelemetry', :git => 'https://github.com/mozilla-mobile/telemetry-ios.git', :branch => 'master'
+     pod 'MozillaTelemetry', :git => 'https://github.com/mozilla-mobile/telemetry-ios.git', :branch => 'master'
     pod 'FontAwesomeKit'
-  # pod "GCDWebServer", "~> 3.0"
+    pod "GCDWebServer", "~> 3.0"
 end
 
 
@@ -21,7 +21,7 @@ post_install do |installer|
     installer.pods_project.targets.each do |target|
         if target.name == 'MozillaTelemetry'
             target.build_configurations.each do |config|
-                config.build_settings['SWIFT_VERSION'] = 'Swift 3.2'
+                                config.build_settings['SWIFT_VERSION'] = '3.2'
             end
         end
     end
