@@ -31,6 +31,10 @@
 @property(nonatomic) ShowMode showMode;
 @property(nonatomic) ShowOptions showOptions;
 
+@property(nonatomic, strong) ARWorldMap *backgroundWorldMap;
+@property(nonatomic, strong) ARWorldMap *savedWorldMap;
+
+
 /*
  Computer vision properties
  We hold different data structures, like accelerate, NSData, and NSString buffers,
@@ -116,6 +120,10 @@
         [[self session] setDelegate:self];
         [self setArSessionState:ARKSessionUnknown];
         
+        // don't want anyone using this
+        self.backgroundWorldMap = nil;
+        self.savedWorldMap = nil;
+
         /**
          A configuration for running world tracking.
          
@@ -242,9 +250,55 @@
     return self.session.currentFrame.timestamp * 1000;
 }
 
-- (void)resumeSessionWithAppState: (AppState*)state {
+- (void)saveWorldMap {
+    if ([self trackingStateNormal]) {
+        return;
+    }
+    
+    [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
+        if (worldMap) {
+            DDLogError(@"saving WorldMap due to web request");
+            self.savedWorldMap = worldMap;
+        }
+    }];
+}
+
+- (void)saveWorldMapInBackground {
+    if ([self trackingStateNormal]) {
+        return;
+    }
+
+    [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
+        if (worldMap) {
+            DDLogError(@"saving WorldMap as we transition to background");
+            self.backgroundWorldMap = worldMap;
+        }
+    }];
+}
+
+- (BOOL) hasSavedWorldMap {
+    return (self.savedWorldMap != nil);
+}
+
+- (BOOL) hasBackgroundWorldMap {
+    return (self.backgroundWorldMap != nil);
+}
+
+- (void)restoreWorldMap:(ARWorldMap *)map withAppState:(AppState *)state {
     [self setRequest:[state aRRequest]];
     
+    if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+        ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
+        if ([self hasSavedWorldMap]) {
+            [worldTrackingConfiguration setInitialWorldMap:[self savedWorldMap]];
+            DDLogError(@"using Saved WorldMap to restart session");
+        } else {
+            [worldTrackingConfiguration setInitialWorldMap:nil];
+            DDLogError(@"no Saved WorldMap, resuming without saved worldmap");
+        }
+    } else {
+        DDLogError(@"resume session on a face-tracking camera");
+    }
     [[self session] runWithConfiguration:[self configuration]];
     [self setArSessionState:ARKSessionRunning];
     [self setupDeviceCamera];
@@ -252,6 +306,51 @@
     [self setShowMode:[state showMode]];
     [self setShowOptions:[state showOptions]];
 }
+
+- (void)resumeSessionWithAppState: (AppState*)state {
+    [self setRequest:[state aRRequest]];
+    
+    if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+        ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
+        if ([self hasBackgroundWorldMap]) {
+            [worldTrackingConfiguration setInitialWorldMap:[self backgroundWorldMap]];
+            self.backgroundWorldMap = nil;
+            DDLogError(@"using Saved WorldMap to resume session");
+        } else {
+            [worldTrackingConfiguration setInitialWorldMap:nil];
+            DDLogError(@"no Saved WorldMap, resuming without background worldmap");
+        }
+    } else {
+        DDLogError(@"resume session on a face-tracking camera");
+    }
+    [[self session] runWithConfiguration:[self configuration]];
+    [self setArSessionState:ARKSessionRunning];
+    [self setupDeviceCamera];
+    
+    [self setShowMode:[state showMode]];
+    [self setShowOptions:[state showOptions]];
+}
+
+- (void)resumeSessionFromBackground: (AppState*)state {
+    [self setRequest:[state aRRequest]];
+    
+    if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+        ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
+        if ([self hasBackgroundWorldMap]) {
+            [worldTrackingConfiguration setInitialWorldMap:[self backgroundWorldMap]];
+            self.backgroundWorldMap = nil;
+            DDLogError(@"using Saved WorldMap to resume session");
+        } else {
+            [worldTrackingConfiguration setInitialWorldMap:nil];
+            DDLogError(@"no Saved WorldMap, resuming without background worldmap");
+        }
+    } else {
+        DDLogError(@"resume session on a face-tracking camera");
+    }
+    [[self session] runWithConfiguration:[self configuration]];
+    [self setArSessionState:ARKSessionRunning];
+}
+
 
 - (void)startSessionWithAppState:(AppState *)state
 {
@@ -274,6 +373,16 @@
 - (void)updateARConfigurationWithState:(AppState *)state {
     [self setRequest:[state aRRequest]];
 
+    // make sure there is no initial worldmap set
+    if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+        ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
+        [worldTrackingConfiguration setInitialWorldMap:nil];
+        if ([self hasBackgroundWorldMap]) {
+            self.backgroundWorldMap = nil;
+            DDLogError(@"clearing Saved Background WorldMap from resume session");
+        }
+    }
+    
     if ([[state aRRequest][WEB_AR_WORLD_ALIGNMENT] boolValue]) {
         [[self configuration] setWorldAlignment:ARWorldAlignmentGravityAndHeading];
     } else {
@@ -328,7 +437,7 @@
     
     matrix_float4x4 matrix = [transform isKindOfClass:[NSArray class]] ? matrixFromArray(transform) : matrixFromDictionary((NSDictionary *)transform);
     
-    ARAnchor *anchor = [[ARAnchor alloc] initWithTransform:matrix];
+    ARAnchor *anchor = [[ARAnchor alloc] initWithName:userGeneratedAnchorID transform:matrix];
     
     [[self session] addAnchor:anchor];
 
@@ -1091,6 +1200,10 @@
     return [array copy];
 }
 
+- (BOOL)trackingStateNormal {
+    return [[[[self session] currentFrame] camera] trackingState] != ARTrackingStateNormal;
+}
+
 - (NSString *)trackingState {
     return trackingState([[[self session] currentFrame] camera]);
 }
@@ -1194,6 +1307,8 @@
 #endif
         anchorDictionary[WEB_AR_UUID_OPTION] = [addedAnchor.identifier UUIDString];
         anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"plane";
+        DDLogDebug(@"Add Plane Anchor - %@", [addedAnchor.identifier UUIDString]);
+
     } else if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
         // User generated ARImageAnchor
         ARImageAnchor *addedImageAnchor = (ARImageAnchor *)addedAnchor;
@@ -1214,6 +1329,7 @@
         anchorDictionary[WEB_AR_UUID_OPTION] = name;
         anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
         anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"anchor";
+        DDLogDebug(@"Add User Anchor - %@", name);
     }
 
     return [anchorDictionary copy];
@@ -1387,6 +1503,7 @@
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
 {
     //DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
+    DDLogDebug(@"Update Anchors - %lu", anchors.count);
     for (ARAnchor* updatedAnchor in anchors) {
         if ([updatedAnchor isKindOfClass:[ARFaceAnchor class]] && ![self.configuration isKindOfClass:[ARFaceTrackingConfiguration class]]) {
             NSLog(@"Trying to update a face anchor in a session configuration that's not ARFaceTrackingConfiguration");
@@ -1442,6 +1559,13 @@
     } else {
         // Simple, user generated ARAnchor
         NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[anchor.identifier UUIDString]];
+//        NSString *anchorName = anchor.name;
+//        NSString *name;
+//        if (userAnchorID) {
+//            name = userAnchorID;
+//        } else {
+//            name = [anchor.identifier UUIDString];
+//        }
         NSString *name = userAnchorID? userAnchorID: [anchor.identifier UUIDString];
         anchorID = name;
     }
@@ -1534,6 +1658,11 @@
     {
         [self didInterrupt](NO);
     }
+}
+
+- (BOOL)sessionShouldAttemptRelocalization:(ARSession *)session
+{
+    return YES;
 }
 
 - (void)session:(ARSession *)session didOutputAudioSampleBuffer:(CMSampleBufferRef)audioSampleBuffer

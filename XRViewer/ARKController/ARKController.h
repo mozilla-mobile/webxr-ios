@@ -107,6 +107,16 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
 - (void)viewWillTransitionToSize:(CGSize)size;
 
 /**
+ Save the current ARKit ARWorldMap if tracking.
+ */
+- (void)saveWorldMapInBackground;
+
+/**
+ is there a saved world map?
+ */
+- (BOOL) hasBackgroundWorldMap;
+
+/**
  Updates the internal AR Request dictionary
  Creates an ARKit configuration object
  Runs the ARKit session
@@ -126,6 +136,16 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
  @param state The current app state
  */
 - (void)resumeSessionWithAppState: (AppState*)state;
+
+/**
+ Updates the internal AR Request dictionary and the configuration
+ Runs the session
+ Updates the session state to running
+ Updates the show mode and the show options
+ 
+ @param state The current app state
+ */
+- (void)resumeSessionFromBackground: (AppState*)state;
 
 /**
  Pauses the AR session and sets the arSessionState to paused
@@ -180,6 +200,8 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
  @return an array of dictionaries representing planes
  */
 - (NSArray *)currentPlanesArray;
+
+- (BOOL)trackingStateNormal;
 
 - (NSString *)trackingState;
 

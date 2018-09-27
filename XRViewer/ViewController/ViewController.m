@@ -306,7 +306,8 @@ typedef void (^UICompletion)(void);
              
              [[blockSelf webController] setLastXRVisitedURL:[[[[blockSelf webController] webView] URL] absoluteString]];
          }
-         else {
+         else
+         {
              [[blockSelf stateController] setShowMode:ShowNothing];
              if ([[blockSelf arkController] arSessionState] == ARKSessionRunning) {
                  [blockSelf.timerSessionRunningInBackground invalidate];
@@ -348,21 +349,31 @@ typedef void (^UICompletion)(void);
                      break;
                  }
                  case ARKSessionPaused: {
-                     NSLog(@"\n\n*********\n\nMoving to foreground while the session is paused, remember to remove anchors on next AR request\n\n*********");
-                     [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession: YES];
-                     break;
+                     if (![[blockSelf arkController] hasBackgroundWorldMap]) {
+                         // if no background map, then need to remove anchors on next session
+                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is paused, remember to remove anchors on next AR request\n\n*********");
+                         [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession: YES];
+                         break;
+                     }
                  }
                      
                  case ARKSessionRunning: {
-                     NSDate *interruptionDate = [[NSUserDefaults standardUserDefaults] objectForKey:backgroundOrPausedDateKey];
-                     NSDate *now = [NSDate date];
-                     if ([now timeIntervalSinceDate:interruptionDate] >= pauseTimeInSecondsToRemoveAnchors) {
-                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a long time, remove the anchors\n\n*********");
-                         [[blockSelf arkController] removeAllAnchors];
+                     if ([[blockSelf arkController] hasBackgroundWorldMap]) {
+                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG and there is a saved WorldMap\n\n*********");
+                         
+                         NSLog(@"\n\n*********\n\nResume session, which will use the worldmap\n\n*********");
+                         [[blockSelf arkController] resumeSessionFromBackground:[[blockSelf stateController] state]];
                      } else {
-                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a short time, do nothing\n\n*********");
+                         NSDate *interruptionDate = [[NSUserDefaults standardUserDefaults] objectForKey:backgroundOrPausedDateKey];
+                         NSDate *now = [NSDate date];
+                         if ([now timeIntervalSinceDate:interruptionDate] >= pauseTimeInSecondsToRemoveAnchors) {
+                             NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a long time, remove the anchors\n\n*********");
+                             [[blockSelf arkController] removeAllAnchors];
+                         } else {
+                             NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a short time, do nothing\n\n*********");
+                         }
+                         break;
                      }
-                     break;
                  }
              }
          }
@@ -494,10 +505,17 @@ typedef void (^UICompletion)(void);
                  break;
              case ARKSessionPaused:
                  NSLog(@"\n\n*********\n\nMoving to background while the session is paused, nothing to do\n\n*********");
+
+                 // need to try and save WorldMap here.  May fail?
+                 [[self arkController] saveWorldMapInBackground];
+
                  break;
              case ARKSessionRunning:
                  NSLog(@"\n\n*********\n\nMoving to background while the session is running, store the timestamp\n\n*********");
                  [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:backgroundOrPausedDateKey];
+                 
+                 // need to save WorldMap here
+                 [[self arkController] saveWorldMapInBackground];
                  break;
          }
          
