@@ -181,8 +181,9 @@
 
         NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
                                                        NSUserDomainMask, YES );
-        NSURL *docsDir = [dirPaths objectAtIndex:0];
+        NSURL *docsDir = [NSURL fileURLWithPath:[dirPaths objectAtIndex:0]];
         NSURL *newDir = [docsDir URLByAppendingPathComponent:@"maps" isDirectory:YES];
+        //if ([storeURL checkResourceIsReachableAndReturnError:&error]) {
         NSError* theError = nil;
         if ([filemgr createDirectoryAtURL:newDir withIntermediateDirectories:YES attributes:nil error:&theError] == NO)
         {
@@ -289,7 +290,7 @@
     
     [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
         if (worldMap) {
-            DDLogError(@"saving WorldMap as we transition to background");
+            DDLogError(@"saving WorldMap to load storage");
             [self _saveWorldMap:worldMap];
         }
     }];
@@ -302,10 +303,13 @@
         if (!worldMap) {
             // try to get rid of an old one if it exists.  Don't care if this fails.
             [[NSFileManager defaultManager] trashItemAtURL:self.worldSaveURL resultingItemURL:nil error:nil];
+            DDLogError(@"moving saved WorldMap to trash");
         } else {
             NSData * data     = [NSKeyedArchiver archivedDataWithRootObject: worldMap requiringSecureCoding:YES error:nil];
             if ([data writeToURL:self.worldSaveURL atomically:YES] == NO) {
                 DDLogError(@"Failed saving WorldMap to persistent storage");
+            } else {
+                DDLogError(@"saved WorldMap to load storage at %@", self.worldSaveURL);
             }
         }
     }
@@ -315,10 +319,14 @@
     if (self.worldSaveURL) {
         NSData * data = [NSData dataWithContentsOfURL:self.worldSaveURL];
         if (!data) {
+            DDLogError(@"Failed to load saved WorldMap from persistent storage");
             return;
         }
 
         ARWorldMap* obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[ARWorldMap class]  fromData:data error:nil];
+        if (!obj) {
+            DDLogError(@"Failed to create ARWorldMap from saved WorldMap loaded from persistent storage");
+        }
         [self _setWorldMap:obj];
     }
 }
@@ -410,8 +418,15 @@
             // value (since a user could still reload it with the browser menu)
             ARWorldMap* map = [self dictToWorldMap : worldMapDictionary];
             
-            [self _saveWorldMap:map];
-            [self _setWorldMap: map];
+            if (map) {
+                [self _saveWorldMap:map];
+                [self _setWorldMap: map];
+            } else {
+                if (self.setWorldMapPromise) {
+                    self.setWorldMapPromise(NO, @"The World Map may be invalid, it couldn't be decoded.");
+                    self.setWorldMapPromise = nil;
+                }
+            }
             break;
         }
         case SendWorldSensingDataAuthorizationStateDenied: {
@@ -431,8 +446,9 @@
     self.setWorldMapPromise = nil;
 
     if (map == nil) {
+        DDLogError(@"nil WorldMap");
         if (completion) {
-            completion(NO, @"The World Map may be invalid, it couldn't be decoded.");
+            completion(NO, @"nil World Map, this error shouldn't happen..");
         }
         return;
     }
@@ -442,6 +458,7 @@
         [worldTrackingConfiguration setInitialWorldMap:[self savedWorldMap]];
         DDLogError(@"using Saved WorldMap to restart session");
     } else {
+        DDLogError(@"Cannot load World Map when using user-facing camera");
         if (completion) {
             completion(NO, @"Cannot load World Map when using user-facing camera");
         }
@@ -459,6 +476,7 @@
 
 - (void)saveWorldMapInBackground {
     if ([self trackingStateNormal]) {
+        DDLogError(@"can't save WorldMap as we transition to background, tracking isn't initialized");
         return;
     }
     
@@ -1684,7 +1702,7 @@
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
 {
     //DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
-    DDLogDebug(@"Update Anchors - %lu", anchors.count);
+    //DDLogDebug(@"Update Anchors - %lu", anchors.count);
     for (ARAnchor* updatedAnchor in anchors) {
         if ([updatedAnchor isKindOfClass:[ARFaceAnchor class]] && ![self.configuration isKindOfClass:[ARFaceTrackingConfiguration class]]) {
             NSLog(@"Trying to update a face anchor in a session configuration that's not ARFaceTrackingConfiguration");

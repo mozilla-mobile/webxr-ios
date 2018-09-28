@@ -14,7 +14,7 @@
 #import "XRViewer-Swift.h"
 #import "Constants.h"
 
-// #define WEBSERVER
+#define WEBSERVER
 #ifdef WEBSERVER
 #import "GCDWebServer.h"
 #endif
@@ -830,7 +830,15 @@ typedef void (^UICompletion)(void);
                 case RemoveExistingAnchors:
                     [[blockSelf arkController] runSessionRemovingAnchorsWithAppState:[[blockSelf stateController] state]];
                     break;
-            }
+                    
+                case SaveWorldMap:
+                    [[blockSelf arkController] saveWorldMap];
+                    break;
+                    
+                case LoadSavedWorldMap:
+                    [[blockSelf arkController] loadSavedMap];
+                    break;
+            } 
         }];
     }];
 

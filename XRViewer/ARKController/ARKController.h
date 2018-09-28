@@ -285,7 +285,7 @@ typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
 - (void)destroyDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
 
 /**
-  Get the current tracker World Map
+  Get the current tracker World Map and return it in an base64 encoded string in a dictionary, for sending to Javascript
  
   - Fails if tracking isn't initialized, or if the acquisition of a World Map fails for some other reason
  
@@ -294,7 +294,8 @@ typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
 - (void)getWorldMap:(GetWorldMapCompletionBlock)completion;
 
 /**
- Set the current tracker World Map
+ Set the current tracker World Map from a base64 encoded text string, probably passed in from Javascript.  Also saves this to
+ local storage.
  
  - Fails if the map will not load for some other reason
  
@@ -306,6 +307,18 @@ typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
 
 /**
+  Save the current tracker World Map in local storage
+
+ - Fails if tracking isn't initialized, or if the acquisition of a World Map fails for some other reason
+ */
+- (void)saveWorldMap;
+
+/**
+   Load a previously saved World Map from local storage.
+ */
+- (void)loadSavedMap;
+
+ /**
  Removes all the anchors in the curren session.
  
  If the current session is not of class ARFaceTrackingConfiguration, create a
