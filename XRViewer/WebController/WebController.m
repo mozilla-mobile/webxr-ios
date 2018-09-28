@@ -434,6 +434,34 @@ inline static WebCompletion debugCompletion(NSString *name)
                 [blockSelf callWebMethod:destroyDetectionImageCallback paramJSON:responseDictionary webCompletion:NULL];
             });
         }
+    } else if ([[message name] isEqualToString:WEB_AR_GET_WORLD_MAP]) {
+        NSString *getWorldMapCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        if ([self onGetWorldMap]) {
+            [self onGetWorldMap](^(BOOL success, NSString* errorString, NSDictionary* worldMap) {
+                NSMutableDictionary* responseDictionary = [NSMutableDictionary new];
+                responseDictionary[@"saved"] = @(success);
+                if (errorString) {
+                    responseDictionary[@"error"] = errorString;
+                }
+                if (worldMap) {
+                    responseDictionary[@"worldMap"] = worldMap;
+                }
+                [blockSelf callWebMethod:getWorldMapCallback paramJSON:responseDictionary webCompletion:NULL];
+            });
+        }
+    } else if ([[message name] isEqualToString:WEB_AR_SET_WORLD_MAP]) {
+        NSDictionary *worldMapInfoDictionary = [message body];
+        NSString *setWorldMapCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        if ([self onSetWorldMap]) {
+            [self onSetWorldMap](worldMapInfoDictionary, ^(BOOL success, NSString* errorString) {
+                NSMutableDictionary* responseDictionary = [NSMutableDictionary new];
+                responseDictionary[@"loaded"] = @(success);
+                if (errorString) {
+                    responseDictionary[@"error"] = errorString;
+                }
+                [blockSelf callWebMethod:setWorldMapCallback paramJSON:responseDictionary webCompletion:NULL];
+            });
+        }
     } else {
         DDLogError(@"Unknown message: %@ ,for name: %@", [message body], [message name]);
     }

@@ -28,6 +28,9 @@
 #define WEB_AR_STOP_SENDING_CV_DATA_MESSAGE     @"stopSendingComputerVisionData"
 #define WEB_AR_ADD_IMAGE_ANCHOR         @"addImageAnchor"
 
+#define WEB_AR_GET_WORLD_MAP   @"getWorldMap"
+#define WEB_AR_SET_WORLD_MAP   @"setWorldMap"
+
 #define WEB_AR_ON_JS_UPDATE_MESSAGE    @"onUpdate" // reques from JS
 
 #define WEB_AR_IOS_SHOW_DEBUG          @"arkitShowDebug"

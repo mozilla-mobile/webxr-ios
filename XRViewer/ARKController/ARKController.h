@@ -61,6 +61,8 @@ typedef void (^DidRemovePlaneAnchors)(void);
 typedef void (^DidUpdateWindowSize)(void);
 typedef void (^DetectionImageCreatedCompletionType)(BOOL success, NSString* errorString);
 typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* detectedImageAnchor);
+typedef void (^GetWorldMapCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* worldMap);
+typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
 
 @interface ARKController : NSObject
 
@@ -281,6 +283,25 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
  @param completion The completion block that will be called with the outcome of the destroy
  */
 - (void)destroyDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
+
+/**
+  Get the current tracker World Map
+ 
+  - Fails if tracking isn't initialized, or if the acquisition of a World Map fails for some other reason
+ 
+  @param completion The completion block that will be called with the outcome of the acquisition of the world map
+  */
+- (void)getWorldMap:(GetWorldMapCompletionBlock)completion;
+
+/**
+ Set the current tracker World Map
+ 
+ - Fails if the map will not load for some other reason
+ 
+ @param worldMapDictionary The dictionary representing the worldMap
+ @param completion The completion block that will be called with the outcome of the loading of the world map
+ */
+- (void)setWorldMap:(NSDictionary *)worldMapDictionary completion:(SetWorldMapCompletionBlock)completion;
 
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
 

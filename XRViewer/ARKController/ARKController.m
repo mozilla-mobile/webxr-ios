@@ -77,6 +77,14 @@
 /// Dictionary holding completion blocks by image name: when an image anchor is removed,
 /// if the name exsist in this dictionary, call activate again using the callback stored here.
 @property(nonatomic, strong) NSMutableDictionary* detectionImageActivationAfterRemovalPromises;
+
+/// completion block for getWorldMap request
+@property(nonatomic, strong) GetWorldMapCompletionBlock getWorldMapPromise;
+@property(nonatomic, strong) SetWorldMapCompletionBlock setWorldMapPromise;
+
+// for saving
+@property(nonatomic, strong) NSURL *worldSaveURL;
+
 /**
  We don't send the face geometry on every frame, for performance reasons. This number indicates the
  current number of frames without sending the face geometry
@@ -166,6 +174,25 @@
         self.detectionImageCreationPromises = [NSMutableDictionary new];
         self.detectionImageActivationAfterRemovalPromises = [NSMutableDictionary new];
         
+        self.getWorldMapPromise = nil;
+        self.setWorldMapPromise = nil;
+        
+        NSFileManager *filemgr = [NSFileManager defaultManager];
+
+        NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                                       NSUserDomainMask, YES );
+        NSURL *docsDir = [dirPaths objectAtIndex:0];
+        NSURL *newDir = [docsDir URLByAppendingPathComponent:@"maps" isDirectory:YES];
+        NSError* theError = nil;
+        if ([filemgr createDirectoryAtURL:newDir withIntermediateDirectories:YES attributes:nil error:&theError] == NO)
+        {
+            // Failed to create directory
+            self.worldSaveURL = nil;
+            DDLogError(@"Couldn't create map save directory error - %@", theError);
+        } else {
+            self.worldSaveURL = [newDir URLByAppendingPathComponent:@"webxrviewer"];
+        }
+ 
         self.numberOfFramesWithoutSendingFaceGeometry = 0;
     }
     
@@ -250,6 +277,11 @@
     return self.session.currentFrame.timestamp * 1000;
 }
 
+
+- (BOOL) hasSavedWorldMap {
+    return (self.savedWorldMap != nil);
+}
+
 - (void)saveWorldMap {
     if ([self trackingStateNormal]) {
         return;
@@ -257,17 +289,179 @@
     
     [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
         if (worldMap) {
-            DDLogError(@"saving WorldMap due to web request");
-            self.savedWorldMap = worldMap;
+            DDLogError(@"saving WorldMap as we transition to background");
+            [self _saveWorldMap:worldMap];
         }
     }];
+}
+
+- (void)_saveWorldMap:(ARWorldMap *)worldMap {
+    self.savedWorldMap = worldMap;
+    
+    if (self.worldSaveURL) {
+        if (!worldMap) {
+            // try to get rid of an old one if it exists.  Don't care if this fails.
+            [[NSFileManager defaultManager] trashItemAtURL:self.worldSaveURL resultingItemURL:nil error:nil];
+        } else {
+            NSData * data     = [NSKeyedArchiver archivedDataWithRootObject: worldMap requiringSecureCoding:YES error:nil];
+            if ([data writeToURL:self.worldSaveURL atomically:YES] == NO) {
+                DDLogError(@"Failed saving WorldMap to persistent storage");
+            }
+        }
+    }
+}
+
+- (void)loadSavedMap {
+    if (self.worldSaveURL) {
+        NSData * data = [NSData dataWithContentsOfURL:self.worldSaveURL];
+        if (!data) {
+            return;
+        }
+
+        ARWorldMap* obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[ARWorldMap class]  fromData:data error:nil];
+        [self _setWorldMap:obj];
+    }
+}
+
+// this is the web command to save and return the world map
+- (void)getWorldMap:(GetWorldMapCompletionBlock)completion {
+    if (self.getWorldMapPromise) {
+        self.getWorldMapPromise(NO, @"World Map request cancelled by subsequent call to get World Map.", nil);
+    }
+    
+    switch (self.sendingWorldSensingDataAuthorizationStatus) {
+        case SendWorldSensingDataAuthorizationStateAuthorized: {
+            self.getWorldMapPromise = completion;
+            [self _getWorldMap];
+            break;
+        }
+        case SendWorldSensingDataAuthorizationStateDenied: {
+            completion(NO, @"The user denied access to world sensing data", nil);
+            break;
+        }
+        case SendWorldSensingDataAuthorizationStateNotDetermined: {
+            NSLog(@"Attempt to get World Map but world sensing data authorization is not determined, enqueue the request");
+            self.getWorldMapPromise = completion;
+            break;
+        }
+    }
+}
+
+// actually do the saving and sending of world map back to the app
+- (void)_getWorldMap {
+    GetWorldMapCompletionBlock completion = self.getWorldMapPromise;
+    self.getWorldMapPromise = nil;
+    
+    if ([[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
+        if (completion) {
+            completion(NO, @"Cannot get World Map when using the front facing camera", nil);
+        }
+        return;
+    }
+
+    if (![self trackingStateNormal]) {
+        if (completion) {
+            completion(NO, @"Cannot get World Map until tracking is fully initialized", nil);
+        }
+        return;
+    }
+    
+    [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
+        if (worldMap) {
+            if (completion) {
+                NSMutableDictionary *mapData = [NSMutableDictionary new];
+
+                NSData * data     = [NSKeyedArchiver archivedDataWithRootObject: worldMap requiringSecureCoding:YES error:nil];
+                NSString * string = [data base64EncodedStringWithOptions:0];
+                mapData[@"worldMap"] = string;
+
+                completion(YES, nil, mapData);
+                DDLogError(@"saving WorldMap due to web request");
+            }
+        } else {
+            completion(NO, [NSString stringWithFormat:@"request to get World Map failed: %@", error], nil);
+        }
+    }];
+}
+
+- (ARWorldMap *)dictToWorldMap:(NSDictionary*)worldMapDictionary {
+    NSString* b64String = worldMapDictionary[@"worldMap"];
+    if (!b64String) {
+        return nil;
+    }
+    NSData *data    = [[NSData alloc] initWithBase64EncodedString:b64String options:(NSDataBase64DecodingIgnoreUnknownCharacters)];
+    if (!data) {
+        return nil;
+    }
+    ARWorldMap* obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[ARWorldMap class]  fromData:data error:nil];
+    
+    return obj;
+}
+
+- (void)setWorldMap:(NSDictionary *)worldMapDictionary completion:(SetWorldMapCompletionBlock)completion {
+    if (self.setWorldMapPromise) {
+        self.setWorldMapPromise(NO, @"World Map set request cancelled by subsequent call to set World Map.");
+    }
+    
+    switch (self.sendingWorldSensingDataAuthorizationStatus) {
+        case SendWorldSensingDataAuthorizationStateAuthorized: {
+            self.setWorldMapPromise = completion;
+            // we do it here (rather than above) because if a nil is passed in, we don't want to replace the previously saved
+            // value (since a user could still reload it with the browser menu)
+            ARWorldMap* map = [self dictToWorldMap : worldMapDictionary];
+            
+            [self _saveWorldMap:map];
+            [self _setWorldMap: map];
+            break;
+        }
+        case SendWorldSensingDataAuthorizationStateDenied: {
+            completion(NO, @"The user denied access to world sensing data, so cannot set map");
+            break;
+        }
+        case SendWorldSensingDataAuthorizationStateNotDetermined: {
+            NSLog(@"Attempt to get World Map but world sensing data authorization is not determined, enqueue the request");
+            self.setWorldMapPromise = completion;
+            break;
+        }
+    }
+}
+
+- (void)_setWorldMap:(ARWorldMap *)map  {
+    SetWorldMapCompletionBlock completion = self.setWorldMapPromise;
+    self.setWorldMapPromise = nil;
+
+    if (map == nil) {
+        if (completion) {
+            completion(NO, @"The World Map may be invalid, it couldn't be decoded.");
+        }
+        return;
+    }
+
+    if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+        ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
+        [worldTrackingConfiguration setInitialWorldMap:[self savedWorldMap]];
+        DDLogError(@"using Saved WorldMap to restart session");
+    } else {
+        if (completion) {
+            completion(NO, @"Cannot load World Map when using user-facing camera");
+        }
+        return;
+    }
+    [[self session] runWithConfiguration:[self configuration]];
+    [self setArSessionState:ARKSessionRunning];
+    [self setupDeviceCamera];
+}
+
+
+- (BOOL) hasBackgroundWorldMap {
+    return (self.backgroundWorldMap != nil);
 }
 
 - (void)saveWorldMapInBackground {
     if ([self trackingStateNormal]) {
         return;
     }
-
+    
     [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
         if (worldMap) {
             DDLogError(@"saving WorldMap as we transition to background");
@@ -276,37 +470,7 @@
     }];
 }
 
-- (BOOL) hasSavedWorldMap {
-    return (self.savedWorldMap != nil);
-}
-
-- (BOOL) hasBackgroundWorldMap {
-    return (self.backgroundWorldMap != nil);
-}
-
-- (void)restoreWorldMap:(ARWorldMap *)map withAppState:(AppState *)state {
-    [self setRequest:[state aRRequest]];
-    
-    if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
-        ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
-        if ([self hasSavedWorldMap]) {
-            [worldTrackingConfiguration setInitialWorldMap:[self savedWorldMap]];
-            DDLogError(@"using Saved WorldMap to restart session");
-        } else {
-            [worldTrackingConfiguration setInitialWorldMap:nil];
-            DDLogError(@"no Saved WorldMap, resuming without saved worldmap");
-        }
-    } else {
-        DDLogError(@"resume session on a face-tracking camera");
-    }
-    [[self session] runWithConfiguration:[self configuration]];
-    [self setArSessionState:ARKSessionRunning];
-    [self setupDeviceCamera];
-    
-    [self setShowMode:[state showMode]];
-    [self setShowOptions:[state showOptions]];
-}
-
+// the session was paused, which implies it was off of the AR page, somewhere 2D, for a bit
 - (void)resumeSessionWithAppState: (AppState*)state {
     [self setRequest:[state aRRequest]];
     
@@ -331,6 +495,7 @@
     [self setShowOptions:[state showOptions]];
 }
 
+// the app was backgrounded, so try to reactivate the session map
 - (void)resumeSessionFromBackground: (AppState*)state {
     [self setRequest:[state aRRequest]];
     
@@ -582,6 +747,11 @@
             }
             
             [self createRequestedDetectionImages];
+
+            // Only need to do this if there's an outstanding world map request
+            if (self.getWorldMapPromise) {
+                [self _getWorldMap];
+            }
             break;
         }
         case SendWorldSensingDataAuthorizationStateDenied: {
@@ -596,6 +766,17 @@
                 }
             }
             
+            if (self.getWorldMapPromise) {
+                self.getWorldMapPromise(NO, @"The user denied access to world sensing data", nil);
+                self.getWorldMapPromise = nil;
+            }
+
+            for (NSDictionary* referenceImageDictionary in self.detectionImageCreationRequests) {
+                DetectionImageCreatedCompletionType block = self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]];
+                block(NO, @"The user denied access to world sensing data");
+            }
+            [self.detectionImageCreationRequests removeAllObjects];
+            [self.detectionImageCreationPromises removeAllObjects];
             break;
         }
     }

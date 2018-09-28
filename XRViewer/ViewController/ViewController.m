@@ -846,6 +846,14 @@ typedef void (^UICompletion)(void);
         [[blockSelf arkController] activateDetectionImage:imageName completion:completion];
     }];
 
+    [[self webController] setOnGetWorldMap:^(GetWorldMapCompletionBlock completion) {
+        [[blockSelf arkController] getWorldMap:completion];
+    }];
+
+    [[self webController] setOnSetWorldMap:^(NSDictionary *dictionary, SetWorldMapCompletionBlock completion) {
+        [[blockSelf arkController] setWorldMap:dictionary completion:completion];
+    }];
+
     [[self webController] setOnDeactivateDetectionImage:^(NSString *imageName, CreateDetectionImageCompletionBlock completion) {
         [[blockSelf arkController] deactivateDetectionImage:imageName completion:completion];
     }];
@@ -1059,6 +1067,7 @@ typedef void (^UICompletion)(void);
 {
     [[self webController] sendARData:[self commonData]];
 }
+
 
 -(void)sendComputerVisionData {
     [[self webController] sendComputerVisionData:[[self arkController] computerVisionData]];
