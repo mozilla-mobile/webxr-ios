@@ -188,7 +188,7 @@ extension SettingsViewController: UITableViewDelegate {
                                       options: [:],
                                       completionHandler: nil)
         } else if indexPath.section == 2 {
-            UIApplication.shared.open(URL(string: UIApplicationOpenSettingsURLString)!, options: [:], completionHandler: nil)
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
         }
     }
     
