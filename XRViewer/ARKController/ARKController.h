@@ -203,6 +203,8 @@ typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
  */
 - (NSArray *)currentPlanesArray;
 
+- (BOOL)hasPlanes;
+
 - (BOOL)trackingStateNormal;
 
 - (NSString *)trackingState;

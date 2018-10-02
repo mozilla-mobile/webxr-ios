@@ -758,10 +758,14 @@
         case SendWorldSensingDataAuthorizationStateAuthorized: {
             NSLog(@"World sensing auth changed to authorized");
             
+            // make sure all the anchors are in the objects[] array, and mark them as added
             NSArray *anchors = [[[self session] currentFrame] anchors];
             for (ARAnchor* addedAnchor in anchors) {
-                NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
-                [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+                if (!objects[[self anchorIDForAnchor:addedAnchor]]) {
+                    NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
+                    [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+                    objects[[self anchorIDForAnchor:addedAnchor]] = addedAnchorDictionary;
+                }
             }
             
             [self createRequestedDetectionImages];
@@ -778,9 +782,20 @@
             // still need to send the "required" anchors
             NSArray *anchors = [[[self session] currentFrame] anchors];
             for (ARAnchor* addedAnchor in anchors) {
-                if ([self shouldSendAnchor: addedAnchor]) {
-                    NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
-                    [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+                if (objects[[self anchorIDForAnchor:addedAnchor]]) {
+                    // if the anchor is in the current object list, and is now not being sent
+                    // mark it as removed and remove from the object list
+                    if (![self shouldSendAnchor: addedAnchor]) {
+                        [removedAnchorsSinceLastFrame addObject:[self anchorIDForAnchor:addedAnchor]];
+                        objects[[self anchorIDForAnchor:addedAnchor]] = nil;
+                    }
+                } else {
+                    // if the anchor was not being sent but is in the approved list, start sending it
+                    if ([self shouldSendAnchor: addedAnchor]) {
+                        NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
+                        [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+                        objects[[self anchorIDForAnchor:addedAnchor]] = addedAnchorDictionary;
+                    }
                 }
             }
             
@@ -1382,6 +1397,19 @@
     return [array copy];
 }
 
+- (BOOL)hasPlanes
+{
+    ARFrame *currentFrame = [[self session] currentFrame];
+    for (ARAnchor *anchor in [currentFrame anchors])
+    {
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]])
+        {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 - (NSArray *)currentPlanesArray
 {
     ARFrame *currentFrame = [[self session] currentFrame];
@@ -1444,8 +1472,10 @@
             continue;
         }
         
-        NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
-        if ([self shouldSendAnchor:addedAnchor] || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
+        if ([self shouldSendAnchor:addedAnchor] ||
+            self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
+            
+            NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
             [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
             objects[[self anchorIDForAnchor:addedAnchor]] = addedAnchorDictionary;
             
@@ -1494,16 +1524,12 @@
 - (NSDictionary *)createDictionaryForAnchor:(ARAnchor *)addedAnchor {
     NSMutableDictionary* anchorDictionary = [NSMutableDictionary new];
     anchorDictionary[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([addedAnchor transform]);
+    anchorDictionary[WEB_AR_MUST_SEND_OPTION] = [self shouldSendAnchor:addedAnchor] ? @(YES) : @(NO);
     
     if ([addedAnchor isKindOfClass:[ARPlaneAnchor class]]) {
         // ARKit system plane anchor
         ARPlaneAnchor *addedPlaneAnchor = (ARPlaneAnchor *)addedAnchor;
         [self addPlaneAnchorData:addedPlaneAnchor toDictionary: anchorDictionary];
-#if SEND_PLANES_BY_DEFAULT
-        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(YES);
-#else
-        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
-#endif
         anchorDictionary[WEB_AR_UUID_OPTION] = [addedAnchor.identifier UUIDString];
         anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"plane";
         DDLogDebug(@"Add Plane Anchor - %@", [addedAnchor.identifier UUIDString]);
@@ -1513,7 +1539,6 @@
         ARImageAnchor *addedImageAnchor = (ARImageAnchor *)addedAnchor;
         arkitGeneratedAnchorIDUserAnchorIDMap[[[addedAnchor identifier] UUIDString]] = addedImageAnchor.referenceImage.name;
         anchorDictionary[WEB_AR_UUID_OPTION] = addedImageAnchor.referenceImage.name;
-        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
         anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"image";
     } else if ([addedAnchor isKindOfClass:[ARFaceAnchor class]]) {
         // System generated ARFaceAnchor
@@ -1526,7 +1551,6 @@
         NSString *userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[[addedAnchor.identifier UUIDString]];
         NSString *name = userAnchorID? userAnchorID: [addedAnchor.identifier UUIDString];
         anchorDictionary[WEB_AR_UUID_OPTION] = name;
-        anchorDictionary[WEB_AR_MUST_SEND_OPTION] = @(NO);
         anchorDictionary[WEB_AR_ANCHOR_TYPE] = @"anchor";
         DDLogDebug(@"Add User Anchor - %@", name);
     }
@@ -1717,12 +1741,16 @@
 {
     DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
     for (ARAnchor* removedAnchor in anchors) {
-        BOOL mustSendAnchor = [self shouldSendAnchor: removedAnchor];
-        if (mustSendAnchor || self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
-            NSString* anchorID = [self anchorIDForAnchor: removedAnchor];
-
+        
+        // logic makes no sense:  if the anchor is in objects[] list, remove it and send removed flag.  otherwise, ignore
+        //        BOOL mustSendAnchor = [self shouldSendAnchor: removedAnchor];
+        //        if (mustSendAnchor ||
+        //            self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
+        NSString* anchorID = [self anchorIDForAnchor: removedAnchor];
+        if (objects[anchorID]) {
             [removedAnchorsSinceLastFrame addObject: anchorID];
             objects[anchorID] = nil;
+
             arkitGeneratedAnchorIDUserAnchorIDMap[anchorID] = nil;
             if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
                 ARImageAnchor* imageAnchor = (ARImageAnchor*)removedAnchor;
@@ -1796,7 +1824,7 @@
         // System generated ARFaceAnchor
     } else {
         // Simple, user generated ARAnchor
-        shouldSend = NO;
+        shouldSend = YES;
     }
 
     return shouldSend;

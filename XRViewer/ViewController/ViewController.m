@@ -14,7 +14,7 @@
 #import "XRViewer-Swift.h"
 #import "Constants.h"
 
-#define WEBSERVER
+//#define WEBSERVER
 #ifdef WEBSERVER
 #import "GCDWebServer.h"
 #endif
@@ -675,21 +675,21 @@ typedef void (^UICompletion)(void);
          // providing the tracking state string, and also a boolean indicating if the scene has any plane anchor.
          // The overlay controller will decide on the warning message to show
          [[blockSelf overlayController] setTrackingState:state
-                                          sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
+                                          sceneHasPlanes:[[blockSelf arkController] hasPlanes]];
      }];
 
     [[self arkController] setDidAddPlaneAnchors:^{
         // When a new plane is added, we pass the tracking state and whether the scene has planes or not to the
         // overlay controller. He will decide on the warning message to show
         [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
-                                         sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
+                                         sceneHasPlanes:[[blockSelf arkController] hasPlanes]];
     }];
 
     [[self arkController] setDidRemovePlaneAnchors:^{
         // When a new plane is removed, we pass the tracking state and whether the scene has planes or not to the
         // overlay controller. He will decide on the warning message to show
         [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
-                                         sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
+                                         sceneHasPlanes:[[blockSelf arkController] hasPlanes]];
     }];
 
     [[self arkController] setDidUpdateWindowSize:^{
