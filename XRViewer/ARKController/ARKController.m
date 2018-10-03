@@ -284,13 +284,14 @@
 }
 
 - (void)saveWorldMap {
-    if ([self trackingStateNormal]) {
+    if (![self trackingStateNormal]) {
+        DDLogError(@"can't save WorldMap to local storage until tracking is initialized");
         return;
     }
     
     [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
         if (worldMap) {
-            DDLogError(@"saving WorldMap to load storage");
+            DDLogError(@"saving WorldMap to local storage");
             [self _saveWorldMap:worldMap];
         }
     }];
@@ -335,6 +336,7 @@
 - (void)getWorldMap:(GetWorldMapCompletionBlock)completion {
     if (self.getWorldMapPromise) {
         self.getWorldMapPromise(NO, @"World Map request cancelled by subsequent call to get World Map.", nil);
+        self.getWorldMapPromise = nil;
     }
     
     switch (self.sendingWorldSensingDataAuthorizationStatus) {
@@ -456,6 +458,9 @@
     if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
         ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
         [worldTrackingConfiguration setInitialWorldMap:[self savedWorldMap]];
+        if (completion) {
+            completion(YES, nil);
+        }
         DDLogError(@"using Saved WorldMap to restart session");
     } else {
         DDLogError(@"Cannot load World Map when using user-facing camera");
@@ -475,7 +480,7 @@
 }
 
 - (void)saveWorldMapInBackground {
-    if ([self trackingStateNormal]) {
+    if (![self trackingStateNormal]) {
         DDLogError(@"can't save WorldMap as we transition to background, tracking isn't initialized");
         return;
     }
@@ -540,6 +545,15 @@
     [self updateARConfigurationWithState:state];
     [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
     [self setArSessionState:ARKSessionRunning];
+    
+    // if we've already received authorization for CV or WorldState date, likely because of a preference setting or
+    // previous saved approval for the site, make sure we set up the state properly here
+    if ([state askedComputerVisionData]) {
+        [self setComputerVisionDataEnabled:[state userGrantedSendingComputerVisionData]];
+    }
+    if ([state askedWorldStateData]) {
+        [self setSendingWorldSensingDataAuthorizationStatus:[state userGrantedSendingWorldStateData] ? SendWorldSensingDataAuthorizationStateAuthorized: SendWorldSensingDataAuthorizationStateDenied];
+    }
     
     [self setupDeviceCamera];
     
@@ -1428,7 +1442,8 @@
 }
 
 - (BOOL)trackingStateNormal {
-    return [[[[self session] currentFrame] camera] trackingState] != ARTrackingStateNormal;
+    ARTrackingState ts = [[[[self session] currentFrame] camera] trackingState];
+    return ts == ARTrackingStateNormal;
 }
 
 - (NSString *)trackingState {

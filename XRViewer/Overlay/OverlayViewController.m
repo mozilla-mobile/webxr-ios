@@ -443,7 +443,7 @@
                      completion(finish);
                  }];
                 
-                [[self trackingStateButton] setImage:[UIImage imageNamed:@"ARKitNotInitialized"] forState:UIControlStateNormal];
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"ARKitLimitedInitializing"] forState:UIControlStateNormal];
             }
             else if ([state isEqualToString:WEB_AR_TRACKING_STATE_LIMITED_FEATURES])
             {
@@ -472,7 +472,16 @@
                 
                 [[self trackingStateButton] setImage:[UIImage imageNamed:@"ARKitNotAvailable"] forState:UIControlStateNormal];
             }
-            
+            else if ([state isEqualToString:WEB_AR_TRACKING_STATE_RELOCALIZING])
+            {
+                [[self animator] animate:[self trackingStateButton] toFade:NO completion:^(BOOL finish)
+                 {
+                     completion(finish);
+                 }];
+                
+                [[self trackingStateButton] setImage:[UIImage imageNamed:@"ARKitRelocalizing"] forState:UIControlStateNormal];
+            }
+
             return;
         }
     }

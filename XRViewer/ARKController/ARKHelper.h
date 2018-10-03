@@ -210,7 +210,7 @@ static inline NSString *trackingState(ARCamera *camera)
                 case ARTrackingStateReasonInsufficientFeatures: //The scene visible to the camera does not contain enough distinguishable features for image-based position tracking.
                     return WEB_AR_TRACKING_STATE_LIMITED_FEATURES;
                 case ARTrackingStateReasonRelocalizing: // trying to relocalize
-                    return WEB_AR_TRACKING_STATE_LIMITED;
+                    return WEB_AR_TRACKING_STATE_RELOCALIZING;
             }
         }
         case ARTrackingStateNotAvailable:

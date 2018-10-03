@@ -434,7 +434,7 @@ inline static WebCompletion debugCompletion(NSString *name)
                 [blockSelf callWebMethod:destroyDetectionImageCallback paramJSON:responseDictionary webCompletion:NULL];
             });
         }
-    } else if ([[message name] isEqualToString:WEB_AR_GET_WORLD_MAP]) {
+    } else if ([[message name] isEqualToString:WEB_AR_GET_WORLD_MAP_MESSAGE]) {
         NSString *getWorldMapCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
         if ([self onGetWorldMap]) {
             [self onGetWorldMap](^(BOOL success, NSString* errorString, NSDictionary* worldMap) {
@@ -449,7 +449,7 @@ inline static WebCompletion debugCompletion(NSString *name)
                 [blockSelf callWebMethod:getWorldMapCallback paramJSON:responseDictionary webCompletion:NULL];
             });
         }
-    } else if ([[message name] isEqualToString:WEB_AR_SET_WORLD_MAP]) {
+    } else if ([[message name] isEqualToString:WEB_AR_SET_WORLD_MAP_MESSAGE]) {
         NSDictionary *worldMapInfoDictionary = [message body];
         NSString *setWorldMapCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
         if ([self onSetWorldMap]) {
@@ -704,6 +704,8 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_GET_WORLD_MAP_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_SET_WORLD_MAP_MESSAGE];
 }
 
 - (void)cleanWebContent
