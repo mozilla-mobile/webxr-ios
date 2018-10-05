@@ -10,6 +10,7 @@
 #import "XRViewer-Swift.h"
 #import <Accelerate/Accelerate.h>
 #import "Constants.h"
+#import "Compression.h"
 
 @interface ARKController () <ARSessionDelegate>
 {
@@ -357,6 +358,60 @@
     }
 }
 
+- (NSData *) getDecompressedData:(NSData *) compressed {
+    size_t dst_buffer_size = compressed.length * 8;
+    
+    uint8_t *src_buffer = malloc(compressed.length);
+    [compressed getBytes:src_buffer length:compressed.length];
+
+    while (YES) {
+        uint8_t *dst_buffer = malloc(dst_buffer_size);
+        size_t decompressedSize = compression_decode_buffer(dst_buffer, dst_buffer_size, src_buffer, compressed.length, nil, COMPRESSION_ZLIB);
+
+        // error!
+        if (decompressedSize == 0) {
+            free(dst_buffer);
+            free(src_buffer);
+            return NULL;
+        }
+
+        // overflow, try again
+        if (decompressedSize == dst_buffer_size) {
+            dst_buffer_size *= 2;
+            free(dst_buffer);
+            continue;
+        }
+        NSData *decompressed = [[NSData alloc] initWithBytes:dst_buffer length:decompressedSize];
+        free(dst_buffer);
+        free(src_buffer);
+        return decompressed;
+    }
+}
+
+- (NSData *) getCompressedData:(NSData*) input {
+    size_t dst_buffer_size = MAX(input.length / 8, 10);
+
+    uint8_t *src_buffer = malloc(input.length);
+    [input getBytes:src_buffer length:input.length];
+
+    while (YES)
+    {
+        uint8_t *dst_buffer = malloc(dst_buffer_size);
+        size_t compressedSize = compression_encode_buffer(dst_buffer, dst_buffer_size, src_buffer, input.length, nil, COMPRESSION_ZLIB);
+
+        // overflow, try again
+        if (compressedSize == 0) {
+            dst_buffer_size *= 2;
+            free(dst_buffer);
+            continue;
+        }
+        NSData *compressed = [[NSData alloc] initWithBytes:dst_buffer length:compressedSize];
+        free(dst_buffer);
+        free(src_buffer);
+        return compressed;
+    }
+}
+
 // actually do the saving and sending of world map back to the app
 - (void)_getWorldMap {
     GetWorldMapCompletionBlock completion = self.getWorldMapPromise;
@@ -382,7 +437,15 @@
                 NSMutableDictionary *mapData = [NSMutableDictionary new];
 
                 NSData * data     = [NSKeyedArchiver archivedDataWithRootObject: worldMap requiringSecureCoding:YES error:nil];
-                NSString * string = [data base64EncodedStringWithOptions:0];
+                NSData * compressedData = [self getCompressedData:data];
+
+                if (!compressedData) {
+                    completion(NO, @"request to get World Map failed: couldn't compress data", nil);
+                    return;
+                }
+                NSLog(@"world map uncompressed size %lu -> compressed %lu", (unsigned long)data.length, (unsigned long)compressedData.length);
+
+                NSString * string = [compressedData base64EncodedStringWithOptions:0];
                 mapData[@"worldMap"] = string;
 
                 completion(YES, nil, mapData);
@@ -403,7 +466,9 @@
     if (!data) {
         return nil;
     }
-    ARWorldMap* obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[ARWorldMap class]  fromData:data error:nil];
+    NSData *uncompressed = [self getDecompressedData:data];
+    NSLog(@"world map compressed size %lu -> uncompressed %lu", (unsigned long)data.length, (unsigned long)uncompressed.length);
+    ARWorldMap* obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[ARWorldMap class]  fromData:uncompressed error:nil];
     
     return obj;
 }
