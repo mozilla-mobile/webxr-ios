@@ -340,6 +340,7 @@
         self.getWorldMapPromise = nil;
     }
     
+#ifdef ALLOW_GET_WORLDMAP
     switch (self.sendingWorldSensingDataAuthorizationStatus) {
         case SendWorldSensingDataAuthorizationStateAuthorized: {
             self.getWorldMapPromise = completion;
@@ -356,6 +357,9 @@
             break;
         }
     }
+#else
+    completion(NO, @"getWorldMap not supported", nil);
+#endif
 }
 
 - (NSData *) getDecompressedData:(NSData *) compressed {

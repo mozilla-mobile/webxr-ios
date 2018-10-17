@@ -2,6 +2,9 @@
 #import "ARKHelper.h"
 #import "AppState.h"
 
+// uncomment this to allow "getWorldMap" method from javascript
+//#define ALLOW_GET_WORLDMAP
+
 // The ARSessionConfiguration object passed to the run(_:options:) method is not supported by the current device.
 #define UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_CODE 100
 
