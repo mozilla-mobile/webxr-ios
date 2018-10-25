@@ -150,6 +150,12 @@
 #define WEB_AR_CAMERA_TRANSFORM_OPTION @"camera_transform"
 #define WEB_AR_CAMERA_VIEW_OPTION      @"camera_view"
 
+#define WEB_AR_WORLDMAPPING_STATUS_OPTION   @"worldMappingStatus"
+#define WEB_AR_WORLDMAPPING_NOT_AVAILABLE   @"ar_worldmapping_not_available"
+#define WEB_AR_WORLDMAPPING_LIMITED         @"ar_worldmapping_limited"
+#define WEB_AR_WORLDMAPPING_EXTENDING       @"ar_worldmapping_extending"
+#define WEB_AR_WORLDMAPPING_MAPPED          @"ar_worldmapping_mapped"
+
 #define WEB_AR_TRACKING_STATE_NORMAL               @"ar_tracking_normal"
 #define WEB_AR_TRACKING_STATE_LIMITED              @"ar_tracking_limited"
 #define WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING @"ar_tracking_limited_initializing"
