@@ -33,8 +33,6 @@
 @property(nonatomic) ShowOptions showOptions;
 
 @property(nonatomic, strong) ARWorldMap *backgroundWorldMap;
-@property(nonatomic, strong) ARWorldMap *savedWorldMap;
-
 
 /*
  Computer vision properties
@@ -131,7 +129,6 @@
         
         // don't want anyone using this
         self.backgroundWorldMap = nil;
-        self.savedWorldMap = nil;
 
         /**
          A configuration for running world tracking.
@@ -280,10 +277,6 @@
 }
 
 
-- (BOOL) hasSavedWorldMap {
-    return (self.savedWorldMap != nil);
-}
-
 - (void)saveWorldMap {
     if (![self trackingStateNormal]) {
         DDLogError(@"can't save WorldMap to local storage until tracking is initialized");
@@ -299,8 +292,6 @@
 }
 
 - (void)_saveWorldMap:(ARWorldMap *)worldMap {
-    self.savedWorldMap = worldMap;
-    
     if (self.worldSaveURL) {
         if (!worldMap) {
             // try to get rid of an old one if it exists.  Don't care if this fails.
@@ -416,6 +407,34 @@
     }
 }
 
+- (void)_printWorldMapInfo:(ARWorldMap*) worldMap {
+    NSArray<ARAnchor *> *anchors = worldMap.anchors;
+    for (ARAnchor* anchor in anchors) {
+        NSString *anchorID;
+        if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
+            // ARKit system plane anchor;  probably shouldn't happen!
+            anchorID = [anchor.identifier UUIDString];
+            DDLogWarn(@"saved WorldMap: contained PlaneAnchor");
+        } else if ([anchor isKindOfClass:[ARImageAnchor class]]) {
+            // User generated ARImageAnchor;  probably shouldn't happen!
+            ARImageAnchor *imageAnchor = (ARImageAnchor *)anchor;
+            anchorID = imageAnchor.referenceImage.name;
+            DDLogWarn(@"saved WorldMap: contained trackable ImageAnchor");
+        } else if ([anchor isKindOfClass:[ARFaceAnchor class]]) {
+            // System generated ARFaceAnchor;  probably shouldn't happen!
+            anchorID = [anchor.identifier UUIDString];
+            DDLogWarn(@"saved WorldMap: contained trackable FaceAnchor");
+        } else {
+            anchorID = anchor.name;
+        }
+        NSLog(@"WorldMap contains anchor: %@", anchorID);
+    }
+    simd_float3 center = worldMap.center;
+    simd_float3 extent = worldMap.extent;
+    NSLog(@"Map center: %g, %g, %g", center[0], center[1], center[2]);
+    NSLog(@"Map extent: %g, %g, %g", extent[0], extent[1], extent[2]);
+}
+
 // actually do the saving and sending of world map back to the app
 - (void)_getWorldMap {
     GetWorldMapCompletionBlock completion = self.getWorldMapPromise;
@@ -451,6 +470,8 @@
 
                 NSString * string = [compressedData base64EncodedStringWithOptions:0];
                 mapData[@"worldMap"] = string;
+
+                [self _printWorldMapInfo:worldMap];
 
                 completion(YES, nil, mapData);
                 DDLogError(@"saving WorldMap due to web request");
@@ -490,7 +511,7 @@
             ARWorldMap* map = [self dictToWorldMap : worldMapDictionary];
             
             if (map) {
-                [self _saveWorldMap:map];
+                //[self _saveWorldMap:map];
                 [self _setWorldMap: map];
             } else {
                 if (self.setWorldMapPromise) {
@@ -525,8 +546,34 @@
     }
 
     if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
+        // first, let's restart with curret configuration, but remove existing anchors
+    //    [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionRemoveExistingAnchors];
+        
+        NSLog(@"Restarted, removing existing anchors");
+
+        // now, let's load the world map
         ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
-        [worldTrackingConfiguration setInitialWorldMap:[self savedWorldMap]];
+        [worldTrackingConfiguration setInitialWorldMap:map];
+
+        [self _printWorldMapInfo:map];
+
+        [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
+
+        NSLog(@"Restarted, loading map.");
+
+        NSArray<ARAnchor *> *anchors = map.anchors;
+        for (ARAnchor* anchor in anchors) {
+            [[self session] addAnchor:anchor];
+            arkitGeneratedAnchorIDUserAnchorIDMap[[[anchor identifier] UUIDString]] = anchor.name;
+            NSLog(@"WorldMap loaded anchor: %@", anchor.name);
+        }
+        
+        // now remove the map from the config
+        [worldTrackingConfiguration setInitialWorldMap:nil];
+
+        [self setArSessionState:ARKSessionRunning];
+        // [self setupDeviceCamera];
+
         if (completion) {
             completion(YES, nil);
         }
@@ -538,9 +585,6 @@
         }
         return;
     }
-    [[self session] runWithConfiguration:[self configuration]];
-    [self setArSessionState:ARKSessionRunning];
-    [self setupDeviceCamera];
 }
 
 
