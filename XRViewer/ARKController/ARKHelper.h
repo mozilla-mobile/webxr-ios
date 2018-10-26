@@ -218,6 +218,24 @@ static inline NSString *trackingState(ARCamera *camera)
     }
 }
 
+static inline NSString *worldMappingState(ARFrame *frame)
+{
+    switch ([frame worldMappingStatus])
+    {
+        case ARWorldMappingStatusNotAvailable:
+            return WEB_AR_WORLDMAPPING_NOT_AVAILABLE;
+            
+        case ARWorldMappingStatusLimited:
+            return WEB_AR_WORLDMAPPING_LIMITED;
+            
+        case ARWorldMappingStatusExtending:
+            return WEB_AR_WORLDMAPPING_EXTENDING;
+            
+        case ARWorldMappingStatusMapped:
+            return WEB_AR_WORLDMAPPING_MAPPED;
+    }
+}
+
 static inline NSArray *hitTestResultArrayFromResult(NSArray *resultArray)
 {
     NSMutableArray *results = [NSMutableArray arrayWithCapacity:[resultArray count]];

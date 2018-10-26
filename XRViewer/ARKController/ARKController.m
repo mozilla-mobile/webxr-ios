@@ -283,6 +283,11 @@
         return;
     }
     
+    if (![self worldMappingAvailable]) {
+        DDLogError(@"can't save WorldMap to local storage until World Mapping has started");
+        return;
+    }
+
     [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
         if (worldMap) {
             DDLogError(@"saving WorldMap to local storage");
@@ -453,7 +458,14 @@
         }
         return;
     }
-    
+
+    if (![self worldMappingAvailable]) {
+        if (completion) {
+            completion(NO, @"Cannot get World Map until World Mapping has started", nil);
+        }
+        return;
+    }
+
     [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
         if (worldMap) {
             if (completion) {
@@ -471,6 +483,20 @@
                 NSString * string = [compressedData base64EncodedStringWithOptions:0];
                 mapData[@"worldMap"] = string;
 
+                NSArray<ARAnchor *> *anchors = worldMap.anchors;
+                NSMutableArray *anchorList = [NSMutableArray arrayWithCapacity:anchors.count];
+                for (ARAnchor* anchor in anchors) {
+                    // include any anchor with a name in the list, since they've likely been
+                    // created by the web app
+                    if (anchor.name) {
+                        [anchorList addObject:anchor.name];
+                    }
+                }
+                mapData[@"anchors"] = anchorList;
+                mapData[@"center"] = dictFromVector3(worldMap.center);
+                mapData[@"extent"] = dictFromVector3(worldMap.extent);
+                mapData[@"featureCount"] = @(worldMap.rawFeaturePoints.count);
+                
                 [self _printWorldMapInfo:worldMap];
 
                 completion(YES, nil, mapData);
@@ -1163,6 +1189,9 @@
             NSInteger ts = (NSInteger) ([frame timestamp] * 1000.0);
             newData[@"timestamp"] = @(ts);
 
+            // status of ARKit World Mapping
+            newData[WEB_AR_WORLDMAPPING_STATUS_MESSAGE] = worldMappingState(frame);
+            
             if ([[self request][WEB_AR_LIGHT_INTENSITY_OPTION] boolValue])
             {
                 newData[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
@@ -1557,6 +1586,11 @@
 - (BOOL)trackingStateNormal {
     ARTrackingState ts = [[[[self session] currentFrame] camera] trackingState];
     return ts == ARTrackingStateNormal;
+}
+
+- (BOOL)worldMappingAvailable {
+    ARWorldMappingStatus ws = [[[self session] currentFrame] worldMappingStatus];
+    return ws != ARWorldMappingStatusNotAvailable;
 }
 
 - (NSString *)trackingState {

@@ -45,6 +45,7 @@
 #define WEB_AR_IOS_INTERRUPTION_ENDED_MESSAGE  @"arkitInterruptionEnded"
 
 #define WEB_AR_IOS_TRACKING_STATE_MESSAGE       @"arTrackingChanged"
+#define WEB_AR_WORLDMAPPING_STATUS_MESSAGE      @"worldMappingStatus"
 
 #define WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE   @"ios_did_receive_memory_warning"
 #define WEB_AR_IOS_USER_GRANTED_CV_DATA         @"userGrantedComputerVisionData"
@@ -150,7 +151,6 @@
 #define WEB_AR_CAMERA_TRANSFORM_OPTION @"camera_transform"
 #define WEB_AR_CAMERA_VIEW_OPTION      @"camera_view"
 
-#define WEB_AR_WORLDMAPPING_STATUS_OPTION   @"worldMappingStatus"
 #define WEB_AR_WORLDMAPPING_NOT_AVAILABLE   @"ar_worldmapping_not_available"
 #define WEB_AR_WORLDMAPPING_LIMITED         @"ar_worldmapping_limited"
 #define WEB_AR_WORLDMAPPING_EXTENDING       @"ar_worldmapping_extending"
