@@ -14,7 +14,6 @@
 #import "XRViewer-Swift.h"
 #import "Constants.h"
 
-//#define WEBSERVER
 #ifdef WEBSERVER
 #import "GCDWebServer.h"
 #endif

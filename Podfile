@@ -12,7 +12,7 @@ target 'XRViewer' do
     pod 'pop'
      pod 'MozillaTelemetry', :git => 'https://github.com/mozilla-mobile/telemetry-ios.git', :branch => 'master'
     pod 'FontAwesomeKit'
-  #  pod "GCDWebServer", "~> 3.0"
+    pod "GCDWebServer", "~> 3.0"
 end
 
 
