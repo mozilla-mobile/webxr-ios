@@ -2,6 +2,9 @@
 #import "ARKHelper.h"
 #import "AppState.h"
 
+// uncomment this to allow "getWorldMap" method from javascript
+//#define ALLOW_GET_WORLDMAP
+
 // The ARSessionConfiguration object passed to the run(_:options:) method is not supported by the current device.
 #define UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_CODE 100
 
@@ -61,6 +64,8 @@ typedef void (^DidRemovePlaneAnchors)(void);
 typedef void (^DidUpdateWindowSize)(void);
 typedef void (^DetectionImageCreatedCompletionType)(BOOL success, NSString* errorString);
 typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* detectedImageAnchor);
+typedef void (^GetWorldMapCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* worldMap);
+typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
 
 @interface ARKController : NSObject
 
@@ -107,6 +112,16 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
 - (void)viewWillTransitionToSize:(CGSize)size;
 
 /**
+ Save the current ARKit ARWorldMap if tracking.
+ */
+- (void)saveWorldMapInBackground;
+
+/**
+ is there a saved world map?
+ */
+- (BOOL) hasBackgroundWorldMap;
+
+/**
  Updates the internal AR Request dictionary
  Creates an ARKit configuration object
  Runs the ARKit session
@@ -126,6 +141,16 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
  @param state The current app state
  */
 - (void)resumeSessionWithAppState: (AppState*)state;
+
+/**
+ Updates the internal AR Request dictionary and the configuration
+ Runs the session
+ Updates the session state to running
+ Updates the show mode and the show options
+ 
+ @param state The current app state
+ */
+- (void)resumeSessionFromBackground: (AppState*)state;
 
 /**
  Pauses the AR session and sets the arSessionState to paused
@@ -180,6 +205,10 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
  @return an array of dictionaries representing planes
  */
 - (NSArray *)currentPlanesArray;
+
+- (BOOL)hasPlanes;
+
+- (BOOL)trackingStateNormal;
 
 - (NSString *)trackingState;
 
@@ -260,9 +289,41 @@ typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* er
  */
 - (void)destroyDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
 
+/**
+  Get the current tracker World Map and return it in an base64 encoded string in a dictionary, for sending to Javascript
+ 
+  - Fails if tracking isn't initialized, or if the acquisition of a World Map fails for some other reason
+ 
+  @param completion The completion block that will be called with the outcome of the acquisition of the world map
+  */
+- (void)getWorldMap:(GetWorldMapCompletionBlock)completion;
+
+/**
+ Set the current tracker World Map from a base64 encoded text string, probably passed in from Javascript.  Also saves this to
+ local storage.
+ 
+ - Fails if the map will not load for some other reason
+ 
+ @param worldMapDictionary The dictionary representing the worldMap
+ @param completion The completion block that will be called with the outcome of the loading of the world map
+ */
+- (void)setWorldMap:(NSDictionary *)worldMapDictionary completion:(SetWorldMapCompletionBlock)completion;
+
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
 
 /**
+  Save the current tracker World Map in local storage
+
+ - Fails if tracking isn't initialized, or if the acquisition of a World Map fails for some other reason
+ */
+- (void)saveWorldMap;
+
+/**
+   Load a previously saved World Map from local storage.
+ */
+- (void)loadSavedMap;
+
+ /**
  Removes all the anchors in the curren session.
  
  If the current session is not of class ARFaceTrackingConfiguration, create a

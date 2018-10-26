@@ -209,10 +209,30 @@ static inline NSString *trackingState(ARCamera *camera)
                     return WEB_AR_TRACKING_STATE_LIMITED_MOTION;
                 case ARTrackingStateReasonInsufficientFeatures: //The scene visible to the camera does not contain enough distinguishable features for image-based position tracking.
                     return WEB_AR_TRACKING_STATE_LIMITED_FEATURES;
+                case ARTrackingStateReasonRelocalizing: // trying to relocalize
+                    return WEB_AR_TRACKING_STATE_RELOCALIZING;
             }
         }
         case ARTrackingStateNotAvailable:
             return WEB_AR_TRACKING_STATE_NOT_AVAILABLE;
+    }
+}
+
+static inline NSString *worldMappingState(ARFrame *frame)
+{
+    switch ([frame worldMappingStatus])
+    {
+        case ARWorldMappingStatusNotAvailable:
+            return WEB_AR_WORLDMAPPING_NOT_AVAILABLE;
+            
+        case ARWorldMappingStatusLimited:
+            return WEB_AR_WORLDMAPPING_LIMITED;
+            
+        case ARWorldMappingStatusExtending:
+            return WEB_AR_WORLDMAPPING_EXTENDING;
+            
+        case ARWorldMappingStatusMapped:
+            return WEB_AR_WORLDMAPPING_MAPPED;
     }
 }
 

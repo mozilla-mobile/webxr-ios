@@ -27,9 +27,6 @@ PODS:
     - FontAwesomeKit/Core
   - FontAwesomeKit/Zocial (2.2.1):
     - FontAwesomeKit/Core
-  - GCDWebServer (3.4.2):
-    - GCDWebServer/Core (= 3.4.2)
-  - GCDWebServer/Core (3.4.2)
   - MozillaTelemetry (1.1.0)
   - pop (1.0.10)
   - PopupDialog (0.8.1):
@@ -38,19 +35,9 @@ PODS:
 DEPENDENCIES:
   - CocoaLumberjack
   - FontAwesomeKit
-  - GCDWebServer (~> 3.0)
   - MozillaTelemetry (from `https://github.com/mozilla-mobile/telemetry-ios.git`, branch `master`)
   - pop
   - PopupDialog
-
-SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - CocoaLumberjack
-    - DynamicBlurView
-    - FontAwesomeKit
-    - GCDWebServer
-    - pop
-    - PopupDialog
 
 EXTERNAL SOURCES:
   MozillaTelemetry:
@@ -66,11 +53,10 @@ SPEC CHECKSUMS:
   CocoaLumberjack: db7cc9e464771f12054c22ff6947c5a58d43a0fd
   DynamicBlurView: aa6db4defc6e537eb86fc5e58dd3991666178399
   FontAwesomeKit: 3614979b3dbb0ec3f7fac1bd760b91f66c31db67
-  GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
   MozillaTelemetry: 09a819bd9cc9685c33a1e5fbe846423e770fd5c0
   pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
   PopupDialog: 3d4e8e0795c3a614f407d730986c9b9af9781123
 
-PODFILE CHECKSUM: 51a3a955d4638418eef15292b3f21ecd169f807b
+PODFILE CHECKSUM: 96f8cdd440fa65b1ff249cafa4ed837240cf8658
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.4.0

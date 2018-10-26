@@ -312,10 +312,20 @@
     }];
     removeExistingAnchors.titleColor = removeExistingAnchors.tintColor;
 
+    DefaultButton *saveWorldMap = [[DefaultButton alloc] initWithTitle:@"Save World Map" height:40 dismissOnTap:YES action:^{
+        responseBlock(SaveWorldMap);
+    }];
+    saveWorldMap.titleColor = saveWorldMap.tintColor;
+
+    DefaultButton *loadWorldMap = [[DefaultButton alloc] initWithTitle:@"Load previously saved World Map" height:40 dismissOnTap:YES action:^{
+        responseBlock(LoadSavedWorldMap);
+    }];
+    loadWorldMap.titleColor = loadWorldMap.tintColor;
+    
     CancelButton * cancelButton = [[CancelButton alloc] initWithTitle:@"Cancel" height:40 dismissOnTap:YES action:^{}];
     cancelButton.titleColor = cancelButton.tintColor;
     
-    [popup addButtons: @[resetTracking, removeExistingAnchors, cancelButton]];
+    [popup addButtons: @[resetTracking, removeExistingAnchors, saveWorldMap, loadWorldMap, cancelButton]];
 
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }

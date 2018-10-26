@@ -13,6 +13,8 @@ typedef void (^ResultArrayBlock)(NSArray *);
 typedef void (^ImageDetectedBlock)(NSDictionary *);
 typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* detectedImageAnchor);
 typedef void (^CreateDetectionImageCompletionBlock)(BOOL success, NSString* errorString);
+typedef void (^GetWorldMapCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* worldMap);
+typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
 
 typedef void (^OnRemoveObjects)(NSArray * );
 typedef NSDictionary * (^OnJSUpdateData)(void);
@@ -35,6 +37,8 @@ typedef void (^OnActivateDetectionImage)(NSString*, ActivateDetectionImageComple
 typedef void (^OnDeactivateDetectionImage)(NSString*, CreateDetectionImageCompletionBlock);
 typedef void (^OnDestroyDetectionImage)(NSString*, CreateDetectionImageCompletionBlock);
 typedef void (^OnCreateDetectionImage)(NSDictionary*, CreateDetectionImageCompletionBlock);
+typedef void (^OnGetWorldMap)(GetWorldMapCompletionBlock);
+typedef void (^OnSetWorldMap)(NSDictionary*, SetWorldMapCompletionBlock);
 
 @interface WebController : NSObject
 
@@ -64,6 +68,9 @@ typedef void (^OnCreateDetectionImage)(NSDictionary*, CreateDetectionImageComple
 @property(nonatomic, copy) OnDeactivateDetectionImage onDeactivateDetectionImage;
 @property(nonatomic, copy) OnDestroyDetectionImage onDestroyDetectionImage;
 @property(nonatomic, copy) OnCreateDetectionImage onCreateDetectionImage;
+
+@property(nonatomic, copy) OnGetWorldMap onGetWorldMap;
+@property(nonatomic, copy) OnSetWorldMap onSetWorldMap;
 
 @property (nonatomic, strong) Animator *animator;
 
