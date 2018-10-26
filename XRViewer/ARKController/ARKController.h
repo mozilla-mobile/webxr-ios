@@ -296,8 +296,7 @@ typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
 - (void)getWorldMap:(GetWorldMapCompletionBlock)completion;
 
 /**
- Set the current tracker World Map from a base64 encoded text string, probably passed in from Javascript.  Also saves this to
- local storage.
+ Set the current tracker World Map from a base64 encoded text string, passed in from Javascript.
  
  - Fails if the map will not load for some other reason
  
