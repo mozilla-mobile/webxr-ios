@@ -86,7 +86,7 @@
 			<key>Title</key>
 			<string>Expose WebXR API (restart required)</string>
 			<key>Key</key>
-			<string>alwaysAllowWorldSensing</string>
+			<string>exposeWebXRAPI</string>
 			<key>DefaultValue</key>
 			<true/>
 		</dict>

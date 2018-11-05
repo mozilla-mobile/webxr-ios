@@ -53,7 +53,7 @@ FOUNDATION_EXPORT NSString *const exposeWebXRAPIKey;
 /// some settings
 
 // uncomment this to allow "getWorldMap" method from javascript
-//#define ALLOW_GET_WORLDMAP
+#define ALLOW_GET_WORLDMAP
 
 // uncomment this to spin up an internal web server that serves the Web directory
 //#define WEBSERVER

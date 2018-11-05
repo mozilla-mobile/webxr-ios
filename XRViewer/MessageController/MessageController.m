@@ -389,10 +389,13 @@
     ];
     
     DestructiveButton *always = [[DestructiveButton alloc] initWithTitle:@"Always for this site" height:40 dismissOnTap:YES action:^{
-        
+
         // don't set global permission...
         // [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:alwaysAllowWorldSensingKey];
-        
+        [self showMessageWithTitle:@"Site will not Require Permission in the Future"
+                           message:@"'Reset Allowed World Sensing' in Settings to reset for all sites."
+                                                  hideAfter:3];
+
         // instead, encode the domain/site into the allowed list
         NSMutableDictionary* newDict;
         if (allowedWorldSensingSites == nil) {
