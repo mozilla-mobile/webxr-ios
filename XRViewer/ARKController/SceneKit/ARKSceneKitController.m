@@ -120,7 +120,7 @@
 
 - (void)didChangeTrackingState:(ARCamera *)camera
 {
-    if ([camera trackingState] != ARTrackingStateNormal)
+    if ([camera trackingState] == ARTrackingStateNormal)
     {
         [[self focus] show:NO];
     }

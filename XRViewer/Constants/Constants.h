@@ -39,4 +39,23 @@ FOUNDATION_EXPORT NSString *const backgroundOrPausedDateKey;
 /// anchors on the next session run
 FOUNDATION_EXPORT double const pauseTimeInSecondsToRemoveAnchors;
 
+/// The NSUserDefaults key for the boolean that tells us whether
+/// the allow world sensing dialog should be shown (globally)
+FOUNDATION_EXPORT NSString *const alwaysAllowWorldSensingKey;
+/// The NSUserDefaults key for the boolean that tells us whether
+/// the allow world sensing dialog should be shown for sites
+FOUNDATION_EXPORT NSString *const allowedWorldSensingSitesKey;
+
+/// The NSUserDefaults key for the boolean that tells us whether
+/// we should preload the webxr.js file to expose a WebXR API
+FOUNDATION_EXPORT NSString *const exposeWebXRAPIKey;
+
+/// some settings
+
+// uncomment this to allow "getWorldMap" method from javascript
+#define ALLOW_GET_WORLDMAP
+
+// uncomment this to spin up an internal web server that serves the Web directory
+//#define WEBSERVER
+
 #endif /* Constants_h */

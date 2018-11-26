@@ -2,6 +2,8 @@
 #import "XRViewer-Swift.h"
 #import <PopupDialog/PopupDialog-Swift.h>
 
+#include "Constants.h"
+
 #warning LOCALIZATION
 
 @interface MessageController ()
@@ -58,7 +60,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
                           ];
@@ -94,7 +97,8 @@
                                                 buttonAlignment:UILayoutConstraintAxisHorizontal
                                                 transitionStyle:PopupDialogTransitionStyleBounceUp
                                                  preferredWidth:200.0
-                                               gestureDismissal:NO
+                                            tapGestureDismissal:NO
+                                            panGestureDismissal:NO
                                                   hideStatusBar:TRUE
                                                      completion:^{}
                               ];
@@ -122,7 +126,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleZoomIn
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
                           ];
@@ -142,7 +147,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
@@ -172,7 +178,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
                           ];
@@ -202,7 +209,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
                           ];
@@ -234,7 +242,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
                           ];
@@ -260,7 +269,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
@@ -286,7 +296,8 @@
                                             buttonAlignment:UILayoutConstraintAxisVertical
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:200.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
@@ -301,10 +312,20 @@
     }];
     removeExistingAnchors.titleColor = removeExistingAnchors.tintColor;
 
+    DefaultButton *saveWorldMap = [[DefaultButton alloc] initWithTitle:@"Save World Map" height:40 dismissOnTap:YES action:^{
+        responseBlock(SaveWorldMap);
+    }];
+    saveWorldMap.titleColor = saveWorldMap.tintColor;
+
+    DefaultButton *loadWorldMap = [[DefaultButton alloc] initWithTitle:@"Load previously saved World Map" height:40 dismissOnTap:YES action:^{
+        responseBlock(LoadSavedWorldMap);
+    }];
+    loadWorldMap.titleColor = loadWorldMap.tintColor;
+    
     CancelButton * cancelButton = [[CancelButton alloc] initWithTitle:@"Cancel" height:40 dismissOnTap:YES action:^{}];
     cancelButton.titleColor = cancelButton.tintColor;
     
-    [popup addButtons: @[resetTracking, removeExistingAnchors, cancelButton]];
+    [popup addButtons: @[resetTracking, removeExistingAnchors, saveWorldMap, loadWorldMap, cancelButton]];
 
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
@@ -316,7 +337,8 @@
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:340.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
@@ -335,19 +357,59 @@
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
 
-- (void)showMessageAboutAccessingWorldSensingData:(void (^)(BOOL))granted {
+- (void)showMessageAboutAccessingWorldSensingData:(void (^)(BOOL))granted url:(NSURL*)url {
+    NSUserDefaults* standardUserDefaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary<NSString *,id>* allowedWorldSensingSites = [standardUserDefaults dictionaryForKey:allowedWorldSensingSitesKey];
+    NSString* site = [[url host] stringByAppendingFormat:@":%@", [url port]];
+
+    // Check global permission.
+    if ([standardUserDefaults boolForKey:alwaysAllowWorldSensingKey]) {
+        granted(true);
+        return;
+    }
+
+    // Check per-site permission.
+    if (allowedWorldSensingSites != nil) {
+        if (allowedWorldSensingSites[site] != nil) {
+            granted(true);
+            return;
+        }
+    }
+    
     PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Access to World Sensing"
                                                     message:@"This webpage wants to use your camera to look for faces and things in the real world. (For details, see our Privacy Notice in Settings.) Allow?"
                                                       image:nil
-                                            buttonAlignment:UILayoutConstraintAxisHorizontal
+                                            buttonAlignment:UILayoutConstraintAxisVertical // Horizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
                                              preferredWidth:340.0
-                                           gestureDismissal:NO
+                                        tapGestureDismissal:NO
+                                        panGestureDismissal:NO
                                               hideStatusBar:TRUE
                                                  completion:^{}
     ];
+    
+    DestructiveButton *always = [[DestructiveButton alloc] initWithTitle:@"Always for this site" height:40 dismissOnTap:YES action:^{
 
-    DestructiveButton *ok = [[DestructiveButton alloc] initWithTitle:@"YES" height:40 dismissOnTap:YES action:^{
+        // don't set global permission...
+        // [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:alwaysAllowWorldSensingKey];
+        [self showMessageWithTitle:@"Site will not Require Permission in the Future"
+                           message:@"'Reset Allowed World Sensing' in Settings to reset for all sites."
+                                                  hideAfter:3];
+
+        // instead, encode the domain/site into the allowed list
+        NSMutableDictionary* newDict;
+        if (allowedWorldSensingSites == nil) {
+            newDict = [NSMutableDictionary new];
+        } else {
+            newDict = [allowedWorldSensingSites mutableCopy];
+        }
+        newDict[site] = @"YES";
+        [[NSUserDefaults standardUserDefaults] setObject:newDict forKey:allowedWorldSensingSitesKey];
+
+        granted(true);
+    }];
+
+    DestructiveButton *ok = [[DestructiveButton alloc] initWithTitle:@"This time only" height:40 dismissOnTap:YES action:^{
         granted(true);
     }];
     ok.titleColor = UIColor.blueColor;
@@ -356,7 +418,7 @@
         granted(false);
     }];
 
-    [popup addButtons: @[cancel, ok]];
+    [popup addButtons: @[cancel, ok, always]];
 
     [[self viewController] presentViewController:popup animated:YES completion:nil];
 }
@@ -374,7 +436,8 @@
                                                       buttonAlignment:UILayoutConstraintAxisVertical
                                                       transitionStyle:PopupDialogTransitionStyleBounceUp
                                                        preferredWidth:UIScreen.mainScreen.bounds.size.width/2.0
-                                                     gestureDismissal:NO
+                                                  tapGestureDismissal:NO
+                                                  panGestureDismissal:NO
                                                         hideStatusBar:YES
                                                            completion:^{}];
     

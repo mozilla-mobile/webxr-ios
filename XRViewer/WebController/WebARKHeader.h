@@ -28,6 +28,9 @@
 #define WEB_AR_STOP_SENDING_CV_DATA_MESSAGE     @"stopSendingComputerVisionData"
 #define WEB_AR_ADD_IMAGE_ANCHOR         @"addImageAnchor"
 
+#define WEB_AR_GET_WORLD_MAP_MESSAGE   @"getWorldMap"
+#define WEB_AR_SET_WORLD_MAP_MESSAGE   @"setWorldMap"
+
 #define WEB_AR_ON_JS_UPDATE_MESSAGE    @"onUpdate" // reques from JS
 
 #define WEB_AR_IOS_SHOW_DEBUG          @"arkitShowDebug"
@@ -42,6 +45,7 @@
 #define WEB_AR_IOS_INTERRUPTION_ENDED_MESSAGE  @"arkitInterruptionEnded"
 
 #define WEB_AR_IOS_TRACKING_STATE_MESSAGE       @"arTrackingChanged"
+#define WEB_AR_WORLDMAPPING_STATUS_MESSAGE      @"worldMappingStatus"
 
 #define WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE   @"ios_did_receive_memory_warning"
 #define WEB_AR_IOS_USER_GRANTED_CV_DATA         @"userGrantedComputerVisionData"
@@ -147,12 +151,18 @@
 #define WEB_AR_CAMERA_TRANSFORM_OPTION @"camera_transform"
 #define WEB_AR_CAMERA_VIEW_OPTION      @"camera_view"
 
+#define WEB_AR_WORLDMAPPING_NOT_AVAILABLE   @"ar_worldmapping_not_available"
+#define WEB_AR_WORLDMAPPING_LIMITED         @"ar_worldmapping_limited"
+#define WEB_AR_WORLDMAPPING_EXTENDING       @"ar_worldmapping_extending"
+#define WEB_AR_WORLDMAPPING_MAPPED          @"ar_worldmapping_mapped"
+
 #define WEB_AR_TRACKING_STATE_NORMAL               @"ar_tracking_normal"
 #define WEB_AR_TRACKING_STATE_LIMITED              @"ar_tracking_limited"
 #define WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING @"ar_tracking_limited_initializing"
 #define WEB_AR_TRACKING_STATE_LIMITED_MOTION       @"ar_tracking_limited_excessive_motion"
 #define WEB_AR_TRACKING_STATE_LIMITED_FEATURES     @"ar_tracking_limited_insufficient_features"
 #define WEB_AR_TRACKING_STATE_NOT_AVAILABLE        @"ar_tracking_not_available"
+#define WEB_AR_TRACKING_STATE_RELOCALIZING         @"ar_tracking_relocalizing"
 
 #define WEB_AR_DETECTION_IMAGE_NAME_OPTION  @"uid"
 

@@ -11,6 +11,7 @@ import UIKit
 class SwitchInputTableViewCell: UITableViewCell {
 
     @IBOutlet weak var switchControl: UISwitch!
+    @IBOutlet weak var labelTitle: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

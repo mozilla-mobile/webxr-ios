@@ -94,7 +94,7 @@ inline static WebCompletion debugCompletion(NSString *name)
 }
 
 - (void)sendNativeTime:(NSTimeInterval)nativeTime {
-    NSLog(@"Sending native time: %ld", nativeTime);
+    NSLog(@"Sending native time: %g", nativeTime);
     NSDictionary* jsonData = @{@"nativeTime": [NSNumber numberWithDouble:nativeTime]};
     [self callWebMethod:@"setNativeTime" paramJSON:jsonData webCompletion:^(id  _Nullable param, NSError * _Nullable error) {
         if (error != nil) {
@@ -434,6 +434,34 @@ inline static WebCompletion debugCompletion(NSString *name)
                 [blockSelf callWebMethod:destroyDetectionImageCallback paramJSON:responseDictionary webCompletion:NULL];
             });
         }
+    } else if ([[message name] isEqualToString:WEB_AR_GET_WORLD_MAP_MESSAGE]) {
+        NSString *getWorldMapCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        if ([self onGetWorldMap]) {
+            [self onGetWorldMap](^(BOOL success, NSString* errorString, NSDictionary* worldMap) {
+                NSMutableDictionary* responseDictionary = [NSMutableDictionary new];
+                responseDictionary[@"saved"] = @(success);
+                if (errorString) {
+                    responseDictionary[@"error"] = errorString;
+                }
+                if (worldMap) {
+                    responseDictionary[@"worldMap"] = worldMap;
+                }
+                [blockSelf callWebMethod:getWorldMapCallback paramJSON:responseDictionary webCompletion:NULL];
+            });
+        }
+    } else if ([[message name] isEqualToString:WEB_AR_SET_WORLD_MAP_MESSAGE]) {
+        NSDictionary *worldMapInfoDictionary = [message body];
+        NSString *setWorldMapCallback = [[message body] objectForKey:WEB_AR_CALLBACK_OPTION];
+        if ([self onSetWorldMap]) {
+            [self onSetWorldMap](worldMapInfoDictionary, ^(BOOL success, NSString* errorString) {
+                NSMutableDictionary* responseDictionary = [NSMutableDictionary new];
+                responseDictionary[@"loaded"] = @(success);
+                if (errorString) {
+                    responseDictionary[@"error"] = errorString;
+                }
+                [blockSelf callWebMethod:setWorldMapCallback paramJSON:responseDictionary webCompletion:NULL];
+            });
+        }
     } else {
         DDLogError(@"Unknown message: %@ ,for name: %@", [message body], [message name]);
     }
@@ -676,6 +704,8 @@ inline static WebCompletion debugCompletion(NSString *name)
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE];
     [[self contentController] addScriptMessageHandler:self name:WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_GET_WORLD_MAP_MESSAGE];
+    [[self contentController] addScriptMessageHandler:self name:WEB_AR_SET_WORLD_MAP_MESSAGE];
 }
 
 - (void)cleanWebContent
@@ -703,9 +733,23 @@ inline static WebCompletion debugCompletion(NSString *name)
 {
     WKWebViewConfiguration *conf = [[WKWebViewConfiguration alloc] init];
     WKUserContentController *contentController = [WKUserContentController new];
+
+    NSUserDefaults* standardUserDefaults = [NSUserDefaults standardUserDefaults];
+    // Check if we are supposed to be exposing WebXR.
+    if ([standardUserDefaults boolForKey:exposeWebXRAPIKey]) {
+        NSBundle *scriptBundle = [NSBundle bundleForClass:[self class]];
+        NSString *scriptURL = [scriptBundle pathForResource:@"webxr" ofType:@"js"];
+        NSString *scriptContent = [[NSString alloc] initWithContentsOfFile:scriptURL encoding:NSUTF8StringEncoding error: nil];
+
+        NSLog(@"size of webxr.js: %ld", [scriptContent length]);
+
+        WKUserScript *userScript = [[WKUserScript alloc] initWithSource:scriptContent injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:true];
+
+        [contentController addUserScript:userScript];
+    }
     [conf setUserContentController:contentController];
     [self setContentController:contentController];
-    
+
     WKPreferences *pref = [[WKPreferences alloc] init];
     [pref setJavaScriptEnabled:YES];
     [conf setPreferences:pref];

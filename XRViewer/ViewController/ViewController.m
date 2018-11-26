@@ -14,7 +14,6 @@
 #import "XRViewer-Swift.h"
 #import "Constants.h"
 
-// #define WEBSERVER
 #ifdef WEBSERVER
 #import "GCDWebServer.h"
 #endif
@@ -306,7 +305,8 @@ typedef void (^UICompletion)(void);
              
              [[blockSelf webController] setLastXRVisitedURL:[[[[blockSelf webController] webView] URL] absoluteString]];
          }
-         else {
+         else
+         {
              [[blockSelf stateController] setShowMode:ShowNothing];
              if ([[blockSelf arkController] arSessionState] == ARKSessionRunning) {
                  [blockSelf.timerSessionRunningInBackground invalidate];
@@ -348,21 +348,31 @@ typedef void (^UICompletion)(void);
                      break;
                  }
                  case ARKSessionPaused: {
-                     NSLog(@"\n\n*********\n\nMoving to foreground while the session is paused, remember to remove anchors on next AR request\n\n*********");
-                     [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession: YES];
-                     break;
+                     if (![[blockSelf arkController] hasBackgroundWorldMap]) {
+                         // if no background map, then need to remove anchors on next session
+                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is paused, remember to remove anchors on next AR request\n\n*********");
+                         [[[blockSelf stateController] state] setShouldRemoveAnchorsOnNextARSession: YES];
+                         break;
+                     }
                  }
                      
                  case ARKSessionRunning: {
-                     NSDate *interruptionDate = [[NSUserDefaults standardUserDefaults] objectForKey:backgroundOrPausedDateKey];
-                     NSDate *now = [NSDate date];
-                     if ([now timeIntervalSinceDate:interruptionDate] >= pauseTimeInSecondsToRemoveAnchors) {
-                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a long time, remove the anchors\n\n*********");
-                         [[blockSelf arkController] removeAllAnchors];
+                     if ([[blockSelf arkController] hasBackgroundWorldMap]) {
+                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG and there is a saved WorldMap\n\n*********");
+                         
+                         NSLog(@"\n\n*********\n\nResume session, which will use the worldmap\n\n*********");
+                         [[blockSelf arkController] resumeSessionFromBackground:[[blockSelf stateController] state]];
                      } else {
-                         NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a short time, do nothing\n\n*********");
+                         NSDate *interruptionDate = [[NSUserDefaults standardUserDefaults] objectForKey:backgroundOrPausedDateKey];
+                         NSDate *now = [NSDate date];
+                         if ([now timeIntervalSinceDate:interruptionDate] >= pauseTimeInSecondsToRemoveAnchors) {
+                             NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a long time, remove the anchors\n\n*********");
+                             [[blockSelf arkController] removeAllAnchors];
+                         } else {
+                             NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a short time, do nothing\n\n*********");
+                         }
+                         break;
                      }
-                     break;
                  }
              }
          }
@@ -494,10 +504,17 @@ typedef void (^UICompletion)(void);
                  break;
              case ARKSessionPaused:
                  NSLog(@"\n\n*********\n\nMoving to background while the session is paused, nothing to do\n\n*********");
+
+                 // need to try and save WorldMap here.  May fail?
+                 [[self arkController] saveWorldMapInBackground];
+
                  break;
              case ARKSessionRunning:
                  NSLog(@"\n\n*********\n\nMoving to background while the session is running, store the timestamp\n\n*********");
                  [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:backgroundOrPausedDateKey];
+                 
+                 // need to save WorldMap here
+                 [[self arkController] saveWorldMapInBackground];
                  break;
          }
          
@@ -657,21 +674,21 @@ typedef void (^UICompletion)(void);
          // providing the tracking state string, and also a boolean indicating if the scene has any plane anchor.
          // The overlay controller will decide on the warning message to show
          [[blockSelf overlayController] setTrackingState:state
-                                          sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
+                                          sceneHasPlanes:[[blockSelf arkController] hasPlanes]];
      }];
 
     [[self arkController] setDidAddPlaneAnchors:^{
         // When a new plane is added, we pass the tracking state and whether the scene has planes or not to the
         // overlay controller. He will decide on the warning message to show
         [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
-                                         sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
+                                         sceneHasPlanes:[[blockSelf arkController] hasPlanes]];
     }];
 
     [[self arkController] setDidRemovePlaneAnchors:^{
         // When a new plane is removed, we pass the tracking state and whether the scene has planes or not to the
         // overlay controller. He will decide on the warning message to show
         [[blockSelf overlayController] setTrackingState:[[self arkController] trackingState]
-                                         sceneHasPlanes:[[[blockSelf arkController] currentPlanesArray] count] > 0];
+                                         sceneHasPlanes:[[blockSelf arkController] hasPlanes]];
     }];
 
     [[self arkController] setDidUpdateWindowSize:^{
@@ -812,7 +829,15 @@ typedef void (^UICompletion)(void);
                 case RemoveExistingAnchors:
                     [[blockSelf arkController] runSessionRemovingAnchorsWithAppState:[[blockSelf stateController] state]];
                     break;
-            }
+                    
+                case SaveWorldMap:
+                    [[blockSelf arkController] saveWorldMap];
+                    break;
+                    
+                case LoadSavedWorldMap:
+                    [[blockSelf arkController] loadSavedMap];
+                    break;
+            } 
         }];
     }];
 
@@ -826,6 +851,14 @@ typedef void (^UICompletion)(void);
 
     [[self webController] setOnActivateDetectionImage:^(NSString *imageName, ActivateDetectionImageCompletionBlock completion) {
         [[blockSelf arkController] activateDetectionImage:imageName completion:completion];
+    }];
+
+    [[self webController] setOnGetWorldMap:^(GetWorldMapCompletionBlock completion) {
+        [[blockSelf arkController] getWorldMap:completion];
+    }];
+
+    [[self webController] setOnSetWorldMap:^(NSDictionary *dictionary, SetWorldMapCompletionBlock completion) {
+        [[blockSelf arkController] setWorldMap:dictionary completion:completion];
     }];
 
     [[self webController] setOnDeactivateDetectionImage:^(NSString *imageName, CreateDetectionImageCompletionBlock completion) {
@@ -1042,6 +1075,7 @@ typedef void (^UICompletion)(void);
     [[self webController] sendARData:[self commonData]];
 }
 
+
 -(void)sendComputerVisionData {
     [[self webController] sendComputerVisionData:[[self arkController] computerVisionData]];
 }
@@ -1102,23 +1136,36 @@ typedef void (^UICompletion)(void);
     
     [[self arkController] setComputerVisionDataEnabled: false];
     [[[self stateController] state] setUserGrantedSendingComputerVisionData:false];
+    [[[self stateController] state] setUserGrantedSendingWorldStateData:false];
     [[[self stateController] state] setSendComputerVisionData: true];
+    [[[self stateController] state] setAskedComputerVisionData: false];
+    [[[self stateController] state] setAskedWorldStateData: false];
     [[self arkController] setSendingWorldSensingDataAuthorizationStatus: SendWorldSensingDataAuthorizationStateNotDetermined];
 
     if ([request[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingTheCapturedImage:^(BOOL granted){
             [[blockSelf webController] userGrantedComputerVisionData:granted];
-            [[blockSelf arkController] setComputerVisionDataEnabled:granted];
+            if ([blockSelf arkController]) {
+                [[blockSelf arkController] setComputerVisionDataEnabled:granted];
+
+                // Approving computer vision data implicitly approves the world sensing data
+                [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: granted ? SendWorldSensingDataAuthorizationStateAuthorized: SendWorldSensingDataAuthorizationStateDenied];
+            }
+            [[[blockSelf stateController] state] setAskedComputerVisionData: true];
             [[[blockSelf stateController] state] setUserGrantedSendingComputerVisionData:granted];
             
-            // Approving computer vision data implicitly approves the world sensing data
-            [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: SendWorldSensingDataAuthorizationStateAuthorized];
+            [[[blockSelf stateController] state] setAskedWorldStateData: true];
+            [[[blockSelf stateController] state] setUserGrantedSendingWorldStateData: granted ? SendWorldSensingDataAuthorizationStateAuthorized: SendWorldSensingDataAuthorizationStateDenied];
         }];
     } else if ([request[WEB_AR_WORLD_SENSING_DATA_OPTION] boolValue]) {
         [[self messageController] showMessageAboutAccessingWorldSensingData:^(BOOL granted){
             [[blockSelf webController] userGrantedSendingWorldSensingData:granted];
-            [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: granted ? SendWorldSensingDataAuthorizationStateAuthorized: SendWorldSensingDataAuthorizationStateDenied];
-        }];
+            if ([blockSelf arkController]) {
+                [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: granted ? SendWorldSensingDataAuthorizationStateAuthorized: SendWorldSensingDataAuthorizationStateDenied];
+            }
+            [[[blockSelf stateController] state] setAskedWorldStateData: true];
+            [[[blockSelf stateController] state] setUserGrantedSendingWorldStateData:granted];
+        } url:[[[self webController] webView] URL]];
     } else {
         // if neither is requested, we'll actually set it to denied!
         [[blockSelf arkController] setSendingWorldSensingDataAuthorizationStatus: SendWorldSensingDataAuthorizationStateDenied];
