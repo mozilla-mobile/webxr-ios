@@ -916,9 +916,9 @@
             for (ARAnchor* addedAnchor in anchors) {
                 if (!objects[[self anchorIDForAnchor:addedAnchor]]) {
                     NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
-                    [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
                     objects[[self anchorIDForAnchor:addedAnchor]] = addedAnchorDictionary;
                 }
+                [addedAnchorsSinceLastFrame addObject: objects[[self anchorIDForAnchor:addedAnchor]]];
             }
             
             [self createRequestedDetectionImages];
