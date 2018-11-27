@@ -495,7 +495,10 @@
                     // include any anchor with a name in the list, since they've likely been
                     // created by the web app
                     if (anchor.name) {
-                        [anchorList addObject:anchor.name];
+                        NSMutableDictionary *anchorDict = [NSMutableDictionary new];
+                        anchorDict[@"name"] = anchor.name;
+                        anchorDict[@"transform"] = arrayFromMatrix4x4(anchor.transform);
+                        [anchorList addObject:anchorDict];
                     }
                 }
                 mapData[@"anchors"] = anchorList;
@@ -579,7 +582,7 @@
 
     if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
         // first, let's restart with curret configuration, but remove existing anchors
-    //    [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionRemoveExistingAnchors];
+       //    [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionRemoveExistingAnchors];
         
         NSLog(@"Restarted, removing existing anchors");
 
@@ -590,6 +593,9 @@
         [self _printWorldMapInfo:map];
 
         [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
+        
+        // if we are removing anchors, clear the user map
+        arkitGeneratedAnchorIDUserAnchorIDMap = [NSMutableDictionary new];
 
         NSLog(@"Restarted, loading map.");
 
@@ -690,7 +696,10 @@
     [self updateARConfigurationWithState:state];
     [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
     [self setArSessionState:ARKSessionRunning];
-    
+
+    // if we are removing anchors, clear the user map
+    arkitGeneratedAnchorIDUserAnchorIDMap = [NSMutableDictionary new];
+
     // if we've already received authorization for CV or WorldState date, likely because of a preference setting or
     // previous saved approval for the site, make sure we set up the state properly here
     if ([state askedComputerVisionData]) {
@@ -709,6 +718,8 @@
 - (void)runSessionRemovingAnchorsWithAppState:(AppState *)state {
     [self updateARConfigurationWithState:state];
     [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionRemoveExistingAnchors];
+    // if we are removing anchors, clear the user map
+    arkitGeneratedAnchorIDUserAnchorIDMap = [NSMutableDictionary new];
     [self setArSessionState:ARKSessionRunning];
 }
 
@@ -735,6 +746,8 @@
 - (void)runSessionResettingTrackingAndRemovingAnchorsWithAppState:(AppState *)state {
     [self updateARConfigurationWithState:state];
     [[self session] runWithConfiguration:[self configuration] options:ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
+    // if we are removing anchors, clear the user map
+    arkitGeneratedAnchorIDUserAnchorIDMap = [NSMutableDictionary new];
     [self setArSessionState:ARKSessionRunning];
 }
 
@@ -819,7 +832,8 @@
     [arkitGeneratedAnchorIDUserAnchorIDMap enumerateKeysAndObjectsUsingBlock:^(NSString* arkitID, NSString* userID, BOOL *stop) {
         if ([userID isEqualToString:userAnchorID]) {
             ARFrame *currentFrame = [[self session] currentFrame];
-            for (ARAnchor *currentAnchor in [currentFrame anchors]) {
+            NSArray<ARAnchor *> *anchors = [currentFrame anchors];
+            for (ARAnchor *currentAnchor in anchors) {
                 if ([[currentAnchor.identifier UUIDString] isEqualToString:arkitID]) {
                     anchor = currentAnchor;
                     break;
@@ -1919,7 +1933,7 @@
             [removedAnchorsSinceLastFrame addObject: anchorID];
             objects[anchorID] = nil;
 
-            arkitGeneratedAnchorIDUserAnchorIDMap[anchorID] = nil;
+            arkitGeneratedAnchorIDUserAnchorIDMap[[removedAnchor.identifier UUIDString]] = nil;
             if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
                 ARImageAnchor* imageAnchor = (ARImageAnchor*)removedAnchor;
                 ActivateDetectionImageCompletionBlock completion = self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name];
@@ -1927,6 +1941,10 @@
                     [self activateDetectionImage:imageAnchor.referenceImage.name completion:completion];
                     self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name] = nil;
                 }
+            }
+        } else {
+            if (arkitGeneratedAnchorIDUserAnchorIDMap[[removedAnchor.identifier UUIDString]]) {
+                DDLogDebug(@"Remove Anchor not in objects, but in UserAnchorIDMap - %@", anchorID);
             }
         }
     }
