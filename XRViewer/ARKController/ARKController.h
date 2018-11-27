@@ -94,6 +94,12 @@ typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
 @property(nonatomic) bool computerVisionDataEnabled;
 
 /**
+ Request a CV frame
+ */
+@property(nonatomic) BOOL computerVisionFrameRequested;
+
+
+/**
  Enum representing the world sensing data sending authorization status
  @see SendWorldSensingDataAuthorizationState
  */

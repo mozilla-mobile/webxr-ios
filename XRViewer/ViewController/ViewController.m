@@ -434,6 +434,7 @@ typedef void (^UICompletion)(void);
          }
          if ([dict[WEB_AR_CV_INFORMATION_OPTION] boolValue]) {
              [[[blockSelf stateController] state] setComputerVisionFrameRequested:YES];
+             [[blockSelf arkController] setComputerVisionFrameRequested:YES];
              [[[blockSelf stateController] state] setSendComputerVisionData:YES];
          }
      }];
@@ -611,8 +612,10 @@ typedef void (^UICompletion)(void);
          }
 
          if ([[blockSelf stateController] shouldSendCVData]) {
-             [blockSelf sendComputerVisionData];
-             [[[blockSelf stateController] state] setComputerVisionFrameRequested:NO];
+             if ([blockSelf sendComputerVisionData]) {
+                 [[[blockSelf stateController] state] setComputerVisionFrameRequested:NO];
+                 [[blockSelf arkController] setComputerVisionFrameRequested:NO];
+             }
          }
      }];
     [[self arkController] setDidFailSession:^(NSError *error)
@@ -816,6 +819,7 @@ typedef void (^UICompletion)(void);
 
     [[self webController] setOnComputerVisionDataRequested:^{
         [[[blockSelf stateController] state] setComputerVisionFrameRequested:YES];
+        [[blockSelf arkController] setComputerVisionFrameRequested:YES];
     }];
 
     [[self webController] setOnResetTrackingButtonTapped:^{
@@ -1072,12 +1076,19 @@ typedef void (^UICompletion)(void);
 
 - (void)sendARKData
 {
-    [[self webController] sendARData:[self commonData]];
+    // BLAIR:  Why are we doing this copy above?  Seems like
+//    [[self webController] sendARData:[self commonData]];
+    [[self webController] sendARData:[[self arkController] arkData]];
 }
 
 
--(void)sendComputerVisionData {
-    [[self webController] sendComputerVisionData:[[self arkController] computerVisionData]];
+-(Boolean)sendComputerVisionData {
+    NSDictionary* data = [[self arkController] computerVisionData];
+    if (data) {
+        [[self webController] sendComputerVisionData:data];
+        return YES;
+    }
+    return NO;
 }
 
 -(void)sendNativeTime {

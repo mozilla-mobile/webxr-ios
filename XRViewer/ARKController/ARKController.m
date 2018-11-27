@@ -118,6 +118,9 @@
     {
         lock = OS_UNFAIR_LOCK_INIT;
         objects = [NSMutableDictionary new];
+        computerVisionData = NULL;
+        arkData = NULL;
+
         addedAnchorsSinceLastFrame = [NSMutableArray new];
         removedAnchorsSinceLastFrame = [NSMutableArray new];
         arkitGeneratedAnchorIDUserAnchorIDMap = [NSMutableDictionary new];
@@ -259,7 +262,8 @@
     data = arkData;
     os_unfair_lock_unlock(&(lock));
     
-    return [data copy];
+  //  return [data copy];
+    return data;
 }
 
 - (NSDictionary*)computerVisionData {
@@ -267,9 +271,11 @@
     
     os_unfair_lock_lock(&(lock));
     data = computerVisionData;
+    computerVisionData = NULL;
     os_unfair_lock_unlock(&(lock));
     
-    return [data copy];
+ //   return [data copy];
+    return data;
 }
 
 - (NSTimeInterval)currentFrameTimeInMilliseconds {
@@ -1242,7 +1248,7 @@
                 [addedAnchorsSinceLastFrame removeAllObjects];
                 newData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
             }
-            if ([self computerVisionDataEnabled]) {
+            if ([self computerVisionDataEnabled] && [self computerVisionFrameRequested]) {
                 NSMutableDictionary *cameraInformation = [NSMutableDictionary new];
                 CGSize cameraImageResolution = [[frame camera] imageResolution];
                 cameraInformation[@"cameraImageResolution"] = @{
