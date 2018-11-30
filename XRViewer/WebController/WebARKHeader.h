@@ -4,6 +4,7 @@
 #import "AppState.h"
 
 #define INTERNET_OFFLINE_CODE -1009
+#define USER_CANCELLED_LOADING_CODE -999
 
 // URL
 #define WEB_URL @"https://ios-viewer.webxrexperiments.com/viewer.html"

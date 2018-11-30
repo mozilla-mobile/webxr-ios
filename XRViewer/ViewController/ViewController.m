@@ -1108,6 +1108,10 @@ typedef void (^UICompletion)(void);
              [[self messageController] showMessageAboutConnectionRequired];
 //         }];
     }
+    else if ([error code] == USER_CANCELLED_LOADING_CODE)
+    {
+        // Desired behavior is similar to Safari, i.e. no alerts or messages presented upon user-initiated cancel
+    }
     else
     {
         [[self messageController] showMessageAboutWebError:error withCompletion:^(BOOL reload)
