@@ -54,7 +54,7 @@
 
 - (void)showMessageAboutWebError:(NSError *)error withCompletion:(void(^)(BOOL reload))reloadCompletion;
 {
-    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Can not open the page"
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Cannot open the page"
                                                     message:@"Please check the URL and try again"
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
@@ -92,7 +92,7 @@
     if (interrupt && _arPopup == nil)
     {
         PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"AR Interruption Occurred"
-                                                        message:@"Please wait, it would be fixed automatically"
+                                                        message:@"Please wait, it should be fixed automatically"
                                                           image:nil
                                                 buttonAlignment:UILayoutConstraintAxisHorizontal
                                                 transitionStyle:PopupDialogTransitionStyleBounceUp
@@ -236,8 +236,8 @@
 
 - (void)showMessageAboutConnectionRequired
 {
-    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Internet connection is not available now"
-                                                    message:@"Application will be started automatically when connection become available"
+    PopupDialog *popup = [[PopupDialog alloc] initWithTitle:@"Internet connection is unavailable"
+                                                    message:@"Application will restart automatically when a connection becomes available"
                                                       image:nil
                                             buttonAlignment:UILayoutConstraintAxisHorizontal
                                             transitionStyle:PopupDialogTransitionStyleBounceUp
