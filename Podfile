@@ -8,6 +8,7 @@ target 'XRViewer' do
   # Pods for ArDemo
   # https://github.com/CocoaLumberjack/CocoaLumberjack/issues/882
     pod 'CocoaLumberjack'
+    pod 'CocoaLumberjack/Swift'
     pod 'PopupDialog'
     pod 'pop'
      pod 'MozillaTelemetry', :git => 'https://github.com/mozilla-mobile/telemetry-ios.git', :branch => 'master'
