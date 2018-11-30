@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0401E04B1F612C240075D823 /* BarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0401E04A1F612C240075D823 /* BarView.xib */; };
-		0401E04E1F612D910075D823 /* BarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0401E04D1F612D910075D823 /* BarView.m */; };
 		0401E0521F62E6150075D823 /* Animator.m in Sources */ = {isa = PBXBuildFile; fileRef = 0401E0511F62E6150075D823 /* Animator.m */; };
 		041503C61F28944F00887400 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 041503C51F28944F00887400 /* AppDelegate.m */; };
 		041503D21F28944F00887400 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D01F28944F00887400 /* Main.storyboard */; };
@@ -59,12 +58,11 @@
 		8E5089D8211B6DA90059015B /* webxr.js in Resources */ = {isa = PBXBuildFile; fileRef = 8E5089D7211B6DA90059015B /* webxr.js */; };
 		8ED9EBB3211C6FB000DA58F1 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 8ED9EBB2211C6FB000DA58F1 /* Web */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
+		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0401E04A1F612C240075D823 /* BarView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BarView.xib; sourceTree = "<group>"; };
-		0401E04C1F612D910075D823 /* BarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarView.h; sourceTree = "<group>"; };
-		0401E04D1F612D910075D823 /* BarView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BarView.m; sourceTree = "<group>"; };
 		0401E0501F62E6150075D823 /* Animator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Animator.h; sourceTree = "<group>"; };
 		0401E0511F62E6150075D823 /* Animator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Animator.m; sourceTree = "<group>"; };
 		041503C11F28944F00887400 /* XRViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XRViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -152,6 +150,7 @@
 		8ED9EBB2211C6FB000DA58F1 /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
 		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
 		C99925CDAC21EAF144F18C57 /* Pods-XRViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -248,8 +247,7 @@
 				04A9836F1F3226E000120CF8 /* WebARKHeader.h */,
 				04A9836E1F3226E000120CF8 /* WebController.h */,
 				04A9836D1F3226E000120CF8 /* WebController.m */,
-				0401E04C1F612D910075D823 /* BarView.h */,
-				0401E04D1F612D910075D823 /* BarView.m */,
+				B679967821B06A7000612AF4 /* BarView.swift */,
 				0401E04A1F612C240075D823 /* BarView.xib */,
 			);
 			path = WebController;
@@ -597,7 +595,6 @@
 				625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */,
 				045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */,
 				04A9837B1F32292200120CF8 /* Renderer.m in Sources */,
-				0401E04E1F612D910075D823 /* BarView.m in Sources */,
 				04C64BC81F71011700ACFB8B /* LayerView.m in Sources */,
 				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
 				041503DA1F28944F00887400 /* main.m in Sources */,
@@ -609,6 +606,7 @@
 				04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */,
 				62242AC3201F2A0700506412 /* TextInputTableViewCell.swift in Sources */,
 				04A9837A1F32291D00120CF8 /* ARKController.m in Sources */,
+				B679967921B06A7000612AF4 /* BarView.swift in Sources */,
 				04A815791F42DA990082D31D /* FocusNode.m in Sources */,
 				04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */,
 				04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */,

@@ -3,8 +3,8 @@
 #import "WebARKHeader.h"
 #import "ARKHelper.h"
 #import "OverlayHeader.h"
-#import "BarView.h"
 #import "Constants.h"
+#import "XRViewer-Swift.h"
 
 @interface WebController () <WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler>
 
