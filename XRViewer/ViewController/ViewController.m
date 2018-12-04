@@ -8,7 +8,6 @@
 #import "MessageController.h"
 #import "Animator.h"
 #import "Reachability.h"
-#import "AppStateController.h"
 #import "LayerView.h"
 #import "Utils.h"
 #import "XRViewer-Swift.h"

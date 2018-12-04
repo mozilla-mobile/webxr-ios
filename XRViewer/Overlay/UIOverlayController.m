@@ -1,6 +1,6 @@
 #import "UIOverlayController.h"
-#import "TouchView.h"
 #import "OverlayViewController.h"
+#import "XRViewer-Swift.h"
 
 @interface UIOverlayController ()
 

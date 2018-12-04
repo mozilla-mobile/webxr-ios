@@ -16,7 +16,6 @@
 		0449DE071F4D7F000057F639 /* MessageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0449DE061F4D7F000057F639 /* MessageController.m */; };
 		045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */; };
 		045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */; };
-		045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2EA21F28EE6C0005FF96 /* TouchView.m */; };
 		04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */; };
 		04A806771F3D9ED900B8732C /* PlaneNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806761F3D9ED900B8732C /* PlaneNode.m */; };
 		04A8067A1F3DCAA200B8732C /* AnchorNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806791F3DCAA200B8732C /* AnchorNode.m */; };
@@ -37,7 +36,6 @@
 		04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1281F3C64DF00F96C5A /* ARKSceneKitController.m */; };
 		04C64BC81F71011700ACFB8B /* LayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BC71F71011700ACFB8B /* LayerView.m */; };
 		04C64BCE1F71094500ACFB8B /* AppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCC1F71016A00ACFB8B /* AppState.m */; };
-		04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCA1F71016A00ACFB8B /* AppStateController.m */; };
 		5184F8FC0384A338F76D2653 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 5184FF937519BAF48DCEB808 /* Utils.m */; };
 		591A8C502FA83D70E8F5B5B4 /* Pods_XRViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */; };
 		6207254E206A90BF00887B1F /* RequestPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6207254C206A90BF00887B1F /* RequestPermissionsViewController.swift */; };
@@ -59,6 +57,8 @@
 		8ED9EBB3211C6FB000DA58F1 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 8ED9EBB2211C6FB000DA58F1 /* Web */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
 		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
+		B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FE960221B61BDC0087A21F /* AppStateController.swift */; };
+		B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FE960421B61FEE0087A21F /* TouchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,8 +79,6 @@
 		045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UIOverlayController.m; sourceTree = "<group>"; };
 		045B2E9E1F28EE4B0005FF96 /* OverlayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayViewController.h; sourceTree = "<group>"; };
 		045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OverlayViewController.m; sourceTree = "<group>"; };
-		045B2EA11F28EE6C0005FF96 /* TouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TouchView.h; sourceTree = "<group>"; };
-		045B2EA21F28EE6C0005FF96 /* TouchView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TouchView.m; sourceTree = "<group>"; };
 		045B2EA81F2A02710005FF96 /* OverlayHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayHeader.h; sourceTree = "<group>"; };
 		04A712C21F46EF48005D91E2 /* ARSCNView+HitTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ARSCNView+HitTest.h"; sourceTree = "<group>"; };
 		04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ARSCNView+HitTest.m"; sourceTree = "<group>"; };
@@ -121,8 +119,6 @@
 		04C296D31F331FC700D6909D /* Prefix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.h; sourceTree = "<group>"; };
 		04C64BC61F71011700ACFB8B /* LayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayerView.h; sourceTree = "<group>"; };
 		04C64BC71F71011700ACFB8B /* LayerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LayerView.m; sourceTree = "<group>"; };
-		04C64BCA1F71016A00ACFB8B /* AppStateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppStateController.m; sourceTree = "<group>"; };
-		04C64BCB1F71016A00ACFB8B /* AppStateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppStateController.h; sourceTree = "<group>"; };
 		04C64BCC1F71016A00ACFB8B /* AppState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppState.m; sourceTree = "<group>"; };
 		04C64BCD1F71016B00ACFB8B /* AppState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppState.h; sourceTree = "<group>"; };
 		23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.release.xcconfig"; sourceTree = "<group>"; };
@@ -151,6 +147,8 @@
 		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
+		B6FE960221B61BDC0087A21F /* AppStateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateController.swift; sourceTree = "<group>"; };
+		B6FE960421B61FEE0087A21F /* TouchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchView.swift; sourceTree = "<group>"; };
 		C99925CDAC21EAF144F18C57 /* Pods-XRViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -235,8 +233,7 @@
 				045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */,
 				045B2E9E1F28EE4B0005FF96 /* OverlayViewController.h */,
 				045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */,
-				045B2EA11F28EE6C0005FF96 /* TouchView.h */,
-				045B2EA21F28EE6C0005FF96 /* TouchView.m */,
+				B6FE960421B61FEE0087A21F /* TouchView.swift */,
 			);
 			path = Overlay;
 			sourceTree = "<group>";
@@ -371,8 +368,7 @@
 			children = (
 				04C64BCD1F71016B00ACFB8B /* AppState.h */,
 				04C64BCC1F71016A00ACFB8B /* AppState.m */,
-				04C64BCB1F71016A00ACFB8B /* AppStateController.h */,
-				04C64BCA1F71016A00ACFB8B /* AppStateController.m */,
+				B6FE960221B61BDC0087A21F /* AppStateController.swift */,
 			);
 			path = AppStateController;
 			sourceTree = "<group>";
@@ -593,7 +589,6 @@
 				04A9837E1F32293100120CF8 /* WebController.m in Sources */,
 				04A983781F32291100120CF8 /* ViewController.m in Sources */,
 				625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */,
-				045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */,
 				04A9837B1F32292200120CF8 /* Renderer.m in Sources */,
 				04C64BC81F71011700ACFB8B /* LayerView.m in Sources */,
 				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
@@ -605,10 +600,10 @@
 				04A93D3A1F63CC8D002928CA /* SCNNode+Show.m in Sources */,
 				04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */,
 				62242AC3201F2A0700506412 /* TextInputTableViewCell.swift in Sources */,
+				B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */,
 				04A9837A1F32291D00120CF8 /* ARKController.m in Sources */,
 				B679967921B06A7000612AF4 /* BarView.swift in Sources */,
 				04A815791F42DA990082D31D /* FocusNode.m in Sources */,
-				04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */,
 				04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */,
 				045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */,
 				62242AC0201F037F00506412 /* SettingsViewController.swift in Sources */,
@@ -618,6 +613,7 @@
 				04A983791F32291900120CF8 /* RecordController.m in Sources */,
 				62242AC7201F2AE100506412 /* SwitchInputTableViewCell.swift in Sources */,
 				04A8156D1F41BA660082D31D /* HitAnchor.m in Sources */,
+				B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */,
 				04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */,
 				04C64BCE1F71094500ACFB8B /* AppState.m in Sources */,
 				62242ACB201F2D3600506412 /* TextTableViewCell.swift in Sources */,
