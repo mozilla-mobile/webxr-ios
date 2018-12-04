@@ -2,12 +2,12 @@
 #import <SceneKit/SceneKit.h>
 #import <ARKit/ARKit.h>
 #import "PlaneNode.h"
-#import "AnchorNode.h"
 #import "HitAnchor.h"
 #import "FocusNode.h"
 #import "ARSCNView+HitTest.h"
 #import "HitTestResult.h"
 #import "SCNNode+Show.h"
+#import "XRViewer-Swift.h"
 
 @interface ARKSceneKitController () <ARSCNViewDelegate>
 
