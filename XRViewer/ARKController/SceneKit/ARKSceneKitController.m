@@ -1,7 +1,6 @@
 #import "ARKSceneKitController.h"
 #import <SceneKit/SceneKit.h>
 #import <ARKit/ARKit.h>
-#import "PlaneNode.h"
 #import "HitAnchor.h"
 #import "ARSCNView+HitTest.h"
 #import "HitTestResult.h"
