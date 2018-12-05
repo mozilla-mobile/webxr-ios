@@ -4,7 +4,6 @@
 #import "HitAnchor.h"
 #import "ARSCNView+HitTest.h"
 #import "HitTestResult.h"
-#import "SCNNode+Show.h"
 #import "XRViewer-Swift.h"
 
 @interface ARKSceneKitController () <ARSCNViewDelegate>
