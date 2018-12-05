@@ -2,7 +2,6 @@
 #import <SceneKit/SceneKit.h>
 #import <ARKit/ARKit.h>
 #import "HitAnchor.h"
-#import "ARSCNView+HitTest.h"
 #import "HitTestResult.h"
 #import "XRViewer-Swift.h"
 
@@ -169,7 +168,7 @@
     if (([self showOptions] & ARFocus))
     {
         [self setPlaneHitTestResults:
-         [[self renderView] hitTestPoint:[self hitTestFocusPoint] withResult:^(HitTestResult *result)
+         [[self renderView] hitTestWithPoint:[self hitTestFocusPoint] withResult:^(HitTestResult *result)
           {
               [self setCurrentHitTest:result];
               

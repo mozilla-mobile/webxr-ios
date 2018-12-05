@@ -6,3 +6,4 @@
 #import "OverlayHeader.h"
 #import "LayerView.h"
 #import "ARKHelper.h"
+#import "HitTestResult.h"
