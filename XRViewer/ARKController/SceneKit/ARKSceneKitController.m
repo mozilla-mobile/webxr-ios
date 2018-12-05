@@ -3,7 +3,6 @@
 #import <ARKit/ARKit.h>
 #import "PlaneNode.h"
 #import "HitAnchor.h"
-#import "FocusNode.h"
 #import "ARSCNView+HitTest.h"
 #import "HitTestResult.h"
 #import "SCNNode+Show.h"

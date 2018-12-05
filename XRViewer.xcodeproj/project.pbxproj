@@ -21,7 +21,6 @@
 		04A815681F419EB60082D31D /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A815671F419EB60082D31D /* Models.scnassets */; };
 		04A8156A1F419F840082D31D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 041503D31F28944F00887400 /* Assets.xcassets */; };
 		04A8156D1F41BA660082D31D /* HitAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A8156C1F41BA660082D31D /* HitAnchor.m */; };
-		04A815791F42DA990082D31D /* FocusNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A815781F42DA990082D31D /* FocusNode.m */; };
 		04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A82BEE1F58566100F64A5D /* HitTestResult.m */; };
 		04A93D3A1F63CC8D002928CA /* SCNNode+Show.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A93D391F63CC8D002928CA /* SCNNode+Show.m */; };
 		04A983781F32291100120CF8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983751F32277E00120CF8 /* ViewController.m */; };
@@ -57,6 +56,7 @@
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
 		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
 		B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047521B7333500C9A4EC /* AnchorNode.swift */; };
+		B69C047B21B73E9800C9A4EC /* FocusNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047921B73E9800C9A4EC /* FocusNode.swift */; };
 		B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FE960221B61BDC0087A21F /* AppStateController.swift */; };
 		B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FE960421B61FEE0087A21F /* TouchView.swift */; };
 /* End PBXBuildFile section */
@@ -87,8 +87,6 @@
 		04A815671F419EB60082D31D /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
 		04A8156B1F41BA660082D31D /* HitAnchor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HitAnchor.h; sourceTree = "<group>"; };
 		04A8156C1F41BA660082D31D /* HitAnchor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HitAnchor.m; sourceTree = "<group>"; };
-		04A815771F42DA990082D31D /* FocusNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FocusNode.h; sourceTree = "<group>"; };
-		04A815781F42DA990082D31D /* FocusNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FocusNode.m; sourceTree = "<group>"; };
 		04A82BED1F58566000F64A5D /* HitTestResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HitTestResult.h; path = XRViewer/ARKController/HitTestResult.h; sourceTree = SOURCE_ROOT; };
 		04A82BEE1F58566100F64A5D /* HitTestResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HitTestResult.m; path = XRViewer/ARKController/HitTestResult.m; sourceTree = SOURCE_ROOT; };
 		04A93D381F63CC8D002928CA /* SCNNode+Show.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SCNNode+Show.h"; sourceTree = "<group>"; };
@@ -146,6 +144,7 @@
 		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
 		B69C047521B7333500C9A4EC /* AnchorNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnchorNode.swift; sourceTree = "<group>"; };
+		B69C047921B73E9800C9A4EC /* FocusNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusNode.swift; sourceTree = "<group>"; };
 		B6FE960221B61BDC0087A21F /* AppStateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateController.swift; sourceTree = "<group>"; };
 		B6FE960421B61FEE0087A21F /* TouchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchView.swift; sourceTree = "<group>"; };
 		C99925CDAC21EAF144F18C57 /* Pods-XRViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.debug.xcconfig"; sourceTree = "<group>"; };
@@ -351,8 +350,7 @@
 				04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */,
 				04A93D381F63CC8D002928CA /* SCNNode+Show.h */,
 				04A93D391F63CC8D002928CA /* SCNNode+Show.m */,
-				04A815771F42DA990082D31D /* FocusNode.h */,
-				04A815781F42DA990082D31D /* FocusNode.m */,
+				B69C047921B73E9800C9A4EC /* FocusNode.swift */,
 				04A806751F3D9ED900B8732C /* PlaneNode.h */,
 				04A806761F3D9ED900B8732C /* PlaneNode.m */,
 				B69C047521B7333500C9A4EC /* AnchorNode.swift */,
@@ -601,7 +599,7 @@
 				B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */,
 				04A9837A1F32291D00120CF8 /* ARKController.m in Sources */,
 				B679967921B06A7000612AF4 /* BarView.swift in Sources */,
-				04A815791F42DA990082D31D /* FocusNode.m in Sources */,
+				B69C047B21B73E9800C9A4EC /* FocusNode.swift in Sources */,
 				04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */,
 				045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */,
 				62242AC0201F037F00506412 /* SettingsViewController.swift in Sources */,
