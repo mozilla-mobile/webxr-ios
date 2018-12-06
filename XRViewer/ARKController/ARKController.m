@@ -3,7 +3,6 @@
 #import "WebARKHeader.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ARKMetalController.h"
-#import "HitAnchor.h"
 #import "HitTestResult.h"
 #import "Utils.h"
 #import "XRViewer-Swift.h"

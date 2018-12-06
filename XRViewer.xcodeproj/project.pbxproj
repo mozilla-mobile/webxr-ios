@@ -18,7 +18,6 @@
 		045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */; };
 		04A815681F419EB60082D31D /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A815671F419EB60082D31D /* Models.scnassets */; };
 		04A8156A1F419F840082D31D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 041503D31F28944F00887400 /* Assets.xcassets */; };
-		04A8156D1F41BA660082D31D /* HitAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A8156C1F41BA660082D31D /* HitAnchor.m */; };
 		04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A82BEE1F58566100F64A5D /* HitTestResult.m */; };
 		04A983781F32291100120CF8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983751F32277E00120CF8 /* ViewController.m */; };
 		04A983791F32291900120CF8 /* RecordController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983711F32271B00120CF8 /* RecordController.m */; };
@@ -81,8 +80,6 @@
 		045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OverlayViewController.m; sourceTree = "<group>"; };
 		045B2EA81F2A02710005FF96 /* OverlayHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayHeader.h; sourceTree = "<group>"; };
 		04A815671F419EB60082D31D /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
-		04A8156B1F41BA660082D31D /* HitAnchor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HitAnchor.h; sourceTree = "<group>"; };
-		04A8156C1F41BA660082D31D /* HitAnchor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HitAnchor.m; sourceTree = "<group>"; };
 		04A82BED1F58566000F64A5D /* HitTestResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HitTestResult.h; path = XRViewer/ARKController/HitTestResult.h; sourceTree = SOURCE_ROOT; };
 		04A82BEE1F58566100F64A5D /* HitTestResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HitTestResult.m; path = XRViewer/ARKController/HitTestResult.m; sourceTree = SOURCE_ROOT; };
 		04A983651F32268900120CF8 /* ARKController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKController.m; sourceTree = "<group>"; };
@@ -260,8 +257,6 @@
 				04A983661F32268900120CF8 /* ARKController.h */,
 				04A983651F32268900120CF8 /* ARKController.m */,
 				04B1E12A1F3C660300F96C5A /* ARKControllerProtocol.h */,
-				04A8156B1F41BA660082D31D /* HitAnchor.h */,
-				04A8156C1F41BA660082D31D /* HitAnchor.m */,
 				04A82BED1F58566000F64A5D /* HitTestResult.h */,
 				04A82BEE1F58566100F64A5D /* HitTestResult.m */,
 				04B1E1261F3C64C100F96C5A /* SceneKit */,
@@ -599,7 +594,6 @@
 				B69C047E21B8325F00C9A4EC /* PlaneNode.swift in Sources */,
 				04A983791F32291900120CF8 /* RecordController.m in Sources */,
 				62242AC7201F2AE100506412 /* SwitchInputTableViewCell.swift in Sources */,
-				04A8156D1F41BA660082D31D /* HitAnchor.m in Sources */,
 				B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */,
 				B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */,
 				04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */,
