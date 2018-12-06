@@ -12,11 +12,12 @@
 - (void)updateSession:(ARSession *)session;
 - (void)clean;
 
-- (UIView *)renderView;
+- (UIView *)getRenderView;
 
 - (NSArray *)hitTest:(CGPoint)point withType:(ARHitTestResultType)type;
 
-- (id)currentHitTest;
+// Commented during conversion of ARKSceneKitController to Swift, appears unused
+//- (id)currentHitTest;
 
 - (void)setHitTestFocusPoint:(CGPoint)point;
 - (void)didChangeTrackingState:(ARCamera *)camera;

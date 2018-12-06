@@ -2,7 +2,6 @@
 #import <os/lock.h>
 #import "WebARKHeader.h"
 #import <AVFoundation/AVFoundation.h>
-#import "ARKSceneKitController.h"
 #import "ARKMetalController.h"
 #import "HitAnchor.h"
 #import "HitTestResult.h"
@@ -150,14 +149,14 @@
         Class cls = (type == ARKMetal) ? [ARKMetalController class] : [ARKSceneKitController class];
         id<ARKControllerProtocol> controller = [[cls alloc] initWithSesion:[self session] size:[rootView bounds].size];
         [self setController:controller];
-        [rootView addSubview:[controller renderView]];
-        [[controller renderView] setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [[[[controller renderView] topAnchor] constraintEqualToAnchor:[rootView topAnchor]] setActive:YES];
-        [[[[controller renderView] leftAnchor] constraintEqualToAnchor:[rootView leftAnchor]] setActive:YES];
-        [[[[controller renderView] rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]] setActive:YES];
-        [[[[controller renderView] bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor]] setActive:YES];
+        [rootView addSubview:[controller getRenderView]];
+        [[controller getRenderView] setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [[[[controller getRenderView] topAnchor] constraintEqualToAnchor:[rootView topAnchor]] setActive:YES];
+        [[[[controller getRenderView] leftAnchor] constraintEqualToAnchor:[rootView leftAnchor]] setActive:YES];
+        [[[[controller getRenderView] rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]] setActive:YES];
+        [[[[controller getRenderView] bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor]] setActive:YES];
         
-        [[self controller] setHitTestFocusPoint:[[[self controller] renderView] center]];
+        [[self controller] setHitTestFocusPoint:[[[self controller] getRenderView] center]];
 
         self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
         
@@ -773,7 +772,7 @@
 
 - (NSArray *)hitTestNormPoint:(CGPoint)normPoint types:(NSUInteger)type
 {
-    CGSize renderSize = [[[self controller] renderView] bounds].size;
+    CGSize renderSize = [[[self controller] getRenderView] bounds].size;
     
     CGPoint point = CGPointMake(normPoint.x * renderSize.width, normPoint.y * renderSize.height);
     
@@ -1234,7 +1233,7 @@
             }
             if ([[self request][WEB_AR_CAMERA_OPTION] boolValue])
             {
-                CGSize size = [[self controller] renderView].frame.size;
+                CGSize size = [[self controller] getRenderView].frame.size;
                 matrix_float4x4 projectionMatrix = [[frame camera] projectionMatrixForOrientation:self.interfaceOrientation
                                                                                viewportSize:size
                                                                                       zNear:AR_CAMERA_PROJECTION_MATRIX_Z_NEAR
@@ -1283,7 +1282,7 @@
                 cameraInformation[@"cameraIntrinsics"] = arrayFromMatrix3x3(resizedCameraIntrinsics);
                 
                 // Get the projection matrix
-                CGSize viewportSize = [[self controller] renderView].frame.size;
+                CGSize viewportSize = [[self controller] getRenderView].frame.size;
                 matrix_float4x4 projectionMatrix = [[frame camera] projectionMatrixForOrientation:self.interfaceOrientation
                                                                                      viewportSize:viewportSize
                                                                                             zNear:AR_CAMERA_PROJECTION_MATRIX_Z_NEAR
