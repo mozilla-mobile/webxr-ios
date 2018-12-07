@@ -18,7 +18,6 @@
 		045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */; };
 		04A815681F419EB60082D31D /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A815671F419EB60082D31D /* Models.scnassets */; };
 		04A8156A1F419F840082D31D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 041503D31F28944F00887400 /* Assets.xcassets */; };
-		04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A82BEE1F58566100F64A5D /* HitTestResult.m */; };
 		04A983781F32291100120CF8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983751F32277E00120CF8 /* ViewController.m */; };
 		04A983791F32291900120CF8 /* RecordController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983711F32271B00120CF8 /* RecordController.m */; };
 		04A9837A1F32291D00120CF8 /* ARKController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983651F32268900120CF8 /* ARKController.m */; };
@@ -51,6 +50,7 @@
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
 		B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */; };
 		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
+		B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */; };
 		B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047521B7333500C9A4EC /* AnchorNode.swift */; };
 		B69C047B21B73E9800C9A4EC /* FocusNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047921B73E9800C9A4EC /* FocusNode.swift */; };
 		B69C047E21B8325F00C9A4EC /* PlaneNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047D21B8325F00C9A4EC /* PlaneNode.swift */; };
@@ -80,8 +80,6 @@
 		045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OverlayViewController.m; sourceTree = "<group>"; };
 		045B2EA81F2A02710005FF96 /* OverlayHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayHeader.h; sourceTree = "<group>"; };
 		04A815671F419EB60082D31D /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
-		04A82BED1F58566000F64A5D /* HitTestResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HitTestResult.h; path = XRViewer/ARKController/HitTestResult.h; sourceTree = SOURCE_ROOT; };
-		04A82BEE1F58566100F64A5D /* HitTestResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HitTestResult.m; path = XRViewer/ARKController/HitTestResult.m; sourceTree = SOURCE_ROOT; };
 		04A983651F32268900120CF8 /* ARKController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKController.m; sourceTree = "<group>"; };
 		04A983661F32268900120CF8 /* ARKController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKController.h; sourceTree = "<group>"; };
 		04A983671F3226A500120CF8 /* Renderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Renderer.m; sourceTree = "<group>"; };
@@ -133,6 +131,7 @@
 		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKSceneKitController.swift; sourceTree = "<group>"; };
 		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
+		B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HitTestResult.swift; sourceTree = "<group>"; };
 		B69C047521B7333500C9A4EC /* AnchorNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnchorNode.swift; sourceTree = "<group>"; };
 		B69C047921B73E9800C9A4EC /* FocusNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusNode.swift; sourceTree = "<group>"; };
 		B69C047D21B8325F00C9A4EC /* PlaneNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaneNode.swift; sourceTree = "<group>"; };
@@ -257,8 +256,7 @@
 				04A983661F32268900120CF8 /* ARKController.h */,
 				04A983651F32268900120CF8 /* ARKController.m */,
 				04B1E12A1F3C660300F96C5A /* ARKControllerProtocol.h */,
-				04A82BED1F58566000F64A5D /* HitTestResult.h */,
-				04A82BEE1F58566100F64A5D /* HitTestResult.m */,
+				B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */,
 				04B1E1261F3C64C100F96C5A /* SceneKit */,
 				04B1E1221F3C648200F96C5A /* Metal */,
 			);
@@ -572,6 +570,7 @@
 				04A9837E1F32293100120CF8 /* WebController.m in Sources */,
 				04A983781F32291100120CF8 /* ViewController.m in Sources */,
 				625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */,
+				B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */,
 				04A9837B1F32292200120CF8 /* Renderer.m in Sources */,
 				04C64BC81F71011700ACFB8B /* LayerView.m in Sources */,
 				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
@@ -596,7 +595,6 @@
 				62242AC7201F2AE100506412 /* SwitchInputTableViewCell.swift in Sources */,
 				B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */,
 				B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */,
-				04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */,
 				04C64BCE1F71094500ACFB8B /* AppState.m in Sources */,
 				62242ACB201F2D3600506412 /* TextTableViewCell.swift in Sources */,
 				0449DE071F4D7F000057F639 /* MessageController.m in Sources */,

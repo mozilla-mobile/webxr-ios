@@ -155,7 +155,8 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
             focus?.show(false)
         }
         guard let currentHitTest = currentHitTest else { return }
-        focus?.update(forPosition: currentHitTest.position, planeAnchor: currentHitTest.anchor, camera: session?.currentFrame?.camera)
+        guard let position = currentHitTest.position else { return }
+        focus?.update(forPosition: position, planeAnchor: currentHitTest.anchor, camera: session?.currentFrame?.camera)
     }
 
     func updateCameraFocus() {

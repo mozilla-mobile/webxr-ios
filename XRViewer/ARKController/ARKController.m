@@ -3,12 +3,11 @@
 #import "WebARKHeader.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ARKMetalController.h"
-#import "HitTestResult.h"
 #import "Utils.h"
-#import "XRViewer-Swift.h"
 #import <Accelerate/Accelerate.h>
 #import "Constants.h"
 #import "Compression.h"
+#import "XRViewer-Swift.h"
 
 @interface ARKController () <ARSessionDelegate>
 {
