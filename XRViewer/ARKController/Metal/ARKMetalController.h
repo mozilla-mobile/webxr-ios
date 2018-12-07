@@ -1,4 +1,4 @@
-#import "ARKControllerProtocol.h"
+#import "XRViewer-Swift.h"
 
 @interface ARKMetalController : NSObject <ARKControllerProtocol>
 

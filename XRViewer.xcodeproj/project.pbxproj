@@ -51,6 +51,7 @@
 		B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */; };
 		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
 		B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */; };
+		B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */; };
 		B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047521B7333500C9A4EC /* AnchorNode.swift */; };
 		B69C047B21B73E9800C9A4EC /* FocusNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047921B73E9800C9A4EC /* FocusNode.swift */; };
 		B69C047E21B8325F00C9A4EC /* PlaneNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047D21B8325F00C9A4EC /* PlaneNode.swift */; };
@@ -97,7 +98,6 @@
 		04A983751F32277E00120CF8 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		04B1E1231F3C64A100F96C5A /* ARKMetalController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKMetalController.h; sourceTree = "<group>"; };
 		04B1E1241F3C64A100F96C5A /* ARKMetalController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKMetalController.m; sourceTree = "<group>"; };
-		04B1E12A1F3C660300F96C5A /* ARKControllerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKControllerProtocol.h; sourceTree = "<group>"; };
 		04BB9D641F39BE40004328A2 /* ARKHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKHelper.h; sourceTree = "<group>"; };
 		04C296D31F331FC700D6909D /* Prefix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.h; sourceTree = "<group>"; };
 		04C64BC61F71011700ACFB8B /* LayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayerView.h; sourceTree = "<group>"; };
@@ -132,6 +132,7 @@
 		B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKSceneKitController.swift; sourceTree = "<group>"; };
 		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
 		B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HitTestResult.swift; sourceTree = "<group>"; };
+		B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKControllerProtocol.swift; sourceTree = "<group>"; };
 		B69C047521B7333500C9A4EC /* AnchorNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnchorNode.swift; sourceTree = "<group>"; };
 		B69C047921B73E9800C9A4EC /* FocusNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusNode.swift; sourceTree = "<group>"; };
 		B69C047D21B8325F00C9A4EC /* PlaneNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaneNode.swift; sourceTree = "<group>"; };
@@ -255,7 +256,7 @@
 				04BB9D641F39BE40004328A2 /* ARKHelper.h */,
 				04A983661F32268900120CF8 /* ARKController.h */,
 				04A983651F32268900120CF8 /* ARKController.m */,
-				04B1E12A1F3C660300F96C5A /* ARKControllerProtocol.h */,
+				B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */,
 				B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */,
 				04B1E1261F3C64C100F96C5A /* SceneKit */,
 				04B1E1221F3C648200F96C5A /* Metal */,
@@ -571,6 +572,7 @@
 				04A983781F32291100120CF8 /* ViewController.m in Sources */,
 				625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */,
 				B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */,
+				B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */,
 				04A9837B1F32292200120CF8 /* Renderer.m in Sources */,
 				04C64BC81F71011700ACFB8B /* LayerView.m in Sources */,
 				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,

@@ -154,7 +154,7 @@
         [[[[controller getRenderView] rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]] setActive:YES];
         [[[[controller getRenderView] bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor]] setActive:YES];
         
-        [[self controller] setHitTestFocusPoint:[[[self controller] getRenderView] center]];
+        [[self controller] setHitTestFocus:[[[self controller] getRenderView] center]];
 
         self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
         
@@ -241,7 +241,7 @@
 
 - (void)viewWillTransitionToSize:(CGSize)size
 {
-    [[self controller] setHitTestFocusPoint:CGPointMake(size.width / 2, size.height / 2)];
+    [[self controller] setHitTestFocus:CGPointMake(size.width / 2, size.height / 2)];
     self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
 }
 
@@ -774,7 +774,7 @@
     
     CGPoint point = CGPointMake(normPoint.x * renderSize.width, normPoint.y * renderSize.height);
     
-    NSArray *result = [[self controller] hitTest:point withType:type];
+    NSArray *result = [[self controller] hitTest:point with:type];
     
     return hitTestResultArrayFromResult(result);
 }
