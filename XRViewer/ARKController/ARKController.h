@@ -63,6 +63,8 @@ typedef void (^DetectionImageCreatedCompletionType)(BOOL success, NSString* erro
 typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* detectedImageAnchor);
 typedef void (^GetWorldMapCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* worldMap);
 typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
+typedef void (^ResultBlock)(NSDictionary *);
+typedef void (^ResultArrayBlock)(NSArray *);
 
 @interface ARKController : NSObject
 

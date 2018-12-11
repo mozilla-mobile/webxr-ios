@@ -7,3 +7,5 @@
 #import "LayerView.h"
 #import "ARKHelper.h"
 #import "Prefix.h"
+#import "ARKController.h"
+#import "Animator.h"

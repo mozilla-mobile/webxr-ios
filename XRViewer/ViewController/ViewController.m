@@ -1,6 +1,5 @@
 #import "ViewController.h"
 #import "ARKController.h"
-#import "WebController.h"
 #import "UIOverlayController.h"
 #import "RecordController.h"
 #import "LocationManager.h"
@@ -194,7 +193,7 @@ typedef void (^UICompletion)(void);
     
     [[self arkController] viewWillTransitionToSize:size];
     [[self overlayController] viewWillTransitionToSize:size];
-    [[self webController] viewWillTransitionToSize:size];
+    [[self webController] viewWillTransitionTo:size];
     
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
@@ -385,7 +384,7 @@ typedef void (^UICompletion)(void);
              [[self webController] loadBlankHTMLString];
           }];
 
-         [[blockSelf webController] didReceiveError: [NSError errorWithDomain:MEMORY_ERROR_DOMAIN
+         [[blockSelf webController] didReceiveErrorWithError: [NSError errorWithDomain:MEMORY_ERROR_DOMAIN
                                                                          code:MEMORY_ERROR_CODE
                                                                      userInfo:@{NSLocalizedDescriptionKey: MEMORY_ERROR_MESSAGE}]];
      }];
@@ -619,7 +618,7 @@ typedef void (^UICompletion)(void);
      }];
     [[self arkController] setDidFailSession:^(NSError *error)
     {
-        [[blockSelf webController] didReceiveError: error];
+        [[blockSelf webController] didReceiveErrorWithError: error];
         
         if ([error code] == SENSOR_FAILED_ARKIT_ERROR_CODE) {
             NSMutableDictionary* currentARRequest = [[[[blockSelf stateController] state] aRRequest] mutableCopy];
@@ -772,7 +771,7 @@ typedef void (^UICompletion)(void);
          [[blockSelf stateController] setShowOptions:showOptionsFormDict(uiOptionsDict)];
      }];
     
-    [[self webController] setOnHitTest:^(NSUInteger mask, CGFloat x, CGFloat y, ResultArrayBlock result)
+    [[self webController] setOnHitTest:^(NSInteger mask, CGFloat x, CGFloat y, ResultArrayBlock result)
      {
          result([[blockSelf arkController] hitTestNormPoint:CGPointMake(x, y) types:mask]);
      }];
@@ -864,15 +863,15 @@ typedef void (^UICompletion)(void);
         [[blockSelf arkController] setWorldMap:dictionary completion:completion];
     }];
 
-    [[self webController] setOnDeactivateDetectionImage:^(NSString *imageName, CreateDetectionImageCompletionBlock completion) {
+    [[self webController] setOnDeactivateDetectionImage:^(NSString *imageName, DetectionImageCreatedCompletionType completion) {
         [[blockSelf arkController] deactivateDetectionImage:imageName completion:completion];
     }];
 
-    [[self webController] setOnDestroyDetectionImage:^(NSString *imageName, CreateDetectionImageCompletionBlock completion) {
+    [[self webController] setOnDestroyDetectionImage:^(NSString *imageName, DetectionImageCreatedCompletionType completion) {
         [[blockSelf arkController] destroyDetectionImage:imageName completion:completion];
     }];
 
-    [[self webController] setOnCreateDetectionImage:^(NSDictionary *dictionary, CreateDetectionImageCompletionBlock completion) {
+    [[self webController] setOnCreateDetectionImage:^(NSDictionary *dictionary, DetectionImageCreatedCompletionType completion) {
         [[blockSelf arkController] createDetectionImage:dictionary completion:completion];
     }];
     

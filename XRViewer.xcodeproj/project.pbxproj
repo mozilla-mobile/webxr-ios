@@ -24,7 +24,6 @@
 		04A9837B1F32292200120CF8 /* Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983671F3226A500120CF8 /* Renderer.m */; };
 		04A9837C1F32292900120CF8 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836A1F3226A500120CF8 /* Shaders.metal */; };
 		04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836B1F3226BC00120CF8 /* LocationManager.m */; };
-		04A9837E1F32293100120CF8 /* WebController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836D1F3226E000120CF8 /* WebController.m */; };
 		04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1241F3C64A100F96C5A /* ARKMetalController.m */; };
 		04C64BC81F71011700ACFB8B /* LayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BC71F71011700ACFB8B /* LayerView.m */; };
 		04C64BCE1F71094500ACFB8B /* AppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCC1F71016A00ACFB8B /* AppState.m */; };
@@ -49,6 +48,7 @@
 		8ED9EBB3211C6FB000DA58F1 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 8ED9EBB2211C6FB000DA58F1 /* Web */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
 		B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */; };
+		B658C0F221BF43D500538D57 /* WebController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B658C0F121BF43D500538D57 /* WebController.swift */; };
 		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
 		B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */; };
 		B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */; };
@@ -89,8 +89,6 @@
 		04A9836A1F3226A500120CF8 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		04A9836B1F3226BC00120CF8 /* LocationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		04A9836C1F3226BC00120CF8 /* LocationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
-		04A9836D1F3226E000120CF8 /* WebController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebController.m; sourceTree = "<group>"; };
-		04A9836E1F3226E000120CF8 /* WebController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebController.h; sourceTree = "<group>"; };
 		04A9836F1F3226E000120CF8 /* WebARKHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebARKHeader.h; sourceTree = "<group>"; };
 		04A983711F32271B00120CF8 /* RecordController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordController.m; sourceTree = "<group>"; };
 		04A983721F32271B00120CF8 /* RecordController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordController.h; sourceTree = "<group>"; };
@@ -130,6 +128,7 @@
 		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKSceneKitController.swift; sourceTree = "<group>"; };
+		B658C0F121BF43D500538D57 /* WebController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebController.swift; sourceTree = "<group>"; };
 		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
 		B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HitTestResult.swift; sourceTree = "<group>"; };
 		B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKControllerProtocol.swift; sourceTree = "<group>"; };
@@ -233,8 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				04A9836F1F3226E000120CF8 /* WebARKHeader.h */,
-				04A9836E1F3226E000120CF8 /* WebController.h */,
-				04A9836D1F3226E000120CF8 /* WebController.m */,
+				B658C0F121BF43D500538D57 /* WebController.swift */,
 				B679967821B06A7000612AF4 /* BarView.swift */,
 				0401E04A1F612C240075D823 /* BarView.xib */,
 			);
@@ -568,7 +566,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */,
-				04A9837E1F32293100120CF8 /* WebController.m in Sources */,
 				04A983781F32291100120CF8 /* ViewController.m in Sources */,
 				625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */,
 				B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */,
@@ -599,6 +596,7 @@
 				B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */,
 				04C64BCE1F71094500ACFB8B /* AppState.m in Sources */,
 				62242ACB201F2D3600506412 /* TextTableViewCell.swift in Sources */,
+				B658C0F221BF43D500538D57 /* WebController.swift in Sources */,
 				0449DE071F4D7F000057F639 /* MessageController.m in Sources */,
 				6241012D1FEABABF006FDBE3 /* AnalyticsManager.swift in Sources */,
 				6207254E206A90BF00887B1F /* RequestPermissionsViewController.swift in Sources */,
