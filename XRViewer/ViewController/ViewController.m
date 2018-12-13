@@ -2,7 +2,6 @@
 #import "ARKController.h"
 #import "UIOverlayController.h"
 #import "RecordController.h"
-#import "LocationManager.h"
 #import "WebARKHeader.h"
 #import "MessageController.h"
 #import "Animator.h"

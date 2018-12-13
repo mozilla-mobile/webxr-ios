@@ -23,7 +23,6 @@
 		04A9837A1F32291D00120CF8 /* ARKController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983651F32268900120CF8 /* ARKController.m */; };
 		04A9837B1F32292200120CF8 /* Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983671F3226A500120CF8 /* Renderer.m */; };
 		04A9837C1F32292900120CF8 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836A1F3226A500120CF8 /* Shaders.metal */; };
-		04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836B1F3226BC00120CF8 /* LocationManager.m */; };
 		04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1241F3C64A100F96C5A /* ARKMetalController.m */; };
 		04C64BC81F71011700ACFB8B /* LayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BC71F71011700ACFB8B /* LayerView.m */; };
 		04C64BCE1F71094500ACFB8B /* AppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCC1F71016A00ACFB8B /* AppState.m */; };
@@ -47,6 +46,7 @@
 		8E5089D8211B6DA90059015B /* webxr.js in Resources */ = {isa = PBXBuildFile; fileRef = 8E5089D7211B6DA90059015B /* webxr.js */; };
 		8ED9EBB3211C6FB000DA58F1 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 8ED9EBB2211C6FB000DA58F1 /* Web */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
+		B632850721C2D98A00FD5510 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632850621C2D98900FD5510 /* LocationManager.swift */; };
 		B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */; };
 		B658C0F221BF43D500538D57 /* WebController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B658C0F121BF43D500538D57 /* WebController.swift */; };
 		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
@@ -87,8 +87,6 @@
 		04A983681F3226A500120CF8 /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		04A983691F3226A500120CF8 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		04A9836A1F3226A500120CF8 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
-		04A9836B1F3226BC00120CF8 /* LocationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
-		04A9836C1F3226BC00120CF8 /* LocationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
 		04A9836F1F3226E000120CF8 /* WebARKHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebARKHeader.h; sourceTree = "<group>"; };
 		04A983711F32271B00120CF8 /* RecordController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordController.m; sourceTree = "<group>"; };
 		04A983721F32271B00120CF8 /* RecordController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordController.h; sourceTree = "<group>"; };
@@ -127,6 +125,7 @@
 		8ED9EBB2211C6FB000DA58F1 /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
 		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		B632850621C2D98900FD5510 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKSceneKitController.swift; sourceTree = "<group>"; };
 		B658C0F121BF43D500538D57 /* WebController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebController.swift; sourceTree = "<group>"; };
 		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
@@ -197,7 +196,7 @@
 				04A983611F32213800120CF8 /* WebController */,
 				0449DE041F4D7EEA0057F639 /* MessageController */,
 				04A983701F3226FD00120CF8 /* RecordController */,
-				04A983621F32215300120CF8 /* LocationManager */,
+				B632850621C2D98900FD5510 /* LocationManager.swift */,
 				045B2EA41F28EE790005FF96 /* Overlay */,
 				A6160A081F651AF2009F4402 /* Reachability */,
 				0401E04F1F62E5E70075D823 /* Animator */,
@@ -237,15 +236,6 @@
 				0401E04A1F612C240075D823 /* BarView.xib */,
 			);
 			path = WebController;
-			sourceTree = "<group>";
-		};
-		04A983621F32215300120CF8 /* LocationManager */ = {
-			isa = PBXGroup;
-			children = (
-				04A9836C1F3226BC00120CF8 /* LocationManager.h */,
-				04A9836B1F3226BC00120CF8 /* LocationManager.m */,
-			);
-			path = LocationManager;
 			sourceTree = "<group>";
 		};
 		04A983631F32216800120CF8 /* ARKController */ = {
@@ -572,7 +562,6 @@
 				B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */,
 				04A9837B1F32292200120CF8 /* Renderer.m in Sources */,
 				04C64BC81F71011700ACFB8B /* LayerView.m in Sources */,
-				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
 				041503DA1F28944F00887400 /* main.m in Sources */,
 				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
 				B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */,
@@ -601,6 +590,7 @@
 				6241012D1FEABABF006FDBE3 /* AnalyticsManager.swift in Sources */,
 				6207254E206A90BF00887B1F /* RequestPermissionsViewController.swift in Sources */,
 				5184F8FC0384A338F76D2653 /* Utils.m in Sources */,
+				B632850721C2D98A00FD5510 /* LocationManager.swift in Sources */,
 				6251B441202085BA00BD989D /* Constants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
