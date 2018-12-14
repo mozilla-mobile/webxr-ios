@@ -5,7 +5,6 @@
 #import "WebARKHeader.h"
 #import "Animator.h"
 #import "Reachability.h"
-#import "Utils.h"
 #import "XRViewer-Swift.h"
 
 #ifdef WEBSERVER

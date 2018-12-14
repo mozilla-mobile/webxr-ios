@@ -3,7 +3,6 @@
 #import "WebARKHeader.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ARKMetalController.h"
-#import "Utils.h"
 #import <Accelerate/Accelerate.h>
 #import "Compression.h"
 #import "XRViewer-Swift.h"
