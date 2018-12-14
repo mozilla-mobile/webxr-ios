@@ -9,10 +9,8 @@
 /* Begin PBXBuildFile section */
 		0401E04B1F612C240075D823 /* BarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0401E04A1F612C240075D823 /* BarView.xib */; };
 		0401E0521F62E6150075D823 /* Animator.m in Sources */ = {isa = PBXBuildFile; fileRef = 0401E0511F62E6150075D823 /* Animator.m */; };
-		041503C61F28944F00887400 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 041503C51F28944F00887400 /* AppDelegate.m */; };
 		041503D21F28944F00887400 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D01F28944F00887400 /* Main.storyboard */; };
 		041503D71F28944F00887400 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D51F28944F00887400 /* LaunchScreen.storyboard */; };
-		041503DA1F28944F00887400 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 041503D91F28944F00887400 /* main.m */; };
 		045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */; };
 		045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */; };
 		04A815681F419EB60082D31D /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A815671F419EB60082D31D /* Models.scnassets */; };
@@ -23,7 +21,6 @@
 		04A9837B1F32292200120CF8 /* Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983671F3226A500120CF8 /* Renderer.m */; };
 		04A9837C1F32292900120CF8 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836A1F3226A500120CF8 /* Shaders.metal */; };
 		04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1241F3C64A100F96C5A /* ARKMetalController.m */; };
-		04C64BC81F71011700ACFB8B /* LayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BC71F71011700ACFB8B /* LayerView.m */; };
 		04C64BCE1F71094500ACFB8B /* AppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCC1F71016A00ACFB8B /* AppState.m */; };
 		5184F8FC0384A338F76D2653 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 5184FF937519BAF48DCEB808 /* Utils.m */; };
 		591A8C502FA83D70E8F5B5B4 /* Pods_XRViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */; };
@@ -48,6 +45,8 @@
 		B632850721C2D98A00FD5510 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632850621C2D98900FD5510 /* LocationManager.swift */; };
 		B632850921C2F24200FD5510 /* MessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632850821C2F24200FD5510 /* MessageController.swift */; };
 		B632850B21C330A500FD5510 /* MyriadPro-Regular.OTF in Resources */ = {isa = PBXBuildFile; fileRef = B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */; };
+		B632851321C4159B00FD5510 /* LayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632851221C4159B00FD5510 /* LayerView.swift */; };
+		B632851521C4191200FD5510 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632851421C4191200FD5510 /* AppDelegate.swift */; };
 		B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */; };
 		B658C0F221BF43D500538D57 /* WebController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B658C0F121BF43D500538D57 /* WebController.swift */; };
 		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
@@ -67,13 +66,10 @@
 		0401E0501F62E6150075D823 /* Animator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Animator.h; sourceTree = "<group>"; };
 		0401E0511F62E6150075D823 /* Animator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Animator.m; sourceTree = "<group>"; };
 		041503C11F28944F00887400 /* XRViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XRViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		041503C41F28944F00887400 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		041503C51F28944F00887400 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		041503D11F28944F00887400 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		041503D31F28944F00887400 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		041503D61F28944F00887400 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		041503D81F28944F00887400 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		041503D91F28944F00887400 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		045B2E9B1F28E8A30005FF96 /* UIOverlayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIOverlayController.h; sourceTree = "<group>"; };
 		045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UIOverlayController.m; sourceTree = "<group>"; };
 		045B2E9E1F28EE4B0005FF96 /* OverlayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayViewController.h; sourceTree = "<group>"; };
@@ -95,8 +91,6 @@
 		04B1E1241F3C64A100F96C5A /* ARKMetalController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKMetalController.m; sourceTree = "<group>"; };
 		04BB9D641F39BE40004328A2 /* ARKHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKHelper.h; sourceTree = "<group>"; };
 		04C296D31F331FC700D6909D /* Prefix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.h; sourceTree = "<group>"; };
-		04C64BC61F71011700ACFB8B /* LayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayerView.h; sourceTree = "<group>"; };
-		04C64BC71F71011700ACFB8B /* LayerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LayerView.m; sourceTree = "<group>"; };
 		04C64BCC1F71016A00ACFB8B /* AppState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppState.m; sourceTree = "<group>"; };
 		04C64BCD1F71016B00ACFB8B /* AppState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppState.h; sourceTree = "<group>"; };
 		23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.release.xcconfig"; sourceTree = "<group>"; };
@@ -127,6 +121,8 @@
 		B632850621C2D98900FD5510 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		B632850821C2F24200FD5510 /* MessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MessageController.swift; path = MessageController/MessageController.swift; sourceTree = "<group>"; };
 		B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Regular.OTF"; sourceTree = "<group>"; };
+		B632851221C4159B00FD5510 /* LayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerView.swift; sourceTree = "<group>"; };
+		B632851421C4191200FD5510 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKSceneKitController.swift; sourceTree = "<group>"; };
 		B658C0F121BF43D500538D57 /* WebController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebController.swift; sourceTree = "<group>"; };
 		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
@@ -189,8 +185,8 @@
 				62242ABC201F028800506412 /* SettingsController */,
 				62676C111FEACCE200474547 /* Constants */,
 				621437971FE968090055252A /* Utils */,
-				62414B151FCEFACC00D1CDC8 /* Analytics */,
-				04A983771F32280000120CF8 /* AppDelegate */,
+				6241012C1FEABABF006FDBE3 /* AnalyticsManager.swift */,
+				B632851421C4191200FD5510 /* AppDelegate.swift */,
 				04A983731F32276600120CF8 /* ViewController */,
 				04C64BC91F71014800ACFB8B /* AppStateController */,
 				04A983631F32216800120CF8 /* ARKController */,
@@ -269,8 +265,7 @@
 			children = (
 				04A983741F32277E00120CF8 /* ViewController.h */,
 				04A983751F32277E00120CF8 /* ViewController.m */,
-				04C64BC61F71011700ACFB8B /* LayerView.h */,
-				04C64BC71F71011700ACFB8B /* LayerView.m */,
+				B632851221C4159B00FD5510 /* LayerView.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -281,7 +276,6 @@
 				6241012B1FEABABF006FDBE3 /* XRViewer-Bridging-Header.h */,
 				041503D81F28944F00887400 /* Info.plist */,
 				625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */,
-				041503D91F28944F00887400 /* main.m */,
 				041503D31F28944F00887400 /* Assets.xcassets */,
 				041503D01F28944F00887400 /* Main.storyboard */,
 				041503D51F28944F00887400 /* LaunchScreen.storyboard */,
@@ -291,15 +285,6 @@
 				620D24A01FC48994002127FD /* Settings.bundle */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		04A983771F32280000120CF8 /* AppDelegate */ = {
-			isa = PBXGroup;
-			children = (
-				041503C41F28944F00887400 /* AppDelegate.h */,
-				041503C51F28944F00887400 /* AppDelegate.m */,
-			);
-			path = AppDelegate;
 			sourceTree = "<group>";
 		};
 		04B1E1221F3C648200F96C5A /* Metal */ = {
@@ -377,14 +362,6 @@
 				625FA2E5202046BF00F62698 /* TermsAndConditionsTableViewCell.xib */,
 			);
 			path = SettingsController;
-			sourceTree = "<group>";
-		};
-		62414B151FCEFACC00D1CDC8 /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				6241012C1FEABABF006FDBE3 /* AnalyticsManager.swift */,
-			);
-			path = Analytics;
 			sourceTree = "<group>";
 		};
 		62676C111FEACCE200474547 /* Constants */ = {
@@ -551,17 +528,16 @@
 			files = (
 				A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */,
 				04A983781F32291100120CF8 /* ViewController.m in Sources */,
+				B632851521C4191200FD5510 /* AppDelegate.swift in Sources */,
 				625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */,
 				B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */,
 				B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */,
 				04A9837B1F32292200120CF8 /* Renderer.m in Sources */,
-				04C64BC81F71011700ACFB8B /* LayerView.m in Sources */,
-				041503DA1F28944F00887400 /* main.m in Sources */,
 				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
 				B632850921C2F24200FD5510 /* MessageController.swift in Sources */,
+				B632851321C4159B00FD5510 /* LayerView.swift in Sources */,
 				B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */,
 				0401E0521F62E6150075D823 /* Animator.m in Sources */,
-				041503C61F28944F00887400 /* AppDelegate.m in Sources */,
 				62242AC3201F2A0700506412 /* TextInputTableViewCell.swift in Sources */,
 				B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */,
 				04A9837A1F32291D00120CF8 /* ARKController.m in Sources */,

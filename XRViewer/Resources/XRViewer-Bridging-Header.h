@@ -4,7 +4,6 @@
 
 #import "Constants.h"
 #import "OverlayHeader.h"
-#import "LayerView.h"
 #import "ARKHelper.h"
 #import "Prefix.h"
 #import "ARKController.h"

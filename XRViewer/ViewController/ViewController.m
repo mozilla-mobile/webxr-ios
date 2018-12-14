@@ -5,7 +5,6 @@
 #import "WebARKHeader.h"
 #import "Animator.h"
 #import "Reachability.h"
-#import "LayerView.h"
 #import "Utils.h"
 #import "Constants.h"
 #import "XRViewer-Swift.h"
