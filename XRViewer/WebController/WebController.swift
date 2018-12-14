@@ -274,7 +274,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
     func goHome() {
         print("going home")
-        let homeURL = UserDefaults.standard.string(forKey: homeURLKey)
+        let homeURL = UserDefaults.standard.string(forKey: Constant.homeURLKey())
         if homeURL != nil && !(homeURL == "") {
             loadURL(homeURL)
         } else {
@@ -711,7 +711,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
         let standardUserDefaults = UserDefaults.standard
         // Check if we are supposed to be exposing WebXR.
-        if standardUserDefaults.bool(forKey: exposeWebXRAPIKey) {
+        if standardUserDefaults.bool(forKey: Constant.exposeWebXRAPIKey()) {
             let scriptBundle = Bundle(for: WebController.self)
             let scriptURL = scriptBundle.path(forResource: "webxr", ofType: "js")
             let scriptContent = try? String(contentsOfFile: scriptURL ?? "", encoding: .utf8)

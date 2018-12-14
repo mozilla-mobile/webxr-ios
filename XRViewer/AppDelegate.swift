@@ -11,7 +11,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UIApplication.shared.isIdleTimerDisabled = true
 
-        let sendUsageData: Bool = UserDefaults.standard.bool(forKey: useAnalyticsKey)
+        let sendUsageData: Bool = UserDefaults.standard.bool(forKey: Constant.useAnalyticsKey())
         AnalyticsManager.sharedInstance.initialize(sendUsageData: sendUsageData)
 
         return true
@@ -39,12 +39,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserDefaults.standard.register(defaults: aRegister)
         }
 
-        if UserDefaults.standard.integer(forKey: secondsInBackgroundKey) == 0 {
-            UserDefaults.standard.set(sessionInBackgroundDefaultTimeInSeconds, forKey: secondsInBackgroundKey)
+        if UserDefaults.standard.integer(forKey: Constant.secondsInBackgroundKey()) == 0 {
+            UserDefaults.standard.set(Constant.sessionInBackgroundDefaultTimeInSeconds(), forKey: Constant.secondsInBackgroundKey())
         }
 
-        if UserDefaults.standard.float(forKey: distantAnchorsDistanceKey) == 0.0 {
-            UserDefaults.standard.set(distantAnchorsDefaultDistanceInMeters, forKey: distantAnchorsDistanceKey)
+        if UserDefaults.standard.float(forKey: Constant.distantAnchorsDistanceKey()) == 0.0 {
+            UserDefaults.standard.set(Constant.distantAnchorsDefaultDistanceInMeters(), forKey: Constant.distantAnchorsDistanceKey())
         }
     }
 

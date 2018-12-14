@@ -5,7 +5,6 @@
 #import "ARKMetalController.h"
 #import "Utils.h"
 #import <Accelerate/Accelerate.h>
-#import "Constants.h"
 #import "Compression.h"
 #import "XRViewer-Swift.h"
 
@@ -852,7 +851,7 @@
 
 - (void)removeDistantAnchors {
     matrix_float4x4 cameraTransform = [[[self.session currentFrame] camera] transform];
-    float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:distantAnchorsDistanceKey];
+    float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:[Constant distantAnchorsDistanceKey]];
     
     for (ARAnchor *anchor in [[self.session currentFrame] anchors]) {
         if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {

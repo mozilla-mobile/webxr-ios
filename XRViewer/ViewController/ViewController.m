@@ -6,7 +6,6 @@
 #import "Animator.h"
 #import "Reachability.h"
 #import "Utils.h"
-#import "Constants.h"
 #import "XRViewer-Swift.h"
 
 #ifdef WEBSERVER
@@ -91,11 +90,11 @@ typedef void (^UICompletion)(void);
     [self.view addGestureRecognizer:swipeGestureRecognizer];
     
     /// Show the permissions popup if we have never shown it
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:permissionsUIAlreadyShownKey] == NO &&
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:[Constant permissionsUIAlreadyShownKey]] == NO &&
         ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined ||
          [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo] == kCLAuthorizationStatusNotDetermined)) {
             dispatch_async(dispatch_get_main_queue(), ^ {
-                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:permissionsUIAlreadyShownKey];
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[Constant permissionsUIAlreadyShownKey]];
                 [[self messageController] showPermissionsPopup];
             });
     }
@@ -305,7 +304,7 @@ typedef void (^UICompletion)(void);
              [[blockSelf stateController] setShowMode:ShowNothing];
              if ([[blockSelf arkController] arSessionState] == ARKSessionRunning) {
                  [blockSelf.timerSessionRunningInBackground invalidate];
-                 NSInteger timerSeconds = [[NSUserDefaults standardUserDefaults] integerForKey:secondsInBackgroundKey];
+                 NSInteger timerSeconds = [[NSUserDefaults standardUserDefaults] integerForKey:[Constant secondsInBackgroundKey]];
                  NSLog(@"\n\n*********\n\nMoving away from an XR site, keep ARKit running, and launch the timer for %ld seconds\n\n*********", timerSeconds);
                  blockSelf.timerSessionRunningInBackground = [NSTimer scheduledTimerWithTimeInterval:timerSeconds repeats:NO block:^(NSTimer * _Nonnull timer) {
                      NSLog(@"\n\n*********\n\nTimer expired, pausing session\n\n*********");
@@ -358,9 +357,9 @@ typedef void (^UICompletion)(void);
                          NSLog(@"\n\n*********\n\nResume session, which will use the worldmap\n\n*********");
                          [[blockSelf arkController] resumeSessionFromBackground:[[blockSelf stateController] state]];
                      } else {
-                         NSDate *interruptionDate = [[NSUserDefaults standardUserDefaults] objectForKey:backgroundOrPausedDateKey];
+                         NSDate *interruptionDate = [[NSUserDefaults standardUserDefaults] objectForKey:[Constant backgroundOrPausedDateKey]];
                          NSDate *now = [NSDate date];
-                         if ([now timeIntervalSinceDate:interruptionDate] >= pauseTimeInSecondsToRemoveAnchors) {
+                         if ([now timeIntervalSinceDate:interruptionDate] >= [Constant pauseTimeInSecondsToRemoveAnchors]) {
                              NSLog(@"\n\n*********\n\nMoving to foreground while the session is running and it was in BG for a long time, remove the anchors\n\n*********");
                              [[blockSelf arkController] removeAllAnchors];
                          } else {
@@ -372,7 +371,7 @@ typedef void (^UICompletion)(void);
              }
          }
          
-         [[NSUserDefaults standardUserDefaults] setObject:nil forKey:backgroundOrPausedDateKey];
+         [[NSUserDefaults standardUserDefaults] setObject:nil forKey:[Constant backgroundOrPausedDateKey]];
      }];
     
     [[self stateController] setOnMemoryWarning:^(NSString *url)
@@ -507,7 +506,7 @@ typedef void (^UICompletion)(void);
                  break;
              case ARKSessionRunning:
                  NSLog(@"\n\n*********\n\nMoving to background while the session is running, store the timestamp\n\n*********");
-                 [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:backgroundOrPausedDateKey];
+                 [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:[Constant backgroundOrPausedDateKey]];
                  
                  // need to save WorldMap here
                  [[self arkController] saveWorldMapInBackground];
@@ -891,7 +890,7 @@ typedef void (^UICompletion)(void);
             if (lastURL) {
                 [[self webController] loadURL:lastURL];
             } else {
-                NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:homeURLKey];
+                NSString* homeURL = [[NSUserDefaults standardUserDefaults] stringForKey:[Constant homeURLKey]];
                 if (homeURL && ![homeURL isEqualToString:@""]) {
                     [[self webController] loadURL:homeURL];
                 } else {

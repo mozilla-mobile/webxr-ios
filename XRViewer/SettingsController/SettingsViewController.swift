@@ -80,7 +80,7 @@ extension SettingsViewController: UITableViewDataSource {
             case 0:
                 let textInputCell = tableView.dequeueReusableCell(withIdentifier: "TextInputTableViewCell", for: indexPath) as! TextInputTableViewCell
                 textInputCell.labelTitle?.text = "Home URL"
-                textInputCell.textField.text = UserDefaults.standard.string(forKey: homeURLKey)
+                textInputCell.textField.text = UserDefaults.standard.string(forKey: Constant.homeURLKey())
                 textInputCell.textField.delegate = self
                 textInputCell.textField.keyboardType = .URL
                 textInputCell.textField.tag = 1
@@ -88,14 +88,14 @@ extension SettingsViewController: UITableViewDataSource {
             case 1:
                 let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
                 switchInputCell.labelTitle?.text = "Send Tech and Interaction Data"
-                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: useAnalyticsKey)
+                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.useAnalyticsKey())
                 switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
                 switchInputCell.switchControl.tag = 1
                 cell = switchInputCell
             case 2:
                 let textInputCell = tableView.dequeueReusableCell(withIdentifier: "TextInputTableViewCell", for: indexPath) as! TextInputTableViewCell
                 textInputCell.labelTitle?.text = "ARKit shutdown delay:"
-                textInputCell.textField.text = UserDefaults.standard.string(forKey: secondsInBackgroundKey)
+                textInputCell.textField.text = UserDefaults.standard.string(forKey: Constant.secondsInBackgroundKey())
                 textInputCell.textField.keyboardType = .numberPad
                 textInputCell.textField.delegate = self
                 textInputCell.textField.tag = 2
@@ -103,7 +103,7 @@ extension SettingsViewController: UITableViewDataSource {
             case 3:
                 let textInputCell = tableView.dequeueReusableCell(withIdentifier: "TextInputTableViewCell", for: indexPath) as! TextInputTableViewCell
                 textInputCell.labelTitle?.text = "Anchor retention threshold (meters):"
-                textInputCell.textField.text = UserDefaults.standard.string(forKey: distantAnchorsDistanceKey)
+                textInputCell.textField.text = UserDefaults.standard.string(forKey: Constant.distantAnchorsDistanceKey())
                 textInputCell.textField.keyboardType = .numberPad
                 textInputCell.textField.delegate = self
                 textInputCell.textField.tag = 3
@@ -111,21 +111,21 @@ extension SettingsViewController: UITableViewDataSource {
             case 4:
                 let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
                 switchInputCell.labelTitle?.text = "Always Allow World Sensing"
-                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: alwaysAllowWorldSensingKey)
+                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.alwaysAllowWorldSensingKey())
                 switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
                 switchInputCell.switchControl.tag = 4
                 cell = switchInputCell
             case 5:
                 let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
                 switchInputCell.labelTitle?.text = "Reset Allowed World Sensing"
-                switchInputCell.switchControl.isOn = UserDefaults.standard.object(forKey: allowedWorldSensingSitesKey) == nil && !UserDefaults.standard.bool(forKey: alwaysAllowWorldSensingKey);
+                switchInputCell.switchControl.isOn = UserDefaults.standard.object(forKey: Constant.allowedWorldSensingSitesKey()) == nil && !UserDefaults.standard.bool(forKey: Constant.alwaysAllowWorldSensingKey())
                 switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
                 switchInputCell.switchControl.tag = 5
                 cell = switchInputCell
             case 6:
                 let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
                 switchInputCell.labelTitle?.text = "Expose WebXR API (restart required)"
-                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: exposeWebXRAPIKey);
+                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.exposeWebXRAPIKey());
                 switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
                 switchInputCell.switchControl.tag = 6
                 cell = switchInputCell
@@ -150,17 +150,17 @@ extension SettingsViewController: UITableViewDataSource {
     
     @objc func switchValueChanged(switchControl: UISwitch) {
         if switchControl.tag == 1 {
-            UserDefaults.standard.set(switchControl.isOn, forKey: useAnalyticsKey)
+            UserDefaults.standard.set(switchControl.isOn, forKey: Constant.useAnalyticsKey())
         } else if switchControl.tag == 4 {
-            UserDefaults.standard.set(switchControl.isOn, forKey: alwaysAllowWorldSensingKey)
+            UserDefaults.standard.set(switchControl.isOn, forKey: Constant.alwaysAllowWorldSensingKey())
         } else if switchControl.tag == 5 {
             // Forget any sites remembered
-            UserDefaults.standard.removeObject(forKey: allowedWorldSensingSitesKey)
+            UserDefaults.standard.removeObject(forKey: Constant.allowedWorldSensingSitesKey())
             // Assume that if they are resetting, should NOT be always-on.
             // FIXME: This doesn't update the always-on switch control?
-            UserDefaults.standard.set(false, forKey: alwaysAllowWorldSensingKey)
+            UserDefaults.standard.set(false, forKey: Constant.alwaysAllowWorldSensingKey())
         } else if switchControl.tag == 6 {
-            UserDefaults.standard.set(switchControl.isOn, forKey: exposeWebXRAPIKey)
+            UserDefaults.standard.set(switchControl.isOn, forKey: Constant.exposeWebXRAPIKey())
         }
     }
 }
@@ -168,11 +168,11 @@ extension SettingsViewController: UITableViewDataSource {
 extension SettingsViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let text = textField.text, textField.tag == 1 {
-            UserDefaults.standard.set(text, forKey: homeURLKey)
+            UserDefaults.standard.set(text, forKey: Constant.homeURLKey())
         } else if let text = textField.text, textField.tag == 2 {
-            UserDefaults.standard.set(text, forKey: secondsInBackgroundKey)
+            UserDefaults.standard.set(text, forKey: Constant.secondsInBackgroundKey())
         } else if let text = textField.text, textField.tag == 3 {
-            UserDefaults.standard.set(text, forKey: distantAnchorsDistanceKey)
+            UserDefaults.standard.set(text, forKey: Constant.distantAnchorsDistanceKey())
         }
         textField.resignFirstResponder()
         return true

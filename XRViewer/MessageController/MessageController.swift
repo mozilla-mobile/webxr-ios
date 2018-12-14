@@ -225,14 +225,14 @@ class MessageController: NSObject {
 
     @objc func showMessageAboutAccessingWorldSensingData(_ granted: @escaping (Bool) -> Void, url: URL?) {
         let standardUserDefaults = UserDefaults.standard
-        let allowedWorldSensingSites = standardUserDefaults.dictionary(forKey: allowedWorldSensingSitesKey)
+        let allowedWorldSensingSites = standardUserDefaults.dictionary(forKey: Constant.allowedWorldSensingSitesKey())
         var site: String? = nil
         if let aPort = url?.port {
             site = url?.host ?? "" + (":\(aPort)")
         }
 
         // Check global permission.
-        if standardUserDefaults.bool(forKey: alwaysAllowWorldSensingKey) {
+        if standardUserDefaults.bool(forKey: Constant.alwaysAllowWorldSensingKey()) {
             granted(true)
             return
         }
@@ -261,7 +261,7 @@ class MessageController: NSObject {
                     }
                 }
                 newDict[site ?? ""] = "YES"
-                UserDefaults.standard.set(newDict, forKey: allowedWorldSensingSitesKey)
+                UserDefaults.standard.set(newDict, forKey: Constant.allowedWorldSensingSitesKey())
 
                 granted(true)
             })
