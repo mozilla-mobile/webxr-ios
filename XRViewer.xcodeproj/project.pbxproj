@@ -13,7 +13,6 @@
 		041503D21F28944F00887400 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D01F28944F00887400 /* Main.storyboard */; };
 		041503D71F28944F00887400 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D51F28944F00887400 /* LaunchScreen.storyboard */; };
 		041503DA1F28944F00887400 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 041503D91F28944F00887400 /* main.m */; };
-		0449DE071F4D7F000057F639 /* MessageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0449DE061F4D7F000057F639 /* MessageController.m */; };
 		045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */; };
 		045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */; };
 		04A815681F419EB60082D31D /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A815671F419EB60082D31D /* Models.scnassets */; };
@@ -47,6 +46,8 @@
 		8ED9EBB3211C6FB000DA58F1 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 8ED9EBB2211C6FB000DA58F1 /* Web */; };
 		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
 		B632850721C2D98A00FD5510 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632850621C2D98900FD5510 /* LocationManager.swift */; };
+		B632850921C2F24200FD5510 /* MessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632850821C2F24200FD5510 /* MessageController.swift */; };
+		B632850B21C330A500FD5510 /* MyriadPro-Regular.OTF in Resources */ = {isa = PBXBuildFile; fileRef = B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */; };
 		B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */; };
 		B658C0F221BF43D500538D57 /* WebController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B658C0F121BF43D500538D57 /* WebController.swift */; };
 		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
@@ -73,8 +74,6 @@
 		041503D61F28944F00887400 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		041503D81F28944F00887400 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		041503D91F28944F00887400 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		0449DE051F4D7F000057F639 /* MessageController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageController.h; sourceTree = "<group>"; };
-		0449DE061F4D7F000057F639 /* MessageController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessageController.m; sourceTree = "<group>"; };
 		045B2E9B1F28E8A30005FF96 /* UIOverlayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIOverlayController.h; sourceTree = "<group>"; };
 		045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UIOverlayController.m; sourceTree = "<group>"; };
 		045B2E9E1F28EE4B0005FF96 /* OverlayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayViewController.h; sourceTree = "<group>"; };
@@ -126,6 +125,8 @@
 		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		B632850621C2D98900FD5510 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		B632850821C2F24200FD5510 /* MessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MessageController.swift; path = MessageController/MessageController.swift; sourceTree = "<group>"; };
+		B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Regular.OTF"; sourceTree = "<group>"; };
 		B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKSceneKitController.swift; sourceTree = "<group>"; };
 		B658C0F121BF43D500538D57 /* WebController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebController.swift; sourceTree = "<group>"; };
 		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
@@ -194,7 +195,7 @@
 				04C64BC91F71014800ACFB8B /* AppStateController */,
 				04A983631F32216800120CF8 /* ARKController */,
 				04A983611F32213800120CF8 /* WebController */,
-				0449DE041F4D7EEA0057F639 /* MessageController */,
+				B632850821C2F24200FD5510 /* MessageController.swift */,
 				04A983701F3226FD00120CF8 /* RecordController */,
 				B632850621C2D98900FD5510 /* LocationManager.swift */,
 				045B2EA41F28EE790005FF96 /* Overlay */,
@@ -203,15 +204,6 @@
 				04A983761F32279900120CF8 /* Resources */,
 			);
 			path = XRViewer;
-			sourceTree = "<group>";
-		};
-		0449DE041F4D7EEA0057F639 /* MessageController */ = {
-			isa = PBXGroup;
-			children = (
-				0449DE051F4D7F000057F639 /* MessageController.h */,
-				0449DE061F4D7F000057F639 /* MessageController.m */,
-			);
-			path = MessageController;
 			sourceTree = "<group>";
 		};
 		045B2EA41F28EE790005FF96 /* Overlay */ = {
@@ -295,6 +287,7 @@
 				041503D51F28944F00887400 /* LaunchScreen.storyboard */,
 				04C296D31F331FC700D6909D /* Prefix.h */,
 				8E5089D7211B6DA90059015B /* webxr.js */,
+				B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */,
 				620D24A01FC48994002127FD /* Settings.bundle */,
 			);
 			path = Resources;
@@ -489,6 +482,7 @@
 				62242AC4201F2A0700506412 /* TextInputTableViewCell.xib in Resources */,
 				04A8156A1F419F840082D31D /* Assets.xcassets in Resources */,
 				620D24A11FC48994002127FD /* Settings.bundle in Resources */,
+				B632850B21C330A500FD5510 /* MyriadPro-Regular.OTF in Resources */,
 				62242ACC201F2D3600506412 /* TextTableViewCell.xib in Resources */,
 				04A815681F419EB60082D31D /* Models.scnassets in Resources */,
 				625051091FCDBDBE00EEAC0A /* GoogleService-Info.plist in Resources */,
@@ -564,6 +558,7 @@
 				04C64BC81F71011700ACFB8B /* LayerView.m in Sources */,
 				041503DA1F28944F00887400 /* main.m in Sources */,
 				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
+				B632850921C2F24200FD5510 /* MessageController.swift in Sources */,
 				B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */,
 				0401E0521F62E6150075D823 /* Animator.m in Sources */,
 				041503C61F28944F00887400 /* AppDelegate.m in Sources */,
@@ -586,7 +581,6 @@
 				04C64BCE1F71094500ACFB8B /* AppState.m in Sources */,
 				62242ACB201F2D3600506412 /* TextTableViewCell.swift in Sources */,
 				B658C0F221BF43D500538D57 /* WebController.swift in Sources */,
-				0449DE071F4D7F000057F639 /* MessageController.m in Sources */,
 				6241012D1FEABABF006FDBE3 /* AnalyticsManager.swift in Sources */,
 				6207254E206A90BF00887B1F /* RequestPermissionsViewController.swift in Sources */,
 				5184F8FC0384A338F76D2653 /* Utils.m in Sources */,

@@ -1,6 +1,6 @@
 # WebXR Viewer Changelog
 
-* Converted LocationManager to Swift
+* Converted following to Swift: LocationManager, MessageController
 ---
 * Removed unused class HitAnchor
 * Converted following to Swift: BarView, AppStateController, TouchView, AnchorNode, FocusNode, PlaneNode, SCNNode+Show, ARSCNView+HitTest, ARKSceneKitController, HitTestResult, ARKControllerProtocol, WebController

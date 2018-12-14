@@ -3,7 +3,6 @@
 #import "UIOverlayController.h"
 #import "RecordController.h"
 #import "WebARKHeader.h"
-#import "MessageController.h"
 #import "Animator.h"
 #import "Reachability.h"
 #import "LayerView.h"
@@ -821,7 +820,7 @@ typedef void (^UICompletion)(void);
 
     [[self webController] setOnResetTrackingButtonTapped:^{
 
-        [[blockSelf messageController] showMessageAboutResetTracking:^(ResetTrackigOption option){
+        [[blockSelf messageController] showMessageAboutResetTracking:^(ResetTrackingOption option){
             switch (option) {
                 case ResetTracking:
                     [[blockSelf arkController] runSessionResettingTrackingAndRemovingAnchorsWithAppState:[[blockSelf stateController] state]];
