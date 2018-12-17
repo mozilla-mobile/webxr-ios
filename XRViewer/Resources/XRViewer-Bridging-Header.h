@@ -7,6 +7,7 @@
 #import "Prefix.h"
 #import "ARKController.h"
 #import "Animator.h"
+#import "OverlayViewController.h"
 
 typedef NS_ENUM(NSInteger, ResetTrackingOption) {
     ResetTracking,

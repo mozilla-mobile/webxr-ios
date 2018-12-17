@@ -57,4 +57,5 @@ let ExposeWebXRAPIKey = "exposeWebXRAPI"
     static func alwaysAllowWorldSensingKey() -> String { return AlwaysAllowWorldSensingKey }
     static func allowedWorldSensingSitesKey() -> String { return AllowedWorldSensingSitesKey }
     static func exposeWebXRAPIKey() -> String { return ExposeWebXRAPIKey }
+    @objc static func swipeGestureAreaHeight() -> Float { return 200 }
 }

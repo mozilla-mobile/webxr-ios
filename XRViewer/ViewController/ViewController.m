@@ -1,6 +1,5 @@
 #import "ViewController.h"
 #import "ARKController.h"
-#import "UIOverlayController.h"
 #import "RecordController.h"
 #import "WebARKHeader.h"
 #import "Animator.h"
@@ -148,7 +147,7 @@ typedef void (^UICompletion)(void);
 
 - (void)swipeUp: (UISwipeGestureRecognizer*)recognizer {
     CGPoint location = [recognizer locationInView:[self view]];
-    if (location.y > SWIPE_GESTURE_AREA_HEIGHT) return;
+    if (location.y > Constant.swipeGestureAreaHeight) return;
  
     if ([[[self stateController] state] webXR]) {
         if (![[self stateController] isRecording]) {
@@ -187,7 +186,7 @@ typedef void (^UICompletion)(void);
     }
     
     [[self arkController] viewWillTransitionToSize:size];
-    [[self overlayController] viewWillTransitionToSize:size];
+    [[self overlayController] viewWillTransitionTo:size];
     [[self webController] viewWillTransitionTo:size];
     
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];

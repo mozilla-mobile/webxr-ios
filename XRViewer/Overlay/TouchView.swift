@@ -1,6 +1,27 @@
 import UIKit
 
 class TouchView: UIView {
+    
+    private var cameraAction: HotAction?
+    private var micAction: HotAction?
+    private var showAction: HotAction?
+    private var debugAction: HotAction?
+    private var cameraRect = CGRect.zero
+    private var micRect = CGRect.zero
+    private var showRect = CGRect.zero
+    private var debugRect = CGRect.zero
+    private var cameraEvent = false
+    private var micEvent = false
+    private var showEvent = false
+    private var debugEvent = false
+    private var startTouchDate: Date?
+    private var touchTimer: Timer?
+    var showMode: ShowMode?
+    var showOptions: ShowOptions?
+    private var recordState: RecordState?
+    let MAX_INCREASE_ZONE_SIZE = 10
+    private var increaseHotZoneValue: CGFloat = 0.0
+    
     @objc init(frame: CGRect, cameraAction: @escaping HotAction, micAction: @escaping HotAction, showAction: @escaping HotAction, debugAction: @escaping HotAction) {
         super.init(frame: frame)
         
@@ -8,6 +29,10 @@ class TouchView: UIView {
         self.micAction = micAction
         self.showAction = showAction
         self.debugAction = debugAction
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
     
     @objc func setProcessTouches(_ process: Bool) {
@@ -34,26 +59,6 @@ class TouchView: UIView {
     @objc func setRecordState(_ state: RecordState) {
         recordState = state
     }
-    
-    private var cameraAction: HotAction?
-    private var micAction: HotAction?
-    private var showAction: HotAction?
-    private var debugAction: HotAction?
-    private var cameraRect = CGRect.zero
-    private var micRect = CGRect.zero
-    private var showRect = CGRect.zero
-    private var debugRect = CGRect.zero
-    private var cameraEvent = false
-    private var micEvent = false
-    private var showEvent = false
-    private var debugEvent = false
-    private var startTouchDate: Date?
-    private var touchTimer: Timer?
-    private var showMode: ShowMode?
-    private var showOptions: ShowOptions?
-    private var recordState: RecordState?
-    let MAX_INCREASE_ZONE_SIZE = 10
-    private var increaseHotZoneValue: CGFloat = 0.0
     
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         if (superview as? LayerView)?.processTouchInSubview == false {
@@ -164,9 +169,5 @@ class TouchView: UIView {
     
     func increasedRect(_ rect: CGRect) -> CGRect {
         return CGRect(x: rect.origin.x - increaseHotZoneValue, y: rect.origin.y - increaseHotZoneValue, width: rect.size.width + increaseHotZoneValue * 2, height: rect.size.height + increaseHotZoneValue * 2)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
     }
 }

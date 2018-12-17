@@ -1,5 +1,7 @@
 # WebXR Viewer Changelog
 
+* Converted UIOverlayController to Swift
+---
 * Converted following to Swift: Utils, Constants, AppDelegate, LayerView, LocationManager, MessageController
 ---
 * Removed unused class HitAnchor
