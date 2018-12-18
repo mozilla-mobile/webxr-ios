@@ -1,6 +1,5 @@
 #import "ViewController.h"
 #import "ARKController.h"
-#import "RecordController.h"
 #import "WebARKHeader.h"
 #import "Reachability.h"
 #import "XRViewer-Swift.h"
@@ -31,7 +30,6 @@ typedef void (^UICompletion)(void);
 @property (nonatomic, strong) ARKController *arkController;
 @property (nonatomic, strong) WebController *webController;
 @property (nonatomic, strong) UIOverlayController *overlayController;
-@property (nonatomic, strong) RecordController *recordController;
 @property (nonatomic, strong) LocationManager *locationManager;
 @property (nonatomic, strong) MessageController *messageController;
 @property (nonatomic, strong) Animator *animator;
@@ -149,12 +147,10 @@ typedef void (^UICompletion)(void);
     if (location.y > Constant.swipeGestureAreaHeight) return;
  
     if ([[[self stateController] state] webXR]) {
-        if (![[self stateController] isRecording]) {
-            if ([[self webController] isDebugButtonSelected]) {
-                [[self stateController] setShowMode: ShowDebug];
-            } else {
-                [[self stateController] setShowMode: ShowNothing];
-            }
+        if ([[self webController] isDebugButtonSelected]) {
+            [[self stateController] setShowMode: ShowDebug];
+        } else {
+            [[self stateController] setShowMode: ShowNothing];
         }
         [[self webController] hideKeyboard];
     }
@@ -256,10 +252,7 @@ typedef void (^UICompletion)(void);
      {
          [[blockSelf arkController] setShowMode:mode];
          [[blockSelf overlayController] setMode:mode];
-         
-         if (![[blockSelf stateController] isRecording]) {
-             [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
-         }
+         [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
      }];
     
     [[self stateController] setOnOptionsUpdate:^(ShowOptions options)
@@ -267,13 +260,6 @@ typedef void (^UICompletion)(void);
          [[blockSelf arkController] setShowOptions:options];
          [[blockSelf overlayController] setOptions:options];
          
-         [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
-     }];
-    
-    [[self stateController] setOnRecordUpdate:^(RecordState state)
-     {
-         [[blockSelf overlayController] setRecordState:state];
-         [[blockSelf webController] startRecording:[[blockSelf stateController] isRecording]];
          [[blockSelf webController] showBar:[[blockSelf stateController] shouldShowURLBar]];
      }];
     
@@ -432,7 +418,6 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnInterruption:^(BOOL interruption)
      {
-         [[blockSelf recordController] stopRecordingByInterruption:blockSelf];
          [[blockSelf messageController] showMessageAboutARInterruption:interruption];
          
          [[blockSelf overlayController] setARKitInterruption:interruption];
@@ -441,7 +426,6 @@ typedef void (^UICompletion)(void);
     
     [[self stateController] setOnMicUpdate:^(BOOL enabled)
      {
-         [[blockSelf recordController] setMicEnabled:enabled];
          [[blockSelf overlayController] setMicEnabled:enabled];
      }];
 }
@@ -567,8 +551,6 @@ typedef void (^UICompletion)(void);
 - (void)setupTargetControllers
 {
     [self setupLocationController];
-    
-    [self setupRecordController];
     
     [self setupWebController];
     
@@ -898,48 +880,11 @@ typedef void (^UICompletion)(void);
     }
 }
 
-- (void)setupRecordController
-{
-    __weak typeof (self) blockSelf = self;
-    
-    RecordAction rA = ^(RecordState state)
-    {
-        [[blockSelf stateController] setRecordState:state];
-    };
-    
-    [self setRecordController:[[RecordController alloc] initWithAction:rA
-                                                            micEnabled:[[[self stateController] state] micEnabled]]];
-    [[self recordController] setAnimator:[self animator]];
-    [[self recordController] setAuthAction:^(id sender)
-     {
-         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString] options:@{} completionHandler:^(BOOL success)
-          {}];
-     }];
-}
-
 - (void)setupOverlayController
 {
     CLEAN_VIEW([self hotLayerView]);
     
     __weak typeof (self) blockSelf = self;
-    
-    // the overlay routes the record action to the record controller directly,
-    // because this action (buttons) must belong the record controoler
-    HotAction cameraAction = ^(BOOL longTouch)
-    {
-        if (longTouch)
-        {
-            [[blockSelf recordController] recordAction:blockSelf];
-        }
-        else if ([[blockSelf recordController] isRecording]) // stop
-        {
-            [[blockSelf recordController] recordAction:blockSelf];
-        }
-        else
-        {
-            [[blockSelf recordController] shotAction:blockSelf];
-        }
-    };
     
     // mic enabling should be accepted by user in ReplayKit popup
     // this value can be changed in State comtroller on Record action
@@ -961,7 +906,6 @@ typedef void (^UICompletion)(void);
     [[self hotLayerView] setProcessTouchInSubview:YES];
     
     [self setOverlayController:[[UIOverlayController alloc] initWithRootView:[self hotLayerView]
-                                                                cameraAction:cameraAction
                                                                    micAction:micAction
                                                                   showAction:showAction
                                                                  debugAction:debugAction]];
@@ -971,7 +915,6 @@ typedef void (^UICompletion)(void);
     [[self overlayController] setMode:[[[self stateController] state] showMode]];
     [[self overlayController] setOptions:[[[self stateController] state] showOptions]];
     [[self overlayController] setMicEnabled:[[[self stateController] state] micEnabled]];
-    [[self overlayController] setRecordState:[[[self stateController] state] recordState]];
 }
 
 #pragma mark Cleanups
@@ -988,7 +931,6 @@ typedef void (^UICompletion)(void);
 - (void)cleanupTargetControllers
 {
     [self setLocationManager:nil];
-    [self setRecordController:nil];
     
     [self cleanWebController];
     [self cleanARKController];

@@ -4,7 +4,6 @@ typealias ASValueChangedAction = (Int) -> Void
 typealias ASBoolChangedAction = (Bool) -> Void
 typealias ASShowModeChangedAction = (ShowMode) -> Void
 typealias ASShowOptionsChangedAction = (ShowOptions) -> Void
-typealias ASRecordStateChangedAction = (RecordState) -> Void
 typealias ASOnRequestAction = ([AnyHashable : Any]?) -> Void
 typealias ASURLAction = (String?) -> Void
 
@@ -20,7 +19,6 @@ class AppStateController: NSObject {
     @objc var state: AppState?
     @objc var onModeUpdate: ASShowModeChangedAction?
     @objc var onOptionsUpdate: ASShowOptionsChangedAction?
-    @objc var onRecordUpdate: ASRecordStateChangedAction?
     @objc var onXRUpdate: ASBoolChangedAction?
     @objc var onRequestUpdate: ASOnRequestAction?
     @objc var onInterruption: ASBoolChangedAction?
@@ -59,19 +57,6 @@ class AppStateController: NSObject {
         guard let showOptions = state?.showOptions else { return }
         DispatchQueue.main.async {
             onOptionsUpdate(showOptions)
-        }
-    }
-
-    @objc func setRecordState(_ rState: RecordState) {
-        self.state = state?.updatedRecord(rState)
-        guard let onRecordUpdate = onRecordUpdate else { return }
-        guard let recordState = state?.recordState else { return }
-        DispatchQueue.main.async {
-            onRecordUpdate(recordState)
-        }
-
-        if ((rState == .recordingWithMicrophone) && (state?.micEnabled == false)) || ((rState == .recording) && state?.micEnabled != nil) {
-            invertMic()
         }
     }
 
@@ -121,13 +106,6 @@ class AppStateController: NSObject {
     }
 
     @objc func shouldShowURLBar() -> Bool {
-        if state?.recordState == .photo ||
-            state?.recordState == .recording ||
-            state?.recordState == .recordingWithMicrophone ||
-            state?.recordState == .goingToRecording ||
-            ((state?.recordState == .previewing) && (UIDevice.current.userInterfaceIdiom != .pad)) {
-            return false
-        }
 
         var showURLBar = false
 
@@ -156,15 +134,6 @@ class AppStateController: NSObject {
 
     @objc func shouldSendNativeTime() -> Bool {
         return state?.numberOfTimesSendNativeTimeWasCalled ?? 0 < 10
-    }
-
-    @objc func isRecording() -> Bool {
-        switch state?.recordState {
-            case RecordState.goingToRecording?, RecordState.photo?, RecordState.recording?, RecordState.recordingWithMicrophone?:
-                return true
-            default:
-                return false
-        }
     }
 
     @objc func wasMemoryWarning() -> Bool {

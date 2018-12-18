@@ -5,7 +5,6 @@
 - (instancetype)copyWithZone:(NSZone *)zone
 {
     AppState *copy = [AppState new];
-    [copy setRecordState:[self recordState]];
     [copy setShowOptions:[self showOptions]];
     [copy setShowMode:[self showMode]];
     [copy setWebXR:[self webXR]];
@@ -44,11 +43,6 @@
     }
     
     if ([self showMode] != [theObject showMode])
-    {
-        return NO;
-    }
-    
-    if ([self recordState] != [theObject recordState])
     {
         return NO;
     }
@@ -122,7 +116,7 @@
 
 - (NSUInteger)hash
 {
-    return [self showOptions] ^ [self showMode] ^ [self recordState] ^ [self webXR] ^ [self micEnabled] ^ [[self trackingState] hash] ^ [[self aRRequest] hash] ^ [self interruption];
+    return [self showOptions] ^ [self showMode] ^ [self webXR] ^ [self micEnabled] ^ [[self trackingState] hash] ^ [[self aRRequest] hash] ^ [self interruption];
 }
 
 + (instancetype)defaultState
@@ -131,7 +125,6 @@
     
     [state setShowMode:SHOW_MODE_BY_DEFAULT];
     [state setShowOptions:SHOW_OPTIONS_BY_DEFAULT];
-    [state setRecordState:RECORD_STATE_BY_DEFAULT];
     [state setMicEnabled:MICROPHONE_ENABLED_BY_DEFAULT];
     [state setShouldShowSessionStartedPopup:POPUP_ENABLED_BY_DEFAULT];
     [state setNumberOfTimesSendNativeTimeWasCalled:0];
@@ -154,12 +147,6 @@
 - (instancetype)updatedShowOptions:(ShowOptions)showOptions
 {
     [self setShowOptions:showOptions];
-    return self;
-}
-
-- (instancetype)updatedRecordState:(RecordState)state
-{
-    [self setRecordState:state];
     return self;
 }
 

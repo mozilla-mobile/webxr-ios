@@ -1,7 +1,6 @@
 #import <Foundation/Foundation.h>
 
 #define MICROPHONE_ENABLED_BY_DEFAULT  YES
-#define RECORD_STATE_BY_DEFAULT        RecordStateIsReady
 #define SHOW_MODE_BY_DEFAULT           ShowNothing
 #define SHOW_OPTIONS_BY_DEFAULT        None
 #define POPUP_ENABLED_BY_DEFAULT       YES
@@ -73,22 +72,6 @@ typedef NS_OPTIONS(NSUInteger, ShowOptions)
 };
 
 /**
- An enum representing the record action state machine
- */
-typedef NS_ENUM(NSUInteger, RecordState)
-{
-    RecordStateIsReady,
-    RecordStatePhoto,
-    RecordStateGoingToRecording, // for preparing UI (JS) for capturing(important for first frame)
-    RecordStateRecording,
-    RecordStateRecordingWithMicrophone,
-    RecordStatePreviewing,
-    RecordStateDisabled, // by hardware
-    RecordStateAuthDisabled, // by user
-    RecordStateError
-};
-
-/**
  The app internal state
  */
 @interface AppState : NSObject <NSCopying>
@@ -97,7 +80,6 @@ typedef NS_ENUM(NSUInteger, RecordState)
 @property(nonatomic, copy) NSString *trackingState;
 @property(nonatomic) ShowMode showMode;
 @property(nonatomic) ShowOptions showOptions;
-@property(nonatomic) RecordState recordState;
 @property(nonatomic) BOOL webXR;
 @property(nonatomic) BOOL micEnabled;
 @property(nonatomic) BOOL interruption;
@@ -115,7 +97,6 @@ typedef NS_ENUM(NSUInteger, RecordState)
 
 - (instancetype)updatedShowMode:(ShowMode)showMode;
 - (instancetype)updatedShowOptions:(ShowOptions)showOptions;
-- (instancetype)updatedRecordState:(RecordState)state;
 - (instancetype)updatedWebXR:(BOOL)webXR;
 - (instancetype)updatedWithARRequest:(NSDictionary *)dict;
 - (instancetype)updatedWithMicEnabled:(BOOL)enabled;

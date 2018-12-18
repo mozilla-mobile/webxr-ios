@@ -15,32 +15,16 @@ class UIOverlayController: NSObject {
     private var touchView: TouchView?
     private var overlayWindow: UIWindow?
     private var overlayVC: OverlayViewController?
-    private var cameraAction: HotAction?
     private var micAction: HotAction?
     private var showAction: HotAction?
     private var debugAction: HotAction?
     private var showMode: ShowMode?
     private var showOptions: ShowOptions?
-    private var recordState: RecordState? {
-        didSet(state) {
-            guard let state = state else { return }
-            DDLogDebug("setRecordState")
-            touchView?.setRecordState(state)
-            if state == .photo {
-                touchView?.setProcessTouches(false)
-            }
-            overlayVC?.setRecordState(state, withAnimationCompletion: { finish in
-                self.enableTouches(onFinishAnimation: finish)
-            })
-            viewWillTransition(to: rootView?.bounds.size ?? CGSize.zero)
-        }
-    }
 
-    @objc init(rootView: UIView, cameraAction: @escaping HotAction, micAction: @escaping HotAction, showAction: @escaping HotAction, debugAction: @escaping HotAction) {
+    @objc init(rootView: UIView, micAction: @escaping HotAction, showAction: @escaping HotAction, debugAction: @escaping HotAction) {
         super.init()
         self.rootView = rootView
 
-        self.cameraAction = cameraAction
         self.micAction = micAction
         self.showAction = showAction
         self.debugAction = debugAction
@@ -59,13 +43,10 @@ class UIOverlayController: NSObject {
         var updRect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         guard let showMode = showMode else { return }
         guard let showOptions = showOptions else { return }
-        guard let recordState = recordState else { return }
         
         if showMode.rawValue >= ShowMode.multi.rawValue {
             if showOptions.rawValue & ShowOptions.Browser.rawValue != 0 {
-                if (recordState == .isReady) || (recordState == .goingToRecording) || (recordState.rawValue >= RecordState.previewing.rawValue) {
-                    updRect.origin.y = CGFloat(URL_BAR_HEIGHT)
-                }
+                updRect.origin.y = CGFloat(URL_BAR_HEIGHT)
             }
         }
 
@@ -100,24 +81,6 @@ class UIOverlayController: NSObject {
         })
     }
 
-    @objc func setRecordState(_ state: RecordState) {
-        DDLogDebug("setRecordState")
-
-        recordState = state
-
-        touchView?.setRecordState(state)
-
-        if state == .photo {
-            touchView?.setProcessTouches(false)
-        }
-
-        overlayVC?.setRecordState(state, withAnimationCompletion: { finish in
-            self.enableTouches(onFinishAnimation: finish)
-        })
-
-        viewWillTransition(to: rootView?.bounds.size ?? CGSize.zero)
-    }
-
     @objc func setMicEnabled(_ micEnabled: Bool) {
         overlayVC?.setMicrophoneEnabled(micEnabled, withAnimationCompletion: { finish in
         })
@@ -146,11 +109,10 @@ class UIOverlayController: NSObject {
 
     func setupTouchView() {
         guard let rootView = rootView else { return }
-        guard let cameraAction = cameraAction else { return }
         guard let micAction = micAction else { return }
         guard let showAction = showAction else { return }
         guard let debugAction = debugAction else { return }
-        self.touchView = TouchView(frame: rootView.bounds, cameraAction: cameraAction, micAction: micAction, showAction: showAction, debugAction: debugAction)
+        self.touchView = TouchView(frame: rootView.bounds, micAction: micAction, showAction: showAction, debugAction: debugAction)
 
         viewWillTransition(to: rootView.bounds.size)
 

@@ -2,7 +2,6 @@ import UIKit
 
 class TouchView: UIView {
     
-    private var cameraAction: HotAction?
     private var micAction: HotAction?
     private var showAction: HotAction?
     private var debugAction: HotAction?
@@ -18,14 +17,12 @@ class TouchView: UIView {
     private var touchTimer: Timer?
     var showMode: ShowMode?
     var showOptions: ShowOptions?
-    private var recordState: RecordState?
     let MAX_INCREASE_ZONE_SIZE = 10
     private var increaseHotZoneValue: CGFloat = 0.0
     
-    @objc init(frame: CGRect, cameraAction: @escaping HotAction, micAction: @escaping HotAction, showAction: @escaping HotAction, debugAction: @escaping HotAction) {
+    @objc init(frame: CGRect, micAction: @escaping HotAction, showAction: @escaping HotAction, debugAction: @escaping HotAction) {
         super.init(frame: frame)
         
-        self.cameraAction = cameraAction
         self.micAction = micAction
         self.showAction = showAction
         self.debugAction = debugAction
@@ -54,10 +51,6 @@ class TouchView: UIView {
     
     @objc func setShowOptions(_ options: ShowOptions) {
         showOptions = options
-    }
-    
-    @objc func setRecordState(_ state: RecordState) {
-        recordState = state
     }
     
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
@@ -112,8 +105,6 @@ class TouchView: UIView {
             weak var blockSelf: TouchView? = self
             
             self.touchTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(RECORD_LONG_TAP_DURATION), repeats: false, block: { timer in
-                guard let cameraAction = blockSelf?.cameraAction else { return }
-                cameraAction(true)
                 blockSelf?.cameraEvent = false
                 timer.invalidate()
                 blockSelf?.touchTimer = nil
@@ -138,8 +129,6 @@ class TouchView: UIView {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if touchTimer != nil {
-            guard let cameraAction = cameraAction else { return }
-            cameraAction(false)
             self.cameraEvent = false
             
             touchTimer?.invalidate()
@@ -149,8 +138,6 @@ class TouchView: UIView {
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         if touchTimer != nil {
-            guard let cameraAction = cameraAction else { return }
-            cameraAction(false)
             self.cameraEvent = false
             
             touchTimer?.invalidate()
