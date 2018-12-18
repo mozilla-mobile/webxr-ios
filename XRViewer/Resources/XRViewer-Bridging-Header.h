@@ -6,7 +6,6 @@
 #import "ARKHelper.h"
 #import "Prefix.h"
 #import "ARKController.h"
-#import "Animator.h"
 
 typedef NS_ENUM(NSInteger, ResetTrackingOption) {
     ResetTracking,

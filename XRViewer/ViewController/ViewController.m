@@ -2,7 +2,6 @@
 #import "ARKController.h"
 #import "RecordController.h"
 #import "WebARKHeader.h"
-#import "Animator.h"
 #import "Reachability.h"
 #import "XRViewer-Swift.h"
 

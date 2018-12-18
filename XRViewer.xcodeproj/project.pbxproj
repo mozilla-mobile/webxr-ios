@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0401E04B1F612C240075D823 /* BarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0401E04A1F612C240075D823 /* BarView.xib */; };
-		0401E0521F62E6150075D823 /* Animator.m in Sources */ = {isa = PBXBuildFile; fileRef = 0401E0511F62E6150075D823 /* Animator.m */; };
 		041503D21F28944F00887400 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D01F28944F00887400 /* Main.storyboard */; };
 		041503D71F28944F00887400 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D51F28944F00887400 /* LaunchScreen.storyboard */; };
 		04A815681F419EB60082D31D /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A815671F419EB60082D31D /* Models.scnassets */; };
@@ -50,6 +49,7 @@
 		B67D979721C4404E0075FE0A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D979621C4404E0075FE0A /* Utils.swift */; };
 		B67D97A321C8453F0075FE0A /* UIOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A221C8453F0075FE0A /* UIOverlayController.swift */; };
 		B67D97A521C854C20075FE0A /* OverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A421C854C20075FE0A /* OverlayViewController.swift */; };
+		B67D97A721C9843B0075FE0A /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A621C9843B0075FE0A /* Animator.swift */; };
 		B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */; };
 		B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */; };
 		B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047521B7333500C9A4EC /* AnchorNode.swift */; };
@@ -63,8 +63,6 @@
 
 /* Begin PBXFileReference section */
 		0401E04A1F612C240075D823 /* BarView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BarView.xib; sourceTree = "<group>"; };
-		0401E0501F62E6150075D823 /* Animator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Animator.h; sourceTree = "<group>"; };
-		0401E0511F62E6150075D823 /* Animator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Animator.m; sourceTree = "<group>"; };
 		041503C11F28944F00887400 /* XRViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XRViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		041503D11F28944F00887400 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		041503D31F28944F00887400 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -122,6 +120,7 @@
 		B67D979621C4404E0075FE0A /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		B67D97A221C8453F0075FE0A /* UIOverlayController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIOverlayController.swift; sourceTree = "<group>"; };
 		B67D97A421C854C20075FE0A /* OverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayViewController.swift; sourceTree = "<group>"; };
+		B67D97A621C9843B0075FE0A /* Animator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
 		B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HitTestResult.swift; sourceTree = "<group>"; };
 		B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKControllerProtocol.swift; sourceTree = "<group>"; };
 		B69C047521B7333500C9A4EC /* AnchorNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnchorNode.swift; sourceTree = "<group>"; };
@@ -146,15 +145,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0401E04F1F62E5E70075D823 /* Animator */ = {
-			isa = PBXGroup;
-			children = (
-				0401E0501F62E6150075D823 /* Animator.h */,
-				0401E0511F62E6150075D823 /* Animator.m */,
-			);
-			path = Animator;
-			sourceTree = "<group>";
-		};
 		041503B81F28944F00887400 = {
 			isa = PBXGroup;
 			children = (
@@ -190,7 +180,7 @@
 				B632850621C2D98900FD5510 /* LocationManager.swift */,
 				045B2EA41F28EE790005FF96 /* Overlay */,
 				A6160A081F651AF2009F4402 /* Reachability */,
-				0401E04F1F62E5E70075D823 /* Animator */,
+				B67D97A621C9843B0075FE0A /* Animator.swift */,
 				04A983761F32279900120CF8 /* Resources */,
 			);
 			path = XRViewer;
@@ -513,7 +503,6 @@
 				B632850921C2F24200FD5510 /* MessageController.swift in Sources */,
 				B632851321C4159B00FD5510 /* LayerView.swift in Sources */,
 				B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */,
-				0401E0521F62E6150075D823 /* Animator.m in Sources */,
 				62242AC3201F2A0700506412 /* TextInputTableViewCell.swift in Sources */,
 				B67D979721C4404E0075FE0A /* Utils.swift in Sources */,
 				B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */,
@@ -533,6 +522,7 @@
 				04C64BCE1F71094500ACFB8B /* AppState.m in Sources */,
 				B67D97A521C854C20075FE0A /* OverlayViewController.swift in Sources */,
 				62242ACB201F2D3600506412 /* TextTableViewCell.swift in Sources */,
+				B67D97A721C9843B0075FE0A /* Animator.swift in Sources */,
 				B658C0F221BF43D500538D57 /* WebController.swift in Sources */,
 				6241012D1FEABABF006FDBE3 /* AnalyticsManager.swift in Sources */,
 				6207254E206A90BF00887B1F /* RequestPermissionsViewController.swift in Sources */,

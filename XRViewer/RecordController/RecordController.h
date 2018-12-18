@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
-#import "Animator.h"
 #import "AppState.h"
+#import "XRViewer-Swift.h"
 
 typedef void (^RecordAction)(RecordState);
 typedef void (^RequestAuthAction)(id);
