@@ -44,12 +44,6 @@
 	<string>This application will use the camera for Augmented Reality.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This application will use location for Augmented Reality.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This application will use the microphone for Augmented Reality.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This application will use Photo Library for Augmented Reality.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This application will use Photo Library for Augmented Reality.</string>
 	<key>NSSupportsSuddenTermination</key>
 	<false/>
 	<key>UILaunchStoryboardName</key>
@@ -58,7 +52,6 @@
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>microphone</string>
 		<string>location-services</string>
 		<string>auto-focus-camera</string>
 		<string>armv7</string>

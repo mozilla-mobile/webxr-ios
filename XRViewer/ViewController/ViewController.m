@@ -423,11 +423,6 @@ typedef void (^UICompletion)(void);
          [[blockSelf overlayController] setARKitInterruption:interruption];
          [[blockSelf webController] wasARInterruption:interruption];
      }];
-    
-    [[self stateController] setOnMicUpdate:^(BOOL enabled)
-     {
-         [[blockSelf overlayController] setMicEnabled:enabled];
-     }];
 }
 
 -(BOOL)urlIsNotTheLastXRVisitedURL {
@@ -886,13 +881,6 @@ typedef void (^UICompletion)(void);
     
     __weak typeof (self) blockSelf = self;
     
-    // mic enabling should be accepted by user in ReplayKit popup
-    // this value can be changed in State comtroller on Record action
-    HotAction micAction = ^(BOOL any)
-    {
-        [[blockSelf stateController] invertMic];
-    };
-    
     HotAction showAction = ^(BOOL any)
     {
         [[blockSelf stateController] invertShowMode];
@@ -906,7 +894,6 @@ typedef void (^UICompletion)(void);
     [[self hotLayerView] setProcessTouchInSubview:YES];
     
     [self setOverlayController:[[UIOverlayController alloc] initWithRootView:[self hotLayerView]
-                                                                   micAction:micAction
                                                                   showAction:showAction
                                                                  debugAction:debugAction]];
     
@@ -914,7 +901,6 @@ typedef void (^UICompletion)(void);
     
     [[self overlayController] setMode:[[[self stateController] state] showMode]];
     [[self overlayController] setOptions:[[[self stateController] state] showOptions]];
-    [[self overlayController] setMicEnabled:[[[self stateController] state] micEnabled]];
 }
 
 #pragma mark Cleanups

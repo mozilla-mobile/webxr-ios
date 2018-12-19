@@ -4,9 +4,7 @@ class OverlayViewController: UIViewController {
     
     private var showMode: ShowMode?
     private var showOptions: ShowOptions?
-    private var microphoneEnabled = false
     private var trackingStateButton: UIButton?
-    private var micButton: UIButton?
     private var buildLabel: UILabel?
     private var timer: Timer?
     var animator: Animator?
@@ -58,16 +56,6 @@ class OverlayViewController: UIViewController {
         update(with: completion)
     }
 
-    func setMicrophoneEnabled(_ microphoneEnabled: Bool, withAnimationCompletion completion: @escaping Completion) {
-        self.microphoneEnabled = microphoneEnabled
-
-        micButton?.isSelected = microphoneEnabled
-
-        DispatchQueue.main.async(execute: {
-            completion(true)
-        })
-    }
-
     func viewWillTransition(to size: CGSize) {
         guard let showMode = showMode else { return }
         guard let showOptions = showOptions else { return }
@@ -80,14 +68,6 @@ class OverlayViewController: UIViewController {
         }
         
         weak var blockSelf: OverlayViewController? = self
-        animator?.animate(micButton, toFrame: micFrameIn(viewRect: updRect))
-        
-        if blockSelf?.showMode == ShowMode.single {
-            // delay for show camera, mic frame animations
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
-                blockSelf?.animator?.animate(blockSelf?.micButton, toFade: true)
-            })
-        }
         
         trackingStateButton?.frame = trackFrameIn(viewRect: updRect)
         buildLabel?.frame = buildFrameIn(viewRect: updRect)
@@ -100,7 +80,6 @@ class OverlayViewController: UIViewController {
         
         switch showMode {
         case .nothing:
-            animator?.animate(micButton, toFade: true)
             animator?.animate(buildLabel, toFade: true)
             timer?.invalidate()
             completion(true)
@@ -109,7 +88,6 @@ class OverlayViewController: UIViewController {
             timer?.invalidate()
             completion(true)
         case .debug:
-            animator?.animate(micButton, toFade: true)
             animator?.animate(buildLabel, toFade: true)
             timer?.invalidate()
             completion(true)
@@ -244,11 +222,6 @@ class OverlayViewController: UIViewController {
 
     func setup() {
         
-        self.micButton = UIButton(type: .custom)
-        micButton?.setImage(UIImage(named: "micOff"), for: .normal)
-        micButton?.setImage(UIImage(named: "mic"), for: .selected)
-        view.addSubview(micButton!)
-        
         self.trackingStateButton = UIButton(type: .custom)
         trackingStateButton?.frame = trackFrameIn(viewRect: view.bounds)
         trackingStateButton?.contentVerticalAlignment = .fill
@@ -295,10 +268,6 @@ class OverlayViewController: UIViewController {
         let x = viewRect.size.width - Constant.recordSize() - Constant.recordOffsetX()
         let y = viewRect.origin.y + (viewRect.size.height - viewRect.origin.y / 2) - Constant.recordSize() / 2
         return CGRect(x: x, y: y, width: Constant.recordSize(), height: Constant.recordSize())
-    }
-    
-    func micFrameIn(viewRect: CGRect) -> CGRect {
-        return CGRect(x: viewRect.size.width - Constant.recordSize() - Constant.recordOffsetX() + (Constant.recordSize() - Constant.micSizeW()) / 2, y: viewRect.origin.y + Constant.recordOffsetY(), width: Constant.micSizeW(), height: Constant.micSizeH())
     }
     
     func debugFrameIn(viewRect: CGRect) -> CGRect {

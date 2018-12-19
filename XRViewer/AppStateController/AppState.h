@@ -1,6 +1,5 @@
 #import <Foundation/Foundation.h>
 
-#define MICROPHONE_ENABLED_BY_DEFAULT  YES
 #define SHOW_MODE_BY_DEFAULT           ShowNothing
 #define SHOW_OPTIONS_BY_DEFAULT        None
 #define POPUP_ENABLED_BY_DEFAULT       YES
@@ -80,7 +79,6 @@ typedef NS_OPTIONS(NSUInteger, ShowOptions)
 @property(nonatomic) ShowMode showMode;
 @property(nonatomic) ShowOptions showOptions;
 @property(nonatomic) BOOL webXR;
-@property(nonatomic) BOOL micEnabled;
 @property(nonatomic) BOOL interruption;
 @property(nonatomic) BOOL computerVisionFrameRequested;
 @property(nonatomic) BOOL shouldRemoveAnchorsOnNextARSession;
@@ -98,7 +96,6 @@ typedef NS_OPTIONS(NSUInteger, ShowOptions)
 - (instancetype)updatedShowOptions:(ShowOptions)showOptions;
 - (instancetype)updatedWebXR:(BOOL)webXR;
 - (instancetype)updatedWithARRequest:(NSDictionary *)dict;
-- (instancetype)updatedWithMicEnabled:(BOOL)enabled;
 - (instancetype)updatedWithInterruption:(BOOL)interruption;
 
 @end

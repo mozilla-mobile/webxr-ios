@@ -15,17 +15,15 @@ class UIOverlayController: NSObject {
     private var touchView: TouchView?
     private var overlayWindow: UIWindow?
     private var overlayVC: OverlayViewController?
-    private var micAction: HotAction?
     private var showAction: HotAction?
     private var debugAction: HotAction?
     private var showMode: ShowMode?
     private var showOptions: ShowOptions?
 
-    @objc init(rootView: UIView, micAction: @escaping HotAction, showAction: @escaping HotAction, debugAction: @escaping HotAction) {
+    @objc init(rootView: UIView, showAction: @escaping HotAction, debugAction: @escaping HotAction) {
         super.init()
         self.rootView = rootView
 
-        self.micAction = micAction
         self.showAction = showAction
         self.debugAction = debugAction
 
@@ -81,10 +79,6 @@ class UIOverlayController: NSObject {
         })
     }
 
-    @objc func setMicEnabled(_ micEnabled: Bool) {
-        overlayVC?.setMicrophoneEnabled(micEnabled, withAnimationCompletion: { finish in
-        })
-    }
     /***
      * Informs the overlay view controller about a tracking state change
      * @param state The AR tracking state string
@@ -109,10 +103,9 @@ class UIOverlayController: NSObject {
 
     func setupTouchView() {
         guard let rootView = rootView else { return }
-        guard let micAction = micAction else { return }
         guard let showAction = showAction else { return }
         guard let debugAction = debugAction else { return }
-        self.touchView = TouchView(frame: rootView.bounds, micAction: micAction, showAction: showAction, debugAction: debugAction)
+        self.touchView = TouchView(frame: rootView.bounds, showAction: showAction, debugAction: debugAction)
 
         viewWillTransition(to: rootView.bounds.size)
 

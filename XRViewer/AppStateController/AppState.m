@@ -9,7 +9,6 @@
     [copy setShowMode:[self showMode]];
     [copy setWebXR:[self webXR]];
     [copy setARRequest:[self aRRequest]];
-    [copy setMicEnabled:[self micEnabled]];
     [copy setTrackingState:[self trackingState]];
     [copy setInterruption:[self interruption]];
     [copy setComputerVisionFrameRequested:[self computerVisionFrameRequested]];
@@ -48,11 +47,6 @@
     }
     
     if ([self webXR] != [theObject webXR])
-    {
-        return NO;
-    }
-    
-    if ([self micEnabled] != [theObject micEnabled])
     {
         return NO;
     }
@@ -116,7 +110,7 @@
 
 - (NSUInteger)hash
 {
-    return [self showOptions] ^ [self showMode] ^ [self webXR] ^ [self micEnabled] ^ [[self trackingState] hash] ^ [[self aRRequest] hash] ^ [self interruption];
+    return [self showOptions] ^ [self showMode] ^ [self webXR] ^ [[self trackingState] hash] ^ [[self aRRequest] hash] ^ [self interruption];
 }
 
 + (instancetype)defaultState
@@ -125,7 +119,6 @@
     
     [state setShowMode:SHOW_MODE_BY_DEFAULT];
     [state setShowOptions:SHOW_OPTIONS_BY_DEFAULT];
-    [state setMicEnabled:MICROPHONE_ENABLED_BY_DEFAULT];
     [state setShouldShowSessionStartedPopup:POPUP_ENABLED_BY_DEFAULT];
     [state setNumberOfTimesSendNativeTimeWasCalled:0];
     [state setUserGrantedSendingComputerVisionData:USER_GRANTED_SENDING_COMPUTER_VISION_DATA_BY_DEFAULT];
@@ -159,12 +152,6 @@
 - (instancetype)updatedWithARRequest:(NSDictionary *)dict
 {
     [self setARRequest:dict];
-    return self;
-}
-
-- (instancetype)updatedWithMicEnabled:(BOOL)enabled
-{
-    [self setMicEnabled:enabled];
     return self;
 }
 

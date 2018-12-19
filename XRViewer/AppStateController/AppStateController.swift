@@ -22,7 +22,6 @@ class AppStateController: NSObject {
     @objc var onXRUpdate: ASBoolChangedAction?
     @objc var onRequestUpdate: ASOnRequestAction?
     @objc var onInterruption: ASBoolChangedAction?
-    @objc var onMicUpdate: ASBoolChangedAction?
     @objc var onDebug: ASBoolChangedAction?
     @objc var onMemoryWarning: ASURLAction?
     @objc var onEnterForeground: ASURLAction?
@@ -83,17 +82,6 @@ class AppStateController: NSObject {
         guard let onInterruption = onInterruption else { return }
         DispatchQueue.main.async {
             onInterruption(interruption)
-        }
-    }
-
-    @objc func invertMic() {
-        guard let state = state else { return }
-        let micEnabledUpdated = !state.micEnabled
-
-        self.state = state.updated(withMicEnabled: micEnabledUpdated)
-        guard let onMicUpdate = onMicUpdate else { return }
-        DispatchQueue.main.async {
-            onMicUpdate(micEnabledUpdated)
         }
     }
 
