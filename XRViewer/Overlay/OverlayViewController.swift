@@ -9,7 +9,6 @@ class OverlayViewController: UIViewController {
     private var trackingStateButton: UIButton?
     private var micButton: UIButton?
     private var recordTimingLabel: UILabel?
-    private var recordDot: UIView?
     private var helperLabel: UILabel?
     private var buildLabel: UILabel?
     private var startRecordDate: Date?
@@ -104,7 +103,6 @@ class OverlayViewController: UIViewController {
         helperLabel?.transform = CGAffineTransform(rotationAngle: -.pi / 2)
         
         trackingStateButton?.frame = trackFrameIn(viewRect: updRect)
-        recordDot?.frame = dotFrameIn(viewRect: updRect)
         recordTimingLabel?.frame = recordLabelFrameIn(viewRect: updRect)
         buildLabel?.frame = buildFrameIn(viewRect: updRect)
     }
@@ -120,13 +118,11 @@ class OverlayViewController: UIViewController {
             animator?.animate(micButton, toFade: true)
             animator?.animate(helperLabel, toFade: true)
             animator?.animate(buildLabel, toFade: true)
-            animator?.animate(recordDot, toFade: true)
             timer?.invalidate()
             completion(true)
         case .single:
             animator?.animate(helperLabel, toFade: true)
             animator?.animate(buildLabel, toFade: true)
-            animator?.animate(recordDot, toFade: true)
             animator?.animate(recordTimingLabel, toFade: true)
             timer?.invalidate()
             completion(true)
@@ -135,7 +131,6 @@ class OverlayViewController: UIViewController {
             animator?.animate(micButton, toFade: true)
             animator?.animate(helperLabel, toFade: true)
             animator?.animate(buildLabel, toFade: true)
-            animator?.animate(recordDot, toFade: true)
             timer?.invalidate()
             completion(true)
         case .multi:
@@ -282,11 +277,6 @@ class OverlayViewController: UIViewController {
         trackingStateButton?.contentHorizontalAlignment = .fill
         view.addSubview(trackingStateButton!)
         
-        self.recordDot = UIView(frame: dotFrameIn(viewRect: view.bounds))
-        recordDot?.layer.cornerRadius = CGFloat(Double(DOT_SIZE) / 2.0)
-        recordDot?.backgroundColor = UIColor.red
-        view.addSubview(recordDot!)
-        
         self.recordTimingLabel = UILabel(frame: recordLabelFrameIn(viewRect: view.bounds))
         recordTimingLabel?.font = UIFont.systemFont(ofSize: 12)
         recordTimingLabel?.textAlignment = .left
@@ -359,10 +349,6 @@ class OverlayViewController: UIViewController {
     
     private func trackFrameIn(viewRect: CGRect) -> CGRect {
         return CGRect(x: viewRect.size.width / 2 - (TRACK_SIZE_W / 2), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH() / 2 - TRACK_SIZE_H / 2, width: TRACK_SIZE_W, height: TRACK_SIZE_H)
-    }
-    
-    private func dotFrameIn(viewRect: CGRect) -> CGRect {
-        return CGRect(x: viewRect.size.width / 2 - (DOT_SIZE / 2), y: viewRect.origin.y + DOT_OFFSET_Y, width: DOT_SIZE, height: DOT_SIZE)
     }
     
     private func recordLabelFrameIn(viewRect: CGRect) -> CGRect {
