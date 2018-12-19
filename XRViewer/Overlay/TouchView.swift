@@ -73,27 +73,6 @@ class TouchView: UIView {
                 self.cameraEvent = false
                 return true
             }
-            /*
-             This functionality is not needed anymore, since we are showing/hiding the debug buttons when swipping down/up
-             
-             if (CGRectContainsPoint([self increasedRect:[self showRect]], point))
-             {
-             if (([self recordState] == RecordStateRecording) || ([self recordState] == RecordStateRecordingWithMicrophone))
-             {
-             return NO;
-             }
-             
-             [self setShowEvent:YES];
-             [self setCameraEvent:NO];
-             return YES;
-             }
-             if (([self showMode] >= ShowMulti) && ([self showOptions] & Debug) && CGRectContainsPoint([self debugRect], point))
-             {
-             [self setDebugEvent:YES];
-             [self setCameraEvent:NO];
-             return YES;
-             }
-             */
         }
         
         return false

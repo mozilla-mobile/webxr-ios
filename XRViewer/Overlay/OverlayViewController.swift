@@ -5,23 +5,14 @@ class OverlayViewController: UIViewController {
     private var showMode: ShowMode?
     private var showOptions: ShowOptions?
     private var microphoneEnabled = false
-    private var recordButton: UIButton?
     private var trackingStateButton: UIButton?
     private var micButton: UIButton?
-    private var recordTimingLabel: UILabel?
-    private var helperLabel: UILabel?
     private var buildLabel: UILabel?
-    private var startRecordDate: Date?
     private var timer: Timer?
     var animator: Animator?
     
-    let HELP_LABEL_HEIGHT: CGFloat = 16
-    let HELP_LABEL_WIDTH: CGFloat = 350
-    let RECORD_LABEL_OFFSET_X: CGFloat = 4.5
     let RECORD_LABEL_WIDTH: CGFloat = 80
     let RECORD_LABEL_HEIGHT: CGFloat = 12
-    let DOT_SIZE: CGFloat = 6
-    let DOT_OFFSET_Y: CGFloat = 9.5
     let TRACK_SIZE_W: CGFloat = 256
     let TRACK_SIZE_H: CGFloat = 62
     
@@ -94,16 +85,11 @@ class OverlayViewController: UIViewController {
         if blockSelf?.showMode == ShowMode.single {
             // delay for show camera, mic frame animations
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
-                blockSelf?.animator?.animate(blockSelf?.recordButton, toFade: true)
                 blockSelf?.animator?.animate(blockSelf?.micButton, toFade: true)
             })
         }
         
-        helperLabel?.frame = helperLabelFrameIn(viewRect: updRect)
-        helperLabel?.transform = CGAffineTransform(rotationAngle: -.pi / 2)
-        
         trackingStateButton?.frame = trackFrameIn(viewRect: updRect)
-        recordTimingLabel?.frame = recordLabelFrameIn(viewRect: updRect)
         buildLabel?.frame = buildFrameIn(viewRect: updRect)
     }
     // common visibility
@@ -114,22 +100,16 @@ class OverlayViewController: UIViewController {
         
         switch showMode {
         case .nothing:
-            animator?.animate(recordButton, toFade: true)
             animator?.animate(micButton, toFade: true)
-            animator?.animate(helperLabel, toFade: true)
             animator?.animate(buildLabel, toFade: true)
             timer?.invalidate()
             completion(true)
         case .single:
-            animator?.animate(helperLabel, toFade: true)
             animator?.animate(buildLabel, toFade: true)
-            animator?.animate(recordTimingLabel, toFade: true)
             timer?.invalidate()
             completion(true)
         case .debug:
-            animator?.animate(recordButton, toFade: true)
             animator?.animate(micButton, toFade: true)
-            animator?.animate(helperLabel, toFade: true)
             animator?.animate(buildLabel, toFade: true)
             timer?.invalidate()
             completion(true)
@@ -263,8 +243,6 @@ class OverlayViewController: UIViewController {
     }
 
     func setup() {
-        self.recordButton = UIButton(type: .custom)
-        view.addSubview(recordButton!)
         
         self.micButton = UIButton(type: .custom)
         micButton?.setImage(UIImage(named: "micOff"), for: .normal)
@@ -276,22 +254,6 @@ class OverlayViewController: UIViewController {
         trackingStateButton?.contentVerticalAlignment = .fill
         trackingStateButton?.contentHorizontalAlignment = .fill
         view.addSubview(trackingStateButton!)
-        
-        self.recordTimingLabel = UILabel(frame: recordLabelFrameIn(viewRect: view.bounds))
-        recordTimingLabel?.font = UIFont.systemFont(ofSize: 12)
-        recordTimingLabel?.textAlignment = .left
-        recordTimingLabel?.textColor = UIColor.white
-        recordTimingLabel?.backgroundColor = UIColor.clear
-        recordTimingLabel?.clipsToBounds = true
-        view.addSubview(recordTimingLabel!)
-        
-        self.helperLabel = UILabel(frame: helperLabelFrameIn(viewRect: view.bounds))
-        helperLabel?.font = UIFont.systemFont(ofSize: 12)
-        helperLabel?.textAlignment = .center
-        helperLabel?.textColor = UIColor.white
-        helperLabel?.backgroundColor = UIColor.clear
-        helperLabel?.clipsToBounds = true
-        view.addSubview(helperLabel!)
         
         self.buildLabel = UILabel(frame: buildFrameIn(viewRect: view.bounds))
         buildLabel?.font = UIFont.boldSystemFont(ofSize: 12)
@@ -349,14 +311,6 @@ class OverlayViewController: UIViewController {
     
     private func trackFrameIn(viewRect: CGRect) -> CGRect {
         return CGRect(x: viewRect.size.width / 2 - (TRACK_SIZE_W / 2), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH() / 2 - TRACK_SIZE_H / 2, width: TRACK_SIZE_W, height: TRACK_SIZE_H)
-    }
-    
-    private func recordLabelFrameIn(viewRect: CGRect) -> CGRect {
-        return CGRect(x: viewRect.size.width / 2 + (DOT_SIZE / 2) + RECORD_LABEL_OFFSET_X, y: viewRect.origin.y + DOT_OFFSET_Y - (RECORD_LABEL_HEIGHT - DOT_SIZE) / 2, width: RECORD_LABEL_WIDTH, height: RECORD_LABEL_HEIGHT)
-    }
-    
-    private func helperLabelFrameIn(viewRect: CGRect) -> CGRect {
-        return CGRect(x: viewRect.size.width - HELP_LABEL_HEIGHT - 5, y: viewRect.origin.y, width: HELP_LABEL_HEIGHT, height: viewRect.size.height - viewRect.origin.y) // rotate
     }
     
     private func buildFrameIn(viewRect: CGRect) -> CGRect {

@@ -172,12 +172,6 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         callWebMethod(WEB_AR_IOS_SHOW_DEBUG, paramJSON: [WEB_AR_UI_DEBUG_OPTION: showDebug ? true : false], webCompletion: debugCompletion(name: "showDebug"))
     }
 
-    @objc func startRecording(_ start: Bool) {
-        let message = start ? WEB_AR_IOS_START_RECORDING_MESSAGE : WEB_AR_IOS_STOP_RECORDING_MESSAGE
-
-        callWebMethod(message, param: "", webCompletion: debugCompletion(name: "setRecordState"))
-    }
-
     @objc func wasARInterruption(_ interruption: Bool) {
         let message = interruption ? WEB_AR_IOS_START_RECORDING_MESSAGE : WEB_AR_IOS_INTERRUPTION_ENDED_MESSAGE
 
