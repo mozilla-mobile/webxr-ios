@@ -1,5 +1,7 @@
 # WebXR Viewer Changelog
 
+* Break down OverlayHeader.h file into Swift constants, helper functions, and properties
+* Remove RecordController & RecordState enum
 * Converted following to Swift: Animator, OverlayViewController, UIOverlayController
 ---
 * Converted following to Swift: Utils, Constants, AppDelegate, LayerView, LocationManager, MessageController

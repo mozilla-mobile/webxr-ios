@@ -16,6 +16,16 @@ class OverlayViewController: UIViewController {
     private var timer: Timer?
     var animator: Animator?
     
+    let HELP_LABEL_HEIGHT: CGFloat = 16
+    let HELP_LABEL_WIDTH: CGFloat = 350
+    let RECORD_LABEL_OFFSET_X: CGFloat = 4.5
+    let RECORD_LABEL_WIDTH: CGFloat = 80
+    let RECORD_LABEL_HEIGHT: CGFloat = 12
+    let DOT_SIZE: CGFloat = 6
+    let DOT_OFFSET_Y: CGFloat = 9.5
+    let TRACK_SIZE_W: CGFloat = 256
+    let TRACK_SIZE_H: CGFloat = 62
+    
     deinit {
         DDLogDebug("OverlayViewController dealloc")
     }
@@ -75,12 +85,12 @@ class OverlayViewController: UIViewController {
         
         if showMode.rawValue >= ShowMode.multi.rawValue {
             if showOptions.rawValue & ShowOptions.Browser.rawValue != 0 {
-                updRect.origin.y = CGFloat(URL_BAR_HEIGHT)
+                updRect.origin.y = CGFloat(Constant.urlBarHeight())
             }
         }
         
         weak var blockSelf: OverlayViewController? = self
-        animator?.animate(micButton, toFrame: micFrameIn(updRect))
+        animator?.animate(micButton, toFrame: micFrameIn(viewRect: updRect))
         
         if blockSelf?.showMode == ShowMode.single {
             // delay for show camera, mic frame animations
@@ -90,13 +100,13 @@ class OverlayViewController: UIViewController {
             })
         }
         
-        helperLabel?.frame = helperLabelFrameIn(updRect)
+        helperLabel?.frame = helperLabelFrameIn(viewRect: updRect)
         helperLabel?.transform = CGAffineTransform(rotationAngle: -.pi / 2)
         
-        trackingStateButton?.frame = trackFrameIn(updRect)
-        recordDot?.frame = dotFrameIn(updRect)
-        recordTimingLabel?.frame = recordLabelFrameIn(updRect)
-        buildLabel?.frame = buildFrameIn(updRect)
+        trackingStateButton?.frame = trackFrameIn(viewRect: updRect)
+        recordDot?.frame = dotFrameIn(viewRect: updRect)
+        recordTimingLabel?.frame = recordLabelFrameIn(viewRect: updRect)
+        buildLabel?.frame = buildFrameIn(viewRect: updRect)
     }
     // common visibility
     
@@ -267,17 +277,17 @@ class OverlayViewController: UIViewController {
         view.addSubview(micButton!)
         
         self.trackingStateButton = UIButton(type: .custom)
-        trackingStateButton?.frame = trackFrameIn(view.bounds)
+        trackingStateButton?.frame = trackFrameIn(viewRect: view.bounds)
         trackingStateButton?.contentVerticalAlignment = .fill
         trackingStateButton?.contentHorizontalAlignment = .fill
         view.addSubview(trackingStateButton!)
         
-        self.recordDot = UIView(frame: dotFrameIn(view.bounds))
+        self.recordDot = UIView(frame: dotFrameIn(viewRect: view.bounds))
         recordDot?.layer.cornerRadius = CGFloat(Double(DOT_SIZE) / 2.0)
         recordDot?.backgroundColor = UIColor.red
         view.addSubview(recordDot!)
         
-        self.recordTimingLabel = UILabel(frame: recordLabelFrameIn(view.bounds))
+        self.recordTimingLabel = UILabel(frame: recordLabelFrameIn(viewRect: view.bounds))
         recordTimingLabel?.font = UIFont.systemFont(ofSize: 12)
         recordTimingLabel?.textAlignment = .left
         recordTimingLabel?.textColor = UIColor.white
@@ -285,7 +295,7 @@ class OverlayViewController: UIViewController {
         recordTimingLabel?.clipsToBounds = true
         view.addSubview(recordTimingLabel!)
         
-        self.helperLabel = UILabel(frame: helperLabelFrameIn(view.bounds))
+        self.helperLabel = UILabel(frame: helperLabelFrameIn(viewRect: view.bounds))
         helperLabel?.font = UIFont.systemFont(ofSize: 12)
         helperLabel?.textAlignment = .center
         helperLabel?.textColor = UIColor.white
@@ -293,7 +303,7 @@ class OverlayViewController: UIViewController {
         helperLabel?.clipsToBounds = true
         view.addSubview(helperLabel!)
         
-        self.buildLabel = UILabel(frame: buildFrameIn(view.bounds))
+        self.buildLabel = UILabel(frame: buildFrameIn(viewRect: view.bounds))
         buildLabel?.font = UIFont.boldSystemFont(ofSize: 12)
         buildLabel?.textAlignment = .center
         buildLabel?.textColor = UIColor.white
@@ -326,5 +336,44 @@ class OverlayViewController: UIViewController {
         
         return versionBuild
     }
+    
+    // MARK: - UI Placement Helpers
+    
+    func recordFrameIn(viewRect: CGRect) -> CGRect {
+        let x = viewRect.size.width - Constant.recordSize() - Constant.recordOffsetX()
+        let y = viewRect.origin.y + (viewRect.size.height - viewRect.origin.y / 2) - Constant.recordSize() / 2
+        return CGRect(x: x, y: y, width: Constant.recordSize(), height: Constant.recordSize())
+    }
+    
+    func micFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: viewRect.size.width - Constant.recordSize() - Constant.recordOffsetX() + (Constant.recordSize() - Constant.micSizeW()) / 2, y: viewRect.origin.y + Constant.recordOffsetY(), width: Constant.micSizeW(), height: Constant.micSizeH())
+    }
+    
+    func debugFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: Constant.recordOffsetX(), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH(), width: Constant.micSizeW(), height: Constant.micSizeH())
+    }
+    
+    func showFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: viewRect.size.width - Constant.recordOffsetX() - Constant.micSizeW(), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH(), width: Constant.micSizeW(), height: Constant.micSizeH())
+    }
+    
+    private func trackFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: viewRect.size.width / 2 - (TRACK_SIZE_W / 2), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH() / 2 - TRACK_SIZE_H / 2, width: TRACK_SIZE_W, height: TRACK_SIZE_H)
+    }
+    
+    private func dotFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: viewRect.size.width / 2 - (DOT_SIZE / 2), y: viewRect.origin.y + DOT_OFFSET_Y, width: DOT_SIZE, height: DOT_SIZE)
+    }
+    
+    private func recordLabelFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: viewRect.size.width / 2 + (DOT_SIZE / 2) + RECORD_LABEL_OFFSET_X, y: viewRect.origin.y + DOT_OFFSET_Y - (RECORD_LABEL_HEIGHT - DOT_SIZE) / 2, width: RECORD_LABEL_WIDTH, height: RECORD_LABEL_HEIGHT)
+    }
+    
+    private func helperLabelFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: viewRect.size.width - HELP_LABEL_HEIGHT - 5, y: viewRect.origin.y, width: HELP_LABEL_HEIGHT, height: viewRect.size.height - viewRect.origin.y) // rotate
+    }
+    
+    private func buildFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: viewRect.size.width / 2 - (RECORD_LABEL_WIDTH / 2), y: viewRect.size.height - RECORD_LABEL_HEIGHT - 4, width: RECORD_LABEL_WIDTH, height: RECORD_LABEL_HEIGHT)
+    }
 }
-

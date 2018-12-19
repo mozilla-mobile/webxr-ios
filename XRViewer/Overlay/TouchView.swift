@@ -18,6 +18,7 @@ class TouchView: UIView {
     var showMode: ShowMode?
     var showOptions: ShowOptions?
     let MAX_INCREASE_ZONE_SIZE = 10
+    let RECORD_LONG_TAP_DURATION = 1
     private var increaseHotZoneValue: CGFloat = 0.0
     
     @objc init(frame: CGRect, micAction: @escaping HotAction, showAction: @escaping HotAction, debugAction: @escaping HotAction) {

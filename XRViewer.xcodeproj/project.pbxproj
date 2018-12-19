@@ -67,7 +67,6 @@
 		041503D31F28944F00887400 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		041503D61F28944F00887400 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		041503D81F28944F00887400 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		045B2EA81F2A02710005FF96 /* OverlayHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayHeader.h; sourceTree = "<group>"; };
 		04A815671F419EB60082D31D /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
 		04A983651F32268900120CF8 /* ARKController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKController.m; sourceTree = "<group>"; };
 		04A983661F32268900120CF8 /* ARKController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKController.h; sourceTree = "<group>"; };
@@ -185,7 +184,6 @@
 		045B2EA41F28EE790005FF96 /* Overlay */ = {
 			isa = PBXGroup;
 			children = (
-				045B2EA81F2A02710005FF96 /* OverlayHeader.h */,
 				B67D97A221C8453F0075FE0A /* UIOverlayController.swift */,
 				B67D97A421C854C20075FE0A /* OverlayViewController.swift */,
 				B6FE960421B61FEE0087A21F /* TouchView.swift */,

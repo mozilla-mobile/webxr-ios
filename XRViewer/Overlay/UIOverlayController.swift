@@ -46,11 +46,11 @@ class UIOverlayController: NSObject {
         
         if showMode.rawValue >= ShowMode.multi.rawValue {
             if showOptions.rawValue & ShowOptions.Browser.rawValue != 0 {
-                updRect.origin.y = CGFloat(URL_BAR_HEIGHT)
+                updRect.origin.y = CGFloat(Constant.urlBarHeight())
             }
         }
 
-        touchView?.setCameraRect(recordFrameIn(updRect), micRect: micFrameIn(updRect), showRect: showFrameIn(updRect), debugRect: debugFrameIn(updRect))
+        touchView?.setCameraRect(recordFrameIn(viewRect: updRect), micRect: micFrameIn(viewRect: updRect), showRect: showFrameIn(viewRect: updRect), debugRect: debugFrameIn(viewRect: updRect))
     }
 
     func hotView() -> UIView? {
@@ -155,5 +155,23 @@ class UIOverlayController: NSObject {
                 self.touchView?.setProcessTouches(true)
             })
         }
+    }
+    
+    // MARK: - UI Placement Helpers
+    
+    func recordFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: viewRect.size.width - Constant.recordSize() - Constant.recordOffsetX(), y: viewRect.origin.y + (viewRect.size.height - viewRect.origin.y) / 2 - Constant.recordSize() / 2, width: Constant.recordSize(), height: Constant.recordSize())
+    }
+    
+    func micFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: viewRect.size.width - Constant.recordSize() - Constant.recordOffsetX() + (Constant.recordSize() - Constant.micSizeW()) / 2, y: viewRect.origin.y + Constant.recordOffsetY(), width: Constant.micSizeW(), height: Constant.micSizeH())
+    }
+    
+    func debugFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: Constant.recordOffsetX(), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH(), width: Constant.micSizeW(), height: Constant.micSizeH())
+    }
+    
+    func showFrameIn(viewRect: CGRect) -> CGRect {
+        return CGRect(x: viewRect.size.width - Constant.recordOffsetX() - Constant.micSizeW(), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH(), width: Constant.micSizeW(), height: Constant.micSizeH())
     }
 }

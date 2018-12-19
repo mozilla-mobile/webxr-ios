@@ -57,5 +57,13 @@ let ExposeWebXRAPIKey = "exposeWebXRAPI"
     static func alwaysAllowWorldSensingKey() -> String { return AlwaysAllowWorldSensingKey }
     static func allowedWorldSensingSitesKey() -> String { return AllowedWorldSensingSitesKey }
     static func exposeWebXRAPIKey() -> String { return ExposeWebXRAPIKey }
+    
     @objc static func swipeGestureAreaHeight() -> Float { return 200 }
+    @objc static func recordSize() -> CGFloat { return 60.5 }
+    @objc static func recordOffsetX() -> CGFloat { return 25.5 }
+    @objc static func recordOffsetY() -> CGFloat { return 25.5 }
+    @objc static func micSizeW() -> CGFloat { return 27.75 }
+    @objc static func micSizeH() -> CGFloat { return 27.75 }
+    @objc static func urlBarHeight() -> Float { return 49 }
+    @objc static func urlBarAnimationTimeInSeconds() -> TimeInterval { return 0.2 }
 }

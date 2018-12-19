@@ -144,7 +144,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             self.barView?.hideKeyboard()
             self.barView?.setDebugVisible(webXR)
             self.barView?.setRestartTrackingVisible(webXR)
-            let webViewTopAnchorConstraintConstant: Float = webXR ? 0.0 : Float(URL_BAR_HEIGHT)
+            let webViewTopAnchorConstraintConstant: Float = webXR ? 0.0 : Constant.urlBarHeight()
             self.webViewTopAnchorConstraint?.constant = CGFloat(webViewTopAnchorConstraintConstant)
             self.webView?.superview?.setNeedsLayout()
             self.webView?.superview?.layoutIfNeeded()
@@ -160,10 +160,10 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         print("Show bar: \(showBar ? "Yes" : "No")")
         barView?.superview?.layoutIfNeeded()
 
-        let topAnchorConstant: Float = showBar ? 0.0 : 0.0 - Float(URL_BAR_HEIGHT) * 2
+        let topAnchorConstant: Float = showBar ? 0.0 : 0.0 - Constant.urlBarHeight() * 2
         barViewTopAnchorConstraint?.constant = CGFloat(topAnchorConstant)
 
-        UIView.animate(withDuration: URL_BAR_ANIMATION_TIME_IN_SECONDS, animations: {
+        UIView.animate(withDuration: Constant.urlBarAnimationTimeInSeconds(), animations: {
             self.barView?.superview?.layoutIfNeeded()
         })
     }
@@ -597,7 +597,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
         barView?.leftAnchor.constraint(equalTo: barLeftAnchor).isActive = true
         barView?.rightAnchor.constraint(equalTo: barRightAnchor).isActive = true
-        let barViewHeightAnchorConstraint: NSLayoutConstraint? = barView?.heightAnchor.constraint(equalToConstant: CGFloat(URL_BAR_HEIGHT))
+        let barViewHeightAnchorConstraint: NSLayoutConstraint? = barView?.heightAnchor.constraint(equalToConstant: CGFloat(Constant.urlBarHeight()))
         self.barViewHeightAnchorConstraint = barViewHeightAnchorConstraint
         barViewHeightAnchorConstraint?.isActive = true
 

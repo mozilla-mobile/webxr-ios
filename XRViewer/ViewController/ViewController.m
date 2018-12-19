@@ -193,10 +193,10 @@ typedef void (^UICompletion)(void);
 }
 
 - (void)updateConstraints {
-    // If XR is active, then the top anchor is 0 (fullscreen), else topSafeAreaInset + URL_BAR_HEIGHT
+    // If XR is active, then the top anchor is 0 (fullscreen), else topSafeAreaInset + Constant.urlBarHeight()
     float topSafeAreaInset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets].top;
-    [[[self webController] barViewHeightAnchorConstraint] setConstant:topSafeAreaInset + URL_BAR_HEIGHT];
-    [[[self webController] webViewTopAnchorConstraint] setConstant:[[[self stateController] state] webXR] ? 0.0f : topSafeAreaInset + URL_BAR_HEIGHT];
+    [[[self webController] barViewHeightAnchorConstraint] setConstant:topSafeAreaInset + Constant.urlBarHeight];
+    [[[self webController] webViewTopAnchorConstraint] setConstant:[[[self stateController] state] webXR] ? 0.0f : topSafeAreaInset + Constant.urlBarHeight];
 
     
     [[[self webController] webViewLeftAnchorConstraint] setConstant:0.0f];
