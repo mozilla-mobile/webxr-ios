@@ -2,7 +2,8 @@
 
 * Broke down OverlayHeader.h file into Swift constants, helper functions, and properties
 * Removed: RecordController, RecordState enum, recordDot, helperLabel, recordTimingLabel, recordButton, references to Microphone functionality
-* Converted following to Swift: Animator, OverlayViewController, UIOverlayController
+* Dropped in Swift version of Reachability
+* Converted following to Swift: ViewController, Animator, OverlayViewController, UIOverlayController
 ---
 * Converted following to Swift: Utils, Constants, AppDelegate, LayerView, LocationManager, MessageController
 ---

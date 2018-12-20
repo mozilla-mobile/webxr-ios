@@ -16,8 +16,8 @@ typealias OnRemoveObjects = ([Any]?) -> Void
 typealias OnJSUpdateData = () -> [AnyHashable : Any]
 typealias OnLoadURL = (String?) -> Void
 typealias OnSetUI = ([AnyHashable : Any]?) -> Void
-typealias OnHitTest = (Int, CGFloat, CGFloat, ResultArrayBlock) -> Void
-typealias OnAddAnchor = (String?, [Any]?, ResultBlock) -> Void
+typealias OnHitTest = (Int, CGFloat, CGFloat, @escaping ResultArrayBlock) -> Void
+typealias OnAddAnchor = (String?, [Any]?, @escaping ResultBlock) -> Void
 typealias OnDebugButtonToggled = (Bool) -> Void
 typealias OnSettingsButtonTapped = () -> Void
 typealias OnWatchAR = ([AnyHashable : Any]?) -> Void
@@ -32,8 +32,8 @@ typealias OnActivateDetectionImage = (String?, @escaping ActivateDetectionImageC
 typealias OnDeactivateDetectionImage = (String?, @escaping CreateDetectionImageCompletionBlock) -> Void
 typealias OnDestroyDetectionImage = (String?, @escaping CreateDetectionImageCompletionBlock) -> Void
 typealias OnCreateDetectionImage = ([AnyHashable : Any]?, @escaping CreateDetectionImageCompletionBlock) -> Void
-typealias OnGetWorldMap = (GetWorldMapCompletionBlock) -> Void
-typealias OnSetWorldMap = ([AnyHashable : Any]?, SetWorldMapCompletionBlock) -> Void
+typealias OnGetWorldMap = (@escaping GetWorldMapCompletionBlock) -> Void
+typealias OnSetWorldMap = ([AnyHashable : Any]?, @escaping SetWorldMapCompletionBlock) -> Void
 typealias WebCompletion = (Any?, Error?) -> Void
 
 class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler {
@@ -144,7 +144,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             self.barView?.hideKeyboard()
             self.barView?.setDebugVisible(webXR)
             self.barView?.setRestartTrackingVisible(webXR)
-            let webViewTopAnchorConstraintConstant: Float = webXR ? 0.0 : Constant.urlBarHeight()
+            let webViewTopAnchorConstraintConstant: Float = webXR ? 0.0 : Float(Constant.urlBarHeight())
             self.webViewTopAnchorConstraint?.constant = CGFloat(webViewTopAnchorConstraintConstant)
             self.webView?.superview?.setNeedsLayout()
             self.webView?.superview?.layoutIfNeeded()
@@ -160,7 +160,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         print("Show bar: \(showBar ? "Yes" : "No")")
         barView?.superview?.layoutIfNeeded()
 
-        let topAnchorConstant: Float = showBar ? 0.0 : 0.0 - Constant.urlBarHeight() * 2
+        let topAnchorConstant: Float = showBar ? 0.0 : Float(0.0 - Constant.urlBarHeight() * 2)
         barViewTopAnchorConstraint?.constant = CGFloat(topAnchorConstant)
 
         UIView.animate(withDuration: Constant.urlBarAnimationTimeInSeconds(), animations: {
