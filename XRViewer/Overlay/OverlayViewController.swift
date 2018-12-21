@@ -8,8 +8,10 @@ class OverlayViewController: UIViewController {
     private var timer: Timer?
     var animator: Animator?
     
-    let RECORD_LABEL_WIDTH: CGFloat = 80
-    let RECORD_LABEL_HEIGHT: CGFloat = 12
+    let BUILD_LABEL_WIDTH: CGFloat = 80
+    let BUILD_LABEL_HEIGHT: CGFloat = 12
+    let BUILD_LABEL_LEADING_SPACE: CGFloat = 15
+    let BUILD_LABEL_BOTTOM_SPACE: CGFloat = 34
     
     deinit {
         DDLogDebug("OverlayViewController dealloc")
@@ -98,7 +100,7 @@ class OverlayViewController: UIViewController {
         
         self.buildLabel = UILabel(frame: buildFrameIn(viewRect: view.bounds))
         buildLabel?.font = UIFont.boldSystemFont(ofSize: 12)
-        buildLabel?.textAlignment = .center
+        buildLabel?.textAlignment = .left
         buildLabel?.textColor = UIColor.white
         buildLabel?.backgroundColor = UIColor(white: 0, alpha: 0.0)
         buildLabel?.text = versionBuild()
@@ -132,21 +134,7 @@ class OverlayViewController: UIViewController {
     
     // MARK: - UI Placement Helpers
     
-    func recordFrameIn(viewRect: CGRect) -> CGRect {
-        let x = viewRect.size.width - Constant.recordSize() - Constant.recordOffsetX()
-        let y = viewRect.origin.y + (viewRect.size.height - viewRect.origin.y / 2) - Constant.recordSize() / 2
-        return CGRect(x: x, y: y, width: Constant.recordSize(), height: Constant.recordSize())
-    }
-    
-    func debugFrameIn(viewRect: CGRect) -> CGRect {
-        return CGRect(x: Constant.recordOffsetX(), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH(), width: Constant.micSizeW(), height: Constant.micSizeH())
-    }
-    
-    func showFrameIn(viewRect: CGRect) -> CGRect {
-        return CGRect(x: viewRect.size.width - Constant.recordOffsetX() - Constant.micSizeW(), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH(), width: Constant.micSizeW(), height: Constant.micSizeH())
-    }
-    
     private func buildFrameIn(viewRect: CGRect) -> CGRect {
-        return CGRect(x: viewRect.size.width / 2 - (RECORD_LABEL_WIDTH / 2), y: viewRect.size.height - RECORD_LABEL_HEIGHT - 4, width: RECORD_LABEL_WIDTH, height: RECORD_LABEL_HEIGHT)
+        return CGRect(x: BUILD_LABEL_LEADING_SPACE, y: viewRect.size.height - BUILD_LABEL_HEIGHT - BUILD_LABEL_BOTTOM_SPACE, width: BUILD_LABEL_WIDTH, height: BUILD_LABEL_HEIGHT)
     }
 }
