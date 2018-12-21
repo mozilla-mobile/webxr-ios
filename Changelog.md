@@ -1,6 +1,5 @@
 # WebXR Viewer Changelog
 
-## 1.13
 * Moved buildLabel to bottom left to prevent overlap with home indicator
 * Added TextManager class
 * Started coordinating ARKit updates via ViewController+ARSCNViewDelegate
@@ -15,6 +14,5 @@
 * Alert copy updates (Issue #105)
 * Changed URL bar cancel button functionality to be like Safari & change to reload button upon cancellation (Issue #73)
 * Added CocoaLumberjack/Swift pod for logging in Swift
-
-## 1.12
+---
 * Minor bug fixes to the app.
