@@ -18,7 +18,6 @@
 @property (nonatomic, strong) id<ARKControllerProtocol> controller;
 
 @property (nonatomic, copy) NSDictionary *request;
-@property (nonatomic, strong) ARSession *session;
 
 @property (nonatomic, strong) ARConfiguration *configuration;
 
@@ -2036,17 +2035,17 @@
     }
 }
 
-- (void)session:(ARSession *)session cameraDidChangeTrackingState:(ARCamera *)camera
-{
-    DDLogDebug(@"Session cameraDidChangeTrackingState - %@", trackingState(camera));
-    
-    if ([self didChangeTrackingState])
-    {
-        [self didChangeTrackingState](trackingState(camera));
-    }
-    
-    [[self controller] didChangeTrackingState:camera];
-}
+//- (void)session:(ARSession *)session cameraDidChangeTrackingState:(ARCamera *)camera
+//{
+//    DDLogDebug(@"Session cameraDidChangeTrackingState - %@", trackingState(camera));
+//    
+//    if ([self didChangeTrackingState])
+//    {
+//        [self didChangeTrackingState](trackingState(camera));
+//    }
+//    
+//    [[self controller] didChangeTrackingState:camera];
+//}
 
 - (void)sessionWasInterrupted:(ARSession *)session
 {

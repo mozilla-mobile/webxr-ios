@@ -45,8 +45,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     private var animator: Animator?
     private var reachability: Reachability?
     private var timerSessionRunningInBackground: Timer?
-
-// MARK: UI
+    
+    let session = ARSession()
+    @IBOutlet weak var sceneView: ARSCNView!
+    @IBOutlet weak var messagePanel: UIVisualEffectView!
+    @IBOutlet weak var messageLabel: UILabel!
+    var textManager: TextManager!
+    
+    // MARK: - View Lifecycle
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -59,6 +65,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
 
         setupCommonControllers()
+        setupUI()
+        setupScene()
 
         /// Apparently, this is called async in the main queue because we need viewDidLoad to finish
         /// its execution before doing anything on the subviews. This also could have been called from
@@ -225,7 +233,25 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         return .top
     }
 
-// MARK: Setups
+    // MARK: - Setup
+    
+    func setupScene() {
+        // Set up the scene view
+        sceneView.delegate = self
+        guard let session = arkController?.session else { return }
+        sceneView.session = session
+    }
+    
+    func setupUI() {
+        textManager = TextManager(viewController: self)
+        
+        // Set appearance of the message output panel
+        messagePanel.layer.cornerRadius = 3.0
+        messagePanel.clipsToBounds = true
+        messagePanel.isHidden = true
+        messageLabel.text = ""
+    }
+    
     func setupCommonControllers() {
         setupStateController()
         setupAnimator()
@@ -361,6 +387,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             if blockSelf?.arkController == nil {
                 print("\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********")
                 blockSelf?.startNewARKitSession(withRequest: dict)
+                guard let session = blockSelf?.arkController?.session else { return }
+                self.sceneView.session = session
             } else {
                 guard let arSessionState = blockSelf?.arkController?.arSessionState else { return }
                 switch arSessionState {

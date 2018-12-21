@@ -107,6 +107,8 @@ typedef void (^ResultArrayBlock)(NSArray *);
  */
 @property(nonatomic) SendWorldSensingDataAuthorizationState sendingWorldSensingDataAuthorizationStatus;
 
+@property (nonatomic, strong) ARSession *session;
+
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 
 /**
