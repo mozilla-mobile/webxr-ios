@@ -55,7 +55,6 @@ typedef NS_ENUM(NSUInteger, ARKType)
 typedef void (^DidUpdate)(ARKController *);
 typedef void (^DidFailSession)(NSError *);
 typedef void (^DidInterrupt)(BOOL);
-typedef void (^DidChangeTrackingState)(NSString *state);
 typedef void (^DidAddPlaneAnchors)(void);
 typedef void (^DidRemovePlaneAnchors)(void);
 typedef void (^DidUpdateWindowSize)(void);
@@ -71,7 +70,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
 @property(copy) DidUpdate didUpdate;
 @property(copy) DidInterrupt didInterrupt;
 @property(copy) DidFailSession didFailSession;
-@property(copy) DidChangeTrackingState didChangeTrackingState;
 @property(copy) DidAddPlaneAnchors didAddPlaneAnchors;
 @property(copy) DidRemovePlaneAnchors didRemovePlaneAnchors;
 @property(copy) DidUpdateWindowSize didUpdateWindowSize;

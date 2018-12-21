@@ -4,7 +4,7 @@
 * Started coordinating ARKit updates via ViewController+ARSCNViewDelegate
 * Implemented: messagePanel, messageLabel for tracking updates
 * Broke down OverlayHeader.h file into Swift constants, helper functions, and properties
-* Removed: RecordController, RecordState enum, recordDot, helperLabel, recordTimingLabel, recordButton, references to Microphone functionality
+* Removed: RecordController, RecordState enum, recordDot, helperLabel, recordTimingLabel, recordButton, references to Microphone functionality, legacy ARKit tracking state code & images
 * Dropped in Swift version of Reachability
 * Converted following to Swift: ViewController, Animator, OverlayViewController, UIOverlayController
 ---

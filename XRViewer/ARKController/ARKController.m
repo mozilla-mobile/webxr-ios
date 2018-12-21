@@ -2035,18 +2035,6 @@
     }
 }
 
-//- (void)session:(ARSession *)session cameraDidChangeTrackingState:(ARCamera *)camera
-//{
-//    DDLogDebug(@"Session cameraDidChangeTrackingState - %@", trackingState(camera));
-//    
-//    if ([self didChangeTrackingState])
-//    {
-//        [self didChangeTrackingState](trackingState(camera));
-//    }
-//    
-//    [[self controller] didChangeTrackingState:camera];
-//}
-
 - (void)sessionWasInterrupted:(ARSession *)session
 {
     DDLogError(@"Session WasInterrupted");

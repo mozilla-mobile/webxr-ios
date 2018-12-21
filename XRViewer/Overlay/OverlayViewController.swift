@@ -4,15 +4,12 @@ class OverlayViewController: UIViewController {
     
     private var showMode: ShowMode?
     private var showOptions: ShowOptions?
-    private var trackingStateButton: UIButton?
     private var buildLabel: UILabel?
     private var timer: Timer?
     var animator: Animator?
     
     let RECORD_LABEL_WIDTH: CGFloat = 80
     let RECORD_LABEL_HEIGHT: CGFloat = 12
-    let TRACK_SIZE_W: CGFloat = 256
-    let TRACK_SIZE_H: CGFloat = 62
     
     deinit {
         DDLogDebug("OverlayViewController dealloc")
@@ -67,9 +64,6 @@ class OverlayViewController: UIViewController {
             }
         }
         
-        weak var blockSelf: OverlayViewController? = self
-        
-        trackingStateButton?.frame = trackFrameIn(viewRect: updRect)
         buildLabel?.frame = buildFrameIn(viewRect: updRect)
     }
     // common visibility
@@ -99,134 +93,8 @@ class OverlayViewController: UIViewController {
             break
         }
     }
-    
-    func setTrackingState(_ state: String?, withAnimationCompletion completion: @escaping Completion) {
-        guard let showMode = showMode else { return }
-        guard let showOptions = showOptions else { return }
-        
-        if showMode.rawValue >= ShowMode.nothing.rawValue {
-            if showOptions.rawValue & ShowOptions.ARWarnings.rawValue != 0 {
-                if (state == WEB_AR_TRACKING_STATE_NORMAL) {
-                    animator?.animate(trackingStateButton, toFade: true) { finish in
-                        self.trackingStateButton?.setImage(nil, for: .normal)
-                        completion(finish)
-                    }
-                } else if (state == WEB_AR_TRACKING_STATE_LIMITED) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "ARKitNotInitialized"), for: .normal)
-                } else if (state == WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "ARKitLimitedInitializing"), for: .normal)
-                } else if (state == WEB_AR_TRACKING_STATE_LIMITED_FEATURES) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "NotEnoughVisualFeatures"), for: .normal)
-                } else if (state == WEB_AR_TRACKING_STATE_LIMITED_MOTION) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "MovingTooFast"), for: .normal)
-                } else if (state == WEB_AR_TRACKING_STATE_NOT_AVAILABLE) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "ARKitNotAvailable"), for: .normal)
-                } else if (state == WEB_AR_TRACKING_STATE_RELOCALIZING) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "ARKitRelocalizing"), for: .normal)
-                }
-                
-                return
-            }
-        }
-        
-        trackingStateButton?.setImage(nil, for: .normal)
-    }
-    
-    func setTrackingState(_ state: String?, withAnimationCompletion completion: @escaping Completion, sceneHasPlanes hasPlanes: Bool) {
-        guard let showOptions = showOptions else { return }
-        guard let showMode = showMode else { return }
-        
-        if showMode.rawValue >= ShowMode.nothing.rawValue {
-            if showOptions.rawValue & ShowOptions.ARWarnings.rawValue != 0 {
-                if (state == WEB_AR_TRACKING_STATE_NORMAL) {
-                    if hasPlanes {
-                        animator?.animate(trackingStateButton, toFade: true) { finish in
-                            self.trackingStateButton?.setImage(nil, for: .normal)
-                            completion(finish)
-                        }
-                    } else {
-                        animator?.animate(trackingStateButton, toFade: false) { finish in
-                            completion(finish)
-                        }
-                        
-                        trackingStateButton?.setImage(UIImage(named: "NoPlanesDetectedYet"), for: .normal)
-                    }
-                } else if (state == WEB_AR_TRACKING_STATE_LIMITED) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "ARKitNotInitialized"), for: .normal)
-                } else if (state == WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "ARKitLimitedInitializing"), for: .normal)
-                } else if (state == WEB_AR_TRACKING_STATE_LIMITED_FEATURES) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "NotEnoughVisualFeatures"), for: .normal)
-                } else if (state == WEB_AR_TRACKING_STATE_LIMITED_MOTION) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "MovingTooFast"), for: .normal)
-                } else if (state == WEB_AR_TRACKING_STATE_NOT_AVAILABLE) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "ARKitNotAvailable"), for: .normal)
-                } else if (state == WEB_AR_TRACKING_STATE_RELOCALIZING) {
-                    animator?.animate(trackingStateButton, toFade: false) { finish in
-                        completion(finish)
-                    }
-                    
-                    trackingStateButton?.setImage(UIImage(named: "ARKitRelocalizing"), for: .normal)
-                }
-                
-                return
-            }
-        }
-        
-        trackingStateButton?.setImage(nil, for: .normal)
-    }
 
     func setup() {
-        
-        self.trackingStateButton = UIButton(type: .custom)
-        trackingStateButton?.frame = trackFrameIn(viewRect: view.bounds)
-        trackingStateButton?.contentVerticalAlignment = .fill
-        trackingStateButton?.contentHorizontalAlignment = .fill
-        view.addSubview(trackingStateButton!)
         
         self.buildLabel = UILabel(frame: buildFrameIn(viewRect: view.bounds))
         buildLabel?.font = UIFont.boldSystemFont(ofSize: 12)
@@ -276,10 +144,6 @@ class OverlayViewController: UIViewController {
     
     func showFrameIn(viewRect: CGRect) -> CGRect {
         return CGRect(x: viewRect.size.width - Constant.recordOffsetX() - Constant.micSizeW(), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH(), width: Constant.micSizeW(), height: Constant.micSizeH())
-    }
-    
-    private func trackFrameIn(viewRect: CGRect) -> CGRect {
-        return CGRect(x: viewRect.size.width / 2 - (TRACK_SIZE_W / 2), y: viewRect.size.height - Constant.recordOffsetY() - Constant.micSizeH() / 2 - TRACK_SIZE_H / 2, width: TRACK_SIZE_W, height: TRACK_SIZE_H)
     }
     
     private func buildFrameIn(viewRect: CGRect) -> CGRect {

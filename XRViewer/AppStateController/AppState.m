@@ -9,7 +9,6 @@
     [copy setShowMode:[self showMode]];
     [copy setWebXR:[self webXR]];
     [copy setARRequest:[self aRRequest]];
-    [copy setTrackingState:[self trackingState]];
     [copy setInterruption:[self interruption]];
     [copy setComputerVisionFrameRequested:[self computerVisionFrameRequested]];
     [copy setShouldRemoveAnchorsOnNextARSession: [self shouldRemoveAnchorsOnNextARSession]];

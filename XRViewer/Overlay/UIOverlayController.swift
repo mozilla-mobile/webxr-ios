@@ -79,18 +79,6 @@ class UIOverlayController: NSObject {
         })
     }
 
-    /***
-     * Informs the overlay view controller about a tracking state change
-     * @param state The AR tracking state string
-     * @param hasPlanes A boolean indicating whether there are any planes in the scene
-     */
-
-    @objc func setTrackingState(_ state: String?, sceneHasPlanes hasPlanes: Bool) {
-
-        overlayVC?.setTrackingState(state, withAnimationCompletion: { finish in
-        }, sceneHasPlanes: hasPlanes)
-    }
-
     @objc func setARKitInterruption(_ interruption: Bool) {
         overlayWindow?.alpha = interruption ? 1 : 0
     }
