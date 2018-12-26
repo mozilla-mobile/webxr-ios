@@ -68,7 +68,7 @@ class MessageController: NSObject {
             viewController?.present(popup, animated: true)
 
             didShowMessage?()
-        } else if interrupt == false && arPopup != nil {
+        } else if !interrupt && arPopup != nil {
             arPopup?.dismiss(animated: true)
             self.arPopup = nil
             didHideMessage?()
@@ -99,33 +99,14 @@ class MessageController: NSObject {
         })
     }
 
-    func showMessageAboutFailSession(withCompletion completion: @escaping () -> Void) {
-        let popup = PopupDialog(title: "AR Session Failed", message: "Tap 'Ok' to restart the session", image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
-
-        let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
-                popup.dismiss(animated: true)
-
-                self.didHideMessageByUser?()
-
-                completion()
-            })
-
-        popup.addButtons([ok])
-        viewController?.present(popup, animated: true)
-        didShowMessage?()
-    }
-
     @objc func showMessageAboutMemoryWarning(withCompletion completion: @escaping () -> Void) {
         let popup = PopupDialog(title: "Memory Issue Occurred", message: "There was not enough memory for the application to keep working", image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
 
         let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
                 popup.dismiss(animated: true)
 
-                //if completion
-
                 completion()
             
-
                 self.didHideMessageByUser?()
             })
 
@@ -146,22 +127,6 @@ class MessageController: NSObject {
         popup.addButtons([ok])
         viewController?.present(popup, animated: true)
         didShowMessage?()
-    }
-
-    func showSettingsPopup(_ responseBlock: @escaping (Bool) -> Void) {
-        let popup = PopupDialog(title: "Open iOS Settings", message: "Opening iOS Settings will cause the current AR Session to be restarted when you come back", image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
-
-        let ok = DefaultButton(title: "OK", height: 40, dismissOnTap: true, action: {
-                responseBlock(true)
-            })
-        ok.titleColor = UIColor.blue
-
-        let cancel = DefaultButton(title: "Cancel", height: 40, dismissOnTap: true, action: {
-                responseBlock(false)
-            })
-
-        popup.addButtons([cancel, ok])
-        viewController?.present(popup, animated: true)
     }
 
     @objc func showMessageAboutResetTracking(_ responseBlock: @escaping (ResetTrackingOption) -> Void) {
