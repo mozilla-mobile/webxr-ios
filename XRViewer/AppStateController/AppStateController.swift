@@ -21,7 +21,6 @@ class AppStateController: NSObject {
     @objc var onOptionsUpdate: ASShowOptionsChangedAction?
     @objc var onXRUpdate: ASBoolChangedAction?
     @objc var onRequestUpdate: ASOnRequestAction?
-    @objc var onInterruption: ASBoolChangedAction?
     @objc var onDebug: ASBoolChangedAction?
     @objc var onMemoryWarning: ASURLAction?
     @objc var onEnterForeground: ASURLAction?
@@ -74,14 +73,6 @@ class AppStateController: NSObject {
         guard let dict = dict else { return }
         DispatchQueue.main.async {
             onRequestUpdate(dict)
-        }
-    }
-
-    @objc func setARInterruption(_ interruption: Bool) {
-        self.state = state?.updated(withInterruption: interruption)
-        guard let onInterruption = onInterruption else { return }
-        DispatchQueue.main.async {
-            onInterruption(interruption)
         }
     }
 

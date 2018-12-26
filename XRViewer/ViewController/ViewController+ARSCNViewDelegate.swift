@@ -14,4 +14,21 @@ extension ViewController: ARSCNViewDelegate {
             textManager.cancelScheduledMessage(forType: .trackingStateEscalation)
         }
     }
+    
+    func sessionWasInterrupted(_ session: ARSession) {
+        DDLogError("sessionWasInterrupted")
+        textManager.blurBackground()
+        overlayController?.setARKitInterruption(true)
+        messageController?.showMessageAboutARInterruption(true)
+        webController?.wasARInterruption(true)
+    }
+    
+    func sessionInterruptionEnded(_ session: ARSession) {
+        DDLogError("sessionInterruptionEnded")
+        textManager.unblurBackground()
+        textManager.showMessage("Resetting...")
+        overlayController?.setARKitInterruption(false)
+        messageController?.showMessageAboutARInterruption(false)
+        webController?.wasARInterruption(false)
+    }
 }

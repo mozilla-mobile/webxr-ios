@@ -9,7 +9,6 @@
     [copy setShowMode:[self showMode]];
     [copy setWebXR:[self webXR]];
     [copy setARRequest:[self aRRequest]];
-    [copy setInterruption:[self interruption]];
     [copy setComputerVisionFrameRequested:[self computerVisionFrameRequested]];
     [copy setShouldRemoveAnchorsOnNextARSession: [self shouldRemoveAnchorsOnNextARSession]];
     [copy setSendComputerVisionData:[self sendComputerVisionData]];
@@ -59,11 +58,6 @@
     {
         return NO;
     }
-    
-    if ([self interruption] != [theObject interruption])
-    {
-        return NO;
-    }
 
     if ([self computerVisionFrameRequested] != [theObject computerVisionFrameRequested])
     {
@@ -109,7 +103,7 @@
 
 - (NSUInteger)hash
 {
-    return [self showOptions] ^ [self showMode] ^ [self webXR] ^ [[self trackingState] hash] ^ [[self aRRequest] hash] ^ [self interruption];
+    return [self showOptions] ^ [self showMode] ^ [self webXR] ^ [[self trackingState] hash] ^ [[self aRRequest] hash];
 }
 
 + (instancetype)defaultState
@@ -151,12 +145,6 @@
 - (instancetype)updatedWithARRequest:(NSDictionary *)dict
 {
     [self setARRequest:dict];
-    return self;
-}
-
-- (instancetype)updatedWithInterruption:(BOOL)interruption
-{
-    [self setInterruption:interruption];
     return self;
 }
 

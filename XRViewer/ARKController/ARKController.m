@@ -1666,13 +1666,6 @@
             }
         }
     }
-
-    // Inform up in the calling hierarchy when we have plane anchors added to the scene
-    if ([self didAddPlaneAnchors]) {
-        if ([self anyPlaneAnchor:anchors]) {
-            [self didAddPlaneAnchors]();
-        }
-    }
 }
 
 - (void) updateDictionaryForAnchor:(ARAnchor *)updatedAnchor {
@@ -1942,13 +1935,6 @@
             }
         }
     }
-
-    // Inform up in the calling hierarchy when we have plane anchors removed from the scene
-    if ([self didRemovePlaneAnchors]) {
-        if ([self anyPlaneAnchor:anchors]) {
-            [self didRemovePlaneAnchors]();
-        }
-    }
 }
 
 - (NSString *)anchorIDForAnchor:(ARAnchor *)anchor {
@@ -2032,26 +2018,6 @@
     if ([self didFailSession])
     {
         [self didFailSession](error);
-    }
-}
-
-- (void)sessionWasInterrupted:(ARSession *)session
-{
-    DDLogError(@"Session WasInterrupted");
-    
-    if ([self didInterrupt])
-    {
-        [self didInterrupt](YES);
-    }
-}
-
-- (void)sessionInterruptionEnded:(ARSession *)session
-{
-    DDLogError(@"Session InterruptionEnded");
-    
-    if ([self didInterrupt])
-    {
-        [self didInterrupt](NO);
     }
 }
 

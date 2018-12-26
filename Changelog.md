@@ -1,5 +1,7 @@
 # WebXR Viewer Changelog
-
+* Moved ARSession methods to ViewController+ARSCNViewDelegate
+* Removed legacy ARKit interruption code
+---
 * Moved buildLabel to bottom left to prevent overlap with home indicator
 * Added TextManager class
 * Started coordinating ARKit updates via ViewController+ARSCNViewDelegate

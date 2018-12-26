@@ -38,10 +38,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     @IBOutlet private weak var webLayerView: LayerView!
     private var stateController: AppStateController?
     private var arkController: ARKController?
-    private var webController: WebController?
-    private var overlayController: UIOverlayController?
+    var webController: WebController?
+    var overlayController: UIOverlayController?
     private var locationManager: LocationManager?
-    private var messageController: MessageController?
+    var messageController: MessageController?
     private var animator: Animator?
     private var reachability: Reachability?
     private var timerSessionRunningInBackground: Timer?
@@ -424,13 +424,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.stateController?.state?.sendComputerVisionData = true
             }
         }
-
-        stateController?.onInterruption = { interruption in
-            blockSelf?.messageController?.showMessageAboutARInterruption(interruption)
-
-            blockSelf?.overlayController?.setARKitInterruption(interruption)
-            blockSelf?.webController?.wasARInterruption(interruption)
-        }
     }
 
     func urlIsNotTheLastXRVisitedURL() -> Bool {
@@ -616,10 +609,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     })
                 }
             })
-        }
-
-        arkController?.didInterrupt = { interruption in
-            blockSelf?.stateController?.setARInterruption(interruption)
         }
 
         guard let hasPlanes = blockSelf?.arkController?.hasPlanes() else { return }
