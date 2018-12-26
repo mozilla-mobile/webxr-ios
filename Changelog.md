@@ -1,6 +1,7 @@
 # WebXR Viewer Changelog
+* Fixed Settings.bundle check in AppDelegate
 * Moved ARSession methods to ViewController+ARSCNViewDelegate
-* Removed legacy ARKit interruption code
+* Removed: Legacy ARKit interruption code, legacy MessageController functions
 ---
 * Moved buildLabel to bottom left to prevent overlap with home indicator
 * Added TextManager class

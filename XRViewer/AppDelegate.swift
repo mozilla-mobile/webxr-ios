@@ -18,13 +18,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func registerDefaultsFromSettingsBundle() {
-        let settingsBundle = Bundle.main.path(forResource: "Settings", ofType: "bundle")
-        if settingsBundle == nil {
+        guard let settingsBundle = Bundle.main.url(forResource: "Settings", withExtension: "bundle") else {
             print("Could not find Settings.bundle")
             return
         }
 
-        guard let settings = NSDictionary(contentsOfFile: URL(fileURLWithPath: settingsBundle ?? "").appendingPathComponent("Root.plist").absoluteString) else { return }
+        guard let settings = NSDictionary(contentsOf: settingsBundle.appendingPathComponent("Root.plist")) else {
+            print("Could not find settings dictionary")
+            return
+        }
         let preferences = settings["PreferenceSpecifiers"] as? [[AnyHashable : Any]]
 
         var defaultsToRegister = [AnyHashable : Any]()
