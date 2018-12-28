@@ -12,6 +12,7 @@
     [copy setComputerVisionFrameRequested:[self computerVisionFrameRequested]];
     [copy setShouldRemoveAnchorsOnNextARSession: [self shouldRemoveAnchorsOnNextARSession]];
     [copy setSendComputerVisionData:[self sendComputerVisionData]];
+    [copy setShouldShowLiteModePopup:[self shouldShowLiteModePopup]];
     [copy setShouldShowSessionStartedPopup: [self shouldShowSessionStartedPopup]];
     [copy setNumberOfTimesSendNativeTimeWasCalled: [self numberOfTimesSendNativeTimeWasCalled]];
     [copy setUserGrantedSendingComputerVisionData: [self userGrantedSendingComputerVisionData]];
@@ -74,6 +75,10 @@
         return NO;
     }
     
+    if ([self shouldShowLiteModePopup] != [theObject shouldShowLiteModePopup]) {
+        return NO;
+    }
+    
     if ([self shouldShowSessionStartedPopup] != [theObject shouldShowSessionStartedPopup]) {
         return NO;
     }
@@ -112,10 +117,11 @@
     
     [state setShowMode:SHOW_MODE_BY_DEFAULT];
     [state setShowOptions:SHOW_OPTIONS_BY_DEFAULT];
+    [state setShouldShowLiteModePopup:YES];
     [state setShouldShowSessionStartedPopup:POPUP_ENABLED_BY_DEFAULT];
     [state setNumberOfTimesSendNativeTimeWasCalled:0];
     [state setUserGrantedSendingComputerVisionData:USER_GRANTED_SENDING_COMPUTER_VISION_DATA_BY_DEFAULT];
-    [state setUserGrantedSendingWorldStateData:USER_GRANTED_SENDING_WORLD_DATA_BY_DEFAULT];
+    [state setUserGrantedSendingWorldStateData:SendWorldSensingDataAuthorizationStateDenied];
     [state setAskedComputerVisionData:NO];
     [state setAskedWorldStateData:NO];
 

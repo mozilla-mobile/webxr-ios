@@ -18,20 +18,6 @@
 #define WORLD_TRACKING_FAILED_ARKIT_ERROR_CODE 200
 
 /**
- Enum representing the world sensing authorization status
- 
- - SendWorldSensingDataAuthorizationStateNotDetermined: The user didn't say anything about the world sensing
- - SendWorldSensingDataAuthorizationStateAuthorized: The user allowed sending wold sensing data
- - SendWorldSensingDataAuthorizationStateDenied: The user denied sending world sensing data
- */
-typedef NS_ENUM(NSUInteger, SendWorldSensingDataAuthorizationState)
-{
-    SendWorldSensingDataAuthorizationStateNotDetermined,
-    SendWorldSensingDataAuthorizationStateAuthorized,
-    SendWorldSensingDataAuthorizationStateDenied
-};
-
-/**
  An enum representing the ARKit session state
 
  - ARKSessionUnknown: We don't know about the session state, probably it's been initiated but not ran yet

@@ -42,7 +42,7 @@ class MessageController: NSObject {
     @objc func showMessageAboutWebError(_ error: Error?, withCompletion reloadCompletion: @escaping (_ reload: Bool) -> Void) {
         let popup = PopupDialog(title: "Cannot open the page", message: "Please check the URL and try again", image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
 
-        let cancel = DestructiveButton(title: "Ok", height: 40, dismissOnTap: true, action: {
+        let cancel = CancelButton(title: "Ok", height: 40, dismissOnTap: true, action: {
                 reloadCompletion(false)
 
                 self.didHideMessageByUser?()
@@ -135,26 +135,21 @@ class MessageController: NSObject {
         let resetTracking = DefaultButton(title: "Completely restart tracking", height: 40, dismissOnTap: true, action: {
                 responseBlock(.ResetTracking)
             })
-        resetTracking.titleColor = resetTracking.tintColor
 
         let removeExistingAnchors = DefaultButton(title: "Remove known anchors", height: 40, dismissOnTap: true, action: {
                 responseBlock(.RemoveExistingAnchors)
             })
-        removeExistingAnchors.titleColor = removeExistingAnchors.tintColor
 
         let saveWorldMap = DefaultButton(title: "Save World Map", height: 40, dismissOnTap: true, action: {
                 responseBlock(.SaveWorldMap)
             })
-        saveWorldMap.titleColor = saveWorldMap.tintColor
 
         let loadWorldMap = DefaultButton(title: "Load previously saved World Map", height: 40, dismissOnTap: true, action: {
                 responseBlock(.LoadSavedWorldMap)
             })
-        loadWorldMap.titleColor = loadWorldMap.tintColor
 
         let cancelButton = CancelButton(title: "Cancel", height: 40, dismissOnTap: true, action: {
             })
-        cancelButton.titleColor = cancelButton.tintColor
 
         popup.addButtons([resetTracking, removeExistingAnchors, saveWorldMap, loadWorldMap, cancelButton])
 
@@ -164,12 +159,11 @@ class MessageController: NSObject {
     @objc func showMessageAboutAccessingTheCapturedImage(_ granted: @escaping (Bool) -> Void) {
         let popup = PopupDialog(title: "Video Camera Image Access", message: "WebXR Viewer displays video from your camera without giving the web page access to the video.\n\nThis page is requesting access to images from the video camera. Allow?", image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 340.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
 
-        let ok = DestructiveButton(title: "YES", height: 40, dismissOnTap: true, action: {
+        let ok = DefaultButton(title: "YES", height: 40, dismissOnTap: true, action: {
                 granted(true)
             })
-        ok.titleColor = UIColor.blue
 
-        let cancel = DefaultButton(title: "NO", height: 40, dismissOnTap: true, action: {
+        let cancel = CancelButton(title: "NO", height: 40, dismissOnTap: true, action: {
                 granted(false)
             })
 
@@ -188,7 +182,7 @@ class MessageController: NSObject {
         self.viewController?.present(dialog, animated: true)
     }
 
-    @objc func showMessageAboutAccessingWorldSensingData(_ granted: @escaping (Bool) -> Void, url: URL?) {
+    @objc func showMessageAboutAccessingWorldSensingData(_ access: @escaping (SendWorldSensingDataAuthorizationState) -> Void, url: URL?) {
         let standardUserDefaults = UserDefaults.standard
         let allowedWorldSensingSites = standardUserDefaults.dictionary(forKey: Constant.allowedWorldSensingSitesKey())
         var site: String? = nil
@@ -198,21 +192,21 @@ class MessageController: NSObject {
 
         // Check global permission.
         if standardUserDefaults.bool(forKey: Constant.alwaysAllowWorldSensingKey()) {
-            granted(true)
+            access(.authorized)
             return
         }
 
         // Check per-site permission.
         if allowedWorldSensingSites != nil {
             if allowedWorldSensingSites?[site ?? ""] != nil {
-                granted(true)
+                access(.authorized)
                 return
             }
         }
 
         let popup = PopupDialog(title: "Access to World Sensing", message: "This webpage wants to use your camera to look for faces and things in the real world. (For details, see our Privacy Notice in Settings.) Allow?", image: nil, buttonAlignment: NSLayoutConstraint.Axis.vertical /* Horizontal */, transitionStyle: .bounceUp, preferredWidth: 340.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
 
-        let always = DestructiveButton(title: "Always for this site", height: 40, dismissOnTap: true, action: {
+        let always = DefaultButton(title: "Always for this site", height: 40, dismissOnTap: true, action: {
 
                 // don't set global permission...
                 // [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:alwaysAllowWorldSensingKey];
@@ -228,19 +222,22 @@ class MessageController: NSObject {
                 newDict[site ?? ""] = "YES"
                 UserDefaults.standard.set(newDict, forKey: Constant.allowedWorldSensingSitesKey())
 
-                granted(true)
+                access(.authorized)
             })
 
-        let ok = DestructiveButton(title: "This time only", height: 40, dismissOnTap: true, action: {
-                granted(true)
-            })
-        ok.titleColor = UIColor.blue
-
-        let cancel = DefaultButton(title: "NO", height: 40, dismissOnTap: true, action: {
-                granted(false)
+        let ok = DefaultButton(title: "This time only", height: 40, dismissOnTap: true, action: {
+                access(.authorized)
             })
 
-        popup.addButtons([cancel, ok, always])
+        let onePlane = DefaultButton(title: "Lite Mode: Only share one plane", height: 40, dismissOnTap: true, action: {
+            access(.singlePlane)
+        })
+        
+        let cancel = CancelButton(title: "NO", height: 40, dismissOnTap: true, action: {
+                access(.denied)
+            })
+
+        popup.addButtons([cancel, onePlane, ok, always])
         viewController?.present(popup, animated: true)
     }
     
@@ -266,7 +263,7 @@ class MessageController: NSObject {
         PopupDialogOverlayView.appearance().opacity = 0.5
 
         DefaultButton.appearance().titleFont = largeFont
-        DefaultButton.appearance().titleColor = UIColor.gray
+        DefaultButton.appearance().titleColor = UIColor.blue
         DefaultButton.appearance().buttonColor = UIColor.clear
         DefaultButton.appearance().separatorColor = UIColor(white: 0.8, alpha: 1)
 

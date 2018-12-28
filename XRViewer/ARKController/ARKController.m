@@ -338,7 +338,8 @@
     
 #ifdef ALLOW_GET_WORLDMAP
     switch (self.sendingWorldSensingDataAuthorizationStatus) {
-        case SendWorldSensingDataAuthorizationStateAuthorized: {
+        case SendWorldSensingDataAuthorizationStateAuthorized:
+        case SendWorldSensingDataAuthorizationStateSinglePlane: {
             self.getWorldMapPromise = completion;
             [self _getWorldMap];
             break;
@@ -533,7 +534,8 @@
     }
     
     switch (self.sendingWorldSensingDataAuthorizationStatus) {
-        case SendWorldSensingDataAuthorizationStateAuthorized: {
+        case SendWorldSensingDataAuthorizationStateAuthorized:
+        case SendWorldSensingDataAuthorizationStateSinglePlane: {
             self.setWorldMapPromise = completion;
             // we do it here (rather than above) because if a nil is passed in, we don't want to replace the previously saved
             // value (since a user could still reload it with the browser menu)
@@ -700,7 +702,7 @@
         [self setComputerVisionDataEnabled:[state userGrantedSendingComputerVisionData]];
     }
     if ([state askedWorldStateData]) {
-        [self setSendingWorldSensingDataAuthorizationStatus:[state userGrantedSendingWorldStateData] ? SendWorldSensingDataAuthorizationStateAuthorized: SendWorldSensingDataAuthorizationStateDenied];
+        [self setSendingWorldSensingDataAuthorizationStatus:[state userGrantedSendingWorldStateData]];
     }
     
     [self setupDeviceCamera];
@@ -943,6 +945,30 @@
             }
             break;
         }
+        case SendWorldSensingDataAuthorizationStateSinglePlane: {
+            NSLog(@"World sensing auth changed to single plane");
+
+            NSArray *anchors = [[[self session] currentFrame] anchors];
+            NSPredicate* arPlanePredicate = [NSPredicate predicateWithFormat:@"self isKindOfClass: %@", [ARPlaneAnchor class]];
+            NSArray* predicateResults = [anchors filteredArrayUsingPredicate:arPlanePredicate];
+            
+            if (predicateResults.count > 0) {
+                ARPlaneAnchor *firstPlane = predicateResults.firstObject;
+                if (!objects[[self anchorIDForAnchor:firstPlane]]) {
+                    NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:firstPlane] mutableCopy];
+                    objects[[self anchorIDForAnchor:firstPlane]] = addedAnchorDictionary;
+                }
+                [addedAnchorsSinceLastFrame addObject: objects[[self anchorIDForAnchor:firstPlane]]];
+            }
+            
+            [self createRequestedDetectionImages];
+            
+            // Only need to do this if there's an outstanding world map request
+            if (self.getWorldMapPromise) {
+                [self _getWorldMap];
+            }
+            break;
+        }
         case SendWorldSensingDataAuthorizationStateDenied: {
             NSLog(@"World sensing auth changed to denied");
 
@@ -990,7 +1016,8 @@
 
 - (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion {
     switch (self.sendingWorldSensingDataAuthorizationStatus) {
-        case SendWorldSensingDataAuthorizationStateAuthorized: {
+        case SendWorldSensingDataAuthorizationStateAuthorized:
+        case SendWorldSensingDataAuthorizationStateSinglePlane: {
             self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = completion;
             [self _createDetectionImage:referenceImageDictionary];
             break;
@@ -1547,7 +1574,9 @@
     NSMutableArray *array = [NSMutableArray array];
     [objects enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
      {
-         if ([self sendingWorldSensingDataAuthorizationStatus] == SendWorldSensingDataAuthorizationStateAuthorized || [objects[key][WEB_AR_MUST_SEND_OPTION] boolValue]) {
+         if ([self sendingWorldSensingDataAuthorizationStatus] == SendWorldSensingDataAuthorizationStateAuthorized ||
+             [self sendingWorldSensingDataAuthorizationStatus] == SendWorldSensingDataAuthorizationStateSinglePlane ||
+             [objects[key][WEB_AR_MUST_SEND_OPTION] boolValue]) {
              
              if ([objects[key][WEB_AR_ANCHOR_TYPE] isEqualToString:@"face"]) {
                  if (self.numberOfFramesWithoutSendingFaceGeometry < 1) {
@@ -1649,7 +1678,14 @@
         }
         
         if ([self shouldSendAnchor:addedAnchor] ||
-            self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
+            self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized
+            // Tony: Initially I implemented this line to allow face-based and image-based AR
+            // experiences to work when operating in .singlePlane/AR Lite Mode.  However
+            // if the user is choosing to operate in AR Lite Mode (i.e. a mode focused on
+            // restricting the amount of data shared), they likely wouldn't want the website to
+            // utilize any recognized ARFaceAnchors nor, potentially, ARImageAnchors
+//            || (self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateSinglePlane && ([addedAnchor isKindOfClass:[ARImageAnchor class]] || [addedAnchor isKindOfClass:[ARFaceAnchor class]]))
+            ) {
             
             NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:addedAnchor] mutableCopy];
             [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
@@ -1664,6 +1700,20 @@
                     self.detectionImageActivationPromises[addedImageAnchor.referenceImage.name] = nil;
                 }
             }
+        }
+    }
+    
+    if (self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateSinglePlane) {
+        
+        NSArray *allFrameAnchors = [[[self session] currentFrame] anchors];
+        NSPredicate* arPlanePredicate = [NSPredicate predicateWithFormat:@"self isKindOfClass: %@", [ARPlaneAnchor class]];
+        NSArray* predicateResults = [allFrameAnchors filteredArrayUsingPredicate:arPlanePredicate];
+        
+        if (predicateResults.count == 1) {
+            ARPlaneAnchor *firstPlane = allFrameAnchors.firstObject;
+            NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryForAnchor:firstPlane] mutableCopy];
+            [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+            objects[[self anchorIDForAnchor:firstPlane]] = addedAnchorDictionary;
         }
     }
 }

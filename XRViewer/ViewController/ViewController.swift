@@ -972,7 +972,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         arkController?.computerVisionDataEnabled = false
         stateController?.state?.userGrantedSendingComputerVisionData = false
-        stateController?.state?.userGrantedSendingWorldStateData = false
+        stateController?.state?.userGrantedSendingWorldStateData = .denied
         stateController?.state?.sendComputerVisionData = true
         stateController?.state?.askedComputerVisionData = false
         stateController?.state?.askedWorldStateData = false
@@ -991,16 +991,29 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.stateController?.state?.userGrantedSendingComputerVisionData = granted
 
                 blockSelf?.stateController?.state?.askedWorldStateData = true
-                blockSelf?.stateController?.state?.userGrantedSendingWorldStateData = granted ? true : false
+                blockSelf?.stateController?.state?.userGrantedSendingWorldStateData = granted ? .authorized : .denied
             })
         } else if (request?[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false) {
-            messageController?.showMessageAboutAccessingWorldSensingData({ granted in
-                blockSelf?.webController?.userGrantedSendingWorldSensingData(granted)
-                if blockSelf?.arkController != nil {
-                    blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = granted ? SendWorldSensingDataAuthorizationState.authorized : SendWorldSensingDataAuthorizationState.denied
-                }
+            messageController?.showMessageAboutAccessingWorldSensingData({ access in
+                
                 blockSelf?.stateController?.state?.askedWorldStateData = true
-                blockSelf?.stateController?.state?.userGrantedSendingWorldStateData = granted
+                
+                switch access {
+                case SendWorldSensingDataAuthorizationState.authorized,
+                     SendWorldSensingDataAuthorizationState.singlePlane:
+                    blockSelf?.webController?.userGrantedSendingWorldSensingData(true)
+                    blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = access
+                    blockSelf?.stateController?.state?.userGrantedSendingWorldStateData = access
+                default:
+                    blockSelf?.webController?.userGrantedSendingWorldSensingData(false)
+                    blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = .denied
+                    blockSelf?.stateController?.state?.userGrantedSendingWorldStateData = .denied
+                }
+                
+                if access == SendWorldSensingDataAuthorizationState.singlePlane && blockSelf?.stateController?.state?.shouldShowLiteModePopup ?? false {
+                    blockSelf?.stateController?.state?.shouldShowLiteModePopup = false
+                    blockSelf?.messageController?.showMessage(withTitle: "Lite Mode Started", message: "Only the first plane scanned will be shared with this website. No facial recognition nor image recognition will be shared.", hideAfter: 6)
+                }
             }, url: webController?.webView?.url)
         } else {
             // if neither is requested, we'll actually set it to denied!

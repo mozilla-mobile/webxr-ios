@@ -4,7 +4,6 @@
 #define SHOW_OPTIONS_BY_DEFAULT        None
 #define POPUP_ENABLED_BY_DEFAULT       YES
 #define USER_GRANTED_SENDING_COMPUTER_VISION_DATA_BY_DEFAULT    NO
-#define USER_GRANTED_SENDING_WORLD_DATA_BY_DEFAULT    NO
 
 /*
  ShowDebug, // Shows the only the debug info
@@ -70,6 +69,21 @@ typedef NS_OPTIONS(NSUInteger, ShowOptions)
 };
 
 /**
+ Enum representing the world sensing authorization status
+ 
+ - SendWorldSensingDataAuthorizationStateNotDetermined: The user didn't say anything about the world sensing
+ - SendWorldSensingDataAuthorizationStateAuthorized: The user allowed sending wold sensing data
+ - SendWorldSensingDataAuthorizationStateDenied: The user denied sending world sensing data
+ */
+typedef NS_ENUM(NSUInteger, SendWorldSensingDataAuthorizationState)
+{
+    SendWorldSensingDataAuthorizationStateNotDetermined,
+    SendWorldSensingDataAuthorizationStateAuthorized,
+    SendWorldSensingDataAuthorizationStateSinglePlane,
+    SendWorldSensingDataAuthorizationStateDenied
+};
+
+/**
  The app internal state
  */
 @interface AppState : NSObject <NSCopying>
@@ -83,10 +97,11 @@ typedef NS_OPTIONS(NSUInteger, ShowOptions)
 @property(nonatomic) BOOL shouldRemoveAnchorsOnNextARSession;
 @property(nonatomic) BOOL sendComputerVisionData;
 @property(nonatomic) BOOL shouldShowSessionStartedPopup;
+@property(nonatomic) BOOL shouldShowLiteModePopup;
 @property(nonatomic) int numberOfTimesSendNativeTimeWasCalled;
 @property(nonatomic) bool userGrantedSendingComputerVisionData;
 @property(nonatomic) bool askedComputerVisionData;
-@property(nonatomic) bool userGrantedSendingWorldStateData;
+@property(nonatomic) SendWorldSensingDataAuthorizationState userGrantedSendingWorldStateData;
 @property(nonatomic) bool askedWorldStateData;
 
 + (instancetype)defaultState;

@@ -1,4 +1,5 @@
 # WebXR Viewer Changelog
+* Added Lite Mode option to only share a single plane during World Sensing
 * Fixed Settings.bundle check in AppDelegate
 * Moved ARSession methods to ViewController+ARSCNViewDelegate
 * Removed: Legacy ARKit interruption code, legacy MessageController functions
