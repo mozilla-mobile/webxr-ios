@@ -1,10 +1,80 @@
 #ifndef WebARKHeader_h
 #define WebARKHeader_h
 
-#import "AppState.h"
-
 #define INTERNET_OFFLINE_CODE -1009
 #define USER_CANCELLED_LOADING_CODE -999
+
+/**
+ An enum representing the state of the app UI at a given time
+ 
+ - ShowNothing: Shows the warning labels
+ - ShowSingle: Shows the record button
+ - ShowDebug: Shows the record button, the helper and build label, and the AR debug info
+ - ShowMulti: Shows the URL Bar and the record button
+ - ShowMultiDebug: Shows the URL Bar the record button and the AR debug info
+ */
+typedef NS_ENUM(NSUInteger, ShowMode)
+{
+    ShowNothing,
+    ShowSingle,
+    ShowDebug,
+    ShowMulti,
+    ShowMultiDebug
+};
+
+/**
+ Show options. This option set is built from the AR Request dictionary received on initAR
+ 
+ - None: Shows nothing
+ - Mic: Shows the mic button
+ - Capture: Shows the record button
+ - CaptureTime: Shows the record dot button
+ - Browser: Shows in browser mode
+ - ARWarnings: Shows warnings reported by ARKit
+ - ARFocus: Shows a focus node
+ - ARObject: Shows AR objects
+ - Debug: Not used
+ - ARPlanes: Shows AR planes
+ - ARPoints: Shows AR feature points
+ - ARStatistics: Shows AR Statistics
+ - BuildNumber: Shows the app build number
+ - Full: Shows everything
+ */
+typedef NS_OPTIONS(NSUInteger, ShowOptions)
+{
+    None         = 0,
+    
+    Mic          = (1 << 0),
+    Capture      = (1 << 1),
+    CaptureTime  = (1 << 2),
+    Browser      = (1 << 3),
+    ARWarnings   = (1 << 4),
+    ARFocus      = (1 << 5),
+    ARObject     = (1 << 6),
+    Debug        = (1 << 7),
+    
+    ARPlanes     = (1 << 8),
+    ARPoints     = (1 << 9),
+    ARStatistics = (1 << 10),
+    BuildNumber  = (1 << 11),
+    
+    Full         = NSUIntegerMax
+};
+
+/**
+ Enum representing the world sensing authorization status
+ 
+ - SendWorldSensingDataAuthorizationStateNotDetermined: The user didn't say anything about the world sensing
+ - SendWorldSensingDataAuthorizationStateAuthorized: The user allowed sending wold sensing data
+ - SendWorldSensingDataAuthorizationStateDenied: The user denied sending world sensing data
+ */
+typedef NS_ENUM(NSUInteger, SendWorldSensingDataAuthorizationState)
+{
+    SendWorldSensingDataAuthorizationStateNotDetermined,
+    SendWorldSensingDataAuthorizationStateAuthorized,
+    SendWorldSensingDataAuthorizationStateSinglePlane,
+    SendWorldSensingDataAuthorizationStateDenied
+};
 
 // URL
 #define WEB_URL @"https://ios-viewer.webxrexperiments.com/viewer.html"

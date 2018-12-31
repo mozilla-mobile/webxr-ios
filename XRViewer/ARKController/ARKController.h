@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "ARKHelper.h"
-#import "AppState.h"
+
+@class AppState;
 
 // The ARSessionConfiguration object passed to the run(_:options:) method is not supported by the current device.
 #define UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_CODE 100

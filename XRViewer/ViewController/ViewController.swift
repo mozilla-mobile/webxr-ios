@@ -263,7 +263,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     func setupStateController() {
         weak var blockSelf: ViewController? = self
 
-        self.stateController = AppStateController(state: AppState.default())
+        self.stateController = AppStateController(state: AppState.defaultState())
 
         stateController?.onDebug = { showDebug in
             blockSelf?.webController?.showDebug(showDebug)
@@ -840,9 +840,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 // MARK: Cleanups
     func cleanupCommonControllers() {
         animator?.clean()
-
-        stateController?.state = AppState.default()
-
+        stateController?.state = AppState.defaultState()
         messageController?.clean()
     }
 
@@ -851,7 +849,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         cleanWebController()
         cleanARKController()
-
         cleanOverlay()
     }
 
@@ -875,22 +872,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 // MARK: Splash
     func showSplash(with completion: @escaping UICompletion) {
         splashLayerView.alpha = 1
-
         RUN_UI_COMPLETION_ASYNC_MAIN(c: completion)
     }
 
     func hideSplash(with completion: @escaping UICompletion) {
         splashLayerView.alpha = 0
-
         RUN_UI_COMPLETION_ASYNC_MAIN(c: completion)
     }
 
 // MARK: MemoryWarning
     func processMemoryWarning() {
         stateController?.saveDidReceiveMemoryWarning(onURL: webController?.lastURL)
-
         cleanupCommonControllers()
-
         //    [self showSplashWithCompletion:^
         //     {
         cleanupTargetControllers()
