@@ -3,7 +3,7 @@
 * Fixed Settings.bundle check in AppDelegate
 * Moved ARSession methods to ViewController+ARSCNViewDelegate
 * Removed: Legacy ARKit interruption code, legacy MessageController functions
-* Converted following to Swift: AppState
+* Converted following to Swift: AppState, Prefix
 ---
 * Moved buildLabel to bottom left to prevent overlap with home indicator
 * Added TextManager class

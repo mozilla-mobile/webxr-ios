@@ -1,5 +1,6 @@
 import UIKit
 import PopupDialog
+import CocoaLumberjack
 
 typealias DidShowMessage = () -> Void
 typealias DidHideMessage = () -> Void

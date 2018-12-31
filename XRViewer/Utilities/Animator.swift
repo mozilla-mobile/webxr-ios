@@ -1,5 +1,6 @@
 import pop
 import UIKit
+import CocoaLumberjack
 
 typealias Completion = (Bool) -> Void
 

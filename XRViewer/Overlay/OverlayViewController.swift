@@ -1,4 +1,5 @@
 import UIKit
+import CocoaLumberjack
 
 class OverlayViewController: UIViewController {
     

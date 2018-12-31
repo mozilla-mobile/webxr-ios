@@ -1,6 +1,7 @@
 import UIKit
 import GCDWebServer
 import CoreLocation
+import CocoaLumberjack
 
 let UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_MESSAGE = "The selected ARSessionConfiguration is not supported by the current device"
 let SENSOR_UNAVAILABLE_ARKIT_ERROR_MESSAGE = "A sensor required to run the session is not available"

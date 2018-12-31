@@ -1,5 +1,6 @@
 import Foundation
 import WebKit
+import CocoaLumberjack
 
 typealias OnLoad = () -> Void
 typealias OnInit = ([AnyHashable : Any]?) -> Void

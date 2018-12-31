@@ -1,4 +1,5 @@
 import UIKit
+import CocoaLumberjack
 
 typealias OnSwipeDown = () -> Void
 typealias OnSwipeUp = () -> Void

@@ -1,6 +1,7 @@
 import CoreLocation
 import Foundation
 import os
+import CocoaLumberjack
 
 typealias DidUpdateLocation = (CLLocation?) -> Void
 typealias DidRequestAuth = (Bool) -> Void
