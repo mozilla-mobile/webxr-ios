@@ -41,6 +41,7 @@ let AllowedWorldSensingSitesKey = "allowedWorldSensingSites"
 /// The NSUserDefaults key for the boolean that tells us whether
 /// we should preload the webxr.js file to expose a WebXR API
 let ExposeWebXRAPIKey = "exposeWebXRAPI"
+let BOX_SIZE: CGFloat = 0.05
 
 @objc class Constant: NSObject {
     override private init() {}
@@ -66,4 +67,5 @@ let ExposeWebXRAPIKey = "exposeWebXRAPI"
     @objc static func micSizeH() -> CGFloat { return 27.75 }
     @objc static func urlBarHeight() -> CGFloat { return 49 }
     @objc static func urlBarAnimationTimeInSeconds() -> TimeInterval { return 0.2 }
+    @objc static func boxSize() -> CGFloat { return BOX_SIZE }
 }

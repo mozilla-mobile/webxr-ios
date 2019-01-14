@@ -17,7 +17,7 @@ enum AnchorFigure : Int {
 class AnchorNode: SCNNode {
     
     private var figure: AnchorFigure?
-    let boxSize = CGFloat(BOX_SIZE)
+    let boxSize = Constant.boxSize()
     
     @objc init(anchor: ARAnchor) {
         super.init()

@@ -7,8 +7,6 @@
 #import <ARKit/ARKit.h>
 #import "WebARKHeader.h"
 
-#define BOX_SIZE 0.05
-
 static inline NSArray * arrayFromMatrix3x3(matrix_float3x3  matrix)
 {
     return @[@(matrix.columns[0][0]),
