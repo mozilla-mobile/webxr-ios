@@ -38,7 +38,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     @IBOutlet private weak var hotLayerView: LayerView!
     @IBOutlet private weak var webLayerView: LayerView!
     private var stateController: AppStateController?
-    private var arkController: ARKController?
+    var arkController: ARKController?
     var webController: WebController?
     var overlayController: UIOverlayController?
     private var locationManager: LocationManager?

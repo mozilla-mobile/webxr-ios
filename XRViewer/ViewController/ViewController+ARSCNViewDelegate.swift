@@ -35,6 +35,13 @@ extension ViewController: ARSCNViewDelegate {
         webController?.wasARInterruption(false)
     }
     
+    func session(_ session: ARSession, didFailWithError error: Error) {
+        DDLogError("Session didFailWithError - \(error.localizedDescription)")
+        arkController?.arSessionState = .ARKSessionUnknown
+        
+        arkController?.didFailSession(error)
+    }
+    
     func sessionShouldAttemptRelocalization(_ session: ARSession) -> Bool {
         return true
     }

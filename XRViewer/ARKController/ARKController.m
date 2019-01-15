@@ -2057,19 +2057,5 @@
     return anyPlaneAnchor;
 }
 
-#pragma mark ARSessionObserver
-
-- (void)session:(ARSession *)session didFailWithError:(NSError *)error
-{
-    DDLogError(@"Session didFailWithError - %@", error);
-    
-    [self setArSessionState:ARKSessionUnknown];
-    
-    if ([self didFailSession])
-    {
-        [self didFailSession](error);
-    }
-}
-
 @end
 
