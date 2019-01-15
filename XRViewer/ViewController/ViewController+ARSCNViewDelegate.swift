@@ -3,6 +3,8 @@ import CocoaLumberjack
 
 extension ViewController: ARSCNViewDelegate {
     
+    // MARK: - ARSessionObserver
+    
     func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
         
         textManager.showTrackingQualityInfo(for: camera.trackingState, autoHide: true)
@@ -31,5 +33,9 @@ extension ViewController: ARSCNViewDelegate {
         overlayController?.setARKitInterruption(false)
         messageController?.showMessageAboutARInterruption(false)
         webController?.wasARInterruption(false)
+    }
+    
+    func sessionShouldAttemptRelocalization(_ session: ARSession) -> Bool {
+        return true
     }
 }

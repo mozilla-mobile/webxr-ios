@@ -2071,15 +2071,5 @@
     }
 }
 
-- (BOOL)sessionShouldAttemptRelocalization:(ARSession *)session
-{
-    return YES;
-}
-
-- (void)session:(ARSession *)session didOutputAudioSampleBuffer:(CMSampleBufferRef)audioSampleBuffer
-{
-    //DDLogDebug(@"Session didOutputAudioSampleBuffer");
-}
-
 @end
 
