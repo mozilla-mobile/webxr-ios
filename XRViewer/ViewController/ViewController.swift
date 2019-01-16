@@ -392,15 +392,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 self.sceneView.session = session
             } else {
                 guard let arSessionState = blockSelf?.arkController?.arSessionState else { return }
+                guard let state = blockSelf?.stateController?.state else { return }
                 switch arSessionState {
                     case .ARKSessionUnknown:
                         print("\n\n*********\n\nARKit is in unknown state, instantiate and start a session\n\n*********")
-                        blockSelf?.arkController?.runSession(with: blockSelf?.stateController?.state)
+                        blockSelf?.arkController?.runSession(with: state)
                     case .ARKSessionRunning:
                         if blockSelf?.urlIsNotTheLastXRVisitedURL() ?? false {
                             print("\n\n*********\n\nThis site is not the last XR site visited, and the timer hasn't expired yet. Remove distant anchors and continue with the session\n\n*********")
                             blockSelf?.arkController?.removeDistantAnchors()
-                            blockSelf?.arkController?.runSession(with: blockSelf?.stateController?.state)
+                            blockSelf?.arkController?.runSession(with: state)
                         } else {
                             print("\n\n*********\n\nThis site is the last XR site visited, and the timer hasn't expired yet. Continue with the session\n\n*********")
                         }
@@ -410,7 +411,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                         if shouldRemoveAnchors {
                             print("\n\n*********\n\nRun session removing anchors\n\n*********")
                             blockSelf?.stateController?.state?.shouldRemoveAnchorsOnNextARSession = false
-                            blockSelf?.arkController?.runSessionRemovingAnchors(with: blockSelf?.stateController?.state)
+                            blockSelf?.arkController?.runSessionRemovingAnchors(with: state)
                         } else {
                             print("\n\n*********\n\nResume session\n\n*********")
                             blockSelf?.arkController?.resumeSession(with: blockSelf?.stateController?.state)
@@ -577,9 +578,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
             if error.code == SENSOR_FAILED_ARKIT_ERROR_CODE {
                 var currentARRequest = blockSelf?.stateController?.state?.aRRequest
-                if (currentARRequest?[WEB_AR_WORLD_ALIGNMENT] != nil) {
+                if currentARRequest?[WEB_AR_WORLD_ALIGNMENT] as? Bool ?? false {
                     // The session failed because the compass (heading) couldn't be initialized. Fallback the session to ARWorldAlignmentGravity
-                    currentARRequest?[WEB_AR_WORLD_ALIGNMENT] = 0
+                    currentARRequest?[WEB_AR_WORLD_ALIGNMENT] = false
                     blockSelf?.stateController?.setARRequest(currentARRequest)
                     return
                 }
@@ -620,7 +621,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         animator?.animate(arkLayerView, toFade: false)
 
-        arkController?.startSession(with: stateController?.state)
+        guard let state = stateController?.state else { return }
+        arkController?.startSession(with: state)
 
         // Log event when we start an AR session
         AnalyticsManager.sharedInstance.sendEvent(category: .action, method: .webXR, object: .initialize)
@@ -737,11 +739,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         webController?.onResetTrackingButtonTapped = {
 
             blockSelf?.messageController?.showMessageAboutResetTracking({ option in
+                guard let state = blockSelf?.stateController?.state else { return }
                 switch option {
                     case .ResetTracking:
-                        blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: blockSelf?.stateController?.state)
+                        blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
                     case .RemoveExistingAnchors:
-                        blockSelf?.arkController?.runSessionRemovingAnchors(with: blockSelf?.stateController?.state)
+                        blockSelf?.arkController?.runSessionRemovingAnchors(with: state)
                     case .SaveWorldMap:
                         blockSelf?.arkController?.saveWorldMap()
                     case .LoadSavedWorldMap:
