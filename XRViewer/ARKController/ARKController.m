@@ -233,12 +233,6 @@
     self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
 }
 
-- (void)pauseSession
-{
-    [[self session] pause];
-    [self setArSessionState:ARKSessionPaused];
-}
-
 - (NSDictionary *)arkData
 {
     NSDictionary *data;
@@ -629,52 +623,6 @@
             self.backgroundWorldMap = worldMap;
         }
     }];
-}
-
-// the session was paused, which implies it was off of the AR page, somewhere 2D, for a bit
-- (void)resumeSessionWithAppState: (AppState*)state {
-    [self setRequest:[state aRRequest]];
-    
-    if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
-        ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
-        if ([self hasBackgroundWorldMap]) {
-            [worldTrackingConfiguration setInitialWorldMap:[self backgroundWorldMap]];
-            self.backgroundWorldMap = nil;
-            DDLogError(@"using Saved WorldMap to resume session");
-        } else {
-            [worldTrackingConfiguration setInitialWorldMap:nil];
-            DDLogError(@"no Saved WorldMap, resuming without background worldmap");
-        }
-    } else {
-        DDLogError(@"resume session on a face-tracking camera");
-    }
-    [[self session] runWithConfiguration:[self configuration]];
-    [self setArSessionState:ARKSessionRunning];
-    [self setupDeviceCamera];
-    
-    [self setShowMode:[state showMode]];
-    [self setShowOptions:[state showOptions]];
-}
-
-// the app was backgrounded, so try to reactivate the session map
-- (void)resumeSessionFromBackground: (AppState*)state {
-    [self setRequest:[state aRRequest]];
-    
-    if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
-        ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
-        if ([self hasBackgroundWorldMap]) {
-            [worldTrackingConfiguration setInitialWorldMap:[self backgroundWorldMap]];
-            self.backgroundWorldMap = nil;
-            DDLogError(@"using Saved WorldMap to resume session");
-        } else {
-            [worldTrackingConfiguration setInitialWorldMap:nil];
-            DDLogError(@"no Saved WorldMap, resuming without background worldmap");
-        }
-    } else {
-        DDLogError(@"resume session on a face-tracking camera");
-    }
-    [[self session] runWithConfiguration:[self configuration]];
-    [self setArSessionState:ARKSessionRunning];
 }
 
 - (void)setShowMode:(ShowMode)showMode

@@ -62,6 +62,73 @@ extension ARKController {
         arSessionState = .ARKSessionRunning
     }
     
+    /**
+     Updates the internal AR Request dictionary and the configuration
+     Runs the session
+     Updates the session state to running
+     Updates the show mode and the show options
+     
+     @param state The current app state
+     */
+    func resumeSession(with state: AppState) {
+        request = state.aRRequest
+        
+        if configuration is ARWorldTrackingConfiguration {
+            let worldTrackingConfiguration = configuration as? ARWorldTrackingConfiguration
+            if hasBackgroundWorldMap() {
+                worldTrackingConfiguration?.initialWorldMap = backgroundWorldMap
+                backgroundWorldMap = nil
+                DDLogError("using Saved WorldMap to resume session")
+            } else {
+                worldTrackingConfiguration?.initialWorldMap = nil
+                DDLogError("no Saved WorldMap, resuming without background worldmap")
+            }
+        } else {
+            DDLogError("resume session on a face-tracking camera")
+        }
+        session.run(configuration, options: [])
+        arSessionState = .ARKSessionRunning
+        setupDeviceCamera()
+        setShowMode(state.showMode)
+        setShowOptions(state.showOptions)
+    }
+    
+    /**
+     Updates the internal AR Request dictionary and the configuration
+     Runs the session
+     Updates the session state to running
+     Updates the show mode and the show options
+     
+     @param state The current app state
+     */
+    func resumeSession(fromBackground state: AppState) {
+        request = state.aRRequest
+        
+        if configuration is ARWorldTrackingConfiguration {
+            let worldTrackingConfiguration = configuration as? ARWorldTrackingConfiguration
+            if hasBackgroundWorldMap() {
+                worldTrackingConfiguration?.initialWorldMap = backgroundWorldMap
+                backgroundWorldMap = nil
+                DDLogError("using Saved WorldMap to resume session")
+            } else {
+                worldTrackingConfiguration?.initialWorldMap = nil
+                DDLogError("no Saved WorldMap, resuming without background worldmap")
+            }
+        } else {
+            DDLogError("resume session on a face-tracking camera")
+        }
+        session.run(configuration, options: [])
+        arSessionState = .ARKSessionRunning
+    }
+    
+    /**
+     Pauses the AR session and sets the arSessionState to paused
+     */
+    func pauseSession() {
+        session.pause()
+        arSessionState = .ARKSessionPaused
+    }
+    
     // The session was paused, which implies it was off of the AR page, somewhere 2D, for a bit
     // The app was backgrounded, so try to reactivate the session map
     func updateARConfiguration(with state: AppState) {

@@ -352,7 +352,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                             print("\n\n*********\n\nMoving to foreground while the session is running and it was in BG and there is a saved WorldMap\n\n*********")
 
                             print("\n\n*********\n\nResume session, which will use the worldmap\n\n*********")
-                            blockSelf?.arkController?.resumeSession(fromBackground: blockSelf?.stateController?.state)
+                            guard let state = blockSelf?.stateController?.state else { return }
+                            blockSelf?.arkController?.resumeSession(fromBackground: state)
                         } else {
                             let interruptionDate = UserDefaults.standard.object(forKey: Constant.backgroundOrPausedDateKey()) as? Date
                             let now = Date()
@@ -414,7 +415,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                             blockSelf?.arkController?.runSessionRemovingAnchors(with: state)
                         } else {
                             print("\n\n*********\n\nResume session\n\n*********")
-                            blockSelf?.arkController?.resumeSession(with: blockSelf?.stateController?.state)
+                            blockSelf?.arkController?.resumeSession(with: state)
                         }
                     default:
                         break

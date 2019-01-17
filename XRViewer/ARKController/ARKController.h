@@ -116,31 +116,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
 - (BOOL) hasBackgroundWorldMap;
 
 /**
- Updates the internal AR Request dictionary and the configuration
- Runs the session
- Updates the session state to running
- Updates the show mode and the show options
- 
- @param state The current app state
- */
-- (void)resumeSessionWithAppState: (AppState*)state;
-
-/**
- Updates the internal AR Request dictionary and the configuration
- Runs the session
- Updates the session state to running
- Updates the show mode and the show options
- 
- @param state The current app state
- */
-- (void)resumeSessionFromBackground: (AppState*)state;
-
-/**
- Pauses the AR session and sets the arSessionState to paused
- */
-- (void)pauseSession;
-
-/**
  ARKit data creates a copy of the current AR data and returns it
 
  @return the dictionary that's going to be sent to JS
