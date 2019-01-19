@@ -45,6 +45,7 @@
 		B632851721C4330500FD5510 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632851621C4330500FD5510 /* Constants.swift */; };
 		B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */; };
 		B654FED221EF99150004F001 /* ARKController+AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B654FED121EF99150004F001 /* ARKController+AppState.swift */; };
+		B654FED421F1179B0004F001 /* ARKController+Anchors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B654FED321F1179B0004F001 /* ARKController+Anchors.swift */; };
 		B658C0F221BF43D500538D57 /* WebController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B658C0F121BF43D500538D57 /* WebController.swift */; };
 		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
 		B67D979721C4404E0075FE0A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D979621C4404E0075FE0A /* Utils.swift */; };
@@ -113,6 +114,7 @@
 		B632851621C4330500FD5510 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKSceneKitController.swift; sourceTree = "<group>"; };
 		B654FED121EF99150004F001 /* ARKController+AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+AppState.swift"; sourceTree = "<group>"; };
+		B654FED321F1179B0004F001 /* ARKController+Anchors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Anchors.swift"; sourceTree = "<group>"; };
 		B658C0F121BF43D500538D57 /* WebController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebController.swift; sourceTree = "<group>"; };
 		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
 		B67D979621C4404E0075FE0A /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				04BB9D641F39BE40004328A2 /* ARKHelper.h */,
 				04A983661F32268900120CF8 /* ARKController.h */,
 				04A983651F32268900120CF8 /* ARKController.m */,
+				B654FED321F1179B0004F001 /* ARKController+Anchors.swift */,
 				B654FED121EF99150004F001 /* ARKController+AppState.swift */,
 				B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */,
 				B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */,
@@ -482,6 +485,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B632851521C4191200FD5510 /* AppDelegate.swift in Sources */,
+				B654FED421F1179B0004F001 /* ARKController+Anchors.swift in Sources */,
 				625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */,
 				B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */,
 				B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */,

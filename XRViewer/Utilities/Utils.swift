@@ -33,3 +33,22 @@ class Utils: NSObject {
         return interfaceOrientation
     }
 }
+
+extension vector_float3 {
+    func dictionary() -> NSDictionary {
+        return [
+            WEB_AR_X_POSITION_OPTION: self.x,
+            WEB_AR_Y_POSITION_OPTION: self.y,
+            WEB_AR_Z_POSITION_OPTION: self.z
+        ]
+    }
+}
+
+extension vector_float2 {
+    func dictionary() -> NSDictionary {
+        return [
+            WEB_AR_X_POSITION_OPTION: self.x,
+            WEB_AR_Y_POSITION_OPTION: self.y
+        ]
+    }
+}
