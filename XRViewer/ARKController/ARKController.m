@@ -1599,8 +1599,7 @@
             continue;
         }
         
-        [self updateDictionaryForAnchor:updatedAnchor];
-//        [self updateDictionaryFor:updatedAnchor];
+        [self updateDictionaryFor:updatedAnchor];
     }
 }
 
@@ -1632,29 +1631,6 @@
                 DDLogDebug(@"Remove Anchor not in objects, but in UserAnchorIDMap - %@", anchorID);
             }
         }
-    }
-}
-
-// Tony: Initial Swift version of updateDictionary causing low CV FPS for OpenCV Face detector
-- (void) updateDictionaryForAnchor:(ARAnchor *)updatedAnchor {
-    NSString* anchorID = [self anchorIDFor:updatedAnchor];
-    NSMutableDictionary* anchorDictionary = self.objects[anchorID];
-    anchorDictionary[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4([updatedAnchor transform]);
-    
-    if ([updatedAnchor isKindOfClass:[ARPlaneAnchor class]]) {
-        // ARKit system plane anchor
-        ARPlaneAnchor *updatedPlaneAnchor = (ARPlaneAnchor *)updatedAnchor;
-        [self updatePlaneAnchorData:updatedPlaneAnchor toDictionary: anchorDictionary];
-    } else if ([updatedAnchor isKindOfClass:[ARImageAnchor class]]) {
-        // User generated ARImageAnchor, do nothing more than updating the transform
-        return;
-    } else if ([updatedAnchor isKindOfClass:[ARFaceAnchor class]]) {
-        // System generated ARFaceAnchor
-        ARFaceAnchor *faceAnchor = (ARFaceAnchor *)updatedAnchor;
-        [self updateFaceAnchorData:faceAnchor toDictionary: anchorDictionary];
-    } else {
-        // Simple, user generated ARAnchor, do nothing more than updating the transform
-        return;
     }
 }
 

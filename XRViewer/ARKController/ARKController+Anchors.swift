@@ -1,33 +1,30 @@
 @objc extension ARKController {
-    // Tony: Initial Swift version of updateDictionary causing low CV FPS for OpenCV Face detector
-//    func updateDictionary(for updatedAnchor: ARAnchor) {
-//        let anchorID = self.anchorID(for: updatedAnchor)
-//        guard let anchorDictionary = self.objects[anchorID] as? NSMutableDictionary else { return }
-//        anchorDictionary[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4(updatedAnchor.transform)
-//
-//        if updatedAnchor is ARPlaneAnchor {
-//            // ARKit system plane anchor
-//            guard let updatedPlaneAnchor = updatedAnchor as? ARPlaneAnchor else { return }
-//            updatePlaneAnchorData(updatedPlaneAnchor, toDictionary: anchorDictionary)
-//        } else if updatedAnchor is ARImageAnchor {
-//            // User generated ARImageAnchor, do nothing more than updating the transform
-//            return
-//        } else if updatedAnchor is ARFaceAnchor {
-//            // System generated ARFaceAnchor
-//            guard let faceAnchor = updatedAnchor as? ARFaceAnchor else { return }
-//            updateFaceAnchorData(faceAnchor, to: anchorDictionary)
-//            // Tony: Initial Swift version of updateFaceAnchorData causing dropped frames
-              //       when face visible in front-facing camera
-////            updateFaceAnchorData(faceAnchor, toDictionary: anchorDictionary)
-//        } else {
-//            // Simple, user generated ARAnchor, do nothing more than updating the transform
-//            return
-//        }
-//    }
+    
+    func updateDictionary(for updatedAnchor: ARAnchor) {
+        let anchorID = self.anchorID(for: updatedAnchor)
+        guard let anchorDictionary = objects[anchorID] as? NSMutableDictionary else { return }
+        anchorDictionary[WEB_AR_TRANSFORM_OPTION] = updatedAnchor.transform.array()
+
+        if updatedAnchor is ARPlaneAnchor {
+            // ARKit system plane anchor
+            guard let updatedPlaneAnchor = updatedAnchor as? ARPlaneAnchor else { return }
+            updatePlaneAnchorData(updatedPlaneAnchor, toDictionary: anchorDictionary)
+        } else if updatedAnchor is ARImageAnchor {
+            // User generated ARImageAnchor, do nothing more than updating the transform
+            return
+        } else if updatedAnchor is ARFaceAnchor {
+            // System generated ARFaceAnchor
+            guard let faceAnchor = updatedAnchor as? ARFaceAnchor else { return }
+            updateFaceAnchorData(faceAnchor, toDictionary: anchorDictionary)
+        } else {
+            // Simple, user generated ARAnchor, do nothing more than updating the transform
+            return
+        }
+    }
     
     func createDictionary(for addedAnchor: ARAnchor) -> NSDictionary {
         let anchorDictionary = NSMutableDictionary.init()
-        anchorDictionary[WEB_AR_TRANSFORM_OPTION] = arrayFromMatrix4x4(addedAnchor.transform)
+        anchorDictionary[WEB_AR_TRANSFORM_OPTION] = addedAnchor.transform.array()
         anchorDictionary[WEB_AR_MUST_SEND_OPTION] = shouldSend(addedAnchor) ? NSNumber(value: true) : NSNumber(value: false)
         
         if addedAnchor is ARPlaneAnchor {
@@ -211,8 +208,8 @@
     }
     
     func addPlaneAnchorData(_ planeAnchor: ARPlaneAnchor, toDictionary dictionary: NSMutableDictionary) {
-        dictionary[WEB_AR_PLANE_CENTER_OPTION] = dictFromVector3(planeAnchor.center)
-        dictionary[WEB_AR_PLANE_EXTENT_OPTION] = dictFromVector3(planeAnchor.extent)
+        dictionary[WEB_AR_PLANE_CENTER_OPTION] = planeAnchor.center.dictionary()
+        dictionary[WEB_AR_PLANE_EXTENT_OPTION] = planeAnchor.extent.dictionary()
         dictionary[WEB_AR_PLANE_ALIGNMENT_OPTION] = planeAnchor.alignment.rawValue
         addGeometryData(planeAnchor.geometry, toDictionary: dictionary)
     }
