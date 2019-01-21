@@ -1658,29 +1658,4 @@
     }
 }
 
-// Tony: Initial Swift version of updateFaceAnchorData causing dropped frames when face visible
-//       in front-facing camera
-- (void)updateFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
-    NSMutableDictionary *geometryDictionary = faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION];
-    if (!geometryDictionary) {
-        geometryDictionary = [NSMutableDictionary new];
-        faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
-    }
-    NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.vertexCount];
-    for (int i = 0; i < faceAnchor.geometry.vertexCount; i++) {
-        [vertices addObject:dictFromVector3(faceAnchor.geometry.vertices[i])];
-    }
-    geometryDictionary[@"vertices"] = vertices;
-
-    NSMutableArray *blendShapesDictionary = faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION];
-    [self setBlendShapes:faceAnchor.blendShapes toArray:blendShapesDictionary];
-
-    // Remove the rest of the geometry data, since it doesn't change
-    geometryDictionary[@"vertexCount"] = nil;
-    geometryDictionary[@"textureCoordinateCount"] = nil;
-    geometryDictionary[@"textureCoordinates"] = nil;
-    geometryDictionary[@"triangleCount"] = nil;
-    geometryDictionary[@"triangleIndices"] = nil;
-}
-
 @end

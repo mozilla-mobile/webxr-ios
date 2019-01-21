@@ -61,30 +61,27 @@
         return anchorDictionary
     }
     
-    // Tony: Initial Swift version of updateFaceAnchorData causing dropped frames when face visible
-    //       in front-facing camera
-//    func updateFaceAnchorData(_ faceAnchor: ARFaceAnchor, toDictionary faceAnchorDictionary: NSMutableDictionary) {
-//        var geometryDictionary = faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] as? NSMutableDictionary
-//        if geometryDictionary == nil {
-//            geometryDictionary = NSMutableDictionary.init()
-//            faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary
-//        }
-//        let vertices = NSMutableArray.init(capacity: faceAnchor.geometry.vertices.count)
-//        for i in 0..<faceAnchor.geometry.vertices.count {
-//            vertices.add(faceAnchor.geometry.vertices[i].dictionary())
-//        }
-//        geometryDictionary?["vertices"] = vertices
-//
-//        guard let blendShapesDictionary = faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION] as? NSMutableArray else { return }
-//        setBlendShapes(faceAnchor.blendShapes as NSDictionary, toArray: blendShapesDictionary)
-//
-//        // Remove the rest of the geometry data, since it doesn't change
-//        geometryDictionary?["vertexCount"] = nil
-//        geometryDictionary?["textureCoordinateCount"] = nil
-//        geometryDictionary?["textureCoordinates"] = nil
-//        geometryDictionary?["triangleCount"] = nil
-//        geometryDictionary?["triangleIndices"] = nil
-//    }
+    func updateFaceAnchorData(_ faceAnchor: ARFaceAnchor, toDictionary faceAnchorDictionary: NSMutableDictionary) {
+        guard let geometryDictionary = faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] as? NSMutableDictionary else {
+            faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] = NSMutableDictionary.init()
+            return
+        }
+        let vertices = NSMutableArray.init(capacity: faceAnchor.geometry.vertices.count)
+        for i in 0..<faceAnchor.geometry.vertices.count {
+            vertices.add(faceAnchor.geometry.vertices[i].dictionary())
+        }
+        geometryDictionary["vertices"] = vertices
+
+        guard let blendShapesDictionary = faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION] as? NSMutableArray else { return }
+        setBlendShapes(faceAnchor.blendShapes as NSDictionary, toArray: blendShapesDictionary)
+
+        // Remove the rest of the geometry data, since it doesn't change
+        geometryDictionary["vertexCount"] = nil
+        geometryDictionary["textureCoordinateCount"] = nil
+        geometryDictionary["textureCoordinates"] = nil
+        geometryDictionary["triangleCount"] = nil
+        geometryDictionary["triangleIndices"] = nil
+    }
     
     func addFaceAnchorData(_ faceAnchor: ARFaceAnchor, toDictionary faceAnchorDictionary: NSMutableDictionary) {
         let blendShapesArray = NSMutableArray.init()
