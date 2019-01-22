@@ -421,7 +421,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                         break
                 }
             }
-            if (dict?[WEB_AR_CV_INFORMATION_OPTION] != nil) {
+            if dict?[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
                 blockSelf?.stateController?.state?.computerVisionFrameRequested = true
                 blockSelf?.arkController?.computerVisionFrameRequested = true
                 blockSelf?.stateController?.state?.sendComputerVisionData = true
@@ -976,7 +976,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         stateController?.state?.askedWorldStateData = false
         arkController?.sendingWorldSensingDataAuthorizationStatus = .notDetermined
 
-        if (request?[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false) {
+        if request?[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
             messageController?.showMessageAboutAccessingTheCapturedImage({ granted in
                 blockSelf?.webController?.userGrantedComputerVisionData(granted)
                 if blockSelf?.arkController != nil {
@@ -991,7 +991,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.stateController?.state?.askedWorldStateData = true
                 blockSelf?.stateController?.state?.userGrantedSendingWorldStateData = granted ? .authorized : .denied
             })
-        } else if (request?[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false) {
+        } else if request?[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
             messageController?.showMessageAboutAccessingWorldSensingData({ access in
                 
                 blockSelf?.stateController?.state?.askedWorldStateData = true
