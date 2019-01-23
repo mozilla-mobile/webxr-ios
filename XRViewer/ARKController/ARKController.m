@@ -52,10 +52,6 @@
 /// in order to scale the intrinsics of the camera
 @property (nonatomic) float computerVisionImageScaleFactor;
 
-/// Dictionary holding ARReferenceImages by name
-@property(nonatomic, strong) NSMutableDictionary* referenceImageMap;
-/// Dictionary holding completion blocks by image name
-@property(nonatomic, strong) NSMutableDictionary* detectionImageActivationPromises;
 /// Dictionary holding completion blocks by image name
 @property(nonatomic, strong) NSMutableDictionary* detectionImageCreationPromises;
 /// Array holding dictionaries representing detection image data
@@ -1007,47 +1003,6 @@
     } else {
         completion(NO, @"The image trying to deactivate doesn't exist");
     }
-}
-
-- (void)destroyDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion {
-    ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
-    if (referenceImage) {
-        self.referenceImageMap[imageName] = nil;
-        self.detectionImageActivationPromises[imageName] = nil;
-
-        completion(YES, nil);
-    } else {
-        completion(NO, @"The image doesn't exist");
-    }
-}
-
-- (ARReferenceImage*)createReferenceImageFromDictionary:(NSDictionary*)referenceImageDictionary {
-    CGFloat physicalWidth = [referenceImageDictionary[@"physicalWidth"] doubleValue];
-    NSString* b64String = referenceImageDictionary[@"buffer"];
-    size_t width = (size_t) [referenceImageDictionary[@"imageWidth"] intValue];
-    size_t height = (size_t) [referenceImageDictionary[@"imageHeight"] intValue];
-    size_t bitsPerComponent = 8;
-    size_t bitsPerPixel = 32;
-    size_t bytesPerRow = width * 4;
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    CGBitmapInfo bitmapInfo = (CGBitmapInfo) 0;
-    NSData *data = [[NSData alloc] initWithBase64EncodedString:b64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    CFDataRef bridgedData  = (__bridge CFDataRef)data;
-    CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(bridgedData);
-    
-    BOOL shouldInterpolate = YES;
-    
-    
-    CGImageRef cgImage = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow,
-                                       colorSpace, bitmapInfo,
-                                       dataProvider, NULL, shouldInterpolate,
-                                       kCGRenderingIntentDefault);
-    ARReferenceImage* result = [[ARReferenceImage alloc] initWithCGImage:cgImage orientation:kCGImagePropertyOrientationUp physicalWidth:physicalWidth];
-    result.name = referenceImageDictionary[@"uid"];
-    
-    CGDataProviderRelease(dataProvider);
-    CGColorSpaceRelease(colorSpace);
-    return result;
 }
 
 - (void)switchCameraButtonTapped {

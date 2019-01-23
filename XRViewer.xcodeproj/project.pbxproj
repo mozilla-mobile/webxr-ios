@@ -33,6 +33,7 @@
 		625FA2E7202046BF00F62698 /* TermsAndConditionsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 625FA2E5202046BF00F62698 /* TermsAndConditionsTableViewCell.xib */; };
 		8E5089D8211B6DA90059015B /* webxr.js in Resources */ = {isa = PBXBuildFile; fileRef = 8E5089D7211B6DA90059015B /* webxr.js */; };
 		8ED9EBB3211C6FB000DA58F1 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 8ED9EBB2211C6FB000DA58F1 /* Web */; };
+		B620ED0E21F7B2E90066B4A8 /* ARKController+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */; };
 		B62CE86321CAD3B00053F9B3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86221CAD3B00053F9B3 /* ViewController.swift */; };
 		B62CE86521CC0FDF0053F9B3 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86421CC0FDF0053F9B3 /* Reachability.swift */; };
 		B62CE86821CC46A90053F9B3 /* TextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86721CC46A90053F9B3 /* TextManager.swift */; };
@@ -102,6 +103,7 @@
 		62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_XRViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E5089D7211B6DA90059015B /* webxr.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webxr.js; sourceTree = "<group>"; };
 		8ED9EBB2211C6FB000DA58F1 /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
+		B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Images.swift"; sourceTree = "<group>"; };
 		B62CE86221CAD3B00053F9B3 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		B62CE86421CC0FDF0053F9B3 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		B62CE86721CC46A90053F9B3 /* TextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextManager.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				04BB9D641F39BE40004328A2 /* ARKHelper.h */,
 				04A983661F32268900120CF8 /* ARKController.h */,
 				04A983651F32268900120CF8 /* ARKController.m */,
+				B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */,
 				B654FED321F1179B0004F001 /* ARKController+Anchors.swift */,
 				B654FED121EF99150004F001 /* ARKController+AppState.swift */,
 				B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */,
@@ -502,6 +505,7 @@
 				B67D979721C4404E0075FE0A /* Utils.swift in Sources */,
 				B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */,
 				04A9837A1F32291D00120CF8 /* ARKController.m in Sources */,
+				B620ED0E21F7B2E90066B4A8 /* ARKController+Images.swift in Sources */,
 				B62CE86521CC0FDF0053F9B3 /* Reachability.swift in Sources */,
 				B679967921B06A7000612AF4 /* BarView.swift in Sources */,
 				B69C048221B838A300C9A4EC /* ARSCNView+HitTest.swift in Sources */,

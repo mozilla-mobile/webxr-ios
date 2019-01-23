@@ -922,7 +922,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     func sendComputerVisionData() -> Bool {
         let data = arkController?.computerVisionData()
         if data != nil {
-            webController?.sendComputerVisionData(data)
+            webController?.sendComputerVisionData(data!)
             return true
         }
         return false
