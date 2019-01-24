@@ -16,7 +16,7 @@ enum ExclusiveStateType: Int {
 }
 
 class AppStateController: NSObject {
-    @objc var state: AppState?
+    @objc var state: AppState
     @objc var onModeUpdate: ASShowModeChangedAction?
     @objc var onOptionsUpdate: ASShowOptionsChangedAction?
     @objc var onXRUpdate: ASBoolChangedAction?
@@ -26,49 +26,49 @@ class AppStateController: NSObject {
     @objc var onEnterForeground: ASURLAction?
     @objc var onReachable: ASURLAction?
 
-    @objc init(state: AppState?) {
+    @objc init(state: AppState) {
+        self.state = state
         super.init()
 
         self.exclusives = [ExclusiveState]()
-        self.state = state
     }
 
     @objc func setShowMode(_ mode: ShowMode) {
-        if mode != state?.showMode {
+        if mode != state.showMode {
             guard let onDebug = onDebug else { return }
             DispatchQueue.main.async {
                 onDebug(mode == ShowMode.multiDebug)
             }
         }
 
-        self.state = state?.updatedShowMode(mode)
+        self.state = state.updatedShowMode(mode)
         guard let onModeUpdate = onModeUpdate else { return }
-        guard let showMode = state?.showMode else { return }
+        let showMode = state.showMode
         DispatchQueue.main.async {
             onModeUpdate(showMode)
         }
     }
 
     @objc func setShowOptions(_ options: ShowOptions) {
-        self.state = state?.updatedShowOptions(options)
+        self.state = state.updatedShowOptions(options)
         guard let onOptionsUpdate = onOptionsUpdate else { return }
-        guard let showOptions = state?.showOptions else { return }
+        let showOptions = state.showOptions
         DispatchQueue.main.async {
             onOptionsUpdate(showOptions)
         }
     }
 
     @objc func setWebXR(_ webXR: Bool) {
-        self.state = state?.updatedWebXR(webXR)
+        self.state = state.updatedWebXR(webXR)
         guard let onXRUpdate = onXRUpdate else { return }
-        guard let webXR = state?.webXR else { return }
+        let webXR = state.webXR
         DispatchQueue.main.async {
             onXRUpdate(webXR)
         }
     }
 
     @objc func setARRequest(_ dict: [AnyHashable : Any]?) {
-        self.state = state?.updated(withARRequest: dict)
+        self.state = state.updated(withARRequest: dict)
         guard let onRequestUpdate = onRequestUpdate else { return }
         guard let dict = dict else { return }
         DispatchQueue.main.async {
@@ -77,25 +77,25 @@ class AppStateController: NSObject {
     }
 
     @objc func invertShowMode() {
-        state?.showMode == ShowMode.single ? setShowMode(ShowMode.multi) : setShowMode(ShowMode.single)
+        state.showMode == ShowMode.single ? setShowMode(ShowMode.multi) : setShowMode(ShowMode.single)
     }
 
     @objc func invertDebugMode() {
-        state?.showMode == ShowMode.multi ? setShowMode(ShowMode.multiDebug) : setShowMode(ShowMode.multi)
+        state.showMode == ShowMode.multi ? setShowMode(ShowMode.multiDebug) : setShowMode(ShowMode.multi)
     }
 
     @objc func shouldShowURLBar() -> Bool {
 
         var showURLBar = false
 
-        if state?.webXR == false {
+        if !state.webXR {
             showURLBar = true
         } else {
-            if state?.showMode == ShowMode.debug {
+            if state.showMode == .debug {
                 showURLBar = false
-            } else if state?.showMode == ShowMode.multi {
+            } else if state.showMode == .multi {
                 showURLBar = true
-            } else if state?.showMode == ShowMode.multiDebug {
+            } else if state.showMode == .multiDebug {
                 showURLBar = true
             }
         }
@@ -104,15 +104,15 @@ class AppStateController: NSObject {
     }
 
     @objc func shouldSendARKData() -> Bool {
-        return state?.webXR != nil && state?.aRRequest != nil
+        return state.webXR && !state.aRRequest.isEmpty
     }
 
     @objc func shouldSendCVData() -> Bool {
-        return state?.computerVisionFrameRequested != nil && state?.sendComputerVisionData != nil && state?.userGrantedSendingComputerVisionData != nil
+        return state.computerVisionFrameRequested && state.sendComputerVisionData && state.userGrantedSendingComputerVisionData
     }
 
     @objc func shouldSendNativeTime() -> Bool {
-        return state?.numberOfTimesSendNativeTimeWasCalled ?? 0 < 10
+        return state.numberOfTimesSendNativeTimeWasCalled < 10
     }
 
     @objc func wasMemoryWarning() -> Bool {
@@ -132,9 +132,7 @@ class AppStateController: NSObject {
     // rf ?
 
     @objc func saveOnMessageShowMode() {
-        if let aMode = state?.showMode {
-            save(on: .exclusiveStateMessage, url: nil, mode: aMode)
-        }
+        save(on: .exclusiveStateMessage, url: nil, mode: state.showMode)
     }
 
     @objc func applyOnMessageShowMode() {

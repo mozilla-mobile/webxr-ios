@@ -37,7 +37,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     @IBOutlet private weak var arkLayerView: LayerView!
     @IBOutlet private weak var hotLayerView: LayerView!
     @IBOutlet private weak var webLayerView: LayerView!
-    private var stateController: AppStateController?
+    private lazy var stateController: AppStateController = AppStateController(state: AppState.defaultState())
     var arkController: ARKController?
     var webController: WebController?
     var overlayController: UIOverlayController?
@@ -133,19 +133,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     }
 
     @objc func swipe(fromEdge recognizer: UISwipeGestureRecognizer?) {
-        guard let webXR = stateController?.state?.webXR else { return }
+        let webXR = stateController.state.webXR
         guard let debugSelected = webController?.isDebugButtonSelected() else { return }
         if webXR {
             if debugSelected {
-                stateController?.setShowMode(.multiDebug)
+                stateController.setShowMode(.multiDebug)
             } else {
-                stateController?.setShowMode(.multi)
+                stateController.setShowMode(.multi)
             }
         }
     }
 
     @objc func swipeUp(_ recognizer: UISwipeGestureRecognizer?) {
-        guard let webXR = stateController?.state?.webXR else { return }
+        let webXR = stateController.state.webXR
         guard let debugSelected = webController?.isDebugButtonSelected() else { return }
         let location: CGPoint? = recognizer?.location(in: view)
         if (location?.y ?? 0.0) > Constant.swipeGestureAreaHeight() {
@@ -154,9 +154,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         if webXR {
             if debugSelected {
-                stateController?.setShowMode(.debug)
+                stateController.setShowMode(.debug)
             } else {
-                stateController?.setShowMode(.nothing)
+                stateController.setShowMode(.nothing)
             }
             webController?.hideKeyboard()
         }
@@ -175,7 +175,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        guard let webXR = stateController?.state?.webXR else { return }
+        let webXR = stateController.state.webXR
         // Disable the transition animation if we are on XR
         if webXR {
             coordinator.animate(alongsideTransition: nil) { context in
@@ -201,7 +201,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         guard let webViewTop = webController?.webViewTopAnchorConstraint else { return }
         guard let webViewLeft = webController?.webViewLeftAnchorConstraint else { return }
         guard let webViewRight = webController?.webViewRightAnchorConstraint else { return }
-        guard let webXR = stateController?.state?.webXR else { return }
+        let webXR = stateController.state.webXR
         // If XR is active, then the top anchor is 0 (fullscreen), else topSafeAreaInset + Constant.urlBarHeight()
         let topSafeAreaInset = UIApplication.shared.keyWindow?.safeAreaInsets.top ?? 0.0
         barViewHeight.constant = topSafeAreaInset + Constant.urlBarHeight()
@@ -209,7 +209,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         webViewLeft.constant = 0.0
         webViewRight.constant = 0.0
-        if stateController?.state?.webXR == nil {
+        if !stateController.state.webXR {
             let currentOrientation: UIInterfaceOrientation = Utils.getInterfaceOrientationFromDeviceOrientation()
             if currentOrientation == .landscapeLeft {
                 // The notch is to the right
@@ -264,45 +264,43 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     func setupStateController() {
         weak var blockSelf: ViewController? = self
 
-        self.stateController = AppStateController(state: AppState.defaultState())
-
-        stateController?.onDebug = { showDebug in
+        stateController.onDebug = { showDebug in
             blockSelf?.webController?.showDebug(showDebug)
         }
 
-        stateController?.onModeUpdate = { mode in
+        stateController.onModeUpdate = { mode in
             blockSelf?.arkController?.setShowMode(mode)
             blockSelf?.overlayController?.setMode(mode)
-            guard let showURL = blockSelf?.stateController?.shouldShowURLBar() else { return }
+            guard let showURL = blockSelf?.stateController.shouldShowURLBar() else { return }
             blockSelf?.webController?.showBar(showURL)
         }
 
-        stateController?.onOptionsUpdate = { options in
+        stateController.onOptionsUpdate = { options in
             blockSelf?.arkController?.setShowOptions(options)
             blockSelf?.overlayController?.setOptions(options)
-            guard let showURL = blockSelf?.stateController?.shouldShowURLBar() else { return }
+            guard let showURL = blockSelf?.stateController.shouldShowURLBar() else { return }
             blockSelf?.webController?.showBar(showURL)
         }
 
-        stateController?.onXRUpdate = { xr in
+        stateController.onXRUpdate = { xr in
             if xr {
                 guard let debugSelected = blockSelf?.webController?.isDebugButtonSelected() else { return }
-                guard let shouldShowSessionStartedPopup = blockSelf?.stateController?.state?.shouldShowSessionStartedPopup else { return }
+                guard let shouldShowSessionStartedPopup = blockSelf?.stateController.state.shouldShowSessionStartedPopup else { return }
                 
                 if debugSelected {
-                    blockSelf?.stateController?.setShowMode(.debug)
+                    blockSelf?.stateController.setShowMode(.debug)
                 } else {
-                    blockSelf?.stateController?.setShowMode(.nothing)
+                    blockSelf?.stateController.setShowMode(.nothing)
                 }
 
                 if shouldShowSessionStartedPopup {
-                    blockSelf?.stateController?.state?.shouldShowSessionStartedPopup = false
+                    blockSelf?.stateController.state.shouldShowSessionStartedPopup = false
                     blockSelf?.messageController?.showMessage(withTitle: AR_SESSION_STARTED_POPUP_TITLE, message: AR_SESSION_STARTED_POPUP_MESSAGE, hideAfter: AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS)
                 }
 
                 blockSelf?.webController?.lastXRVisitedURL = blockSelf?.webController?.webView?.url?.absoluteString ?? ""
             } else {
-                blockSelf?.stateController?.setShowMode(.nothing)
+                blockSelf?.stateController.setShowMode(.nothing)
                 if blockSelf?.arkController?.arSessionState == .ARKSessionRunning {
                     blockSelf?.timerSessionRunningInBackground?.invalidate()
                     let timerSeconds: Int = UserDefaults.standard.integer(forKey: Constant.secondsInBackgroundKey())
@@ -321,12 +319,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.webController?.setup(forWebXR: xr)
         }
 
-        stateController?.onReachable = { url in
+        stateController.onReachable = { url in
             blockSelf?.loadURL(url)
         }
 
-        stateController?.onEnterForeground = { url in
-            blockSelf?.stateController?.state?.shouldRemoveAnchorsOnNextARSession = false
+        stateController.onEnterForeground = { url in
+            blockSelf?.stateController.state.shouldRemoveAnchorsOnNextARSession = false
 
             blockSelf?.messageController?.clean()
             let requestedURL = UserDefaults.standard.string(forKey: REQUESTED_URL_KEY)
@@ -344,7 +342,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                         if !hasWorldMap {
                             // if no background map, then need to remove anchors on next session
                             print("\n\n*********\n\nMoving to foreground while the session is paused, remember to remove anchors on next AR request\n\n*********")
-                            blockSelf?.stateController?.state?.shouldRemoveAnchorsOnNextARSession = true
+                            blockSelf?.stateController.state.shouldRemoveAnchorsOnNextARSession = true
                         }
                     case .ARKSessionRunning:
                         guard let hasWorldMap = blockSelf?.arkController?.hasBackgroundWorldMap() else { return }
@@ -352,7 +350,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                             print("\n\n*********\n\nMoving to foreground while the session is running and it was in BG and there is a saved WorldMap\n\n*********")
 
                             print("\n\n*********\n\nResume session, which will use the worldmap\n\n*********")
-                            guard let state = blockSelf?.stateController?.state else { return }
+                            guard let state = blockSelf?.stateController.state else { return }
                             blockSelf?.arkController?.resumeSession(fromBackground: state)
                         } else {
                             let interruptionDate = UserDefaults.standard.object(forKey: Constant.backgroundOrPausedDateKey()) as? Date
@@ -374,7 +372,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             UserDefaults.standard.set(nil, forKey: Constant.backgroundOrPausedDateKey())
         }
 
-        stateController?.onMemoryWarning = { url in
+        stateController.onMemoryWarning = { url in
             blockSelf?.messageController?.showMessageAboutMemoryWarning(withCompletion: {
                 self.webController?.loadBlankHTMLString()
             })
@@ -382,7 +380,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.webController?.didReceiveError(error: NSError(domain: MEMORY_ERROR_DOMAIN, code: MEMORY_ERROR_CODE, userInfo: [NSLocalizedDescriptionKey: MEMORY_ERROR_MESSAGE]))
         }
 
-        stateController?.onRequestUpdate = { dict in
+        stateController.onRequestUpdate = { dict in
             print("\n\n*********\n\nInvalidate timer\n\n*********")
             blockSelf?.timerSessionRunningInBackground?.invalidate()
 
@@ -393,7 +391,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 self.sceneView.session = session
             } else {
                 guard let arSessionState = blockSelf?.arkController?.arSessionState else { return }
-                guard let state = blockSelf?.stateController?.state else { return }
+                guard let state = blockSelf?.stateController.state else { return }
                 switch arSessionState {
                     case .ARKSessionUnknown:
                         print("\n\n*********\n\nARKit is in unknown state, instantiate and start a session\n\n*********")
@@ -408,10 +406,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                         }
                     case .ARKSessionPaused:
                         print("\n\n*********\n\nRequest of a new AR session when it's paused\n\n*********")
-                        guard let shouldRemoveAnchors = blockSelf?.stateController?.state?.shouldRemoveAnchorsOnNextARSession else { return }
+                        guard let shouldRemoveAnchors = blockSelf?.stateController.state.shouldRemoveAnchorsOnNextARSession else { return }
                         if shouldRemoveAnchors {
                             print("\n\n*********\n\nRun session removing anchors\n\n*********")
-                            blockSelf?.stateController?.state?.shouldRemoveAnchorsOnNextARSession = false
+                            blockSelf?.stateController.state.shouldRemoveAnchorsOnNextARSession = false
                             blockSelf?.arkController?.runSessionRemovingAnchors(with: state)
                         } else {
                             print("\n\n*********\n\nResume session\n\n*********")
@@ -422,9 +420,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 }
             }
             if dict?[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
-                blockSelf?.stateController?.state?.computerVisionFrameRequested = true
+                blockSelf?.stateController.state.computerVisionFrameRequested = true
                 blockSelf?.arkController?.computerVisionFrameRequested = true
-                blockSelf?.stateController?.state?.sendComputerVisionData = true
+                blockSelf?.stateController.state.sendComputerVisionData = true
             }
         }
     }
@@ -449,12 +447,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         weak var blockSelf: ViewController? = self
 
         messageController?.didShowMessage = {
-            blockSelf?.stateController?.saveOnMessageShowMode()
-            blockSelf?.stateController?.setShowMode(.nothing)
+            blockSelf?.stateController.saveOnMessageShowMode()
+            blockSelf?.stateController.setShowMode(.nothing)
         }
 
         messageController?.didHideMessage = {
-            blockSelf?.stateController?.applyOnMessageShowMode()
+            blockSelf?.stateController.applyOnMessageShowMode()
         }
 
         messageController?.didHideMessageByUser = {
@@ -485,11 +483,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
             blockSelf?.webController?.didBackgroundAction(true)
 
-            blockSelf?.stateController?.saveMoveToBackground(onURL: blockSelf?.webController?.lastURL)
+            blockSelf?.stateController.saveMoveToBackground(onURL: blockSelf?.webController?.lastURL)
         })
 
         NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: OperationQueue.main, using: { note in
-            blockSelf?.stateController?.applyOnEnterForegroundAction()
+            blockSelf?.stateController.applyOnEnterForegroundAction()
         })
 
         NotificationCenter.default.addObserver(self, selector: #selector(ViewController.deviceOrientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: nil)
@@ -516,10 +514,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 DDLogDebug("Connection isReachable - \(isReachable)")
 
                 if isReachable {
-                    blockSelf?.stateController?.applyOnReachableAction()
+                    blockSelf?.stateController.applyOnReachableAction()
                 } else if isReachable == false && blockSelf?.webController?.lastURL == nil {
                     blockSelf?.messageController?.showMessageAboutConnectionRequired()
-                    blockSelf?.stateController?.saveNotReachable(onURL: nil)
+                    blockSelf?.stateController.saveNotReachable(onURL: nil)
                 }
             }
 
@@ -540,7 +538,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
     func setupLocationController() {
         self.locationManager = LocationManager()
-        locationManager?.setup(forRequest: stateController?.state?.aRRequest)
+        locationManager?.setup(forRequest: stateController.state.aRRequest)
     }
 
     func setupARKController() {
@@ -551,15 +549,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         arkController = ARKController(type: .sceneKit, rootView: arkLayerView)
 
         arkController?.didUpdate = { c in
-            guard let shouldSendNativeTime = blockSelf?.stateController?.shouldSendNativeTime() else { return }
-            guard let shouldSendARKData = blockSelf?.stateController?.shouldSendARKData() else { return }
-            guard let shouldSendCVData = blockSelf?.stateController?.shouldSendCVData() else { return }
+            guard let shouldSendNativeTime = blockSelf?.stateController.shouldSendNativeTime() else { return }
+            guard let shouldSendARKData = blockSelf?.stateController.shouldSendARKData() else { return }
+            guard let shouldSendCVData = blockSelf?.stateController.shouldSendCVData() else { return }
             
             if shouldSendNativeTime {
                 blockSelf?.sendNativeTime()
-                var numberOfTimesSendNativeTimeWasCalled = blockSelf?.stateController?.state?.numberOfTimesSendNativeTimeWasCalled
+                var numberOfTimesSendNativeTimeWasCalled = blockSelf?.stateController.state.numberOfTimesSendNativeTimeWasCalled
                 numberOfTimesSendNativeTimeWasCalled = (numberOfTimesSendNativeTimeWasCalled ?? 0) + 1
-                blockSelf?.stateController?.state?.numberOfTimesSendNativeTimeWasCalled = numberOfTimesSendNativeTimeWasCalled ?? 1
+                blockSelf?.stateController.state.numberOfTimesSendNativeTimeWasCalled = numberOfTimesSendNativeTimeWasCalled ?? 1
             }
 
             if shouldSendARKData {
@@ -568,7 +566,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
             if shouldSendCVData {
                 if blockSelf?.sendComputerVisionData() ?? false {
-                    blockSelf?.stateController?.state?.computerVisionFrameRequested = false
+                    blockSelf?.stateController.state.computerVisionFrameRequested = false
                     blockSelf?.arkController?.computerVisionFrameRequested = false
                 }
             }
@@ -578,11 +576,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.webController?.didReceiveError(error: error)
 
             if error.code == SENSOR_FAILED_ARKIT_ERROR_CODE {
-                var currentARRequest = blockSelf?.stateController?.state?.aRRequest
+                var currentARRequest = blockSelf?.stateController.state.aRRequest
                 if currentARRequest?[WEB_AR_WORLD_ALIGNMENT] as? Bool ?? false {
                     // The session failed because the compass (heading) couldn't be initialized. Fallback the session to ARWorldAlignmentGravity
                     currentARRequest?[WEB_AR_WORLD_ALIGNMENT] = false
-                    blockSelf?.stateController?.setARRequest(currentARRequest)
+                    blockSelf?.stateController.setARRequest(currentARRequest)
                     return
                 }
             }
@@ -622,8 +620,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         animator?.animate(arkLayerView, toFade: false)
 
-        guard let state = stateController?.state else { return }
-        arkController?.startSession(with: state)
+        arkController?.startSession(with: stateController.state)
 
         // Log event when we start an AR session
         AnalyticsManager.sharedInstance.sendEvent(category: .action, method: .webXR, object: .initialize)
@@ -649,7 +646,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.arkController?.removeAllAnchorsExceptPlanes()
                 }
             }
-            blockSelf?.stateController?.setWebXR(false)
+            blockSelf?.stateController.setWebXR(false)
         }
 
         webController?.onFinishLoad = {
@@ -658,10 +655,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onInitAR = { uiOptionsDict in
-            blockSelf?.stateController?.setShowOptions(showOptionsFormDict(uiOptionsDict))
+            blockSelf?.stateController.setShowOptions(showOptionsFormDict(uiOptionsDict))
 
-            blockSelf?.stateController?.applyOnEnterForegroundAction()
-            blockSelf?.stateController?.applyOnDidReceiveMemoryAction()
+            blockSelf?.stateController.applyOnEnterForegroundAction()
+            blockSelf?.stateController.applyOnDidReceiveMemoryAction()
         }
 
         webController?.onError = { error in
@@ -675,8 +672,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onStopAR = {
-            blockSelf?.stateController?.setWebXR(false)
-            blockSelf?.stateController?.setShowMode(.nothing)
+            blockSelf?.stateController.setWebXR(false)
+            blockSelf?.stateController.setShowMode(.nothing)
         }
 
         webController?.onJSUpdateData = {
@@ -688,7 +685,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onSetUI = { uiOptionsDict in
-            blockSelf?.stateController?.setShowOptions(showOptionsFormDict(uiOptionsDict))
+            blockSelf?.stateController.setShowOptions(showOptionsFormDict(uiOptionsDict))
         }
 
         webController?.onHitTest = { mask, x, y, result in
@@ -711,7 +708,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onDebugButtonToggled = { selected in
-            blockSelf?.stateController?.setShowMode(selected ? ShowMode.multiDebug : ShowMode.multi)
+            blockSelf?.stateController.setShowMode(selected ? ShowMode.multiDebug : ShowMode.multi)
         }
         
         webController?.onSettingsButtonTapped = {
@@ -723,24 +720,24 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             settingsViewController.onDoneButtonTapped = {
                 weakSettingsViewController?.dismiss(animated: true)
                 blockSelf?.webController?.showBar(true)
-                blockSelf?.stateController?.setShowMode(.multi)
+                blockSelf?.stateController.setShowMode(.multi)
             }
 
             blockSelf?.webController?.showBar(false)
             blockSelf?.webController?.hideKeyboard()
-            blockSelf?.stateController?.setShowMode(.nothing)
+            blockSelf?.stateController.setShowMode(.nothing)
             blockSelf?.present(navigationController, animated: true)
         }
 
         webController?.onComputerVisionDataRequested = {
-            blockSelf?.stateController?.state?.computerVisionFrameRequested = true
+            blockSelf?.stateController.state.computerVisionFrameRequested = true
             blockSelf?.arkController?.computerVisionFrameRequested = true
         }
 
         webController?.onResetTrackingButtonTapped = {
 
             blockSelf?.messageController?.showMessageAboutResetTracking({ option in
-                guard let state = blockSelf?.stateController?.state else { return }
+                guard let state = blockSelf?.stateController.state else { return }
                 switch option {
                     case .ResetTracking:
                         blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
@@ -757,11 +754,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onStartSendingComputerVisionData = {
-            blockSelf?.stateController?.state?.sendComputerVisionData = true
+            blockSelf?.stateController.state.sendComputerVisionData = true
         }
 
         webController?.onStopSendingComputerVisionData = {
-            blockSelf?.stateController?.state?.sendComputerVisionData = false
+            blockSelf?.stateController.state.sendComputerVisionData = false
         }
 
         webController?.onActivateDetectionImage = { imageName, completion in
@@ -793,9 +790,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.arkController?.switchCameraButtonTapped()
         }
 
-        guard let wasMemoryWarning = stateController?.wasMemoryWarning() else { return }
-        if wasMemoryWarning {
-            stateController?.applyOnDidReceiveMemoryAction()
+        if stateController.wasMemoryWarning() {
+            stateController.applyOnDidReceiveMemoryAction()
         } else {
             let requestedURL = UserDefaults.standard.string(forKey: REQUESTED_URL_KEY)
             if requestedURL != nil && !(requestedURL == "") {
@@ -823,11 +819,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         weak var blockSelf: ViewController? = self
 
         let showAction: HotAction = { any in
-            blockSelf?.stateController?.invertShowMode()
+            blockSelf?.stateController.invertShowMode()
         }
 
         let debugAction: HotAction = { any in
-            blockSelf?.stateController?.invertDebugMode()
+            blockSelf?.stateController.invertDebugMode()
         }
 
         hotLayerView.processTouchInSubview = true
@@ -836,16 +832,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         overlayController?.animator = animator
         
-        guard let showMode = stateController?.state?.showMode else { return }
-        guard let showOptions = stateController?.state?.showOptions else { return }
-        overlayController?.setMode(showMode)
-        overlayController?.setOptions(showOptions)
+        overlayController?.setMode(stateController.state.showMode)
+        overlayController?.setOptions(stateController.state.showOptions)
     }
 
 // MARK: Cleanups
     func cleanupCommonControllers() {
         animator?.clean()
-        stateController?.state = AppState.defaultState()
+        stateController.state = AppState.defaultState()
         messageController?.clean()
     }
 
@@ -887,7 +881,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
 // MARK: MemoryWarning
     func processMemoryWarning() {
-        stateController?.saveDidReceiveMemoryWarning(onURL: webController?.lastURL)
+        stateController.saveDidReceiveMemoryWarning(onURL: webController?.lastURL)
         cleanupCommonControllers()
         //    [self showSplashWithCompletion:^
         //     {
@@ -938,8 +932,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     func showWebError(_ error: NSError?) {
         guard let error = error else { return }
         if error.code == INTERNET_OFFLINE_CODE {
-            stateController?.setShowMode(.nothing)
-            stateController?.saveNotReachable(onURL: webController?.lastURL)
+            stateController.setShowMode(.nothing)
+            stateController.saveNotReachable(onURL: webController?.lastURL)
             messageController?.showMessageAboutConnectionRequired()
         } else if error.code == USER_CANCELLED_LOADING_CODE {
             // Desired behavior is similar to Safari, i.e. no alerts or messages presented upon user-initiated cancel
@@ -949,7 +943,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 if reload {
                     self.loadURL(nil)
                 } else {
-                    self.stateController?.applyOnMessageShowMode()
+                    self.stateController.applyOnMessageShowMode()
                 }
             })
         }
@@ -962,18 +956,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             webController?.loadURL(url)
         }
 
-        stateController?.setWebXR(false)
+        stateController.setWebXR(false)
     }
 
     func handleOnWatchAR(withRequest request: [AnyHashable : Any]?) {
         weak var blockSelf: ViewController? = self
 
         arkController?.computerVisionDataEnabled = false
-        stateController?.state?.userGrantedSendingComputerVisionData = false
-        stateController?.state?.userGrantedSendingWorldStateData = .denied
-        stateController?.state?.sendComputerVisionData = true
-        stateController?.state?.askedComputerVisionData = false
-        stateController?.state?.askedWorldStateData = false
+        stateController.state.userGrantedSendingComputerVisionData = false
+        stateController.state.userGrantedSendingWorldStateData = .denied
+        stateController.state.sendComputerVisionData = true
+        stateController.state.askedComputerVisionData = false
+        stateController.state.askedWorldStateData = false
         arkController?.sendingWorldSensingDataAuthorizationStatus = .notDetermined
 
         if request?[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
@@ -985,31 +979,31 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     // Approving computer vision data implicitly approves the world sensing data
                     blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = granted ? .authorized : .denied
                 }
-                blockSelf?.stateController?.state?.askedComputerVisionData = true
-                blockSelf?.stateController?.state?.userGrantedSendingComputerVisionData = granted
+                blockSelf?.stateController.state.askedComputerVisionData = true
+                blockSelf?.stateController.state.userGrantedSendingComputerVisionData = granted
 
-                blockSelf?.stateController?.state?.askedWorldStateData = true
-                blockSelf?.stateController?.state?.userGrantedSendingWorldStateData = granted ? .authorized : .denied
+                blockSelf?.stateController.state.askedWorldStateData = true
+                blockSelf?.stateController.state.userGrantedSendingWorldStateData = granted ? .authorized : .denied
             })
         } else if request?[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
             messageController?.showMessageAboutAccessingWorldSensingData({ access in
                 
-                blockSelf?.stateController?.state?.askedWorldStateData = true
+                blockSelf?.stateController.state.askedWorldStateData = true
                 
                 switch access {
                 case SendWorldSensingDataAuthorizationState.authorized,
                      SendWorldSensingDataAuthorizationState.singlePlane:
                     blockSelf?.webController?.userGrantedSendingWorldSensingData(true)
                     blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = access
-                    blockSelf?.stateController?.state?.userGrantedSendingWorldStateData = access
+                    blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
                 default:
                     blockSelf?.webController?.userGrantedSendingWorldSensingData(false)
                     blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = .denied
-                    blockSelf?.stateController?.state?.userGrantedSendingWorldStateData = .denied
+                    blockSelf?.stateController.state.userGrantedSendingWorldStateData = .denied
                 }
                 
-                if access == SendWorldSensingDataAuthorizationState.singlePlane && blockSelf?.stateController?.state?.shouldShowLiteModePopup ?? false {
-                    blockSelf?.stateController?.state?.shouldShowLiteModePopup = false
+                if access == SendWorldSensingDataAuthorizationState.singlePlane && blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {
+                    blockSelf?.stateController.state.shouldShowLiteModePopup = false
                     blockSelf?.messageController?.showMessage(withTitle: "Lite Mode Started", message: "Only the first plane scanned will be shared with this website. No facial recognition nor image recognition will be shared.", hideAfter: 6)
                 }
             }, url: webController?.webView?.url)
@@ -1018,9 +1012,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = .denied
         }
 
-        stateController?.setARRequest(request)
-        stateController?.setWebXR(true)
-        stateController?.state?.numberOfTimesSendNativeTimeWasCalled = 0
+        stateController.setARRequest(request)
+        stateController.setWebXR(true)
+        stateController.state.numberOfTimesSendNativeTimeWasCalled = 0
     }
     
     func CLEAN_VIEW(v: LayerView) {

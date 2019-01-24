@@ -288,8 +288,8 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             let params = [WEB_IOS_DEVICE_UUID_OPTION: UIDevice.current.identifierForVendor?.uuidString ?? 0, WEB_IOS_IS_IPAD_OPTION: UIDevice.current.userInterfaceIdiom == .pad, WEB_IOS_SYSTEM_VERSION_OPTION: UIDevice.current.systemVersion, WEB_IOS_SCREEN_SCALE_OPTION: UIScreen.main.nativeScale, WEB_IOS_SCREEN_SIZE_OPTION: NSCoder.string(for: UIScreen.main.nativeBounds.size)] as [String : Any]
 
             DDLogDebug("Init AR send - \(params.debugDescription)")
-
-            callWebMethod((message.body as? [AnyHashable : Any])?[WEB_AR_CALLBACK_OPTION] as? String, paramJSON: params, webCompletion: { param, error in
+            guard let name = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
+            callWebMethod(name, paramJSON: params, webCompletion: { param, error in
 
                 if error == nil {
                     DDLogDebug("Init AR Success")
@@ -304,7 +304,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         } else if message.name == WEB_AR_LOAD_URL_MESSAGE {
             loadURL?(messageBody[WEB_AR_URL_OPTION] as? String)
         } else if message.name == WEB_AR_START_WATCH_MESSAGE {
-            self.transferCallback = (message.body as? [AnyHashable : Any])?[WEB_AR_CALLBACK_OPTION] as? String ?? ""
+            self.transferCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String ?? ""
 
             onWatchAR?(messageBody[WEB_AR_REQUEST_OPTION] as? [AnyHashable: Any])
         } else if message.name == WEB_AR_ON_JS_UPDATE_MESSAGE {
@@ -313,12 +313,12 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             self.transferCallback = ""
 
             onStopAR?()
-
-            callWebMethod((message.body as? [AnyHashable : Any])?[WEB_AR_CALLBACK_OPTION] as? String, param: "", webCompletion: nil)
+            guard let name = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
+            callWebMethod(name, param: "", webCompletion: nil)
         } else if message.name == WEB_AR_SET_UI_MESSAGE {
             onSetUI?(messageBody)
         } else if message.name == WEB_AR_HIT_TEST_MESSAGE {
-            let hitCallback = (message.body as? [AnyHashable : Any])?[WEB_AR_CALLBACK_OPTION] as? String
+            guard let hitCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             let type = Int(messageBody[WEB_AR_TYPE_OPTION] as? Int ?? 0)
             let x = CGFloat(messageBody[WEB_AR_X_POSITION_OPTION] as? CGFloat ?? 0.0)
             let y = CGFloat(messageBody[WEB_AR_Y_POSITION_OPTION] as? CGFloat ?? 0.0)
@@ -328,9 +328,9 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                 blockSelf?.callWebMethod(hitCallback, paramJSON: results, webCompletion: debugCompletion(name: "onHitTest"))
             })
         } else if message.name == WEB_AR_ADD_ANCHOR_MESSAGE {
-            let hitCallback = (message.body as? [AnyHashable : Any])?[WEB_AR_CALLBACK_OPTION] as? String
-            let name = (message.body as? [AnyHashable : Any])?[WEB_AR_UUID_OPTION] as? String
-            guard let transform = (message.body as? [AnyHashable : Any])?[WEB_AR_TRANSFORM_OPTION] as? [Any] else { return }
+            guard let hitCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
+            let name = messageBody[WEB_AR_UUID_OPTION] as? String
+            guard let transform = messageBody[WEB_AR_TRANSFORM_OPTION] as? [Any] else { return }
 
             onAddAnchor?(name, transform, { results in
                 blockSelf?.callWebMethod(hitCallback, paramJSON: results, webCompletion: debugCompletion(name: "onAddAnchor"))
@@ -348,13 +348,13 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                 onStopSendingComputerVisionData?()
             }
         } else if message.name == WEB_AR_REMOVE_ANCHORS_MESSAGE {
-            let anchorIDs = message.body as? [Any]
+            guard let anchorIDs = message.body as? [Any] else { return }
             if onRemoveObjects != nil {
                 onRemoveObjects?(anchorIDs)
             }
         } else if message.name == WEB_AR_ADD_IMAGE_ANCHOR {
             let imageAnchorInfoDictionary = messageBody
-            let createImageAnchorCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String
+            guard let createImageAnchorCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             if onAddImageAnchor != nil {
                 onAddImageAnchor?(imageAnchorInfoDictionary, { imageAnchor in
                     blockSelf?.callWebMethod(createImageAnchorCallback, paramJSON: imageAnchor, webCompletion: nil)
@@ -362,7 +362,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             }
         } else if message.name == WEB_AR_CREATE_IMAGE_ANCHOR_MESSAGE {
             let imageAnchorInfoDictionary = messageBody
-            let createDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String
+            guard let createDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             if onCreateDetectionImage != nil {
                 onCreateDetectionImage?(imageAnchorInfoDictionary, { success, errorString in
                     var responseDictionary = [String : Any]()
@@ -376,7 +376,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         } else if message.name == WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE {
             let imageAnchorInfoDictionary = messageBody
             let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String
-            let activateDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String
+            guard let activateDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             if onActivateDetectionImage != nil {
                 onActivateDetectionImage?(imageName, { success, errorString, imageAnchor in
                     var responseDictionary = [AnyHashable : Any]()
@@ -392,9 +392,9 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                 })
             }
         } else if message.name == WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE {
-            let imageAnchorInfoDictionary = message.body as? [AnyHashable : Any]
-            let imageName = imageAnchorInfoDictionary?[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String
-            let deactivateDetectionImageCallback = (message.body as? [AnyHashable : Any])?[WEB_AR_CALLBACK_OPTION] as? String
+            let imageAnchorInfoDictionary = messageBody
+            let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String
+            guard let deactivateDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             if onDeactivateDetectionImage != nil {
                 onDeactivateDetectionImage?(imageName, { success, errorString in
                     var responseDictionary = [AnyHashable : Any]()
@@ -406,9 +406,9 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                 })
             }
         } else if message.name == WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE {
-            let imageAnchorInfoDictionary = message.body as? [AnyHashable : Any]
-            guard let imageName = imageAnchorInfoDictionary?[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String else { return }
-            let destroyDetectionImageCallback = (message.body as? [AnyHashable : Any])?[WEB_AR_CALLBACK_OPTION] as? String
+            let imageAnchorInfoDictionary = messageBody
+            guard let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String else { return }
+            guard let destroyDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             if onDestroyDetectionImage != nil {
                 onDestroyDetectionImage?(imageName, { success, errorString in
                     var responseDictionary = [AnyHashable : Any]()
@@ -420,7 +420,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                 })
             }
         } else if message.name == WEB_AR_GET_WORLD_MAP_MESSAGE {
-            let getWorldMapCallback = (message.body as? [AnyHashable : Any])?[WEB_AR_CALLBACK_OPTION] as? String
+            guard let getWorldMapCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             if onGetWorldMap != nil {
                 onGetWorldMap?({ success, errorString, worldMap in
                     var responseDictionary = [AnyHashable : Any]()
@@ -437,8 +437,8 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                 })
             }
         } else if message.name == WEB_AR_SET_WORLD_MAP_MESSAGE {
-            let worldMapInfoDictionary = message.body as? [AnyHashable : Any]
-            let setWorldMapCallback = (message.body as? [AnyHashable : Any])?[WEB_AR_CALLBACK_OPTION] as? String
+            let worldMapInfoDictionary = messageBody
+            guard let setWorldMapCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             if onSetWorldMap != nil {
                 onSetWorldMap?(worldMapInfoDictionary, { success, errorString in
                     var responseDictionary = [AnyHashable : Any]()
@@ -455,12 +455,12 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
     }
 
-    func callWebMethod(_ name: String?, param: String?, webCompletion completion: WebCompletion?) {
+    func callWebMethod(_ name: String, param: String?, webCompletion completion: WebCompletion?) {
         let jsonData = param != nil ? try? JSONSerialization.data(withJSONObject: [param], options: []) : Data()
         callWebMethod(name, jsonData: jsonData, webCompletion: completion)
     }
 
-    func callWebMethod(_ name: String?, paramJSON: Any?, webCompletion completion: WebCompletion?) {
+    func callWebMethod(_ name: String, paramJSON: Any?, webCompletion completion: WebCompletion?) {
         var jsonData: Data? = nil
         if let aJSON = paramJSON {
             jsonData = paramJSON != nil ? try? JSONSerialization.data(withJSONObject: aJSON, options: []) : Data()
@@ -483,7 +483,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 // MARK: WKUIDelegate, WKNavigationDelegate
 
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        DDLogDebug("didStartProvisionalNavigation - \(String(describing: navigation))\n on thread \(Thread.current.description)")
+        DDLogDebug("didStartProvisionalNavigation - \(navigation.debugDescription)\n on thread \(Thread.current.description)")
 
         self.webView?.addObserver(self as NSObject, forKeyPath: "estimatedProgress", options: .new, context: nil)
         documentReadyState = ""
@@ -496,7 +496,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        DDLogDebug("didFinishNavigation - \(String(describing: navigation))")
+        DDLogDebug("didFinishNavigation - \(navigation.debugDescription)")
         //    NSString* loadedURL = [[[self webView] URL] absoluteString];
         //    [self setLastURL:loadedURL];
         //
@@ -802,12 +802,12 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
 }
 
-@inline(__always) private func debugCompletion(name: String?) -> WebCompletion {
+@inline(__always) private func debugCompletion(name: String) -> WebCompletion {
     return { param, error in
         if error == nil {
-            DDLogDebug("\(String(describing: name)) : success")
+            DDLogDebug("\(name) : success")
         } else {
-            DDLogDebug("\(String(describing: name)) : error")
+            DDLogDebug("\(name) : error")
         }
     }
 }
