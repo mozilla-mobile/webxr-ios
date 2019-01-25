@@ -1,5 +1,7 @@
 @objc extension ARKController {
     
+    // MARK: - Anchor Dictionaries
+    
     func updateDictionary(for updatedAnchor: ARAnchor) {
         let anchorID = self.anchorID(for: updatedAnchor)
         guard let anchorDictionary = objects[anchorID] as? NSMutableDictionary else { return }
@@ -57,6 +59,8 @@
         
         return anchorDictionary
     }
+    
+    // MARK: - Face Anchors
     
     // Tony: Commenting this out, conversion to Swift is causing issues again.
     // Tried several resolutions, none worked so far. Leaving original in place for the moment.
@@ -173,6 +177,8 @@
         blendShapesArray[50] = blendShapes[ARFaceAnchor.BlendShapeLocation.noseSneerRight] ?? 0
     }
     
+    // MARK: - Plane Anchors
+    
     func updatePlaneGeometryData(_ planeGeometry: ARPlaneGeometry, toDictionary planeGeometryDictionary: NSMutableDictionary) {
         
         planeGeometryDictionary["vertexCount"] = NSNumber(value: planeGeometry.vertices.count)
@@ -224,6 +230,32 @@
         guard let geometry = planeAnchorDictionary[WEB_AR_GEOMETRY_OPTION] as? NSMutableDictionary else { return }
         updatePlaneGeometryData(planeAnchor.geometry, toDictionary: geometry)
     }
+    
+    // MARK: - Anchor Removal
+    
+    func removeAllAnchors() {
+        clearImageDetectionDictionaries()
+        
+        guard let currentFrame = session?.currentFrame else { return }
+        
+        for anchor in currentFrame.anchors {
+            session?.remove(anchor: anchor)
+        }
+    }
+    
+    func removeAllAnchorsExceptPlanes() {
+        clearImageDetectionDictionaries()
+        
+        guard let currentFrame = session?.currentFrame else { return }
+        
+        for anchor in currentFrame.anchors {
+            if !(anchor is ARPlaneAnchor) {
+                session?.remove(anchor: anchor)
+            }
+        }
+    }
+    
+    // MARK: - Helpers
     
     func anchorID(for anchor: ARAnchor) -> String {
         var anchorID: String
