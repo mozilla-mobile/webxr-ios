@@ -708,14 +708,6 @@
     return anchor;
 }
 
-- (void)removeDetectionImages {
-    self.detectionImageActivationPromises = [NSMutableDictionary new];
-    self.referenceImageMap = [NSMutableDictionary new];
-    self.detectionImageCreationRequests = [NSMutableArray new];
-    self.detectionImageCreationPromises = [NSMutableDictionary new];
-    self.detectionImageActivationAfterRemovalPromises = [NSMutableDictionary new];
-}
-
 - (void)removeDistantAnchors {
     matrix_float4x4 cameraTransform = [[[self.session currentFrame] camera] transform];
     float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:[Constant distantAnchorsDistanceKey]];
