@@ -173,13 +173,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
 /// @param anchorIDsToDelete An array of anchor IDs. These can be both ARKit-generated anchorIDs or user-generated anchorIDs
 - (void)removeAnchors:(NSArray *)anchorIDsToDelete;
 
-/**
- Get an array of dictionaries representing planes
-
- @return an array of dictionaries representing planes
- */
-- (NSArray *)currentPlanesArray;
-
 - (BOOL)trackingStateNormal;
 
 - (NSString *)trackingState;

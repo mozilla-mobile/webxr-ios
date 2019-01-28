@@ -1333,23 +1333,6 @@
     return [array copy];
 }
 
-- (NSArray *)currentPlanesArray
-{
-    ARFrame *currentFrame = [[self session] currentFrame];
-    
-    NSMutableArray *array = [NSMutableArray array];
-    
-    for (ARAnchor *anchor in [currentFrame anchors])
-    {
-        if ([anchor isKindOfClass:[ARPlaneAnchor class]])
-        {
-            [array addObject:[self planeDictFromPlaneAnchor:(ARPlaneAnchor *)anchor]];
-        }
-    }
-    
-    return [array copy];
-}
-
 - (BOOL)trackingStateNormal {
     ARTrackingState ts = [[[[self session] currentFrame] camera] trackingState];
     return ts == ARTrackingStateNormal;

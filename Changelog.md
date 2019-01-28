@@ -4,7 +4,7 @@
 * Added Lite Mode option to only share a single plane during World Sensing
 * Fixed Settings.bundle check in AppDelegate
 * Moved ARSession methods to ViewController+ARSCNViewDelegate
-* Removed: Legacy ARKit interruption code, legacy MessageController functions
+* Removed: Legacy ARKit interruption code, legacy MessageController functions, unused hasPlanes & currentPlanesArray functions
 * Converted following to Swift: AppState, Prefix
 ---
 * Moved buildLabel to bottom left to prevent overlap with home indicator
