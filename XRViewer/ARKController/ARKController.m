@@ -72,9 +72,6 @@
 @end
 
 @implementation ARKController {
-
-    /// Array of anchor IDs that were removed since the last frame
-    NSMutableArray *removedAnchorsSinceLastFrame;
 }
 
 #pragma mark Interface
@@ -96,7 +93,7 @@
         arkData = NULL;
 
         self.addedAnchorsSinceLastFrame = [NSMutableArray new];
-        removedAnchorsSinceLastFrame = [NSMutableArray new];
+        self.removedAnchorsSinceLastFrame = [NSMutableArray new];
         self.arkitGeneratedAnchorIDUserAnchorIDMap = [NSMutableDictionary new];
         [self setShouldUpdateWindowSize:YES];
 
@@ -810,7 +807,7 @@
                     // if the anchor is in the current object list, and is now not being sent
                     // mark it as removed and remove from the object list
                     if (![self shouldSend:addedAnchor]) {
-                        [removedAnchorsSinceLastFrame addObject:[self anchorIDFor:addedAnchor]];
+                        [self.removedAnchorsSinceLastFrame addObject:[self anchorIDFor:addedAnchor]];
                         self.objects[[self anchorIDFor:addedAnchor]] = nil;
                     }
                 } else {
@@ -1014,8 +1011,8 @@
                 newData[WEB_AR_3D_OBJECTS_OPTION] = anchorsArray;
 
                 // Prepare the objectsRemoved array
-                NSArray *removedObjects = [removedAnchorsSinceLastFrame copy];
-                [removedAnchorsSinceLastFrame removeAllObjects];
+                NSArray *removedObjects = [self.removedAnchorsSinceLastFrame copy];
+                [self.removedAnchorsSinceLastFrame removeAllObjects];
                 newData[WEB_AR_3D_REMOVED_OBJECTS_OPTION] = removedObjects;
                 
                 // Prepare the newObjects array
@@ -1390,51 +1387,6 @@
     dict[WEB_AR_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
     
     return [dict copy];
-}
-
-- (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
-{
-    //DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
-    //DDLogDebug(@"Update Anchors - %lu", anchors.count);
-    for (ARAnchor* updatedAnchor in anchors) {
-        if ([updatedAnchor isKindOfClass:[ARFaceAnchor class]] && ![self.configuration isKindOfClass:[ARFaceTrackingConfiguration class]]) {
-            NSLog(@"Trying to update a face anchor in a session configuration that's not ARFaceTrackingConfiguration");
-            continue;
-        }
-        
-        [self updateDictionaryFor:updatedAnchor];
-    }
-}
-
-- (void)session:(ARSession *)session didRemoveAnchors:(NSArray<ARAnchor*>*)anchors
-{
-    DDLogDebug(@"Remove Anchors - %@", [anchors debugDescription]);
-    for (ARAnchor* removedAnchor in anchors) {
-        
-        // logic makes no sense:  if the anchor is in objects[] list, remove it and send removed flag.  otherwise, ignore
-        //        BOOL mustSendAnchor = [self shouldSendAnchor: removedAnchor];
-        //        if (mustSendAnchor ||
-        //            self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
-        NSString* anchorID = [self anchorIDFor:removedAnchor];
-        if (self.objects[anchorID]) {
-            [removedAnchorsSinceLastFrame addObject: anchorID];
-            self.objects[anchorID] = nil;
-
-            self.arkitGeneratedAnchorIDUserAnchorIDMap[[removedAnchor.identifier UUIDString]] = nil;
-            if ([removedAnchor isKindOfClass:[ARImageAnchor class]]) {
-                ARImageAnchor* imageAnchor = (ARImageAnchor*)removedAnchor;
-                ActivateDetectionImageCompletionBlock completion = self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name];
-                if (completion) {
-                    [self activateDetectionImage:imageAnchor.referenceImage.name completion:completion];
-                    self.detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name] = nil;
-                }
-            }
-        } else {
-            if (self.arkitGeneratedAnchorIDUserAnchorIDMap[[removedAnchor.identifier UUIDString]]) {
-                DDLogDebug(@"Remove Anchor not in objects, but in UserAnchorIDMap - %@", anchorID);
-            }
-        }
-    }
 }
 
 - (void)updateFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {

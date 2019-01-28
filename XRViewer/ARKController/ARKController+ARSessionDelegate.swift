@@ -63,4 +63,51 @@ extension ARKController: ARSessionDelegate {
             }
         }
     }
+    
+    @objc(session:didUpdateAnchors:)
+    func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
+        //DDLogDebug(@"Update Anchors - %@", [anchors debugDescription]);
+        //DDLogDebug(@"Update Anchors - %lu", anchors.count);
+        for updatedAnchor: ARAnchor in anchors {
+            if updatedAnchor is ARFaceAnchor && !(configuration is ARFaceTrackingConfiguration) {
+                print("Trying to update a face anchor in a session configuration that's not ARFaceTrackingConfiguration")
+                continue
+            }
+            
+            updateDictionary(for: updatedAnchor)
+        }
+    }
+    
+    @objc(session:didRemoveAnchors:)
+    func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {
+        DDLogDebug("Remove Anchors - \(anchors.debugDescription)")
+        for removedAnchor: ARAnchor in anchors {
+            
+            // logic makes no sense:  if the anchor is in objects[] list, remove it and send removed flag.  otherwise, ignore
+            //        BOOL mustSendAnchor = [self shouldSendAnchor: removedAnchor];
+            //        if (mustSendAnchor ||
+            //            self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
+            let anchorID = self.anchorID(for: removedAnchor)
+            if objects[anchorID] != nil {
+                removedAnchorsSinceLastFrame.add(anchorID)
+                objects[anchorID] = nil
+                
+                arkitGeneratedAnchorIDUserAnchorIDMap[removedAnchor.identifier.uuidString] = nil
+                if removedAnchor is ARImageAnchor {
+                    let imageAnchor = removedAnchor as? ARImageAnchor
+                    let completion = detectionImageActivationAfterRemovalPromises[imageAnchor?.referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
+                    if completion != nil {
+                        if let completion = completion {
+                            activateDetectionImage(imageAnchor?.referenceImage.name, completion: completion)
+                        }
+                        detectionImageActivationAfterRemovalPromises[imageAnchor?.referenceImage.name ?? ""] = nil
+                    }
+                }
+            } else {
+                if arkitGeneratedAnchorIDUserAnchorIDMap[removedAnchor.identifier.uuidString] != nil {
+                    DDLogDebug("Remove Anchor not in objects, but in UserAnchorIDMap - \(anchorID)")
+                }
+            }
+        }
+    }
 }
