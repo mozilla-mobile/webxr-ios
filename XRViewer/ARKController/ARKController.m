@@ -7,7 +7,7 @@
 #import "Compression.h"
 #import "XRViewer-Swift.h"
 
-@interface ARKController () <ARSessionDelegate>
+@interface ARKController ()
 {
     NSDictionary *arkData;
     os_unfair_lock lock;
@@ -56,9 +56,6 @@
 @property(nonatomic, strong) NSMutableDictionary* detectionImageCreationPromises;
 /// Array holding dictionaries representing detection image data
 @property(nonatomic, strong) NSMutableArray *detectionImageCreationRequests;
-/// Dictionary holding completion blocks by image name: when an image anchor is removed,
-/// if the name exsist in this dictionary, call activate again using the callback stored here.
-@property(nonatomic, strong) NSMutableDictionary* detectionImageActivationAfterRemovalPromises;
 
 /// completion block for getWorldMap request
 @property(nonatomic, strong) GetWorldMapCompletionBlock getWorldMapPromise;
@@ -75,9 +72,6 @@
 @end
 
 @implementation ARKController {
-    /// Array of anchor dictionaries that were added since the last frame.
-    /// Contains the initial data of the anchor when it was added.
-    NSMutableArray *addedAnchorsSinceLastFrame;
 
     /// Array of anchor IDs that were removed since the last frame
     NSMutableArray *removedAnchorsSinceLastFrame;
@@ -101,7 +95,7 @@
         computerVisionData = NULL;
         arkData = NULL;
 
-        addedAnchorsSinceLastFrame = [NSMutableArray new];
+        self.addedAnchorsSinceLastFrame = [NSMutableArray new];
         removedAnchorsSinceLastFrame = [NSMutableArray new];
         self.arkitGeneratedAnchorIDUserAnchorIDMap = [NSMutableDictionary new];
         [self setShouldUpdateWindowSize:YES];
@@ -771,7 +765,7 @@
                     NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:addedAnchor] mutableCopy];
                     self.objects[[self anchorIDFor:addedAnchor]] = addedAnchorDictionary;
                 }
-                [addedAnchorsSinceLastFrame addObject: self.objects[[self anchorIDFor:addedAnchor]]];
+                [self.addedAnchorsSinceLastFrame addObject: self.objects[[self anchorIDFor:addedAnchor]]];
             }
             
             [self createRequestedDetectionImages];
@@ -795,7 +789,7 @@
                     NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:firstPlane] mutableCopy];
                     self.objects[[self anchorIDFor:firstPlane]] = addedAnchorDictionary;
                 }
-                [addedAnchorsSinceLastFrame addObject: self.objects[[self anchorIDFor:firstPlane]]];
+                [self.addedAnchorsSinceLastFrame addObject: self.objects[[self anchorIDFor:firstPlane]]];
             }
             
             [self createRequestedDetectionImages];
@@ -823,7 +817,7 @@
                     // if the anchor was not being sent but is in the approved list, start sending it
                     if ([self shouldSend:addedAnchor]) {
                         NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:addedAnchor] mutableCopy];
-                        [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+                        [self.addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
                         self.objects[[self anchorIDFor:addedAnchor]] = addedAnchorDictionary;
                     }
                 }
@@ -892,56 +886,6 @@
     }
     
     self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = nil;
-}
-
-- (void)activateDetectionImage:(NSString *)imageName completion:(ActivateDetectionImageCompletionBlock)completion {
-    if ([[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
-        completion(NO, @"Cannot activate a detection image when using the front facing camera", nil);
-        return;
-    }
-    
-    ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
-    ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
-    if (referenceImage) {
-        NSMutableSet* currentDetectionImages = [worldTrackingConfiguration detectionImages] != nil ? [[worldTrackingConfiguration detectionImages] mutableCopy] : [NSMutableSet new];
-        if (![currentDetectionImages containsObject:referenceImage]) {
-            [currentDetectionImages addObject: referenceImage];
-            [worldTrackingConfiguration setDetectionImages: currentDetectionImages];
-            
-            self.detectionImageActivationPromises[referenceImage.name] = completion;
-            [[self session] runWithConfiguration:[self configuration]];
-        } else {
-            if (self.detectionImageActivationPromises[referenceImage.name]) {
-                // Trying to activate an image that hasn't been activated yet, return an error on the second promise, but keep the first
-                completion(NO, @"Trying to activate an image that's already activated but not found yet", nil);
-                return;
-            } else {
-                // Activating an already activated and found image, remove the anchor from the scene
-                // so it can be detected again
-                for(ARAnchor* anchor in self.session.currentFrame.anchors) {
-                    if ([anchor isKindOfClass:[ARImageAnchor class]]) {
-                        ARImageAnchor* imageAnchor = (ARImageAnchor*)anchor;
-                        if ([imageAnchor.referenceImage.name isEqualToString:imageName]) {
-                            // Remove the reference image fromt he session configuration and run again
-                            [currentDetectionImages removeObject:referenceImage];
-                            [worldTrackingConfiguration setDetectionImages: currentDetectionImages];
-                            [[self session] runWithConfiguration:[self configuration]];
-                            
-                            // When the anchor is removed and didRemoveAnchor callback gets called, look in this map
-                            // and see if there is a promise for the recently removed image anchor. If so, call
-                            // activateDetectionImage again with the image name of the removed anchor, and the completion set here
-                            self.detectionImageActivationAfterRemovalPromises[referenceImage.name] = completion;
-                            [self.session removeAnchor: anchor];
-                            return;
-                        }
-                    }
-                    
-                }
-            }
-        }
-    } else {
-        completion(NO, [NSString stringWithFormat:@"The image %@ doesn't exist", imageName], nil);
-    }
 }
 
 - (void)deactivateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion {
@@ -1075,8 +1019,8 @@
                 newData[WEB_AR_3D_REMOVED_OBJECTS_OPTION] = removedObjects;
                 
                 // Prepare the newObjects array
-                NSArray *newObjects = [addedAnchorsSinceLastFrame copy];
-                [addedAnchorsSinceLastFrame removeAllObjects];
+                NSArray *newObjects = [self.addedAnchorsSinceLastFrame copy];
+                [self.addedAnchorsSinceLastFrame removeAllObjects];
                 newData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
             }
             if ([self computerVisionDataEnabled] && [self computerVisionFrameRequested]) {
@@ -1446,72 +1390,6 @@
     dict[WEB_AR_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
     
     return [dict copy];
-}
-
-#pragma mark - ARSessionDelegate
-
-- (void)session:(ARSession *)session didUpdateFrame:(ARFrame *)frame
-{
-    [self updateARKDataWithFrame:frame];
-    
-    [self didUpdate](self);
-
-    if ([self shouldUpdateWindowSize]) {
-        [self setShouldUpdateWindowSize:NO];
-        if ([self didUpdateWindowSize]) {
-            [self didUpdateWindowSize]();
-        }
-    }
-}
-
-- (void)session:(ARSession *)session didAddAnchors:(NSArray<ARAnchor*>*)anchors
-{
-    DDLogDebug(@"Add Anchors - %@", [anchors debugDescription]);
-    for (ARAnchor* addedAnchor in anchors) {
-        if ([addedAnchor isKindOfClass:[ARFaceAnchor class]] && ![self.configuration isKindOfClass:[ARFaceTrackingConfiguration class]]) {
-            NSLog(@"Trying to add a face anchor to a session configuration that's not ARFaceTrackingConfiguration");
-            continue;
-        }
-        
-        if ([self shouldSend:addedAnchor] ||
-            self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized
-            // Tony: Initially I implemented this line to allow face-based and image-based AR
-            // experiences to work when operating in .singlePlane/AR Lite Mode.  However
-            // if the user is choosing to operate in AR Lite Mode (i.e. a mode focused on
-            // restricting the amount of data shared), they likely wouldn't want the website to
-            // utilize any recognized ARFaceAnchors nor, potentially, ARImageAnchors
-//            || (self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateSinglePlane && ([addedAnchor isKindOfClass:[ARImageAnchor class]] || [addedAnchor isKindOfClass:[ARFaceAnchor class]]))
-            ) {
-            
-            NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:addedAnchor] mutableCopy];
-            [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
-            self.objects[[self anchorIDFor:addedAnchor]] = addedAnchorDictionary;
-            
-            if ([addedAnchor isKindOfClass:[ARImageAnchor class]]) {
-                ARImageAnchor* addedImageAnchor = (ARImageAnchor*)addedAnchor;
-                if ([[self.detectionImageActivationPromises allKeys] containsObject:addedImageAnchor.referenceImage.name]) {
-                    // Call the detection image block
-                    ActivateDetectionImageCompletionBlock block = self.detectionImageActivationPromises[addedImageAnchor.referenceImage.name];
-                    block(YES, nil, addedAnchorDictionary);
-                    self.detectionImageActivationPromises[addedImageAnchor.referenceImage.name] = nil;
-                }
-            }
-        }
-    }
-    
-    if (self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateSinglePlane) {
-        
-        NSArray *allFrameAnchors = [[[self session] currentFrame] anchors];
-        NSPredicate* arPlanePredicate = [NSPredicate predicateWithFormat:@"self isKindOfClass: %@", [ARPlaneAnchor class]];
-        NSArray* predicateResults = [allFrameAnchors filteredArrayUsingPredicate:arPlanePredicate];
-        
-        if (predicateResults.count == 1) {
-            ARPlaneAnchor *firstPlane = allFrameAnchors.firstObject;
-            NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:firstPlane] mutableCopy];
-            [addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
-            self.objects[[self anchorIDFor:firstPlane]] = addedAnchorDictionary;
-        }
-    }
 }
 
 - (void)session:(ARSession *)session didUpdateAnchors:(NSArray<ARAnchor*>*)anchors
