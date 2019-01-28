@@ -180,8 +180,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
  */
 - (NSArray *)currentPlanesArray;
 
-- (BOOL)hasPlanes;
-
 - (BOOL)trackingStateNormal;
 
 - (NSString *)trackingState;

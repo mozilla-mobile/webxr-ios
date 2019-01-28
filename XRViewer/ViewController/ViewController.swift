@@ -612,8 +612,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             })
         }
 
-        guard let hasPlanes = blockSelf?.arkController?.hasPlanes() else { return }
-
         arkController?.didUpdateWindowSize = {
             blockSelf?.webController?.updateWindowSize()
         }

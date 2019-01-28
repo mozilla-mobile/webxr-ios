@@ -1333,19 +1333,6 @@
     return [array copy];
 }
 
-- (BOOL)hasPlanes
-{
-    ARFrame *currentFrame = [[self session] currentFrame];
-    for (ARAnchor *anchor in [currentFrame anchors])
-    {
-        if ([anchor isKindOfClass:[ARPlaneAnchor class]])
-        {
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
 - (NSArray *)currentPlanesArray
 {
     ARFrame *currentFrame = [[self session] currentFrame];
