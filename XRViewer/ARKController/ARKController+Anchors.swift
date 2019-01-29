@@ -257,6 +257,38 @@
     
     // MARK: - Helpers
     
+    func getAnchorFromARKitAnchorID(_ arkitAnchorID: String) -> ARAnchor? {
+        var anchor: ARAnchor? = nil
+        guard let currentFrame: ARFrame = session?.currentFrame else { return nil }
+        for currentAnchor in currentFrame.anchors {
+            if currentAnchor.identifier.uuidString == arkitAnchorID {
+                anchor = currentAnchor
+                break
+            }
+        }
+        return anchor
+    }
+    
+    func getAnchorFromUserAnchorID(_ userAnchorID: String) -> ARAnchor? {
+        var anchor: ARAnchor? = nil
+        arkitGeneratedAnchorIDUserAnchorIDMap.enumerateKeysAndObjects { arkitID, userID, stop in
+            guard let userID = userID as? String else { return }
+            guard let arkitID = arkitID as? String else { return }
+            if userID == userAnchorID {
+                guard let currentFrame = self.session?.currentFrame else { return }
+                let anchors = currentFrame.anchors
+                for currentAnchor in anchors {
+                    if currentAnchor.identifier.uuidString == arkitID {
+                        anchor = currentAnchor
+                        break
+                    }
+                }
+                stop.pointee = true
+            }
+        }
+        return anchor
+    }
+    
     func anchorID(for anchor: ARAnchor) -> String {
         var anchorID: String
         if anchor is ARPlaneAnchor {

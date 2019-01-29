@@ -115,4 +115,12 @@
             completion(false, "The image doesn't exist")
         }
     }
+    
+    func clearImageDetectionDictionaries() {
+        detectionImageActivationPromises.removeAllObjects()
+        referenceImageMap.removeAllObjects()
+        detectionImageCreationRequests.removeAllObjects()
+        detectionImageCreationPromises.removeAllObjects()
+        detectionImageActivationAfterRemovalPromises.removeAllObjects()
+    }
 }

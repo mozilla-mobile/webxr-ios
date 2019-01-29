@@ -52,11 +52,6 @@
 /// in order to scale the intrinsics of the camera
 @property (nonatomic) float computerVisionImageScaleFactor;
 
-/// Dictionary holding completion blocks by image name
-@property(nonatomic, strong) NSMutableDictionary* detectionImageCreationPromises;
-/// Array holding dictionaries representing detection image data
-@property(nonatomic, strong) NSMutableArray *detectionImageCreationRequests;
-
 /// completion block for getWorldMap request
 @property(nonatomic, strong) GetWorldMapCompletionBlock getWorldMapPromise;
 @property(nonatomic, strong) SetWorldMapCompletionBlock setWorldMapPromise;
@@ -669,36 +664,6 @@
     }
 }
 
-- (ARAnchor *)getAnchorFromARKitAnchorID:(NSString *)arkitAnchorID {
-    ARAnchor *anchor = nil;
-    ARFrame *currentFrame = [[self session] currentFrame];
-    for (ARAnchor *currentAnchor in [currentFrame anchors]) {
-        if ([[currentAnchor.identifier UUIDString] isEqualToString:arkitAnchorID]) {
-            anchor = currentAnchor;
-            break;
-        }
-    }
-    return anchor;
-}
-
-- (ARAnchor *)getAnchorFromUserAnchorID:(NSString *)userAnchorID {
-    __block ARAnchor *anchor = nil;
-    [self.arkitGeneratedAnchorIDUserAnchorIDMap enumerateKeysAndObjectsUsingBlock:^(NSString* arkitID, NSString* userID, BOOL *stop) {
-        if ([userID isEqualToString:userAnchorID]) {
-            ARFrame *currentFrame = [[self session] currentFrame];
-            NSArray<ARAnchor *> *anchors = [currentFrame anchors];
-            for (ARAnchor *currentAnchor in anchors) {
-                if ([[currentAnchor.identifier UUIDString] isEqualToString:arkitID]) {
-                    anchor = currentAnchor;
-                    break;
-                }
-            }
-            *stop = YES;
-        }
-    }];
-    return anchor;
-}
-
 - (void)removeDistantAnchors {
     matrix_float4x4 cameraTransform = [[[self.session currentFrame] camera] transform];
     float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:[Constant distantAnchorsDistanceKey]];
@@ -734,14 +699,6 @@
             }
         }
     }
-}
-
-- (void)clearImageDetectionDictionaries {
-    [self.detectionImageActivationPromises removeAllObjects];
-    [self.referenceImageMap removeAllObjects];
-    [self.detectionImageCreationRequests removeAllObjects];
-    [self.detectionImageCreationPromises removeAllObjects];
-    [self.detectionImageActivationAfterRemovalPromises removeAllObjects];
 }
 
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)authorizationStatus {
