@@ -192,16 +192,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
 - (void)removeDistantAnchors;
 
 /**
- If SendWorldSensingDataAuthorizationStateAuthorized, creates an ARImages using the
- information in the dictionary as input. Otherwise, enqueue the request for when the user
- accepts and SendWorldSensingDataAuthorizationStateAuthorized is set
-
- @param referenceImageDictionary the dictionary representing the ARReferenceImage
- @param completion the promise to be resolved when the image is created
- */
-- (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion;
-
-/**
  Removes the reference image from the current set of reference images and re-runs the session
  
  - It fails when the current session is not of type ARWorldTrackingConfiguration

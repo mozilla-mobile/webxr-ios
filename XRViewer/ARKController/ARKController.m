@@ -794,49 +794,6 @@
     }
 }
 
-- (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion {
-    switch (self.sendingWorldSensingDataAuthorizationStatus) {
-        case SendWorldSensingDataAuthorizationStateAuthorized:
-        case SendWorldSensingDataAuthorizationStateSinglePlane: {
-            self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = completion;
-            [self _createDetectionImage:referenceImageDictionary];
-            break;
-        }
-        case SendWorldSensingDataAuthorizationStateDenied: {
-            completion(NO, @"The user denied access to world sensing data");
-            break;
-        }
-
-        case SendWorldSensingDataAuthorizationStateNotDetermined: {
-            NSLog(@"Attempt to create a detection image but world sensing data authorization is not determined, enqueue the request");
-            self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = completion;
-            [self.detectionImageCreationRequests addObject: referenceImageDictionary];
-            break;
-        }
-    }
-}
-
-
-- (void)_createDetectionImage:(NSDictionary *)referenceImageDictionary {
-    ARReferenceImage *referenceImage = [self createReferenceImageFromDictionary:referenceImageDictionary];
-    DetectionImageCreatedCompletionType block = self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]];
-    if (referenceImage) {
-        self.referenceImageMap[referenceImage.name] = referenceImage;
-        NSLog(@"Detection image created: %@", referenceImage.name);
-        
-        if (block) {
-            block(YES, nil);
-        }
-    } else {
-        NSLog(@"Cannot create detection image from dictionary: %@", referenceImageDictionary[@"uid"]);
-        if (block) {
-            block(NO, @"Error creating the ARReferenceImage");
-        }
-    }
-    
-    self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]] = nil;
-}
-
 - (void)deactivateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion {
     if ([[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
         completion(NO, @"Cannot deactivate a detection image when using the front facing camera");

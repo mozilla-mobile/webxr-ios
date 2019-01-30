@@ -1,6 +1,6 @@
 @objc extension ARKController {
     
-    func createReferenceImage(fromDictionary referenceImageDictionary: [AnyHashable: Any]) -> ARReferenceImage {
+    func createReferenceImage(fromDictionary referenceImageDictionary: [AnyHashable: Any]) -> ARReferenceImage? {
         let physicalWidth: CGFloat = referenceImageDictionary["physicalWidth"] as? CGFloat ?? 0
         let b64String = referenceImageDictionary["buffer"] as? String
         let width = size_t(referenceImageDictionary["imageWidth"] as? Int ?? 0)
@@ -8,11 +8,11 @@
         let bitsPerComponent: size_t = 8
         let bitsPerPixel: size_t = 32
         let bytesPerRow = size_t(width * 4)
-        let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)
+        guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) else { return nil }
         let bitmapInfo = CGBitmapInfo(rawValue: 0)
-        let data = Data(base64Encoded: b64String ?? "", options: .ignoreUnknownCharacters)
-        let bridgedData: CFData = data! as CFData
-        let dataProvider = CGDataProvider.init(data: bridgedData)
+        guard let data = Data(base64Encoded: b64String ?? "", options: .ignoreUnknownCharacters) else { return nil }
+        let bridgedData = data as CFData
+        guard let dataProvider = CGDataProvider.init(data: bridgedData) else { return nil }
         let shouldInterpolate = true
         
         let cgImage = CGImage(width: width,
@@ -20,16 +20,65 @@
                               bitsPerComponent: bitsPerComponent,
                               bitsPerPixel: bitsPerPixel,
                               bytesPerRow: bytesPerRow,
-                              space: colorSpace!,
+                              space: colorSpace,
                               bitmapInfo: bitmapInfo,
-                              provider: dataProvider!,
+                              provider: dataProvider,
                               decode: nil,
                               shouldInterpolate: shouldInterpolate,
                               intent: CGColorRenderingIntent.defaultIntent)
-        let result = ARReferenceImage(cgImage!, orientation: .up, physicalWidth: physicalWidth)
-        result.name = referenceImageDictionary["uid"] as? String
+        var result: ARReferenceImage? = nil
+        if cgImage != nil {
+            result = ARReferenceImage(cgImage!, orientation: .up, physicalWidth: physicalWidth)
+            result?.name = referenceImageDictionary["uid"] as? String
+        }
         
         return result
+    }
+    
+    /**
+     If SendWorldSensingDataAuthorizationStateAuthorized, creates an ARImages using the
+     information in the dictionary as input. Otherwise, enqueue the request for when the user
+     accepts and SendWorldSensingDataAuthorizationStateAuthorized is set
+     
+     @param referenceImageDictionary the dictionary representing the ARReferenceImage
+     @param completion the promise to be resolved when the image is created
+     */
+    func createDetectionImage(_ referenceImageDictionary: [AnyHashable : Any], completion: @escaping DetectionImageCreatedCompletionType) {
+        switch sendingWorldSensingDataAuthorizationStatus {
+        case .authorized, .singlePlane:
+            detectionImageCreationPromises?[referenceImageDictionary["uid"] as Any] = completion
+            _createDetectionImage(referenceImageDictionary)
+        case .denied:
+            completion(false, "The user denied access to world sensing data")
+        case .notDetermined:
+            print("Attempt to create a detection image but world sensing data authorization is not determined, enqueue the request")
+            detectionImageCreationPromises?[referenceImageDictionary["uid"] as Any] = completion
+            detectionImageCreationRequests.add(referenceImageDictionary)
+        default:
+            break
+        }
+    }
+    
+    func _createDetectionImage(_ referenceImageDictionary: [AnyHashable : Any]) {
+        let referenceImage: ARReferenceImage? = createReferenceImage(fromDictionary: referenceImageDictionary)
+        let block = detectionImageCreationPromises?[referenceImageDictionary["uid"] as Any] as? DetectionImageCreatedCompletionType
+        if referenceImage != nil {
+            if let referenceImage = referenceImage {
+                referenceImageMap?[referenceImage.name ?? ""] = referenceImage
+            }
+            print("Detection image created: \(referenceImage?.name ?? "")")
+            
+            if block != nil {
+                block?(true, nil)
+            }
+        } else {
+            print("Cannot create detection image from dictionary: \(String(describing: referenceImageDictionary["uid"]))")
+            if block != nil {
+                block?(false, "Error creating the ARReferenceImage")
+            }
+        }
+        
+        detectionImageCreationPromises[referenceImageDictionary["uid"] as Any] = nil
     }
     
     /**
