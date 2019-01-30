@@ -137,11 +137,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
 - (void)saveWorldMapInBackground;
 
 /**
- is there a saved world map?
- */
-- (BOOL) hasBackgroundWorldMap;
-
-/**
  ARKit data creates a copy of the current AR data and returns it
 
  @return the dictionary that's going to be sent to JS

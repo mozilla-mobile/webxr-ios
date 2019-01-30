@@ -334,34 +334,6 @@
     }
 }
 
-- (void)_printWorldMapInfo:(ARWorldMap*) worldMap {
-    NSArray<ARAnchor *> *anchors = worldMap.anchors;
-    for (ARAnchor* anchor in anchors) {
-        NSString *anchorID;
-        if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
-            // ARKit system plane anchor;  probably shouldn't happen!
-            anchorID = [anchor.identifier UUIDString];
-            DDLogWarn(@"saved WorldMap: contained PlaneAnchor");
-        } else if ([anchor isKindOfClass:[ARImageAnchor class]]) {
-            // User generated ARImageAnchor;  probably shouldn't happen!
-            ARImageAnchor *imageAnchor = (ARImageAnchor *)anchor;
-            anchorID = imageAnchor.referenceImage.name;
-            DDLogWarn(@"saved WorldMap: contained trackable ImageAnchor");
-        } else if ([anchor isKindOfClass:[ARFaceAnchor class]]) {
-            // System generated ARFaceAnchor;  probably shouldn't happen!
-            anchorID = [anchor.identifier UUIDString];
-            DDLogWarn(@"saved WorldMap: contained trackable FaceAnchor");
-        } else {
-            anchorID = anchor.name;
-        }
-        NSLog(@"WorldMap contains anchor: %@", anchorID);
-    }
-    simd_float3 center = worldMap.center;
-    simd_float3 extent = worldMap.extent;
-    NSLog(@"Map center: %g, %g, %g", center[0], center[1], center[2]);
-    NSLog(@"Map extent: %g, %g, %g", extent[0], extent[1], extent[2]);
-}
-
 // actually do the saving and sending of world map back to the app
 - (void)_getWorldMap {
     GetWorldMapCompletionBlock completion = self.getWorldMapPromise;
@@ -422,7 +394,7 @@
                 mapData[@"extent"] = dictFromVector3(worldMap.extent);
                 mapData[@"featureCount"] = @(worldMap.rawFeaturePoints.count);
                 
-                [self _printWorldMapInfo:worldMap];
+                [self printWorldMapInfo:worldMap];
 
                 completion(YES, nil, mapData);
                 DDLogError(@"saving WorldMap due to web request");
@@ -507,7 +479,7 @@
         ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
         [worldTrackingConfiguration setInitialWorldMap:map];
 
-        [self _printWorldMapInfo:map];
+        [self printWorldMapInfo:map];
 
         [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
         
@@ -540,11 +512,6 @@
         }
         return;
     }
-}
-
-
-- (BOOL) hasBackgroundWorldMap {
-    return (self.backgroundWorldMap != nil);
 }
 
 - (void)saveWorldMapInBackground {

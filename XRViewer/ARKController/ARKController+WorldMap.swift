@@ -49,8 +49,43 @@
     
     // MARK: - Helpers
     
+    func printWorldMapInfo(_ worldMap: ARWorldMap) {
+        let anchors = worldMap.anchors
+        for anchor in anchors {
+            var anchorID: String
+            if anchor is ARPlaneAnchor {
+                // ARKit system plane anchor; probably shouldn't happen!
+                anchorID = anchor.identifier.uuidString
+                DDLogWarn("saved WorldMap: contained PlaneAnchor")
+            } else if anchor is ARImageAnchor {
+                // User generated ARImageAnchor; probably shouldn't happen!
+                let imageAnchor = anchor as? ARImageAnchor
+                anchorID = imageAnchor?.referenceImage.name ?? "No name stored for this imageAnchor's referenceImage"
+                DDLogWarn("saved WorldMap: contained trackable ImageAnchor")
+            } else if anchor is ARFaceAnchor {
+                // System generated ARFaceAnchor; probably shouldn't happen!
+                anchorID = anchor.identifier.uuidString
+                DDLogWarn("saved WorldMap: contained trackable FaceAnchor")
+            } else {
+                anchorID = anchor.name ?? "No name stored for this anchor"
+            }
+            print("WorldMap contains anchor: \(anchorID)")
+        }
+        let center: simd_float3 = worldMap.center
+        let extent: simd_float3 = worldMap.extent
+        print("Map center: \(center.x), \(center.y), \(center.z)")
+        print("Map extent: \(extent.x), \(extent.y), \(extent.z)")
+    }
+    
     func worldMappingAvailable() -> Bool {
         guard let ws = session?.currentFrame?.worldMappingStatus else { return false }
         return ws != .notAvailable
+    }
+    
+    /**
+     Is there a saved world map?
+     */
+    func hasBackgroundWorldMap() -> Bool {
+        return backgroundWorldMap != nil
     }
 }
