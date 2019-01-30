@@ -56,9 +56,6 @@
 @property(nonatomic, strong) GetWorldMapCompletionBlock getWorldMapPromise;
 @property(nonatomic, strong) SetWorldMapCompletionBlock setWorldMapPromise;
 
-// for saving
-@property(nonatomic, strong) NSURL *worldSaveURL;
-
 @end
 
 @implementation ARKController {
@@ -235,43 +232,6 @@
 
 - (NSTimeInterval)currentFrameTimeInMilliseconds {
     return self.session.currentFrame.timestamp * 1000;
-}
-
-
-- (void)saveWorldMap {
-    if (![self trackingStateNormal]) {
-        DDLogError(@"can't save WorldMap to local storage until tracking is initialized");
-        return;
-    }
-    
-    if (![self worldMappingAvailable]) {
-        DDLogError(@"can't save WorldMap to local storage until World Mapping has started");
-        return;
-    }
-
-    [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
-        if (worldMap) {
-            DDLogError(@"saving WorldMap to local storage");
-            [self _saveWorldMap:worldMap];
-        }
-    }];
-}
-
-- (void)_saveWorldMap:(ARWorldMap *)worldMap {
-    if (self.worldSaveURL) {
-        if (!worldMap) {
-            // try to get rid of an old one if it exists.  Don't care if this fails.
-            [[NSFileManager defaultManager] trashItemAtURL:self.worldSaveURL resultingItemURL:nil error:nil];
-            DDLogError(@"moving saved WorldMap to trash");
-        } else {
-            NSData * data     = [NSKeyedArchiver archivedDataWithRootObject: worldMap requiringSecureCoding:YES error:nil];
-            if ([data writeToURL:self.worldSaveURL atomically:YES] == NO) {
-                DDLogError(@"Failed saving WorldMap to persistent storage");
-            } else {
-                DDLogError(@"saved WorldMap to load storage at %@", self.worldSaveURL);
-            }
-        }
-    }
 }
 
 - (void)loadSavedMap {
@@ -1219,11 +1179,6 @@
 - (BOOL)trackingStateNormal {
     ARTrackingState ts = [[[[self session] currentFrame] camera] trackingState];
     return ts == ARTrackingStateNormal;
-}
-
-- (BOOL)worldMappingAvailable {
-    ARWorldMappingStatus ws = [[[self session] currentFrame] worldMappingStatus];
-    return ws != ARWorldMappingStatusNotAvailable;
 }
 
 - (NSString *)trackingState {

@@ -35,6 +35,7 @@
 		8ED9EBB3211C6FB000DA58F1 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 8ED9EBB2211C6FB000DA58F1 /* Web */; };
 		B620ED0E21F7B2E90066B4A8 /* ARKController+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */; };
 		B620ED1021FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */; };
+		B620ED1222024D5A0066B4A8 /* ARKController+WorldMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED1122024D5A0066B4A8 /* ARKController+WorldMap.swift */; };
 		B62CE86321CAD3B00053F9B3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86221CAD3B00053F9B3 /* ViewController.swift */; };
 		B62CE86521CC0FDF0053F9B3 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86421CC0FDF0053F9B3 /* Reachability.swift */; };
 		B62CE86821CC46A90053F9B3 /* TextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86721CC46A90053F9B3 /* TextManager.swift */; };
@@ -106,6 +107,7 @@
 		8ED9EBB2211C6FB000DA58F1 /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
 		B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Images.swift"; sourceTree = "<group>"; };
 		B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+ARSessionDelegate.swift"; sourceTree = "<group>"; };
+		B620ED1122024D5A0066B4A8 /* ARKController+WorldMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+WorldMap.swift"; sourceTree = "<group>"; };
 		B62CE86221CAD3B00053F9B3 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		B62CE86421CC0FDF0053F9B3 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		B62CE86721CC46A90053F9B3 /* TextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextManager.swift; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 				B654FED121EF99150004F001 /* ARKController+AppState.swift */,
 				B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */,
 				B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */,
+				B620ED1122024D5A0066B4A8 /* ARKController+WorldMap.swift */,
 				B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */,
 				B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */,
 				04B1E1261F3C64C100F96C5A /* SceneKit */,
@@ -499,6 +502,7 @@
 				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
 				B620ED1021FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift in Sources */,
 				B632850921C2F24200FD5510 /* MessageController.swift in Sources */,
+				B620ED1222024D5A0066B4A8 /* ARKController+WorldMap.swift in Sources */,
 				B632851321C4159B00FD5510 /* LayerView.swift in Sources */,
 				B62CE86821CC46A90053F9B3 /* TextManager.swift in Sources */,
 				B6EAD6DD21DAB48800DF5127 /* Prefix.swift in Sources */,
