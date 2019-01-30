@@ -289,6 +289,33 @@
         return anchor
     }
     
+    func currentAnchorsArray() -> NSArray {
+        let array = NSMutableArray.init()
+        objects.enumerateKeysAndObjects { key, obj, stop in
+            guard let key = key as? String else { return }
+            guard let dict = self.objects.value(forKey: key) as? [AnyHashable: Any] else { return }
+            if self.sendingWorldSensingDataAuthorizationStatus == .authorized || self.sendingWorldSensingDataAuthorizationStatus == .singlePlane || (dict[WEB_AR_MUST_SEND_OPTION] as? NSNumber)?.boolValue ?? false
+            {
+                if let type = dict[WEB_AR_ANCHOR_TYPE] as? String, type == "face" {
+                    if self.numberOfFramesWithoutSendingFaceGeometry < 1 {
+                        self.numberOfFramesWithoutSendingFaceGeometry += 1
+                        if let mutableDict: NSMutableDictionary = dict as? NSMutableDictionary {
+                            mutableDict.removeObject(forKey: WEB_AR_GEOMETRY_OPTION)
+                            self.objects[key] = mutableDict
+                        }
+                    } else {
+                        self.numberOfFramesWithoutSendingFaceGeometry = 0
+                    }
+                }
+                if let obj = self.objects.value(forKey: key) as? [AnyHashable: Any] {
+                    array.add(obj)
+                }
+            }
+        }
+        
+        return array
+    }
+    
     func anchorID(for anchor: ARAnchor) -> String {
         var anchorID: String
         if anchor is ARPlaneAnchor {

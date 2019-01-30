@@ -59,11 +59,6 @@
 // for saving
 @property(nonatomic, strong) NSURL *worldSaveURL;
 
-/**
- We don't send the face geometry on every frame, for performance reasons. This number indicates the
- current number of frames without sending the face geometry
- */
-@property int numberOfFramesWithoutSendingFaceGeometry;
 @end
 
 @implementation ARKController {
@@ -1263,32 +1258,6 @@
     }
 }
 
-- (NSArray *)currentAnchorsArray
-{
-    NSMutableArray *array = [NSMutableArray array];
-    [self.objects enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop)
-     {
-         if ([self sendingWorldSensingDataAuthorizationStatus] == SendWorldSensingDataAuthorizationStateAuthorized ||
-             [self sendingWorldSensingDataAuthorizationStatus] == SendWorldSensingDataAuthorizationStateSinglePlane ||
-             [self.objects[key][WEB_AR_MUST_SEND_OPTION] boolValue]) {
-             
-             if ([self.objects[key][WEB_AR_ANCHOR_TYPE] isEqualToString:@"face"]) {
-                 if (self.numberOfFramesWithoutSendingFaceGeometry < 1) {
-                     self.numberOfFramesWithoutSendingFaceGeometry++;
-                     NSMutableDictionary* mutableDict = [self.objects[key] mutableCopy];
-                     [mutableDict removeObjectForKey:WEB_AR_GEOMETRY_OPTION];
-                     self.objects[key] = mutableDict;
-                 } else {
-                     self.numberOfFramesWithoutSendingFaceGeometry = 0;
-                 }
-             }
-             
-             [array addObject:self.objects[key]];
-         }
-     }];
-    
-    return [array copy];
-}
 
 - (BOOL)trackingStateNormal {
     ARTrackingState ts = [[[[self session] currentFrame] camera] trackingState];
