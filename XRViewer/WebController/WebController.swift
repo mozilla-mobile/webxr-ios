@@ -34,7 +34,7 @@ typealias OnDeactivateDetectionImage = (String?, @escaping CreateDetectionImageC
 typealias OnDestroyDetectionImage = (String, @escaping CreateDetectionImageCompletionBlock) -> Void
 typealias OnCreateDetectionImage = ([AnyHashable : Any], @escaping CreateDetectionImageCompletionBlock) -> Void
 typealias OnGetWorldMap = (@escaping GetWorldMapCompletionBlock) -> Void
-typealias OnSetWorldMap = ([AnyHashable : Any]?, @escaping SetWorldMapCompletionBlock) -> Void
+typealias OnSetWorldMap = ([AnyHashable : Any], @escaping SetWorldMapCompletionBlock) -> Void
 typealias WebCompletion = (Any?, Error?) -> Void
 
 class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler {

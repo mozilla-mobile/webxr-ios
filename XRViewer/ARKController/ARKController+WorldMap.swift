@@ -47,6 +47,117 @@
     
     // MARK: - Loading
     
+    /**
+     Load a previously saved World Map from local storage.
+     */
+    func loadSavedMap() {
+        if let worldSaveURL = worldSaveURL {
+            var data: Data? = nil
+            do {
+                data = try Data(contentsOf: worldSaveURL)
+            } catch {
+                DDLogError("Error loading WorldMap")
+                return
+            }
+            if let data = data {
+                do {
+                    guard let obj = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: data) else {
+                        DDLogError("Failed to unarchive the WorldMap")
+                        return
+                    }
+                    _setWorldMap(obj)
+                } catch {
+                    DDLogError("Failed to create ARWorldMap from saved WorldMap loaded from persistent storage")
+                }
+            } else {
+                DDLogError("Failed to load saved WorldMap from persistent storage")
+                return
+            }
+        }
+    }
+    
+    // MARK: - Setting
+    
+    /**
+     Set the current tracker World Map from a base64 encoded text string, passed in from Javascript.
+     
+     - Fails if the map will not load for some other reason
+     
+     @param worldMapDictionary The dictionary representing the worldMap
+     @param completion The completion block that will be called with the outcome of the loading of the world map
+     */
+    func setWorldMap(_ worldMapDictionary: [AnyHashable : Any], completion: @escaping SetWorldMapCompletionBlock) {
+        if setWorldMapPromise != nil {
+            setWorldMapPromise(false, "World Map set request cancelled by subsequent call to set World Map.")
+        }
+        
+        switch sendingWorldSensingDataAuthorizationStatus {
+        case .authorized, .singlePlane:
+            setWorldMapPromise = completion
+            // we do it here (rather than above) because if a nil is passed in, we don't want to replace the previously saved
+            // value (since a user could still reload it with the browser menu)
+            let map: ARWorldMap? = dict(toWorldMap: worldMapDictionary)
+            
+            if let map = map {
+                //[self _saveWorldMap:map];
+                _setWorldMap(map)
+            } else {
+                if setWorldMapPromise != nil {
+                    setWorldMapPromise(false, "The World Map may be invalid, it couldn't be decoded.")
+                    setWorldMapPromise = nil
+                }
+            }
+        case .denied:
+            completion(false, "The user denied access to world sensing data, so cannot set map")
+        case .notDetermined:
+            print("Attempt to get World Map but world sensing data authorization is not determined, enqueue the request")
+            setWorldMapPromise = completion
+        }
+    }
+    
+    func _setWorldMap(_ map: ARWorldMap) {
+        let completion: SetWorldMapCompletionBlock? = setWorldMapPromise
+        setWorldMapPromise = nil
+        
+        if configuration is ARWorldTrackingConfiguration {
+            // First, let's restart with current configuration, but remove existing anchors
+            //    [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionRemoveExistingAnchors];
+            print("Restarted, removing existing anchors")
+            
+            // now, let's load the world map
+            let worldTrackingConfiguration = configuration as? ARWorldTrackingConfiguration
+            worldTrackingConfiguration?.initialWorldMap = map
+            printWorldMapInfo(map)
+            
+            if let configuration = configuration {
+                session?.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+            }
+            
+            // if we are removing anchors, clear the user map
+            arkitGeneratedAnchorIDUserAnchorIDMap = NSMutableDictionary.init()
+            print("Restarted, loading map.")
+            
+            for anchor in map.anchors {
+                session?.add(anchor: anchor)
+                arkitGeneratedAnchorIDUserAnchorIDMap[anchor.identifier.uuidString] = anchor.name ?? ""
+                print("WorldMap loaded anchor: \(anchor.name ?? "nameless anchor")")
+            }
+            
+            // now remove the map from the config
+            worldTrackingConfiguration?.initialWorldMap = nil
+            
+            self.arSessionState = .ARKSessionRunning
+            // [self setupDeviceCamera];
+            
+            completion?(true, nil)
+            DDLogError("using Saved WorldMap to restart session")
+        } else {
+            DDLogError("Cannot load World Map when using user-facing camera")
+            completion?(false, "Cannot load World Map when using user-facing camera")
+            return
+        }
+    }
+    
     // MARK: - Helpers
     
     func printWorldMapInfo(_ worldMap: ARWorldMap) {
@@ -75,6 +186,21 @@
         let extent: simd_float3 = worldMap.extent
         print("Map center: \(center.x), \(center.y), \(center.z)")
         print("Map extent: \(extent.x), \(extent.y), \(extent.z)")
+    }
+    
+    func dict(toWorldMap worldMapDictionary: [AnyHashable : Any]) -> ARWorldMap? {
+        guard let b64String = worldMapDictionary["worldMap"] as? String else { return nil }
+        guard let data = Data(base64Encoded: b64String, options: .ignoreUnknownCharacters) else { return nil }
+        guard let uncompressed = getDecompressedData(data) else { return nil }
+        print("World map compressed size \(data.count) -> uncompressed \(uncompressed.count)")
+        var obj: ARWorldMap? = nil
+        do {
+            obj = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: uncompressed)
+        } catch {
+            print("Error unarchiving WorldMap")
+        }
+        
+        return obj
     }
     
     func worldMappingAvailable() -> Bool {

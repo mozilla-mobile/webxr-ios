@@ -54,7 +54,6 @@
 
 /// completion block for getWorldMap request
 @property(nonatomic, strong) GetWorldMapCompletionBlock getWorldMapPromise;
-@property(nonatomic, strong) SetWorldMapCompletionBlock setWorldMapPromise;
 
 @end
 
@@ -234,22 +233,6 @@
     return self.session.currentFrame.timestamp * 1000;
 }
 
-- (void)loadSavedMap {
-    if (self.worldSaveURL) {
-        NSData * data = [NSData dataWithContentsOfURL:self.worldSaveURL];
-        if (!data) {
-            DDLogError(@"Failed to load saved WorldMap from persistent storage");
-            return;
-        }
-
-        ARWorldMap* obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[ARWorldMap class]  fromData:data error:nil];
-        if (!obj) {
-            DDLogError(@"Failed to create ARWorldMap from saved WorldMap loaded from persistent storage");
-        }
-        [self _setWorldMap:obj];
-    }
-}
-
 // this is the web command to save and return the world map
 - (void)getWorldMap:(GetWorldMapCompletionBlock)completion {
     if (self.getWorldMapPromise) {
@@ -403,115 +386,6 @@
             completion(NO, [NSString stringWithFormat:@"request to get World Map failed: %@", error], nil);
         }
     }];
-}
-
-- (ARWorldMap *)dictToWorldMap:(NSDictionary*)worldMapDictionary {
-    NSString* b64String = worldMapDictionary[@"worldMap"];
-    if (!b64String) {
-        return nil;
-    }
-    NSData *data    = [[NSData alloc] initWithBase64EncodedString:b64String options:(NSDataBase64DecodingIgnoreUnknownCharacters)];
-    if (!data) {
-        return nil;
-    }
-    NSData *uncompressed = [self getDecompressedData:data];
-    NSLog(@"world map compressed size %lu -> uncompressed %lu", (unsigned long)data.length, (unsigned long)uncompressed.length);
-    ARWorldMap* obj = [NSKeyedUnarchiver unarchivedObjectOfClass:[ARWorldMap class]  fromData:uncompressed error:nil];
-    
-    return obj;
-}
-
-- (void)setWorldMap:(NSDictionary *)worldMapDictionary completion:(SetWorldMapCompletionBlock)completion {
-    if (self.setWorldMapPromise) {
-        self.setWorldMapPromise(NO, @"World Map set request cancelled by subsequent call to set World Map.");
-    }
-    
-    switch (self.sendingWorldSensingDataAuthorizationStatus) {
-        case SendWorldSensingDataAuthorizationStateAuthorized:
-        case SendWorldSensingDataAuthorizationStateSinglePlane: {
-            self.setWorldMapPromise = completion;
-            // we do it here (rather than above) because if a nil is passed in, we don't want to replace the previously saved
-            // value (since a user could still reload it with the browser menu)
-            ARWorldMap* map = [self dictToWorldMap : worldMapDictionary];
-            
-            if (map) {
-                //[self _saveWorldMap:map];
-                [self _setWorldMap: map];
-            } else {
-                if (self.setWorldMapPromise) {
-                    self.setWorldMapPromise(NO, @"The World Map may be invalid, it couldn't be decoded.");
-                    self.setWorldMapPromise = nil;
-                }
-            }
-            break;
-        }
-        case SendWorldSensingDataAuthorizationStateDenied: {
-            completion(NO, @"The user denied access to world sensing data, so cannot set map");
-            break;
-        }
-        case SendWorldSensingDataAuthorizationStateNotDetermined: {
-            NSLog(@"Attempt to get World Map but world sensing data authorization is not determined, enqueue the request");
-            self.setWorldMapPromise = completion;
-            break;
-        }
-    }
-}
-
-- (void)_setWorldMap:(ARWorldMap *)map  {
-    SetWorldMapCompletionBlock completion = self.setWorldMapPromise;
-    self.setWorldMapPromise = nil;
-
-    if (map == nil) {
-        DDLogError(@"nil WorldMap");
-        if (completion) {
-            completion(NO, @"nil World Map, this error shouldn't happen..");
-        }
-        return;
-    }
-
-    if ([[self configuration] isKindOfClass:[ARWorldTrackingConfiguration class]]) {
-        // first, let's restart with curret configuration, but remove existing anchors
-       //    [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionRemoveExistingAnchors];
-        
-        NSLog(@"Restarted, removing existing anchors");
-
-        // now, let's load the world map
-        ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
-        [worldTrackingConfiguration setInitialWorldMap:map];
-
-        [self printWorldMapInfo:map];
-
-        [[self session] runWithConfiguration:[self configuration] options: ARSessionRunOptionResetTracking | ARSessionRunOptionRemoveExistingAnchors];
-        
-        // if we are removing anchors, clear the user map
-        self.arkitGeneratedAnchorIDUserAnchorIDMap = [NSMutableDictionary new];
-
-        NSLog(@"Restarted, loading map.");
-
-        NSArray<ARAnchor *> *anchors = map.anchors;
-        for (ARAnchor* anchor in anchors) {
-            [[self session] addAnchor:anchor];
-            self.arkitGeneratedAnchorIDUserAnchorIDMap[[[anchor identifier] UUIDString]] = anchor.name;
-            NSLog(@"WorldMap loaded anchor: %@", anchor.name);
-        }
-        
-        // now remove the map from the config
-        [worldTrackingConfiguration setInitialWorldMap:nil];
-
-        [self setArSessionState:ARKSessionRunning];
-        // [self setupDeviceCamera];
-
-        if (completion) {
-            completion(YES, nil);
-        }
-        DDLogError(@"using Saved WorldMap to restart session");
-    } else {
-        DDLogError(@"Cannot load World Map when using user-facing camera");
-        if (completion) {
-            completion(NO, @"Cannot load World Map when using user-facing camera");
-        }
-        return;
-    }
 }
 
 - (void)saveWorldMapInBackground {
@@ -1150,18 +1024,6 @@
 
 - (NSString *)trackingState {
     return trackingState([[[self session] currentFrame] camera]);
-}
-
-
-- (NSDictionary *)planeDictFromPlaneAnchor:(ARPlaneAnchor *)planeAnchor
-{
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
-    
-    dict[WEB_AR_PLANE_ID_OPTION] = [[planeAnchor identifier] UUIDString];
-    dict[WEB_AR_PLANE_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
-    dict[WEB_AR_PLANE_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
-    
-    return [dict copy];
 }
 
 - (void)updateFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {

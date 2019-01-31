@@ -54,8 +54,6 @@
             print("Attempt to create a detection image but world sensing data authorization is not determined, enqueue the request")
             detectionImageCreationPromises?[referenceImageDictionary["uid"] as Any] = completion
             detectionImageCreationRequests.add(referenceImageDictionary)
-        default:
-            break
         }
     }
     
