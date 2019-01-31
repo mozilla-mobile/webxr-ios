@@ -52,9 +52,6 @@
 /// in order to scale the intrinsics of the camera
 @property (nonatomic) float computerVisionImageScaleFactor;
 
-/// completion block for getWorldMap request
-@property(nonatomic, strong) GetWorldMapCompletionBlock getWorldMapPromise;
-
 @end
 
 @implementation ARKController {
@@ -233,36 +230,6 @@
     return self.session.currentFrame.timestamp * 1000;
 }
 
-// this is the web command to save and return the world map
-- (void)getWorldMap:(GetWorldMapCompletionBlock)completion {
-    if (self.getWorldMapPromise) {
-        self.getWorldMapPromise(NO, @"World Map request cancelled by subsequent call to get World Map.", nil);
-        self.getWorldMapPromise = nil;
-    }
-    
-#ifdef ALLOW_GET_WORLDMAP
-    switch (self.sendingWorldSensingDataAuthorizationStatus) {
-        case SendWorldSensingDataAuthorizationStateAuthorized:
-        case SendWorldSensingDataAuthorizationStateSinglePlane: {
-            self.getWorldMapPromise = completion;
-            [self _getWorldMap];
-            break;
-        }
-        case SendWorldSensingDataAuthorizationStateDenied: {
-            completion(NO, @"The user denied access to world sensing data", nil);
-            break;
-        }
-        case SendWorldSensingDataAuthorizationStateNotDetermined: {
-            NSLog(@"Attempt to get World Map but world sensing data authorization is not determined, enqueue the request");
-            self.getWorldMapPromise = completion;
-            break;
-        }
-    }
-#else
-    completion(NO, @"getWorldMap not supported", nil);
-#endif
-}
-
 - (NSData *) getDecompressedData:(NSData *) compressed {
     size_t dst_buffer_size = compressed.length * 8;
     
@@ -315,77 +282,6 @@
         free(src_buffer);
         return compressed;
     }
-}
-
-// actually do the saving and sending of world map back to the app
-- (void)_getWorldMap {
-    GetWorldMapCompletionBlock completion = self.getWorldMapPromise;
-    self.getWorldMapPromise = nil;
-    
-    if ([[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
-        if (completion) {
-            completion(NO, @"Cannot get World Map when using the front facing camera", nil);
-        }
-        return;
-    }
-
-    if (![self trackingStateNormal]) {
-        if (completion) {
-            completion(NO, @"Cannot get World Map until tracking is fully initialized", nil);
-        }
-        return;
-    }
-
-    if (![self worldMappingAvailable]) {
-        if (completion) {
-            completion(NO, @"Cannot get World Map until World Mapping has started", nil);
-        }
-        return;
-    }
-
-    [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
-        if (worldMap) {
-            if (completion) {
-                NSMutableDictionary *mapData = [NSMutableDictionary new];
-
-                NSData * data     = [NSKeyedArchiver archivedDataWithRootObject: worldMap requiringSecureCoding:YES error:nil];
-                NSData * compressedData = [self getCompressedData:data];
-
-                if (!compressedData) {
-                    completion(NO, @"request to get World Map failed: couldn't compress data", nil);
-                    return;
-                }
-                NSLog(@"world map uncompressed size %lu -> compressed %lu", (unsigned long)data.length, (unsigned long)compressedData.length);
-
-                NSString * string = [compressedData base64EncodedStringWithOptions:0];
-                mapData[@"worldMap"] = string;
-
-                NSArray<ARAnchor *> *anchors = worldMap.anchors;
-                NSMutableArray *anchorList = [NSMutableArray arrayWithCapacity:anchors.count];
-                for (ARAnchor* anchor in anchors) {
-                    // include any anchor with a name in the list, since they've likely been
-                    // created by the web app
-                    if (anchor.name) {
-                        NSMutableDictionary *anchorDict = [NSMutableDictionary new];
-                        anchorDict[@"name"] = anchor.name;
-                        anchorDict[@"transform"] = arrayFromMatrix4x4(anchor.transform);
-                        [anchorList addObject:anchorDict];
-                    }
-                }
-                mapData[@"anchors"] = anchorList;
-                mapData[@"center"] = dictFromVector3(worldMap.center);
-                mapData[@"extent"] = dictFromVector3(worldMap.extent);
-                mapData[@"featureCount"] = @(worldMap.rawFeaturePoints.count);
-                
-                [self printWorldMapInfo:worldMap];
-
-                completion(YES, nil, mapData);
-                DDLogError(@"saving WorldMap due to web request");
-            }
-        } else {
-            completion(NO, [NSString stringWithFormat:@"request to get World Map failed: %@", error], nil);
-        }
-    }];
 }
 
 - (void)saveWorldMapInBackground {

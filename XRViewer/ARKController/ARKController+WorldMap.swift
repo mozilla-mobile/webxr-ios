@@ -76,6 +76,116 @@
         }
     }
     
+    // MARK: - Getting
+    
+    /**
+     Get the current tracker World Map and return it in an base64 encoded string in a dictionary, for sending to Javascript
+     
+     - Fails if tracking isn't initialized, or if the acquisition of a World Map fails for some other reason
+     
+     @param completion The completion block that will be called with the outcome of the acquisition of the world map
+     */
+    func getWorldMap(_ completion: @escaping GetWorldMapCompletionBlock) {
+        if getWorldMapPromise != nil {
+            getWorldMapPromise(false, "World Map request cancelled by subsequent call to get World Map.", nil)
+            getWorldMapPromise = nil
+        }
+        
+        #if ALLOW_GET_WORLDMAP
+        switch sendingWorldSensingDataAuthorizationStatus {
+        case .authorized, .singlePlane:
+            getWorldMapPromise = completion
+            _getWorldMap()
+        case .denied:
+            completion(false, "The user denied access to world sensing data", nil)
+        case .notDetermined:
+            print("Attempt to get World Map but world sensing data authorization is not determined, enqueue the request")
+            getWorldMapPromise = completion
+        }
+        #else
+        completion(false, "getWorldMap not supported", nil)
+        #endif
+    }
+    
+    // Actually perform the saving and sending of world map back to the app
+    func _getWorldMap() {
+        let completion: GetWorldMapCompletionBlock? = getWorldMapPromise
+        getWorldMapPromise = nil
+        
+        if configuration is ARFaceTrackingConfiguration {
+            if completion != nil {
+                completion?(false, "Cannot get World Map when using the front facing camera", nil)
+            }
+            return
+        }
+        
+        if !trackingStateNormal() {
+            if completion != nil {
+                completion?(false, "Cannot get World Map until tracking is fully initialized", nil)
+            }
+            return
+        }
+        
+        if !worldMappingAvailable() {
+            if completion != nil {
+                completion?(false, "Cannot get World Map until World Mapping has started", nil)
+            }
+            return
+        }
+        
+        session?.getCurrentWorldMap(completionHandler: { worldMap, error in
+            if let worldMap = worldMap {
+                if let completion = completion {
+                    var mapData = [AnyHashable: Any]()
+                    
+                    var data: Data? = nil
+                    do {
+                        data = try NSKeyedArchiver.archivedData(withRootObject: worldMap, requiringSecureCoding: true)
+                    } catch {
+                        print("Error accessing archived worldMap data")
+                        return
+                    }
+                    let compressedData = self.getCompressedData(data)
+                    
+                    if compressedData == nil {
+                        completion(false, "request to get World Map failed: couldn't compress data", nil)
+                        return
+                    }
+                    print("world map uncompressed size \(data?.count ?? 0) -> compressed \(compressedData?.count ?? 0)")
+                    
+                    let string = compressedData?.base64EncodedString(options: [])
+                    mapData["worldMap"] = string ?? ""
+                    
+                    let anchors = worldMap.anchors
+                    let anchorList = NSMutableArray.init(capacity: anchors.count)
+                    for anchor in anchors {
+                        // include any anchor with a name in the list, since they've likely been
+                        // created by the web app
+                        if let anchorName = anchor.name {
+                            var anchorDict = [AnyHashable : Any]()
+                            anchorDict["name"] = anchorName
+                            anchorDict["transform"] = arrayFromMatrix4x4(anchor.transform)
+                            anchorList.add(anchorDict)
+                        }
+                    }
+                    mapData["anchors"] = anchorList
+                    mapData["center"] = dictFromVector3(worldMap.center)
+                    mapData["extent"] = dictFromVector3(worldMap.extent)
+                    mapData["featureCount"] = NSNumber(value: worldMap.rawFeaturePoints.points.count)
+                    
+                    self.printWorldMapInfo(worldMap)
+                    
+                    completion(true, nil, mapData)
+                    DDLogError("saving WorldMap due to web request")
+                }
+            } else {
+                if let error = error {
+                    completion?(false, "request to get World Map failed: \(error)", nil)
+                }
+            }
+        })
+    }
+    
     // MARK: - Setting
     
     /**
