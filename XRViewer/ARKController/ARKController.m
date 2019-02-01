@@ -429,37 +429,6 @@
     }
 }
 
-- (void)deactivateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion {
-    if ([[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
-        completion(NO, @"Cannot deactivate a detection image when using the front facing camera");
-        return;
-    }
-    
-    ARWorldTrackingConfiguration* worldTrackingConfiguration = (ARWorldTrackingConfiguration*)[self configuration];
-    ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
-
-    NSMutableSet* currentDetectionImages = [worldTrackingConfiguration detectionImages] != nil ? [[worldTrackingConfiguration detectionImages] mutableCopy] : [NSMutableSet new];
-    if ([currentDetectionImages containsObject:referenceImage]) {
-        if (self.detectionImageActivationPromises[referenceImage.name]) {
-            NSLog(@"The image trying to deactivate is activated and hasn't been found yet, return error");
-            // The image trying to deactivate hasn't been found yet, return an error on the activation block and remove it
-            ActivateDetectionImageCompletionBlock activationBlock = self.detectionImageActivationPromises[referenceImage.name];
-            activationBlock(NO, @"The image has been deactivated", nil);
-            self.detectionImageActivationPromises[referenceImage.name] = nil;
-            return;
-        }
-        
-        [currentDetectionImages removeObject: referenceImage];
-        [worldTrackingConfiguration setDetectionImages: currentDetectionImages];
-
-        self.detectionImageActivationPromises[referenceImage.name] = nil;
-        [[self session] runWithConfiguration:[self configuration]];
-        completion(YES, nil);
-    } else {
-        completion(NO, @"The image trying to deactivate doesn't exist");
-    }
-}
-
 #pragma mark Private
 
 - (void)updateARKDataWithFrame:(ARFrame *)frame

@@ -30,7 +30,7 @@ typealias OnStartSendingComputerVisionData = () -> Void
 typealias OnStopSendingComputerVisionData = () -> Void
 typealias OnAddImageAnchor = ([AnyHashable : Any]?, @escaping ImageDetectedBlock) -> Void
 typealias OnActivateDetectionImage = (String?, @escaping ActivateDetectionImageCompletionBlock) -> Void
-typealias OnDeactivateDetectionImage = (String?, @escaping CreateDetectionImageCompletionBlock) -> Void
+typealias OnDeactivateDetectionImage = (String, @escaping CreateDetectionImageCompletionBlock) -> Void
 typealias OnDestroyDetectionImage = (String, @escaping CreateDetectionImageCompletionBlock) -> Void
 typealias OnCreateDetectionImage = ([AnyHashable : Any], @escaping CreateDetectionImageCompletionBlock) -> Void
 typealias OnGetWorldMap = (@escaping GetWorldMapCompletionBlock) -> Void
@@ -393,7 +393,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             }
         } else if message.name == WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE {
             let imageAnchorInfoDictionary = messageBody
-            let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String
+            guard let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String else { return }
             guard let deactivateDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             if onDeactivateDetectionImage != nil {
                 onDeactivateDetectionImage?(imageName, { success, errorString in

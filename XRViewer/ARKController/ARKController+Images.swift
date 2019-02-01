@@ -145,6 +145,52 @@
     }
     
     /**
+     Removes the reference image from the current set of reference images and re-runs the session
+     
+     - It fails when the current session is not of type ARWorldTrackingConfiguration
+     - It fails when the image trying to be deactivated is not in the current set of detection images
+     - It fails when the image trying to be deactivated was already detected
+     - It fails when the image trying to be deactivated is still active
+     
+     @param imageName The name of the image to be deactivated
+     @param completion The promise that will be called with the outcome of the deactivation
+     */
+    func deactivateDetectionImage(_ imageName: String, completion: DetectionImageCreatedCompletionType) {
+        if configuration is ARFaceTrackingConfiguration {
+            completion(false, "Cannot deactivate a detection image when using the front facing camera")
+            return
+        }
+        
+        let worldTrackingConfiguration = configuration as? ARWorldTrackingConfiguration
+        let referenceImage = referenceImageMap[imageName] as? ARReferenceImage
+        
+        var currentDetectionImages = worldTrackingConfiguration?.detectionImages != nil ? worldTrackingConfiguration?.detectionImages : Set<AnyHashable>()
+        if let referenceImage = referenceImage {
+            if currentDetectionImages?.contains(referenceImage) ?? false {
+                if detectionImageActivationPromises?[referenceImage.name ?? ""] != nil {
+                    print("Error: The image attempting to be deactivated is activated and hasn't been found yet")
+                    // The image trying to be deactivated hasn't been found yet, return an error on the activation block and remove it
+                    let activationBlock = detectionImageActivationPromises?[referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
+                    activationBlock?(false, "The image has been deactivated", nil)
+                    detectionImageActivationPromises?[referenceImage.name ?? ""] = nil
+                    return
+                }
+                
+                currentDetectionImages?.remove(referenceImage)
+                if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
+                    worldTrackingConfiguration?.detectionImages = currentDetectionImages
+                }
+                print("deactivate")
+                detectionImageActivationPromises?[referenceImage.name ?? ""] = nil
+                session.run(configuration, options: [])
+                completion(true, nil)
+            } else {
+                completion(false, "The image attempting to be deactivated doesn't exist")
+            }
+        }
+    }
+    
+    /**
      Destroys the detection image
      
      - Fails if the image to be destroy doesn't exist

@@ -183,22 +183,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
  */
 - (void)removeDistantAnchors;
 
-/**
- Removes the reference image from the current set of reference images and re-runs the session
- 
- - It fails when the current session is not of type ARWorldTrackingConfiguration
- 
- - It fails when the image trying to be deactivated is not in the current set of detection images
- 
- - It fails when the image trying to be deactivated was already detected
- 
- - It fails when the image trying to be deactivated is still active
-
- @param imageName The name of the image to be deactivated
- @param completion The promise that will be called with the outcome of the deactivation
- */
-- (void)deactivateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
-
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
 
 @end
