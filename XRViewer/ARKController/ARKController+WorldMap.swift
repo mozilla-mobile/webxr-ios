@@ -45,6 +45,23 @@
         }
     }
     
+    /**
+     Save the current ARKit ARWorldMap if tracking.
+     */
+    func saveWorldMapInBackground() {
+        if !trackingStateNormal() {
+            DDLogError("can't save WorldMap as we transition to background, tracking isn't initialized")
+            return
+        }
+        
+        session.getCurrentWorldMap(completionHandler: { worldMap, error in
+            if worldMap != nil {
+                DDLogError("saving WorldMap as we transition to background")
+                self.backgroundWorldMap = worldMap
+            }
+        })
+    }
+    
     // MARK: - Loading
     
     /**

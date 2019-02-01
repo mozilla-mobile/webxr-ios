@@ -226,10 +226,6 @@
     return data;
 }
 
-- (NSTimeInterval)currentFrameTimeInMilliseconds {
-    return self.session.currentFrame.timestamp * 1000;
-}
-
 - (NSData *) getDecompressedData:(NSData *) compressed {
     size_t dst_buffer_size = compressed.length * 8;
     
@@ -282,20 +278,6 @@
         free(src_buffer);
         return compressed;
     }
-}
-
-- (void)saveWorldMapInBackground {
-    if (![self trackingStateNormal]) {
-        DDLogError(@"can't save WorldMap as we transition to background, tracking isn't initialized");
-        return;
-    }
-    
-    [[self session] getCurrentWorldMapWithCompletionHandler:^(ARWorldMap * _Nullable worldMap, NSError * _Nullable error) {
-        if (worldMap) {
-            DDLogError(@"saving WorldMap as we transition to background");
-            self.backgroundWorldMap = worldMap;
-        }
-    }];
 }
 
 - (void)setShowMode:(ShowMode)showMode
@@ -910,12 +892,6 @@
         case kCVPixelFormatType_14Bayer_GBRG:                  return @"kCVPixelFormatType_14Bayer_GBRG";
         default: return @"UNKNOWN";
     }
-}
-
-
-- (BOOL)trackingStateNormal {
-    ARTrackingState ts = [[[[self session] currentFrame] camera] trackingState];
-    return ts == ARTrackingStateNormal;
 }
 
 - (NSString *)trackingState {

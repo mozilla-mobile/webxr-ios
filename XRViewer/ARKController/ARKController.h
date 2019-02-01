@@ -137,11 +137,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
 - (void)viewWillTransitionToSize:(CGSize)size;
 
 /**
- Save the current ARKit ARWorldMap if tracking.
- */
-- (void)saveWorldMapInBackground;
-
-/**
  ARKit data creates a copy of the current AR data and returns it
 
  @return the dictionary that's going to be sent to JS
@@ -154,8 +149,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
  @return the dictionary of CV data that's going to be sent to JS
  */
 - (NSDictionary*)computerVisionData;
-
-- (NSTimeInterval)currentFrameTimeInMilliseconds;
 
 - (void)setShowMode:(ShowMode)mode;
 
@@ -182,8 +175,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
 /// Removes the anchors with the ids passed as parameter from the scene.
 /// @param anchorIDsToDelete An array of anchor IDs. These can be both ARKit-generated anchorIDs or user-generated anchorIDs
 - (void)removeAnchors:(NSArray *)anchorIDsToDelete;
-
-- (BOOL)trackingStateNormal;
 
 - (NSString *)trackingState;
 

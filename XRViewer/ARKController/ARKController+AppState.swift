@@ -150,4 +150,15 @@ extension ARKController {
             configuration?.worldAlignment = .gravity
         }
     }
+    
+    // MARK: - Helpers
+    
+    func currentFrameTimeInMilliseconds() -> TimeInterval {
+        return TimeInterval((session.currentFrame?.timestamp ?? 0.0) * 1000)
+    }
+    
+    func trackingStateNormal() -> Bool {
+        guard let ts = session.currentFrame?.camera.trackingState.presentationString else { return false }
+        return ts == ARCamera.TrackingState.normal.presentationString
+    }
 }
