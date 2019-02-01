@@ -15,9 +15,6 @@
 }
 
 @property (nonatomic, strong) id<ARKControllerProtocol> controller;
-
-@property (nonatomic, strong) AVCaptureDevice *device;
-
 @property(nonatomic) ShowMode showMode;
 @property(nonatomic) ShowOptions showOptions;
 
@@ -153,47 +150,6 @@
     }
     
     return self;
-}
-
-- (void)setupDeviceCamera
-{
-    [self setDevice:[AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo]];
-    
-    if ([self device] == nil)
-    {
-        DDLogError(@"Camera device is NIL");
-        return;
-    }
-    
-    NSError *outError;
-    [[self device] lockForConfiguration:&outError];
-    
-    if ([[self device] lockForConfiguration:&outError])
-    {
-        if ([[self device] isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus])
-        {
-            DDLogDebug(@"AVCaptureFocusModeContinuousAutoFocus Supported");
-            [[self device] setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
-        }
-        
-        if ([[self device] isFocusPointOfInterestSupported])
-        {
-            DDLogDebug(@"FocusPointOfInterest Supported");
-            [[self device] setFocusPointOfInterest:CGPointMake(0.5, 0.5)];
-        }
-        
-        if ([[self device] isSmoothAutoFocusSupported])
-        {
-            DDLogDebug(@"SmoothAutoFocus Supported");
-            [[self device] setSmoothAutoFocusEnabled:YES];
-        }
-        
-        [[self device] unlockForConfiguration];
-    }
-    else
-    {
-        DDLogError(@"Camera lock error - %@", outError);
-    }
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size
@@ -502,40 +458,6 @@
     } else {
         completion(NO, @"The image trying to deactivate doesn't exist");
     }
-}
-
-- (void)switchCameraButtonTapped {
-    for (ARAnchor* anchor in self.session.currentFrame.anchors) {
-        [self.session removeAnchor: anchor];
-    }
-    
-    if (![[self configuration] isKindOfClass:[ARFaceTrackingConfiguration class]]) {
-        ARFaceTrackingConfiguration* faceTrackingConfiguration = [ARFaceTrackingConfiguration new];
-        self.configuration = faceTrackingConfiguration;
-        [self.session runWithConfiguration: self.configuration];
-    } else {
-        ARWorldTrackingConfiguration* worldTrackingConfiguration = [ARWorldTrackingConfiguration new];
-        [worldTrackingConfiguration setPlaneDetection:ARPlaneDetectionHorizontal | ARPlaneDetectionVertical];
-        [worldTrackingConfiguration setWorldAlignment:ARWorldAlignmentGravityAndHeading];
-
-        // Configure all the active images that weren't detected in the previous back camera session
-        NSArray *notDetectedImageNames = [self.detectionImageActivationPromises allKeys];
-        NSMutableSet* newDetectionImages = [NSMutableSet new];
-        for (NSString* imageName in notDetectedImageNames) {
-            ARReferenceImage *referenceImage = self.referenceImageMap[imageName];
-            if (referenceImage) {
-                [newDetectionImages addObject:referenceImage];
-            }
-        }
-        worldTrackingConfiguration.detectionImages = [newDetectionImages copy];
-
-        self.configuration = worldTrackingConfiguration;
-        [self.session runWithConfiguration: self.configuration];
-    }
-}
-
-+ (BOOL)supportsARFaceTrackingConfiguration {
-    return [ARFaceTrackingConfiguration isSupported];
 }
 
 #pragma mark Private
