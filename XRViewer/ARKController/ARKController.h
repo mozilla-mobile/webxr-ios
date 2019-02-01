@@ -162,26 +162,7 @@ typedef void (^ResultArrayBlock)(NSArray *);
  */
 - (NSArray *)hitTestNormPoint:(CGPoint)point types:(NSUInteger)type;
 
-/**
- Adds a "regular" anchor to the session
-
- @param userGeneratedAnchorID the ID the user wants this new anchor to have
- @param transform the transform of the anchor
- @return YES if the anchorID didn't exist already
- */
-- (BOOL)addAnchor:(NSString *)userGeneratedAnchorID transform:(NSArray *)transform;
-
-/// Removes the anchors with the ids passed as parameter from the scene.
-/// @param anchorIDsToDelete An array of anchor IDs. These can be both ARKit-generated anchorIDs or user-generated anchorIDs
-- (void)removeAnchors:(NSArray *)anchorIDsToDelete;
-
 - (NSString *)trackingState;
-
-/**
- Remove all the plane anchors further than the value hosted in NSUserdDefaults with the
- key "distantAnchorsDistanceKey"
- */
-- (void)removeDistantAnchors;
 
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
 

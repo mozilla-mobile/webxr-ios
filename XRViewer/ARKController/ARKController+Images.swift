@@ -35,6 +35,12 @@
         return result
     }
     
+    func createRequestedDetectionImages() {
+        for referenceImageDictionary: [AnyHashable : Any] in detectionImageCreationRequests as? [[AnyHashable : Any]] ?? [] {
+            _createDetectionImage(referenceImageDictionary)
+        }
+    }
+    
     /**
      If SendWorldSensingDataAuthorizationStateAuthorized, creates an ARImages using the
      information in the dictionary as input. Otherwise, enqueue the request for when the user
@@ -180,7 +186,7 @@
                 if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
                     worldTrackingConfiguration?.detectionImages = currentDetectionImages
                 }
-                print("deactivate")
+                
                 detectionImageActivationPromises?[referenceImage.name ?? ""] = nil
                 session.run(configuration, options: [])
                 completion(true, nil)

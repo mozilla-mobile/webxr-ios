@@ -233,6 +233,68 @@
     
     // MARK: - Anchor Removal
     
+    /// Removes the anchors with the ids passed as parameter from the scene.
+    /// @param anchorIDsToDelete An array of anchor IDs. These can be both ARKit-generated anchorIDs or user-generated anchorIDs
+    func removeAnchors(_ anchorIDsToDelete: [Any]) {
+        for anchorIDToDelete in anchorIDsToDelete as? [String] ?? [] {
+            var anchorToDelete: ARAnchor? = getAnchorFromUserAnchorID(anchorIDToDelete)
+            if let anchorToDelete = anchorToDelete {
+                session.remove(anchor: anchorToDelete)
+            } else {
+                anchorToDelete = getAnchorFromARKitAnchorID(anchorIDToDelete)
+                if let anchorToDelete = anchorToDelete {
+                    session.remove(anchor: anchorToDelete)
+                }
+            }
+        }
+    }
+    
+    /**
+     Remove all the plane anchors further than the value hosted in NSUserdDefaults with the
+     key "distantAnchorsDistanceKey"
+     */
+    func removeDistantAnchors() {
+        guard let currentFrame = session.currentFrame else { return }
+        let cameraTransform = currentFrame.camera.transform
+        let distanceThreshold: Float = UserDefaults.standard.float(forKey: Constant.distantAnchorsDistanceKey())
+        
+        for anchor in currentFrame.anchors {
+            if anchor is ARPlaneAnchor {
+                guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
+                let cameraMatrixInAnchorCoordinates: matrix_float4x4 = matrix_multiply(anchor.transform.inverse, cameraTransform)
+                let cameraPositionInAnchorCoordinates: simd_float4 = cameraMatrixInAnchorCoordinates.columns.3
+                let cameraPositionRelativeToPlaneCenter: simd_float4 = cameraPositionInAnchorCoordinates - simd_make_float4(planeAnchor.center, 1.0)
+                
+                print("cam plane coords:\t \(cameraPositionRelativeToPlaneCenter[0]), \(cameraPositionRelativeToPlaneCenter[1]), \(cameraPositionRelativeToPlaneCenter[2])")
+                print("extents:\t\t\t \(planeAnchor.extent[0]), \(planeAnchor.extent[1]), \(planeAnchor.extent[2])")
+                print("center:\t\t\t\t \(planeAnchor.center[0]), \(planeAnchor.center[1]), \(planeAnchor.center[2])")
+
+                let center = cameraPositionRelativeToPlaneCenter[0]
+                let extent = planeAnchor.extent[0]
+                let center1 = cameraPositionRelativeToPlaneCenter[1]
+                let extent1 = planeAnchor.extent[1]
+                let center2 = cameraPositionRelativeToPlaneCenter[2]
+                let extent2 = planeAnchor.extent[2]
+                if (center - extent) > distanceThreshold ||
+                    (center + extent) < -distanceThreshold ||
+                    (center1 - extent1) > distanceThreshold ||
+                    (center1 + extent1) < -distanceThreshold ||
+                    (center2 - extent2) > distanceThreshold ||
+                    (center2 + extent2) < -distanceThreshold {
+                    
+                    print("\n\n*********\n\nRemoving distant plane \(anchor.identifier.uuidString)\n\n*********")
+                    session.remove(anchor: anchor)
+                }
+            } else {
+                let distance = simd_distance(anchor.transform.columns.3, cameraTransform.columns.3)
+                if distance >= distanceThreshold {
+                    print("\n\n*********\n\nRemoving distant anchor \(anchor.identifier.uuidString)\n\n*********")
+                    session.remove(anchor: anchor)
+                }
+            }
+        }
+    }
+    
     func removeAllAnchors() {
         clearImageDetectionDictionaries()
         
@@ -343,6 +405,27 @@
         }
         
         return anchorID
+    }
+
+    /**
+     Adds a "regular" anchor to the session
+    
+     @param userGeneratedAnchorID the ID the user wants this new anchor to have
+     @param transform the transform of the anchor
+     @return YES if the anchorID didn't exist already
+     */
+    func addAnchor(_ userGeneratedAnchorID: String?, transform: [Any]?) -> Bool {
+        if userGeneratedAnchorID == nil || (arkitGeneratedAnchorIDUserAnchorIDMap.allValues as NSArray).contains(userGeneratedAnchorID ?? "") {
+            DDLogError("Duplicate or nil anchor name: \(userGeneratedAnchorID ?? "nil")")
+            return false
+        }
+        
+        let matrix: matrix_float4x4 = matrixFromArray(transform)
+        let anchor = ARAnchor(name: userGeneratedAnchorID ?? "", transform: matrix)
+        session.add(anchor: anchor)
+        arkitGeneratedAnchorIDUserAnchorIDMap?[anchor.identifier.uuidString] = userGeneratedAnchorID ?? ""
+
+        return true
     }
     
     /**

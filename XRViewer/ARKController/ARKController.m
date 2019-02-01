@@ -261,76 +261,6 @@
     return hitTestResultArrayFromResult(result);
 }
 
-- (BOOL)addAnchor:(NSString *)userGeneratedAnchorID transform:(NSArray *)transform
-{
-    if ((userGeneratedAnchorID == nil) || [[self.arkitGeneratedAnchorIDUserAnchorIDMap allValues] containsObject: userGeneratedAnchorID])
-    {
-        DDLogError(@"Duplicate or NIL anchor Name - %@", userGeneratedAnchorID);
-        return NO;
-    }
-    
-    matrix_float4x4 matrix = [transform isKindOfClass:[NSArray class]] ? matrixFromArray(transform) : matrixFromDictionary((NSDictionary *)transform);
-    
-    ARAnchor *anchor = [[ARAnchor alloc] initWithName:userGeneratedAnchorID transform:matrix];
-    
-    [[self session] addAnchor:anchor];
-
-    self.arkitGeneratedAnchorIDUserAnchorIDMap[[[anchor identifier] UUIDString]] = userGeneratedAnchorID;
-
-    return YES;
-}
-
-- (void)removeAnchors:(NSArray *)anchorIDsToDelete {
-    for (NSString *anchorIDToDelete in anchorIDsToDelete) {
-        ARAnchor *anchorToDelete = [self getAnchorFromUserAnchorID:anchorIDToDelete];
-        if (anchorToDelete) {
-            [self.session removeAnchor:anchorToDelete];
-        } else {
-            anchorToDelete = [self getAnchorFromARKitAnchorID:anchorIDToDelete];
-            if (anchorToDelete) {
-                [self.session removeAnchor:anchorToDelete];
-            }
-        }
-    }
-}
-
-- (void)removeDistantAnchors {
-    matrix_float4x4 cameraTransform = [[[self.session currentFrame] camera] transform];
-    float distanceThreshold = [[NSUserDefaults standardUserDefaults] floatForKey:[Constant distantAnchorsDistanceKey]];
-    
-    for (ARAnchor *anchor in [[self.session currentFrame] anchors]) {
-        if ([anchor isKindOfClass:[ARPlaneAnchor class]]) {
-            ARPlaneAnchor* planeAnchor = (ARPlaneAnchor*)anchor;
-            matrix_float4x4 cameraMatrixInAnchorCoordinates = matrix_multiply(matrix_invert(anchor.transform), cameraTransform);
-            simd_float4 cameraPositionInAnchorCoordinates = cameraMatrixInAnchorCoordinates.columns[3];
-            simd_float4 cameraPositionRelativeToPlaneCenter = cameraPositionInAnchorCoordinates - simd_make_float4(planeAnchor.center, 1.0);
-            
-            NSLog(@"cam plane coords:\t %f, %f, %f", cameraPositionRelativeToPlaneCenter[0], cameraPositionRelativeToPlaneCenter[1], cameraPositionRelativeToPlaneCenter[2]);
-            NSLog(@"extents:\t\t\t %f, %f, %f", planeAnchor.extent[0], planeAnchor.extent[1], planeAnchor.extent[2]);
-            NSLog(@"center:\t\t\t\t %f, %f, %f", planeAnchor.center[0], planeAnchor.center[1], planeAnchor.center[2]);
-            if ((cameraPositionRelativeToPlaneCenter[0] - planeAnchor.extent[0] > distanceThreshold) ||
-                (cameraPositionRelativeToPlaneCenter[0] + planeAnchor.extent[0] < -distanceThreshold) ||
-                
-                (cameraPositionRelativeToPlaneCenter[1] - planeAnchor.extent[1] > distanceThreshold) ||
-                (cameraPositionRelativeToPlaneCenter[1] + planeAnchor.extent[1] < -distanceThreshold) ||
-                
-                (cameraPositionRelativeToPlaneCenter[2] - planeAnchor.extent[2] > distanceThreshold) ||
-                (cameraPositionRelativeToPlaneCenter[2] + planeAnchor.extent[2] < -distanceThreshold)
-                ) {
-                
-                NSLog(@"\n\n*********\n\nRemoving distant plane %@\n\n*********", [anchor.identifier UUIDString]);
-                [self.session removeAnchor:anchor];
-            }
-        } else {
-            float distance = simd_distance(anchor.transform.columns[3], cameraTransform.columns[3]);
-            if (distance >= distanceThreshold) {
-                NSLog(@"\n\n*********\n\nRemoving distant anchor %@\n\n*********", [anchor.identifier UUIDString]);
-                [self.session removeAnchor:anchor];
-            }
-        }
-    }
-}
-
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)authorizationStatus {
     _sendingWorldSensingDataAuthorizationStatus = authorizationStatus;
     
@@ -420,12 +350,6 @@
             [self.detectionImageCreationPromises removeAllObjects];
             break;
         }
-    }
-}
-
-- (void)createRequestedDetectionImages {
-    for (NSDictionary* referenceImageDictionary in self.detectionImageCreationRequests) {
-        [self _createDetectionImage:referenceImageDictionary];
     }
 }
 
