@@ -1,5 +1,6 @@
 # WebXR Viewer Changelog
 * Added Lite Mode option to only share a single plane during World Sensing
+* Added 'WEBSERVER' custom flag for Debug compilations
 * Converted, separated functions to ARKController+Anchors, ARKController+AppState, ARKController+Images, ARKController+ARSessionDelegate, ARKController+WorldMap, ARKController+Camera
 * Moved ARSession methods to ViewController+ARSCNViewDelegate
 * Fixed dropped frames and CV low FPS issue with ARFaceAnchors

@@ -1,7 +1,7 @@
 import UIKit
-import GCDWebServer
 import CoreLocation
 import CocoaLumberjack
+import GCDWebServer
 
 let UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_MESSAGE = "The selected ARSessionConfiguration is not supported by the current device"
 let SENSOR_UNAVAILABLE_ARKIT_ERROR_MESSAGE = "A sensor required to run the session is not available"
@@ -16,14 +16,11 @@ let MEMORY_ERROR_DOMAIN = "Memory"
 let MEMORY_ERROR_CODE = 0
 let MEMORY_ERROR_MESSAGE = "Memory warning received"
 
-
 /**
  The main view controller of the app. It's the holder of the other controllers.
  It listens to events happening on the controllers and passes them to the ones
  interested on them.
  */
-#if WEBSERVER
-#endif
 
 let WAITING_TIME_ON_MEMORY_WARNING = 0.5
 typealias UICompletion = () -> Void
@@ -31,7 +28,6 @@ typealias UICompletion = () -> Void
 class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServerDelegate {
 #if WEBSERVER
     private var webServer: GCDWebServer?
-
 #endif
     @IBOutlet private weak var splashLayerView: LayerView!
     @IBOutlet private weak var arkLayerView: LayerView!
@@ -105,24 +101,25 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         options[GCDWebServerOption_Port] = 8080
         //[options setObject:@NO forKey:GCDWebServerOption_AutomaticallySuspendInBackground];
 
-        let documentsPath = URL(fileURLWithPath: Bundle.main.resourcePath ?? "").appendingPathComponent("Web").absoluteString
+        let documentsPath = URL(fileURLWithPath: Bundle.main.resourcePath ?? "").appendingPathComponent("Web").path
 
         if FileManager.default.fileExists(atPath: documentsPath) {
             webServer = GCDWebServer()
             webServer?.addGETHandler(forBasePath: "/", directoryPath: documentsPath, indexFilename: "index.html", cacheAge: 0, allowRangeRequests: true)
 
             webServer?.delegate = self
-            if webServer?.start(withOptions: options, error: nil) != nil {
-                print(String(format: "GCDWebServer running locally on port %i", Int(webServer?.port ?? 0)))
-            } else {
-                print("GCDWebServer not running!")
+            do {
+                try webServer?.start(options: options)
+                print("GCDWebServer running locally on port \(webServer?.port ?? 0)")
+            } catch {
+                print("GCDWebServer not running! Error: \(error.localizedDescription)")
             }
         } else {
             print("No Web directory, GCDWebServer not running!")
         }
     }
-
 #endif
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
