@@ -25,12 +25,14 @@ extension ARKController: ARSessionDelegate {
             }
             
             if shouldSend(addedAnchor) || sendingWorldSensingDataAuthorizationStatus == .authorized
-            // Tony: Initially I implemented this line to allow face-based and image-based AR
+            // Tony: Initially I implemented a line below to allow face-based and image-based AR
             // experiences to work when operating in .singlePlane/AR Lite Mode.  However
             // if the user is choosing to operate in AR Lite Mode (i.e. a mode focused on
             // restricting the amount of data shared), they likely wouldn't want the website to
-            // utilize any recognized ARFaceAnchors nor, potentially, ARImageAnchors
-            //            || (self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateSinglePlane && ([addedAnchor isKindOfClass:[ARImageAnchor class]] || [addedAnchor isKindOfClass:[ARFaceAnchor class]]))
+            // utilize any recognized ARFaceAnchors nor, potentially, ARImageAnchors.
+            // Tony: Spoke with Blair briefly about this 2/4/19, allowing ARFaceAnchors
+            //       but not ARImageAnchors
+            || (sendingWorldSensingDataAuthorizationStatus == .singlePlane && addedAnchor is ARFaceAnchor)
             {
                 
                 let addedAnchorDictionary = createDictionary(for: addedAnchor)
@@ -47,19 +49,6 @@ extension ARKController: ARSessionDelegate {
                         detectionImageActivationPromises[name] = nil
                     }
                 }
-            }
-        }
-        
-        if sendingWorldSensingDataAuthorizationStatus == .singlePlane {
-            
-            let allFrameAnchors = self.session?.currentFrame?.anchors
-            let planeAnchors = allFrameAnchors?.filter { $0 is ARPlaneAnchor }
-            
-            if planeAnchors?.count == 1 {
-                guard let firstPlane = allFrameAnchors?.first as? ARPlaneAnchor else { return }
-                let addedAnchorDictionary = createDictionary(for: firstPlane)
-                addedAnchorsSinceLastFrame.add(addedAnchorDictionary)
-                objects[anchorID(for: firstPlane)] = addedAnchorDictionary
             }
         }
     }

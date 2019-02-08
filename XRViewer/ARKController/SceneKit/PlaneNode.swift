@@ -26,7 +26,6 @@ class PlaneNode: SCNNode {
 
         let translateTransform: SCNMatrix4 = SCNMatrix4MakeTranslation(anchor.center.x, 0, anchor.center.z)
         let rotationTransform: SCNMatrix4 = SCNMatrix4MakeRotation(-.pi / 2.0, 1.0, 0.0, 0.0)
-
         transform = SCNMatrix4Mult(rotationTransform, translateTransform)
     }
 
@@ -41,7 +40,6 @@ class PlaneNode: SCNNode {
 
         geometry = plane
         transform = SCNMatrix4MakeRotation(-.pi / 2.0, 1, 0, 0)
-
         opacity = 0
     }
 }

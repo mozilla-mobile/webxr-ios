@@ -42,6 +42,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     private var animator: Animator?
     private var reachability: Reachability?
     private var timerSessionRunningInBackground: Timer?
+    private var chooseSinglePlaneButton = UIButton()
     
     let session = ARSession()
     @IBOutlet weak var sceneView: ARSCNView!
@@ -64,6 +65,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         setupCommonControllers()
         setupUI()
         setupScene()
+        setupSinglePlaneButton()
 
         /// Apparently, this is called async in the main queue because we need viewDidLoad to finish
         /// its execution before doing anything on the subviews. This also could have been called from
@@ -370,6 +372,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         stateController.onMemoryWarning = { url in
+            self.arkController?.controller.previewingSinglePlane = false
+            self.chooseSinglePlaneButton.removeFromSuperview()
             blockSelf?.messageController?.showMessageAboutMemoryWarning(withCompletion: {
                 self.webController?.loadBlankHTMLString()
             })
@@ -461,6 +465,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         weak var blockSelf: ViewController? = self
 
         NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main, using: { note in
+            self.arkController?.controller.previewingSinglePlane = false
+            self.chooseSinglePlaneButton.removeFromSuperview()
             guard let arSessionState = blockSelf?.arkController?.arSessionState else { return }
             switch arSessionState {
                 case .ARKSessionUnknown:
@@ -527,9 +533,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
     func setupTargetControllers() {
         setupLocationController()
-
         setupWebController()
-
         setupOverlayController()
     }
 
@@ -633,6 +637,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         webController?.animator = animator
         webController?.onStartLoad = {
             if blockSelf?.arkController != nil {
+                blockSelf?.arkController?.controller.previewingSinglePlane = false
+                blockSelf?.chooseSinglePlaneButton.removeFromSuperview()
                 let lastURL = blockSelf?.webController?.lastURL
                 let currentURL = blockSelf?.webController?.webView?.url?.absoluteString
 
@@ -651,7 +657,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         webController?.onInitAR = { uiOptionsDict in
             blockSelf?.stateController.setShowOptions(showOptionsFormDict(uiOptionsDict))
-
             blockSelf?.stateController.applyOnEnterForegroundAction()
             blockSelf?.stateController.applyOnDidReceiveMemoryAction()
         }
@@ -830,8 +835,23 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         overlayController?.setMode(stateController.state.showMode)
         overlayController?.setOptions(stateController.state.showOptions)
     }
+    
+    func setupSinglePlaneButton() {
+        let buttonWidth: CGFloat = 200
+        let buttonHeight: CGFloat = 50
+        chooseSinglePlaneButton = UIButton(type: .roundedRect)
+        chooseSinglePlaneButton.frame = CGRect(x: 0, y: 0, width: buttonWidth, height: buttonHeight)
+        chooseSinglePlaneButton.center = CGPoint(x: view.center.x, y: (view.center.y) + buttonWidth)
+        chooseSinglePlaneButton.backgroundColor = .white
+        chooseSinglePlaneButton.layer.cornerRadius = 0.5 * buttonHeight
+        chooseSinglePlaneButton.clipsToBounds = true
+        chooseSinglePlaneButton.tintColor = .black
+        chooseSinglePlaneButton.setTitle("Share green plane", for: .normal)
+        chooseSinglePlaneButton.addTarget(self, action: #selector(chooseSinglePlaneAction), for: .touchUpInside)
+    }
 
-// MARK: Cleanups
+    // MARK: - Cleanups
+    
     func cleanupCommonControllers() {
         animator?.clean()
         stateController.state = AppState.defaultState()
@@ -839,8 +859,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     }
 
     func cleanupTargetControllers() {
-        self.locationManager = nil
-
+        locationManager = nil
         cleanWebController()
         cleanARKController()
         cleanOverlay()
@@ -848,19 +867,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
     func cleanARKController() {
         CLEAN_VIEW(v: arkLayerView)
-        self.arkController = nil
+        arkController = nil
     }
 
     func cleanWebController() {
         webController?.clean()
         CLEAN_VIEW(v: webLayerView)
-        self.webController = nil
+        webController = nil
     }
 
     func cleanOverlay() {
         overlayController?.clean()
         CLEAN_VIEW(v: hotLayerView)
-        self.overlayController = nil
+        overlayController = nil
     }
 
 // MARK: Splash
@@ -981,6 +1000,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.stateController.state.userGrantedSendingWorldStateData = granted ? .authorized : .denied
             })
         } else if request?[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
+            blockSelf?.arkController?.controller.previewingSinglePlane = false
+            blockSelf?.chooseSinglePlaneButton.removeFromSuperview()
             messageController?.showMessageAboutAccessingWorldSensingData({ access in
                 
                 blockSelf?.stateController.state.askedWorldStateData = true
@@ -997,9 +1018,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.stateController.state.userGrantedSendingWorldStateData = .denied
                 }
                 
-                if access == SendWorldSensingDataAuthorizationState.singlePlane && blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {
-                    blockSelf?.stateController.state.shouldShowLiteModePopup = false
-                    blockSelf?.messageController?.showMessage(withTitle: "Lite Mode Started", message: "Only the first plane scanned will be shared with this website. No facial recognition nor image recognition will be shared.", hideAfter: 6)
+                if access == SendWorldSensingDataAuthorizationState.singlePlane {
+                    blockSelf?.arkController?.controller.previewingSinglePlane = true
+                    blockSelf?.view.addSubview(blockSelf?.chooseSinglePlaneButton ?? UIButton())
+                    if blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {
+                        blockSelf?.stateController.state.shouldShowLiteModePopup = false
+                        blockSelf?.messageController?.showMessage(withTitle: "Lite Mode Started", message: "Choose one plane to share with this website.", hideAfter: 2)
+                    }
                 }
             }, url: webController?.webView?.url)
         } else {
@@ -1015,6 +1040,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     func CLEAN_VIEW(v: LayerView) {
         for view in v.subviews {
             view.removeFromSuperview()
+        }
+    }
+    
+    @objc private func chooseSinglePlaneAction() {
+        chooseSinglePlaneButton.removeFromSuperview()
+        arkController?.controller.previewingSinglePlane = false
+        guard let chosenPlane = arkController?.controller.focusedPlane else { return }
+        if let anchorIdentifier = arkController?.controller.planes.someKey(forValue: chosenPlane) {
+            let allFrameAnchors = arkController?.session.currentFrame?.anchors
+            let anchor = allFrameAnchors?.filter { $0.identifier == anchorIdentifier }.first
+            if let anchor = anchor {
+                let addedAnchorDictionary = arkController?.createDictionary(for: anchor)
+                arkController?.addedAnchorsSinceLastFrame.add(addedAnchorDictionary ?? [:])
+                arkController?.objects[anchor.identifier.uuidString] = addedAnchorDictionary
+            }
         }
     }
 }

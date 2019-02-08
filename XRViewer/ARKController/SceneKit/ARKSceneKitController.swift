@@ -19,11 +19,14 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
             updateModes()
         }
     }
-    private var planes: [UUID : PlaneNode] = [:]
+    var planes: [UUID : PlaneNode] = [:]
     private var planeHitTestResults: [ARHitTestResult] = []
     private var currentHitTest: HitTestResult?
     private var focus: FocusNode?
     private var hitTestFocusPoint = CGPoint.zero
+    private var greenGrid = UIImage(named: "Models.scnassets/plane_grid2.png")
+    var previewingSinglePlane = false
+    var focusedPlane: PlaneNode?
 
     deinit {
         DDLogDebug("ARKSceneKitController dealloc")
@@ -145,6 +148,16 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         } else {
             focus?.show(false)
         }
+        
+        guard previewingSinglePlane else { return }
+        guard let firstHitTestResult = renderView?.hitTest(hitTestFocusPoint, types: .existingPlaneUsingGeometry).first else { return }
+        if let plane = firstHitTestResult.anchor as? ARPlaneAnchor {
+            let node = self.renderView?.node(for: plane)
+            let child = node?.childNodes.first as? PlaneNode
+            child?.geometry?.firstMaterial?.diffuse.contents = greenGrid
+            child?.opacity = 1
+            focusedPlane = child
+        }
     }
 
     func updateFocus() {
@@ -181,7 +194,8 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         guard let showMode = showMode else { return }
         guard let showOptions = showOptions else { return }
         for (_, plane) in planes {
-            plane.show(((showMode == ShowMode.multiDebug) && (showOptions.rawValue & ShowOptions.ARPlanes.rawValue) != 0) || ((showMode == ShowMode.debug) && (showOptions.rawValue & ShowOptions.ARPlanes.rawValue) != 0))
+            plane.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "Models.scnassets/plane_grid1.png")
+            plane.show(((showMode == ShowMode.multiDebug) && (showOptions.rawValue & ShowOptions.ARPlanes.rawValue) != 0) || ((showMode == ShowMode.debug) && (showOptions.rawValue & ShowOptions.ARPlanes.rawValue) != 0) || previewingSinglePlane)
         }
     }
 
@@ -200,11 +214,10 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
             self.renderView?.scene.lightingEnvironment.intensity = (lightEstimate ?? 0.0) / 40
 
-            self.hitTest()
-
             self.updateCameraFocus()
             self.updatePlanes()
             self.updateAnchors()
+            self.hitTest()
         })
     }
 

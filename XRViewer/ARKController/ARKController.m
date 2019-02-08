@@ -14,7 +14,6 @@
     NSDictionary* computerVisionData;
 }
 
-@property (nonatomic, strong) id<ARKControllerProtocol> controller;
 @property(nonatomic) ShowMode showMode;
 @property(nonatomic) ShowOptions showOptions;
 
@@ -292,23 +291,6 @@
         }
         case SendWorldSensingDataAuthorizationStateSinglePlane: {
             NSLog(@"World sensing auth changed to single plane");
-
-            NSArray *anchors = [[[self session] currentFrame] anchors];
-            NSPredicate* arPlanePredicate = [NSPredicate predicateWithFormat:@"self isKindOfClass: %@", [ARPlaneAnchor class]];
-            NSArray* predicateResults = [anchors filteredArrayUsingPredicate:arPlanePredicate];
-            
-            if (predicateResults.count > 0) {
-                ARPlaneAnchor *firstPlane = predicateResults.firstObject;
-                if (!self.objects[[self anchorIDFor:firstPlane]]) {
-                    NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:firstPlane] mutableCopy];
-                    self.objects[[self anchorIDFor:firstPlane]] = addedAnchorDictionary;
-                }
-                [self.addedAnchorsSinceLastFrame addObject: self.objects[[self anchorIDFor:firstPlane]]];
-            }
-            
-            [self createRequestedDetectionImages];
-            
-            // Only need to do this if there's an outstanding world map request
             if (self.getWorldMapPromise) {
                 [self _getWorldMap];
             }

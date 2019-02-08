@@ -75,3 +75,9 @@ extension matrix_float4x4 {
         ]
     }
 }
+
+extension Dictionary where Value: Equatable {
+    func someKey(forValue val: Value) -> Key? {
+        return first(where: { $1 == val })?.key
+    }
+}
