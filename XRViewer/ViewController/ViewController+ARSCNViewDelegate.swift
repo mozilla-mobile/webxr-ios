@@ -20,7 +20,7 @@ extension ViewController: ARSCNViewDelegate {
     
     func sessionWasInterrupted(_ session: ARSession) {
         DDLogError("sessionWasInterrupted")
-        textManager.blurBackground()
+        textManager.showMessage("Session interrupted!")
         overlayController?.setARKitInterruption(true)
         messageController?.showMessageAboutARInterruption(true)
         webController?.wasARInterruption(true)
@@ -28,8 +28,7 @@ extension ViewController: ARSCNViewDelegate {
     
     func sessionInterruptionEnded(_ session: ARSession) {
         DDLogError("sessionInterruptionEnded")
-        textManager.unblurBackground()
-        textManager.showMessage("Resetting...")
+        textManager.showMessage("Interruption ended\nResetting...")
         overlayController?.setARKitInterruption(false)
         messageController?.showMessageAboutARInterruption(false)
         webController?.wasARInterruption(false)
@@ -38,7 +37,6 @@ extension ViewController: ARSCNViewDelegate {
     func session(_ session: ARSession, didFailWithError error: Error) {
         DDLogError("Session didFailWithError - \(error.localizedDescription)")
         arkController?.arSessionState = .ARKSessionUnknown
-        
         arkController?.didFailSession(error)
     }
     

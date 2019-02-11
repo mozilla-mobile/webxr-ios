@@ -56,7 +56,6 @@ class TextManager {
     // Timer for tracking state escalation
     private var trackingStateFeedbackEscalationTimer: Timer?
     
-    let blurEffectViewTag = 100
     var schedulingMessagesBlocked = false
     var alertController: UIAlertController?
     
@@ -190,25 +189,6 @@ class TextManager {
     func dismissPresentedAlert() {
         DispatchQueue.main.async {
             self.alertController?.dismiss(animated: true, completion: nil)
-        }
-    }
-    
-    // MARK: - Background Blur
-    
-    func blurBackground() {
-        let blurEffect = UIBlurEffect(style: UIBlurEffect.Style.light)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = viewController.view.bounds
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        blurEffectView.tag = blurEffectViewTag
-        viewController.view.addSubview(blurEffectView)
-    }
-    
-    func unblurBackground() {
-        for view in viewController.view.subviews {
-            if let blurView = view as? UIVisualEffectView, blurView.tag == blurEffectViewTag {
-                blurView.removeFromSuperview()
-            }
         }
     }
     
