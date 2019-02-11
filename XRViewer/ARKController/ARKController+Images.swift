@@ -51,9 +51,11 @@
      */
     func createDetectionImage(_ referenceImageDictionary: [AnyHashable : Any], completion: @escaping DetectionImageCreatedCompletionType) {
         switch sendingWorldSensingDataAuthorizationStatus {
-        case .authorized, .singlePlane:
+        case .authorized:
             detectionImageCreationPromises?[referenceImageDictionary["uid"] as Any] = completion
             _createDetectionImage(referenceImageDictionary)
+        case .singlePlane:
+            completion(false, "The user only provided access to a single plane, not detection images")
         case .denied:
             completion(false, "The user denied access to world sensing data")
         case .notDetermined:

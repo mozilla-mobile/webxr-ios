@@ -1019,6 +1019,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 }
                 
                 if access == SendWorldSensingDataAuthorizationState.singlePlane {
+                    guard let state = blockSelf?.stateController.state else { return }
+                    blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
                     blockSelf?.arkController?.controller.previewingSinglePlane = true
                     blockSelf?.view.addSubview(blockSelf?.chooseSinglePlaneButton ?? UIButton())
                     if blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {

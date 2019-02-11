@@ -110,9 +110,11 @@
         
         #if ALLOW_GET_WORLDMAP
         switch sendingWorldSensingDataAuthorizationStatus {
-        case .authorized, .singlePlane:
+        case .authorized:
             getWorldMapPromise = completion
             _getWorldMap()
+        case .singlePlane:
+            completion(false, "The user only granted access to a single plane, so cannot get map", nil)
         case .denied:
             completion(false, "The user denied access to world sensing data", nil)
         case .notDetermined:
@@ -219,7 +221,7 @@
         }
         
         switch sendingWorldSensingDataAuthorizationStatus {
-        case .authorized, .singlePlane:
+        case .authorized:
             setWorldMapPromise = completion
             // we do it here (rather than above) because if a nil is passed in, we don't want to replace the previously saved
             // value (since a user could still reload it with the browser menu)
@@ -234,6 +236,8 @@
                     setWorldMapPromise = nil
                 }
             }
+        case .singlePlane:
+            completion(false, "The user only provided access to a single plane, so cannot set map")
         case .denied:
             completion(false, "The user denied access to world sensing data, so cannot set map")
         case .notDetermined:
