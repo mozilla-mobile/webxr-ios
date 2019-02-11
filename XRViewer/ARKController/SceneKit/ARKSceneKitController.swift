@@ -24,7 +24,6 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     private var currentHitTest: HitTestResult?
     private var focus: FocusNode?
     private var hitTestFocusPoint = CGPoint.zero
-    private var greenGrid = UIImage(named: "Models.scnassets/plane_grid2.png")
     var previewingSinglePlane = false
     var focusedPlane: PlaneNode?
 
@@ -154,7 +153,6 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         if let plane = firstHitTestResult.anchor as? ARPlaneAnchor {
             let node = self.renderView?.node(for: plane)
             let child = node?.childNodes.first as? PlaneNode
-            child?.geometry?.firstMaterial?.diffuse.contents = greenGrid
             child?.opacity = 1
             focusedPlane = child
         }
@@ -194,7 +192,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         guard let showMode = showMode else { return }
         guard let showOptions = showOptions else { return }
         for (_, plane) in planes {
-            plane.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "Models.scnassets/plane_grid1.png")
+            plane.geometry?.firstMaterial?.diffuse.contents = focusedPlane == plane ? UIImage(named: "Models.scnassets/plane_grid2.png") : UIImage(named: "Models.scnassets/plane_grid1.png")
             plane.show(((showMode == ShowMode.multiDebug) && (showOptions.rawValue & ShowOptions.ARPlanes.rawValue) != 0) || ((showMode == ShowMode.debug) && (showOptions.rawValue & ShowOptions.ARPlanes.rawValue) != 0) || previewingSinglePlane)
         }
     }
@@ -214,16 +212,16 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
             self.renderView?.scene.lightingEnvironment.intensity = (lightEstimate ?? 0.0) / 40
 
+            self.hitTest()
             self.updateCameraFocus()
             self.updatePlanes()
             self.updateAnchors()
-            self.hitTest()
         })
     }
 
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         DispatchQueue.main.async(execute: {
-            if (anchor is ARPlaneAnchor) {
+            if anchor is ARPlaneAnchor {
                 var plane: PlaneNode? = nil
                 if let anAnchor = anchor as? ARPlaneAnchor {
                     plane = PlaneNode(anchor: anAnchor)
