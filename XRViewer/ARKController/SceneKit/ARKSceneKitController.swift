@@ -25,7 +25,13 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     private var focus: FocusNode?
     private var hitTestFocusPoint = CGPoint.zero
     var previewingSinglePlane = false
-    var focusedPlane: PlaneNode?
+    var focusedPlane: PlaneNode? {
+        didSet {
+            if focusedPlane == nil {
+                oldValue?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "Models.scnassets/plane_grid1.png")
+            }
+        }
+    }
 
     deinit {
         DDLogDebug("ARKSceneKitController dealloc")

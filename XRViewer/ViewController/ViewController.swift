@@ -1056,6 +1056,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 let addedAnchorDictionary = arkController?.createDictionary(for: anchor)
                 arkController?.addedAnchorsSinceLastFrame.add(addedAnchorDictionary ?? [:])
                 arkController?.objects[anchor.identifier.uuidString] = addedAnchorDictionary
+                arkController?.controller.focusedPlane = nil
             }
         }
     }
