@@ -37,7 +37,7 @@ class AppStateController: NSObject {
         if mode != state.showMode {
             guard let onDebug = onDebug else { return }
             DispatchQueue.main.async {
-                onDebug(mode == ShowMode.multiDebug)
+                onDebug(mode == ShowMode.urlDebug)
             }
         }
 
@@ -76,12 +76,8 @@ class AppStateController: NSObject {
         }
     }
 
-    @objc func invertShowMode() {
-        state.showMode == ShowMode.single ? setShowMode(ShowMode.multi) : setShowMode(ShowMode.single)
-    }
-
     @objc func invertDebugMode() {
-        state.showMode == ShowMode.multi ? setShowMode(ShowMode.multiDebug) : setShowMode(ShowMode.multi)
+        state.showMode == ShowMode.URL ? setShowMode(ShowMode.urlDebug) : setShowMode(ShowMode.URL)
     }
 
     @objc func shouldShowURLBar() -> Bool {
@@ -93,9 +89,9 @@ class AppStateController: NSObject {
         } else {
             if state.showMode == .debug {
                 showURLBar = false
-            } else if state.showMode == .multi {
+            } else if state.showMode == .URL {
                 showURLBar = true
-            } else if state.showMode == .multiDebug {
+            } else if state.showMode == .urlDebug {
                 showURLBar = true
             }
         }

@@ -76,7 +76,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     func updateModes() {
         guard let showMode = showMode else { return }
         guard let showOptions = showOptions else { return }
-        if showMode == ShowMode.multiDebug || showMode == ShowMode.debug {
+        if showMode == ShowMode.urlDebug || showMode == ShowMode.debug {
             renderView?.showsStatistics = (showOptions.rawValue & ShowOptions.ARStatistics.rawValue) != 0
             renderView?.debugOptions = (showOptions.rawValue & ShowOptions.ARPoints.rawValue) != 0 ? .showFeaturePoints : []
         } else {
@@ -199,7 +199,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         guard let showOptions = showOptions else { return }
         for (_, plane) in planes {
             plane.geometry?.firstMaterial?.diffuse.contents = focusedPlane == plane ? UIImage(named: "Models.scnassets/plane_grid2.png") : UIImage(named: "Models.scnassets/plane_grid1.png")
-            plane.show(((showMode == ShowMode.multiDebug) && (showOptions.rawValue & ShowOptions.ARPlanes.rawValue) != 0) || ((showMode == ShowMode.debug) && (showOptions.rawValue & ShowOptions.ARPlanes.rawValue) != 0) || previewingSinglePlane)
+            plane.show(((showMode == ShowMode.urlDebug) && (showOptions.rawValue & ShowOptions.ARPlanes.rawValue) != 0) || ((showMode == ShowMode.debug) && (showOptions.rawValue & ShowOptions.ARPlanes.rawValue) != 0) || previewingSinglePlane)
         }
     }
 

@@ -136,9 +136,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         guard let debugSelected = webController?.isDebugButtonSelected() else { return }
         if webXR {
             if debugSelected {
-                stateController.setShowMode(.multiDebug)
+                stateController.setShowMode(.urlDebug)
             } else {
-                stateController.setShowMode(.multi)
+                stateController.setShowMode(.URL)
             }
         }
     }
@@ -708,7 +708,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onDebugButtonToggled = { selected in
-            blockSelf?.stateController.setShowMode(selected ? ShowMode.multiDebug : ShowMode.multi)
+            blockSelf?.stateController.setShowMode(selected ? ShowMode.urlDebug : ShowMode.URL)
         }
         
         webController?.onSettingsButtonTapped = {
@@ -720,7 +720,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             settingsViewController.onDoneButtonTapped = {
                 weakSettingsViewController?.dismiss(animated: true)
                 blockSelf?.webController?.showBar(true)
-                blockSelf?.stateController.setShowMode(.multi)
+                blockSelf?.stateController.setShowMode(.URL)
             }
 
             blockSelf?.webController?.showBar(false)
@@ -818,17 +818,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         weak var blockSelf: ViewController? = self
 
-        let showAction: HotAction = { any in
-            blockSelf?.stateController.invertShowMode()
-        }
-
         let debugAction: HotAction = { any in
             blockSelf?.stateController.invertDebugMode()
         }
 
         hotLayerView.processTouchInSubview = true
 
-        self.overlayController = UIOverlayController(rootView: hotLayerView, showAction: showAction, debugAction: debugAction)
+        self.overlayController = UIOverlayController(rootView: hotLayerView, debugAction: debugAction)
 
         overlayController?.animator = animator
         

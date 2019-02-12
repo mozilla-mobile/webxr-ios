@@ -53,24 +53,15 @@ Method of the event being tracked
 
 /**
 Event being tracked
-- recordVideoButton: when there is an event related with the record video button
-- recordPictureButton: when there is an event related with the record picture button
-- releaseVideoButton: when the user releases the video button
 - initialize: when the app initializes
 - app: when there is an event related with the app
 */
 @objc enum EventObject: Int {
-    case recordVideoButton
-    case recordPictureButton
-    case releaseVideoButton
     case initialize
     case app
     
     func name () -> String {
         switch self {
-        case .recordVideoButton: return "record_video_button"
-        case .recordPictureButton: return "record_picture_button"
-        case .releaseVideoButton: return "release_video_button"
         case .initialize: return "init"
         case .app: return "app"
         }

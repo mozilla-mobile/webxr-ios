@@ -2,13 +2,11 @@ import UIKit
 
 class TouchView: UIView {
     
-    private var showAction: HotAction?
     private var debugAction: HotAction?
     private var cameraRect = CGRect.zero
     private var micRect = CGRect.zero
     private var showRect = CGRect.zero
     private var debugRect = CGRect.zero
-    private var showEvent = false
     private var debugEvent = false
     private var startTouchDate: Date?
     private var touchTimer: Timer?
@@ -17,10 +15,9 @@ class TouchView: UIView {
     let MAX_INCREASE_ZONE_SIZE = 10
     private var increaseHotZoneValue: CGFloat = 0.0
     
-    @objc init(frame: CGRect, showAction: @escaping HotAction, debugAction: @escaping HotAction) {
+    @objc init(frame: CGRect, debugAction: @escaping HotAction) {
         super.init(frame: frame)
         
-        self.showAction = showAction
         self.debugAction = debugAction
     }
     
@@ -59,10 +56,10 @@ class TouchView: UIView {
         }
         guard let showMode = showMode else { return false }
         guard let showOptions = showOptions else { return false }
-        if (showMode.rawValue >= ShowMode.multi.rawValue) && (showOptions.rawValue & ShowOptions.Capture.rawValue) != 0 && increasedRect(cameraRect).contains(point) {
+        if (showMode.rawValue >= ShowMode.URL.rawValue) && (showOptions.rawValue & ShowOptions.Capture.rawValue) != 0 && increasedRect(cameraRect).contains(point) {
             return true
         } else {
-            if (showMode.rawValue >= ShowMode.multi.rawValue) && (showOptions.rawValue & ShowOptions.Mic.rawValue) != 0 && increasedRect(micRect).contains(point) {
+            if (showMode.rawValue >= ShowMode.URL.rawValue) && (showOptions.rawValue & ShowOptions.Mic.rawValue) != 0 && increasedRect(micRect).contains(point) {
                 return true
             }
         }
@@ -71,11 +68,7 @@ class TouchView: UIView {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if showEvent {
-            guard let showAction = showAction else { return }
-            showAction(true)
-            self.showEvent = false
-        } else if debugEvent {
+        if debugEvent {
             guard let debugAction = debugAction else { return }
             debugAction(true)
             self.debugEvent = false

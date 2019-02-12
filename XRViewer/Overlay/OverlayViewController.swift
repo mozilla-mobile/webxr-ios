@@ -61,7 +61,7 @@ class OverlayViewController: UIViewController {
         guard let showOptions = showOptions else { return }
         var updRect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         
-        if showMode.rawValue >= ShowMode.multi.rawValue {
+        if showMode.rawValue >= ShowMode.URL.rawValue {
             if showOptions.rawValue & ShowOptions.Browser.rawValue != 0 {
                 updRect.origin.y = CGFloat(Constant.urlBarHeight())
             }
@@ -76,24 +76,12 @@ class OverlayViewController: UIViewController {
         guard let showMode = showMode else { return }
         
         switch showMode {
-        case .nothing:
+        case .nothing, .debug:
             animator?.animate(buildLabel, toFade: true)
             timer?.invalidate()
             completion(true)
-        case .single:
-            animator?.animate(buildLabel, toFade: true)
-            timer?.invalidate()
+        case .URL, .urlDebug:
             completion(true)
-        case .debug:
-            animator?.animate(buildLabel, toFade: true)
-            timer?.invalidate()
-            completion(true)
-        case .multi:
-            completion(true)
-        case .multiDebug:
-            completion(true)
-        default:
-            break
         }
     }
 

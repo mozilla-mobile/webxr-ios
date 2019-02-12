@@ -8,18 +8,19 @@
  An enum representing the state of the app UI at a given time
  
  - ShowNothing: Shows the warning labels
- - ShowSingle: Shows the record button
- - ShowDebug: Shows the record button, the helper and build label, and the AR debug info
- - ShowMulti: Shows the URL Bar and the record button
- - ShowMultiDebug: Shows the URL Bar the record button and the AR debug info
+ - ShowDebug: Shows the helper and build label, and the AR debug info
+ - ShowURL: Shows the URL Bar
+ - ShowURLDebug: Shows the URL Bar and the AR debug info
  */
+// Tony (2/12/19): In making the ShowMode enum more descriptive, there's temporary
+//      awkwardness & bad style when using the enum in Swift (.URL & .urlDebug).
+//      This will be resolved when fully converted to Swift.
 typedef NS_ENUM(NSUInteger, ShowMode)
 {
     ShowNothing,
-    ShowSingle,
     ShowDebug,
-    ShowMulti,
-    ShowMultiDebug
+    ShowURL,
+    ShowURLDebug
 };
 
 /**
@@ -52,12 +53,10 @@ typedef NS_OPTIONS(NSUInteger, ShowOptions)
     ARFocus      = (1 << 5),
     ARObject     = (1 << 6),
     Debug        = (1 << 7),
-    
     ARPlanes     = (1 << 8),
     ARPoints     = (1 << 9),
     ARStatistics = (1 << 10),
     BuildNumber  = (1 << 11),
-    
     Full         = NSUIntegerMax
 };
 

@@ -16,18 +16,14 @@ class UIOverlayController: NSObject {
     private var touchView: TouchView?
     private var overlayWindow: UIWindow?
     private var overlayVC: OverlayViewController?
-    private var showAction: HotAction?
     private var debugAction: HotAction?
     private var showMode: ShowMode?
     private var showOptions: ShowOptions?
 
-    @objc init(rootView: UIView, showAction: @escaping HotAction, debugAction: @escaping HotAction) {
+    @objc init(rootView: UIView, debugAction: @escaping HotAction) {
         super.init()
         self.rootView = rootView
-
-        self.showAction = showAction
         self.debugAction = debugAction
-
         setupTouchView()
         setupOverlayWindow()
     }
@@ -43,7 +39,7 @@ class UIOverlayController: NSObject {
         guard let showMode = showMode else { return }
         guard let showOptions = showOptions else { return }
         
-        if showMode.rawValue >= ShowMode.multi.rawValue {
+        if showMode.rawValue >= ShowMode.URL.rawValue {
             if showOptions.rawValue & ShowOptions.Browser.rawValue != 0 {
                 updRect.origin.y = CGFloat(Constant.urlBarHeight())
             }
@@ -58,23 +54,17 @@ class UIOverlayController: NSObject {
 
     @objc func setMode(_ mode: ShowMode) {
         showMode = mode
-
         overlayWindow?.alpha = mode == .nothing ? 0 : 1
-
         touchView?.showMode = mode
-
         touchView?.setProcessTouches(false)
-
         overlayVC?.setShowMode(mode, withAnimationCompletion: { finish in
             self.enableTouches(onFinishAnimation: finish)
         })
-
         viewWillTransition(to: rootView?.bounds.size ?? CGSize.zero)
     }
 
     @objc func setOptions(_ options: ShowOptions) {
         showOptions = options
-
         touchView?.showOptions = options
         overlayVC?.setShowOptions(options, withAnimationCompletion: { finish in
         })
@@ -92,9 +82,8 @@ class UIOverlayController: NSObject {
 
     func setupTouchView() {
         guard let rootView = rootView else { return }
-        guard let showAction = showAction else { return }
         guard let debugAction = debugAction else { return }
-        self.touchView = TouchView(frame: rootView.bounds, showAction: showAction, debugAction: debugAction)
+        self.touchView = TouchView(frame: rootView.bounds, debugAction: debugAction)
 
         viewWillTransition(to: rootView.bounds.size)
 
