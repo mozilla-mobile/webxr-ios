@@ -27,9 +27,6 @@ typedef NS_ENUM(NSUInteger, ShowMode)
  Show options. This option set is built from the AR Request dictionary received on initAR
  
  - None: Shows nothing
- - Mic: Shows the mic button
- - Capture: Shows the record button
- - CaptureTime: Shows the record dot button
  - Browser: Shows in browser mode
  - ARWarnings: Shows warnings reported by ARKit
  - ARFocus: Shows a focus node
@@ -44,19 +41,15 @@ typedef NS_ENUM(NSUInteger, ShowMode)
 typedef NS_OPTIONS(NSUInteger, ShowOptions)
 {
     None         = 0,
-    
-    Mic          = (1 << 0),
-    Capture      = (1 << 1),
-    CaptureTime  = (1 << 2),
-    Browser      = (1 << 3),
-    ARWarnings   = (1 << 4),
-    ARFocus      = (1 << 5),
-    ARObject     = (1 << 6),
-    Debug        = (1 << 7),
-    ARPlanes     = (1 << 8),
-    ARPoints     = (1 << 9),
-    ARStatistics = (1 << 10),
-    BuildNumber  = (1 << 11),
+    Browser      = (1 << 0),
+    ARWarnings   = (1 << 1),
+    ARFocus      = (1 << 2),
+    ARObject     = (1 << 3),
+    Debug        = (1 << 4),
+    ARPlanes     = (1 << 5),
+    ARPoints     = (1 << 6),
+    ARStatistics = (1 << 7),
+    BuildNumber  = (1 << 8),
     Full         = NSUIntegerMax
 };
 
@@ -272,21 +265,6 @@ static inline ShowOptions showOptionsFormDict(NSDictionary *dict)
     if ([dict[WEB_AR_UI_FOCUS_OPTION] boolValue])
     {
         options = options | ARFocus;
-    }
-    
-    if ([dict[WEB_AR_UI_CAMERA_OPTION] boolValue])
-    {
-        options = options | Capture;
-    }
-    
-    if ([dict[WEB_AR_UI_MIC_OPTION] boolValue])
-    {
-        options = options | Mic;
-    }
-    
-    if ([dict[WEB_AR_UI_CAMERA_TIME_OPTION] boolValue])
-    {
-        options = options | CaptureTime;
     }
     
     if ([dict[WEB_AR_UI_BUILD_OPTION] boolValue])

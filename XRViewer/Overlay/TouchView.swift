@@ -54,16 +54,7 @@ class TouchView: UIView {
         if showMode == ShowMode.nothing {
             return false
         }
-        guard let showMode = showMode else { return false }
-        guard let showOptions = showOptions else { return false }
-        if (showMode.rawValue >= ShowMode.URL.rawValue) && (showOptions.rawValue & ShowOptions.Capture.rawValue) != 0 && increasedRect(cameraRect).contains(point) {
-            return true
-        } else {
-            if (showMode.rawValue >= ShowMode.URL.rawValue) && (showOptions.rawValue & ShowOptions.Mic.rawValue) != 0 && increasedRect(micRect).contains(point) {
-                return true
-            }
-        }
-        
+
         return false
     }
     
