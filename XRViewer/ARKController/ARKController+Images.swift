@@ -224,4 +224,196 @@
         detectionImageCreationPromises.removeAllObjects()
         detectionImageActivationAfterRemovalPromises.removeAllObjects()
     }
+    
+    // MARK: - Buffer Functions
+    
+    func updateBase64Buffers(from capturedImagePixelBuffer: CVPixelBuffer) {
+        
+        // Luma
+        CVPixelBufferLockBaseAddress(capturedImagePixelBuffer, CVPixelBufferLockFlags.readOnly)
+        
+        //[self logPixelBufferInfo:capturedImagePixelBuffer];
+        
+        let lumaBufferWidth: size_t = CVPixelBufferGetWidthOfPlane(capturedImagePixelBuffer, 0)
+        let lumaBufferHeight: size_t = CVPixelBufferGetHeightOfPlane(capturedImagePixelBuffer, 0)
+        
+        var lumaSrcBuffer = vImage_Buffer()
+        lumaSrcBuffer.data = CVPixelBufferGetBaseAddressOfPlane(capturedImagePixelBuffer, 0)
+        lumaSrcBuffer.width = vImagePixelCount(lumaBufferWidth)
+        lumaSrcBuffer.height = vImagePixelCount(lumaBufferHeight)
+        lumaSrcBuffer.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(capturedImagePixelBuffer, 0)
+        
+        var extraColumnsOnLeft = size_t()
+        var extraColumnsOnRight = size_t()
+        var extraColumnsOnTop = size_t()
+        var extraColumnsOnBottom = size_t()
+        CVPixelBufferGetExtendedPixels(capturedImagePixelBuffer, &extraColumnsOnLeft, &extraColumnsOnRight, &extraColumnsOnTop, &extraColumnsOnBottom)
+        
+        if lumaBufferSize.width == 0.0 {
+            lumaBufferSize = downscaleByFactorOf2(untilLargestSideIsLessThan512AvoidingFractionalSides: CGSize(width: CGFloat(lumaBufferWidth), height: CGFloat(lumaBufferHeight)))
+        }
+        chromaBufferSize = CGSize(width: lumaBufferSize.width / 2.0, height: lumaBufferSize.height / 2.0)
+        
+        if lumaBuffer.data == nil {
+            vImageBuffer_Init(&lumaBuffer, vImagePixelCount(lumaBufferSize.height), vImagePixelCount(lumaBufferSize.width), UInt32(8 * MemoryLayout<Pixel_8>.size), vImage_Flags(kvImageNoFlags))
+            vImageScale_Planar8(&lumaBuffer, &lumaBuffer, nil, vImage_Flags(kvImageGetTempBufferSize))
+            let scaledBufferSize: size_t = vImageScale_Planar8(&lumaSrcBuffer, &lumaBuffer, nil, vImage_Flags(kvImageGetTempBufferSize))
+            lumaScaleTemporaryBuffer = malloc(scaledBufferSize * MemoryLayout<Pixel_8>.size)
+        }
+        
+        var scaleError: vImage_Error = vImageScale_Planar8(&lumaSrcBuffer, &lumaBuffer, lumaScaleTemporaryBuffer, vImage_Flags(kvImageNoFlags))
+        if scaleError != 0 {
+            print("Error scaling luma image")
+            CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, CVPixelBufferLockFlags.readOnly)
+            return
+        }
+
+        if lumaDataBuffer == nil {
+            lumaDataBuffer = NSMutableData(bytes: lumaBuffer.data,
+                                           length: Int(lumaBuffer.width * lumaBuffer.height) * MemoryLayout<Pixel_8>.size)
+        }
+        for currentRow in 0..<Int(lumaBuffer.height) {
+            lumaDataBuffer?.replaceBytes(in: NSRange(location: Int(lumaBuffer.width) * currentRow, length: Int(lumaBuffer.width)), withBytes: lumaBuffer.data + lumaBuffer.rowBytes * currentRow)
+        }
+        
+        if lumaBase64StringBuffer == nil {
+            lumaBase64StringBuffer = ""
+        }
+        if let stringBuffer = lumaDataBuffer.base64EncodedString(options: []) as? NSMutableString {
+            lumaBase64StringBuffer = stringBuffer
+        }
+        
+        // Chroma
+        var chromaSrcBuffer = vImage_Buffer()
+        chromaSrcBuffer.data = CVPixelBufferGetBaseAddressOfPlane(capturedImagePixelBuffer, 1)
+        chromaSrcBuffer.width = vImagePixelCount(CVPixelBufferGetWidthOfPlane(capturedImagePixelBuffer, 1))
+        chromaSrcBuffer.height = vImagePixelCount(CVPixelBufferGetHeightOfPlane(capturedImagePixelBuffer, 1))
+        chromaSrcBuffer.rowBytes = CVPixelBufferGetBytesPerRowOfPlane(capturedImagePixelBuffer, 1)
+        
+        if chromaBuffer.data == nil {
+            vImageBuffer_Init(&chromaBuffer, vImagePixelCount(chromaBufferSize.height), vImagePixelCount(chromaBufferSize.width), UInt32(8 * MemoryLayout<Pixel_16U>.size), vImage_Flags(kvImageNoFlags))
+            let scaledBufferSize: size_t = vImageScale_Planar8(&chromaSrcBuffer, &chromaBuffer, nil, vImage_Flags(kvImageGetTempBufferSize))
+            chromaScaleTemporaryBuffer = malloc(scaledBufferSize * MemoryLayout<Pixel_16U>.size)
+        }
+        
+        scaleError = vImageScale_CbCr8(&chromaSrcBuffer, &chromaBuffer, chromaScaleTemporaryBuffer, vImage_Flags(kvImageNoFlags))
+        if scaleError != 0 {
+            print("Error scaling chroma image")
+            CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, CVPixelBufferLockFlags.readOnly)
+            return
+        }
+
+        if chromaDataBuffer == nil {
+            chromaDataBuffer = NSMutableData(bytes: chromaBuffer.data,
+                                             length: Int(chromaBuffer.width * chromaBuffer.height) * MemoryLayout<Pixel_16U>.size)
+        }
+        for currentRow in 0..<Int(chromaBuffer.height) {
+            chromaDataBuffer?.replaceBytes(in: NSRange(location: Int(chromaBuffer.width) * currentRow * MemoryLayout<Pixel_16U>.size, length: Int(chromaBuffer.width) * MemoryLayout<Pixel_16U>.size), withBytes: chromaBuffer.data + chromaBuffer.rowBytes * currentRow)
+        }
+        
+        if chromaBase64StringBuffer == nil {
+            chromaBase64StringBuffer = ""
+        }
+        if let chromaStringBuffer = chromaDataBuffer.base64EncodedString(options: []) as? NSMutableString {
+            chromaBase64StringBuffer = chromaStringBuffer
+        }
+        
+        CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, CVPixelBufferLockFlags.readOnly)
+    }
+    
+    func downscaleByFactorOf2(untilLargestSideIsLessThan512AvoidingFractionalSides originalSize: CGSize) -> CGSize {
+        var result: CGSize = originalSize
+        
+        var largestSideLessThan512Found = false
+        var fractionalSideFound = false
+        computerVisionImageScaleFactor = 1.0
+        while !(largestSideLessThan512Found || fractionalSideFound) {
+            if Int(result.width) % 2 != 0 || Int(result.height) % 2 != 0 {
+                fractionalSideFound = true
+            } else {
+                result = CGSize(width: result.width / 2.0, height: result.height / 2.0)
+                computerVisionImageScaleFactor *= 2.0
+                
+                let largestSide = max(result.width, result.height)
+                if largestSide < 512 {
+                    largestSideLessThan512Found = true
+                }
+            }
+        }
+        
+        return result
+    }
+    
+    func string(for type: OSType) -> String {
+        
+        switch type {
+        case kCVPixelFormatType_1Monochrome:                return "kCVPixelFormatType_1Monochrome"
+        case kCVPixelFormatType_2Indexed:                   return "kCVPixelFormatType_2Indexed"
+        case kCVPixelFormatType_4Indexed:                   return "kCVPixelFormatType_4Indexed"
+        case kCVPixelFormatType_8Indexed:                   return "kCVPixelFormatType_8Indexed"
+        case kCVPixelFormatType_1IndexedGray_WhiteIsZero:   return "kCVPixelFormatType_1IndexedGray_WhiteIsZero"
+        case kCVPixelFormatType_2IndexedGray_WhiteIsZero:   return "kCVPixelFormatType_2IndexedGray_WhiteIsZero"
+        case kCVPixelFormatType_4IndexedGray_WhiteIsZero:   return "kCVPixelFormatType_4IndexedGray_WhiteIsZero"
+        case kCVPixelFormatType_8IndexedGray_WhiteIsZero:   return "kCVPixelFormatType_8IndexedGray_WhiteIsZero"
+        case kCVPixelFormatType_16BE555:                    return "kCVPixelFormatType_16BE555"
+        case kCVPixelFormatType_16LE555:                    return "kCVPixelFormatType_16LE555"
+        case kCVPixelFormatType_16LE5551:                   return "kCVPixelFormatType_16LE5551"
+        case kCVPixelFormatType_16BE565:                    return "kCVPixelFormatType_16BE565"
+        case kCVPixelFormatType_16LE565:                    return "kCVPixelFormatType_16LE565"
+        case kCVPixelFormatType_24RGB:                      return "kCVPixelFormatType_24RGB"
+        case kCVPixelFormatType_24BGR:                      return "kCVPixelFormatType_24BGR"
+        case kCVPixelFormatType_32ARGB:                     return "kCVPixelFormatType_32ARGB"
+        case kCVPixelFormatType_32BGRA:                     return "kCVPixelFormatType_32BGRA"
+        case kCVPixelFormatType_32ABGR:                     return "kCVPixelFormatType_32ABGR"
+        case kCVPixelFormatType_32RGBA:                     return "kCVPixelFormatType_32RGBA"
+        case kCVPixelFormatType_64ARGB:                     return "kCVPixelFormatType_64ARGB"
+        case kCVPixelFormatType_48RGB:                      return "kCVPixelFormatType_48RGB"
+        case kCVPixelFormatType_32AlphaGray:                return "kCVPixelFormatType_32AlphaGray"
+        case kCVPixelFormatType_16Gray:                     return "kCVPixelFormatType_16Gray"
+        case kCVPixelFormatType_30RGB:                      return "kCVPixelFormatType_30RGB"
+        case kCVPixelFormatType_422YpCbCr8:                 return "kCVPixelFormatType_422YpCbCr8"
+        case kCVPixelFormatType_4444YpCbCrA8:               return "kCVPixelFormatType_4444YpCbCrA8"
+        case kCVPixelFormatType_4444YpCbCrA8R:              return "kCVPixelFormatType_4444YpCbCrA8R"
+        case kCVPixelFormatType_4444AYpCbCr8:               return "kCVPixelFormatType_4444AYpCbCr8"
+        case kCVPixelFormatType_4444AYpCbCr16:              return "kCVPixelFormatType_4444AYpCbCr16"
+        case kCVPixelFormatType_444YpCbCr8:                 return "kCVPixelFormatType_444YpCbCr8"
+        case kCVPixelFormatType_422YpCbCr16:                return "kCVPixelFormatType_422YpCbCr16"
+        case kCVPixelFormatType_422YpCbCr10:                return "kCVPixelFormatType_422YpCbCr10"
+        case kCVPixelFormatType_444YpCbCr10:                return "kCVPixelFormatType_444YpCbCr10"
+        case kCVPixelFormatType_420YpCbCr8Planar:           return "kCVPixelFormatType_420YpCbCr8Planar"
+        case kCVPixelFormatType_420YpCbCr8PlanarFullRange:  return "kCVPixelFormatType_420YpCbCr8PlanarFullRange"
+        case kCVPixelFormatType_422YpCbCr_4A_8BiPlanar:     return "kCVPixelFormatType_422YpCbCr_4A_8BiPlanar"
+        case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange:   return "kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange"
+        case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange:    return "kCVPixelFormatType_420YpCbCr8BiPlanarFullRange"
+        case kCVPixelFormatType_422YpCbCr8_yuvs:            return "kCVPixelFormatType_422YpCbCr8_yuvs"
+        case kCVPixelFormatType_422YpCbCr8FullRange:        return "kCVPixelFormatType_422YpCbCr8FullRange"
+        case kCVPixelFormatType_OneComponent8:              return "kCVPixelFormatType_OneComponent8"
+        case kCVPixelFormatType_TwoComponent8:              return "kCVPixelFormatType_TwoComponent8"
+        case kCVPixelFormatType_30RGBLEPackedWideGamut:     return "kCVPixelFormatType_30RGBLEPackedWideGamut"
+        case kCVPixelFormatType_OneComponent16Half:         return "kCVPixelFormatType_OneComponent16Half"
+        case kCVPixelFormatType_OneComponent32Float:        return "kCVPixelFormatType_OneComponent32Float"
+        case kCVPixelFormatType_TwoComponent16Half:         return "kCVPixelFormatType_TwoComponent16Half"
+        case kCVPixelFormatType_TwoComponent32Float:        return "kCVPixelFormatType_TwoComponent32Float"
+        case kCVPixelFormatType_64RGBAHalf:                 return "kCVPixelFormatType_64RGBAHalf"
+        case kCVPixelFormatType_128RGBAFloat:               return "kCVPixelFormatType_128RGBAFloat"
+        case kCVPixelFormatType_14Bayer_GRBG:               return "kCVPixelFormatType_14Bayer_GRBG"
+        case kCVPixelFormatType_14Bayer_RGGB:               return "kCVPixelFormatType_14Bayer_RGGB"
+        case kCVPixelFormatType_14Bayer_BGGR:               return "kCVPixelFormatType_14Bayer_BGGR"
+        case kCVPixelFormatType_14Bayer_GBRG:               return "kCVPixelFormatType_14Bayer_GBRG"
+        default:                                            return "UNKNOWN"
+        }
+    }
+    
+    func logPixelBufferInfo(_ capturedImagePixelBuffer: CVPixelBuffer) {
+        let capturedImagePixelBufferWidth = CVPixelBufferGetWidth(capturedImagePixelBuffer)
+        let capturedImagePixelBufferHeight = CVPixelBufferGetHeight(capturedImagePixelBuffer)
+        let capturedImagePixelBufferBytesPerRow = CVPixelBufferGetBytesPerRow(capturedImagePixelBuffer)
+        let capturedImageNumberOfPlanes = CVPixelBufferGetPlaneCount(capturedImagePixelBuffer)
+        let capturedImagePixelBufferTypeID = CVPixelBufferGetTypeID()
+        let capturedImagePixelBufferDataSize = CVPixelBufferGetDataSize(capturedImagePixelBuffer)
+        let capturedImagePixelBufferPixelFormatType: OSType = CVPixelBufferGetPixelFormatType(capturedImagePixelBuffer)
+        let capturedImagePixelBufferBaseAddress = CVPixelBufferGetBaseAddress(capturedImagePixelBuffer)
+        
+        print("\n\nnumberOfPlanes: \(capturedImageNumberOfPlanes)\npixelBufferWidth: \(capturedImagePixelBufferWidth)\npixelBufferHeight: \(capturedImagePixelBufferHeight)\npixelBufferTypeID: \(capturedImagePixelBufferTypeID)\npixelBufferDataSize: \(capturedImagePixelBufferDataSize)\npixelBufferBytesPerRow: \(capturedImagePixelBufferBytesPerRow)\npixelBufferPIxelFormatType:" + string(for: capturedImagePixelBufferPixelFormatType) + "\npixelBufferBaseAddress: \(String(describing: capturedImagePixelBufferBaseAddress))\n")
+    }
 }
