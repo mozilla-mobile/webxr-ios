@@ -119,8 +119,6 @@ typedef void (^ResultArrayBlock)(NSArray *);
 // For saving WorldMap
 @property(nonatomic, strong) NSURL *worldSaveURL;
 @property(nonatomic, strong) SetWorldMapCompletionBlock setWorldMapPromise;
-- (NSData *)getDecompressedData:(NSData *) compressed;
-- (NSData *)getCompressedData:(NSData*) input;
 /// completion block for getWorldMap request
 @property(nonatomic, strong) GetWorldMapCompletionBlock getWorldMapPromise;
 @property (nonatomic, strong) AVCaptureDevice *device;

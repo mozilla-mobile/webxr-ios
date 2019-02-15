@@ -1,3 +1,5 @@
+import Compression
+
 @objc extension ARKController {
     
     // MARK: - Saving
@@ -290,6 +292,56 @@
     }
     
     // MARK: - Helpers
+    
+    func getDecompressedData(_ compressed: Data) -> Data? {
+        var dst_buffer_size: size_t = compressed.count * 8
+        
+        var src_buffer = UInt8(compressed.count)
+        compressed.copyBytes(to: &src_buffer, count: compressed.count)
+        
+        while true {
+            var dst_buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dst_buffer_size)
+            let decompressedSize: size_t = compression_decode_buffer(dst_buffer, dst_buffer_size, &src_buffer, compressed.count, nil, COMPRESSION_ZLIB)
+            
+            // error!
+            if decompressedSize == 0 {
+                free(dst_buffer)
+                return nil
+            }
+            
+            // overflow, try again
+            if decompressedSize == dst_buffer_size {
+                dst_buffer_size *= 2
+                free(dst_buffer)
+                continue
+            }
+            let decompressed = Data(bytes: &dst_buffer, count: decompressedSize)
+            free(dst_buffer)
+            return decompressed
+        }
+    }
+    
+    func getCompressedData(_ input: Data?) -> Data? {
+        var dst_buffer_size: size_t = max((input?.count ?? 0) / 8, 10)
+        
+        var src_buffer = UInt8(input?.count ?? 0)
+        input?.copyBytes(to: &src_buffer, count: input?.count ?? 0)
+        
+        while true {
+            var dst_buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dst_buffer_size)
+            let compressedSize = compression_encode_buffer(dst_buffer, dst_buffer_size, &src_buffer, (input?.count ?? 0), nil, COMPRESSION_ZLIB)
+            
+            // overflow, try again
+            if compressedSize == 0 {
+                dst_buffer_size *= 2
+                free(dst_buffer)
+                continue
+            }
+            let compressed = Data(bytes: &dst_buffer, count: compressedSize)
+            free(dst_buffer)
+            return compressed
+        }
+    }
     
     func printWorldMapInfo(_ worldMap: ARWorldMap) {
         let anchors = worldMap.anchors
