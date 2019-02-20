@@ -67,10 +67,9 @@ class AppStateController: NSObject {
         }
     }
 
-    @objc func setARRequest(_ dict: [AnyHashable : Any]?) {
+    @objc func setARRequest(_ dict: [AnyHashable : Any]) {
         self.state = state.updated(withARRequest: dict)
         guard let onRequestUpdate = onRequestUpdate else { return }
-        guard let dict = dict else { return }
         DispatchQueue.main.async {
             onRequestUpdate(dict)
         }

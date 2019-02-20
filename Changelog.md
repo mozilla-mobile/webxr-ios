@@ -2,7 +2,7 @@
 * Added Lite Mode option to only share a single plane during World Sensing
 * Reconfigured Lite Mode so user can choose which plane to pass in
 * Added 'WEBSERVER' custom flag for Debug compilations
-* Converted, separated functions to ARKController+Anchors, ARKController+AppState, ARKController+Images, ARKController+ARSessionDelegate, ARKController+WorldMap, ARKController+Camera
+* Converted, separated functions to ARKController+Anchors, ARKController+AppState, ARKController+Images, ARKController+ARSessionDelegate, ARKController+WorldMap, ARKController+Camera, ARKController+Frame
 * Moved ARSession methods to ViewController+ARSCNViewDelegate
 * Fixed dropped frames and CV low FPS issue with ARFaceAnchors
 * Fixed Settings.bundle check in AppDelegate

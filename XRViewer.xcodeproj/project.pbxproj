@@ -65,6 +65,7 @@
 		B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047F21B836E300C9A4EC /* SCNNode+Show.swift */; };
 		B69C048221B838A300C9A4EC /* ARSCNView+HitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C048121B838A300C9A4EC /* ARSCNView+HitTest.swift */; };
 		B6EAD6DD21DAB48800DF5127 /* Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6EAD6DC21DAB48800DF5127 /* Prefix.swift */; };
+		B6F4C0BD221B5AEC009ECC06 /* ARKController+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4C0BC221B5AEC009ECC06 /* ARKController+Frame.swift */; };
 		B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FE960221B61BDC0087A21F /* AppStateController.swift */; };
 		B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FE960421B61FEE0087A21F /* TouchView.swift */; };
 /* End PBXBuildFile section */
@@ -138,6 +139,7 @@
 		B69C047F21B836E300C9A4EC /* SCNNode+Show.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNNode+Show.swift"; sourceTree = "<group>"; };
 		B69C048121B838A300C9A4EC /* ARSCNView+HitTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ARSCNView+HitTest.swift"; sourceTree = "<group>"; };
 		B6EAD6DC21DAB48800DF5127 /* Prefix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Prefix.swift; sourceTree = "<group>"; };
+		B6F4C0BC221B5AEC009ECC06 /* ARKController+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Frame.swift"; sourceTree = "<group>"; };
 		B6FE960221B61BDC0087A21F /* AppStateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateController.swift; sourceTree = "<group>"; };
 		B6FE960421B61FEE0087A21F /* TouchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchView.swift; sourceTree = "<group>"; };
 		C99925CDAC21EAF144F18C57 /* Pods-XRViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.debug.xcconfig"; sourceTree = "<group>"; };
@@ -225,6 +227,7 @@
 				B654FED121EF99150004F001 /* ARKController+AppState.swift */,
 				B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */,
 				B620ED132204B5480066B4A8 /* ARKController+Camera.swift */,
+				B6F4C0BC221B5AEC009ECC06 /* ARKController+Frame.swift */,
 				B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */,
 				B620ED1122024D5A0066B4A8 /* ARKController+WorldMap.swift */,
 				B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */,
@@ -507,6 +510,7 @@
 				B632850921C2F24200FD5510 /* MessageController.swift in Sources */,
 				B620ED1222024D5A0066B4A8 /* ARKController+WorldMap.swift in Sources */,
 				B632851321C4159B00FD5510 /* LayerView.swift in Sources */,
+				B6F4C0BD221B5AEC009ECC06 /* ARKController+Frame.swift in Sources */,
 				B62CE86821CC46A90053F9B3 /* TextManager.swift in Sources */,
 				B6EAD6DD21DAB48800DF5127 /* Prefix.swift in Sources */,
 				B654FED221EF99150004F001 /* ARKController+AppState.swift in Sources */,

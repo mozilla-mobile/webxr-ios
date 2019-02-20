@@ -581,7 +581,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 if currentARRequest?[WEB_AR_WORLD_ALIGNMENT] as? Bool ?? false {
                     // The session failed because the compass (heading) couldn't be initialized. Fallback the session to ARWorldAlignmentGravity
                     currentARRequest?[WEB_AR_WORLD_ALIGNMENT] = false
-                    blockSelf?.stateController.setARRequest(currentARRequest)
+                    blockSelf?.stateController.setARRequest(currentARRequest ?? [:])
                     return
                 }
             }
@@ -907,10 +907,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     }
 
 // MARK: Data
-    func commonData() -> [AnyHashable : Any]? {
+    func commonData() -> [AnyHashable : Any] {
         var dictionary = [AnyHashable : Any]()
 
-        if let aData = arkController?.arkData() {
+        if let aData = arkController?.getARKData() {
             dictionary = aData
         }
 
@@ -920,13 +920,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     func sendARKData() {
         // BLAIR:  Why are we doing this copy above?  Seems like
         //    [[self webController] sendARData:[self commonData]];
-        webController?.sendARData(arkController?.arkData())
+        webController?.sendARData(arkController?.getARKData() ?? [:])
     }
 
     func sendComputerVisionData() -> Bool {
-        let data = arkController?.computerVisionData()
-        if data != nil {
-            webController?.sendComputerVisionData(data!)
+        if let data = arkController?.getComputerVisionData() {
+            webController?.sendComputerVisionData(data)
             return true
         }
         return false
@@ -969,7 +968,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         stateController.setWebXR(false)
     }
 
-    func handleOnWatchAR(withRequest request: [AnyHashable : Any]?) {
+    func handleOnWatchAR(withRequest request: [AnyHashable : Any]) {
         weak var blockSelf: ViewController? = self
 
         arkController?.computerVisionDataEnabled = false
@@ -980,7 +979,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         stateController.state.askedWorldStateData = false
         arkController?.sendingWorldSensingDataAuthorizationStatus = .notDetermined
 
-        if request?[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
+        if request[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
             messageController?.showMessageAboutAccessingTheCapturedImage({ granted in
                 blockSelf?.webController?.userGrantedComputerVisionData(granted)
                 if blockSelf?.arkController != nil {
@@ -995,7 +994,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.stateController.state.askedWorldStateData = true
                 blockSelf?.stateController.state.userGrantedSendingWorldStateData = granted ? .authorized : .denied
             })
-        } else if request?[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
+        } else if request[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
             blockSelf?.arkController?.controller.previewingSinglePlane = false
             blockSelf?.chooseSinglePlaneButton.removeFromSuperview()
             messageController?.showMessageAboutAccessingWorldSensingData({ access in

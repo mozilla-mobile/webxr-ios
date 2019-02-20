@@ -21,7 +21,7 @@ typealias OnHitTest = (Int, CGFloat, CGFloat, @escaping ResultArrayBlock) -> Voi
 typealias OnAddAnchor = (String?, [Any]?, @escaping ResultBlock) -> Void
 typealias OnDebugButtonToggled = (Bool) -> Void
 typealias OnSettingsButtonTapped = () -> Void
-typealias OnWatchAR = ([AnyHashable : Any]?) -> Void
+typealias OnWatchAR = ([AnyHashable : Any]) -> Void
 typealias OnComputerVisionDataRequested = () -> Void
 typealias OnStopAR = () -> Void
 typealias OnResetTrackingButtonTapped = () -> Void
@@ -200,10 +200,10 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
 
     // Tony: Doesn't appear a Bool previously returned by sendARData was used anywhere, I removed the return during conversion to Swift
-    @objc func sendARData(_ data: [AnyHashable : Any]?) {
+    @objc func sendARData(_ data: [AnyHashable : Any]) {
         // Tony: Unclear what this bool was used for in Objective-C
 //        let CHECK_UPDATE_CALL = false
-        if transferCallback != "" && data != nil {
+        if transferCallback != ""  {
             callWebMethod(transferCallback, paramJSON: data, webCompletion: nil)
 //            print("sendARData success")
         }
@@ -306,9 +306,9 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         } else if message.name == WEB_AR_START_WATCH_MESSAGE {
             self.transferCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String ?? ""
 
-            onWatchAR?(messageBody[WEB_AR_REQUEST_OPTION] as? [AnyHashable: Any])
+            onWatchAR?(messageBody[WEB_AR_REQUEST_OPTION] as? [AnyHashable: Any] ?? [:])
         } else if message.name == WEB_AR_ON_JS_UPDATE_MESSAGE {
-            sendARData(blockSelf?.onJSUpdateData?())
+            sendARData(blockSelf?.onJSUpdateData?() ?? [:])
         } else if message.name == WEB_AR_STOP_WATCH_MESSAGE {
             self.transferCallback = ""
 

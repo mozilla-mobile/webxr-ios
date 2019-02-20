@@ -1,5 +1,4 @@
 #import "ARKController.h"
-#import <os/lock.h>
 #import "WebARKHeader.h"
 #import <AVFoundation/AVFoundation.h>
 #import "ARKMetalController.h"
@@ -7,11 +6,7 @@
 #import "Compression.h"
 #import "XRViewer-Swift.h"
 
-@interface ARKController ()
-{
-    NSDictionary *arkData;
-    os_unfair_lock lock;
-    NSDictionary* computerVisionData;
+@interface ARKController () {
 }
 
 @property(nonatomic) ShowMode showMode;
@@ -35,10 +30,10 @@
     
     if (self)
     {
-        lock = OS_UNFAIR_LOCK_INIT;
+        self.lock = OS_UNFAIR_LOCK_INIT;
         self.objects = [NSMutableDictionary new];
-        computerVisionData = NULL;
-        arkData = NULL;
+        self.computerVisionData = NULL;
+        self.arkData = NULL;
 
         self.addedAnchorsSinceLastFrame = [NSMutableArray new];
         self.removedAnchorsSinceLastFrame = [NSMutableArray new];
@@ -126,27 +121,28 @@
     self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
 }
 
-- (NSDictionary *)arkData
-{
-    NSDictionary *data;
+- (NSDictionary*)getARKData {
+    NSDictionary* data;
+    os_unfair_lock localLock;
+    localLock = self.lock;
+    os_unfair_lock_lock(&(localLock));
+    data = self.arkData;
+    os_unfair_lock_unlock(&(localLock));
+    self.lock = localLock;
     
-    os_unfair_lock_lock(&(lock));
-    data = arkData;
-    os_unfair_lock_unlock(&(lock));
-    
-  //  return [data copy];
     return data;
 }
 
-- (NSDictionary*)computerVisionData {
+- (NSDictionary*)getComputerVisionData {
     NSDictionary* data;
+    os_unfair_lock localLock;
+    localLock = self.lock;
+    os_unfair_lock_lock(&(localLock));
+    data = self.computerVisionData;
+    self.computerVisionData = NULL;
+    os_unfair_lock_unlock(&(localLock));
+    self.lock = localLock;
     
-    os_unfair_lock_lock(&(lock));
-    data = computerVisionData;
-    computerVisionData = NULL;
-    os_unfair_lock_unlock(&(lock));
-    
- //   return [data copy];
     return data;
 }
 
@@ -251,164 +247,6 @@
 }
 
 #pragma mark Private
-
-- (void)updateARKDataWithFrame:(ARFrame *)frame
-{
-    @synchronized(self)
-    {
-        if ([self request] == nil)
-        {
-            return;
-        }
-        
-        if (frame)
-        {
-            NSMutableDictionary *newData = [NSMutableDictionary dictionaryWithCapacity:3]; // max request object
-            NSInteger ts = (NSInteger) ([frame timestamp] * 1000.0);
-            newData[@"timestamp"] = @(ts);
-
-            // status of ARKit World Mapping
-            newData[WEB_AR_WORLDMAPPING_STATUS_MESSAGE] = worldMappingState(frame);
-            
-            if ([[self request][WEB_AR_LIGHT_INTENSITY_OPTION] boolValue])
-            {
-                newData[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
-                
-                NSMutableDictionary* lightDictionary = [NSMutableDictionary new];
-                lightDictionary[WEB_AR_LIGHT_INTENSITY_OPTION] = @([[frame lightEstimate] ambientIntensity]);
-                lightDictionary[WEB_AR_LIGHT_AMBIENT_COLOR_TEMPERATURE_OPTION] = @([[frame lightEstimate] ambientColorTemperature]);
-                
-                if ([[frame lightEstimate] isKindOfClass:[ARDirectionalLightEstimate class]]) {
-                    ARDirectionalLightEstimate* directionalLightEstimate = (ARDirectionalLightEstimate*)[frame lightEstimate];
-                    lightDictionary[WEB_AR_PRIMARY_LIGHT_DIRECTION_OPTION] = @{
-                                                                               @"x": @(directionalLightEstimate.primaryLightDirection[0]),
-                                                                               @"y": @(directionalLightEstimate.primaryLightDirection[1]),
-                                                                               @"z": @(directionalLightEstimate.primaryLightDirection[2])
-                                                                               };
-                    lightDictionary[WEB_AR_PRIMARY_LIGHT_INTENSITY_OPTION] = @(directionalLightEstimate.primaryLightIntensity);
-                    
-                }
-                newData[WEB_AR_LIGHT_OBJECT_OPTION] = lightDictionary;
-            }
-            if ([[self request][WEB_AR_CAMERA_OPTION] boolValue])
-            {
-                CGSize size = [[self controller] getRenderView].frame.size;
-                matrix_float4x4 projectionMatrix = [[frame camera] projectionMatrixForOrientation:self.interfaceOrientation
-                                                                               viewportSize:size
-                                                                                      zNear:AR_CAMERA_PROJECTION_MATRIX_Z_NEAR
-                                                                                       zFar:AR_CAMERA_PROJECTION_MATRIX_Z_FAR];
-                newData[WEB_AR_PROJ_CAMERA_OPTION] = arrayFromMatrix4x4(projectionMatrix);
-             
-                matrix_float4x4 viewMatrix = [frame.camera viewMatrixForOrientation:self.interfaceOrientation];
-                matrix_float4x4 modelMatrix = matrix_invert(viewMatrix);
-                
-                newData[WEB_AR_CAMERA_TRANSFORM_OPTION] = arrayFromMatrix4x4(modelMatrix);
-                newData[WEB_AR_CAMERA_VIEW_OPTION] = arrayFromMatrix4x4(viewMatrix);
-            }
-            if ([[self request][WEB_AR_3D_OBJECTS_OPTION] boolValue])
-            {
-                NSArray* anchorsArray = [self currentAnchorsArray];
-                newData[WEB_AR_3D_OBJECTS_OPTION] = anchorsArray;
-
-                // Prepare the objectsRemoved array
-                NSArray *removedObjects = [self.removedAnchorsSinceLastFrame copy];
-                [self.removedAnchorsSinceLastFrame removeAllObjects];
-                newData[WEB_AR_3D_REMOVED_OBJECTS_OPTION] = removedObjects;
-                
-                // Prepare the newObjects array
-                NSArray *newObjects = [self.addedAnchorsSinceLastFrame copy];
-                [self.addedAnchorsSinceLastFrame removeAllObjects];
-                newData[WEB_AR_3D_NEW_OBJECTS_OPTION] = newObjects;
-            }
-            if ([self computerVisionDataEnabled] && [self computerVisionFrameRequested]) {
-                NSMutableDictionary *cameraInformation = [NSMutableDictionary new];
-                CGSize cameraImageResolution = [[frame camera] imageResolution];
-                cameraInformation[@"cameraImageResolution"] = @{
-                                                                @"width": @(cameraImageResolution.width),
-                                                                @"height": @(cameraImageResolution.height)
-                                                                };
-                
-                
-                matrix_float3x3 cameraIntrinsics = [[frame camera] intrinsics];
-                matrix_float3x3 resizedCameraIntrinsics = [[frame camera] intrinsics];
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 3; j++) {
-                        resizedCameraIntrinsics.columns[i][j] = cameraIntrinsics.columns[i][j]/self.computerVisionImageScaleFactor;
-                    }
-                }
-                resizedCameraIntrinsics.columns[2][2] = 1.0f;
-
-                cameraInformation[@"cameraIntrinsics"] = arrayFromMatrix3x3(resizedCameraIntrinsics);
-                
-                // Get the projection matrix
-                CGSize viewportSize = [[self controller] getRenderView].frame.size;
-                matrix_float4x4 projectionMatrix = [[frame camera] projectionMatrixForOrientation:self.interfaceOrientation
-                                                                                     viewportSize:viewportSize
-                                                                                            zNear:AR_CAMERA_PROJECTION_MATRIX_Z_NEAR
-                                                                                             zFar:AR_CAMERA_PROJECTION_MATRIX_Z_FAR];
-                cameraInformation[@"projectionMatrix"] = arrayFromMatrix4x4(projectionMatrix);
-                
-                // Get the view matrix
-                matrix_float4x4 viewMatrix = [frame.camera viewMatrixForOrientation:self.interfaceOrientation];
-                cameraInformation[@"viewMatrix"] = arrayFromMatrix4x4(viewMatrix);
-                
-                cameraInformation[@"inverse_viewMatrix"] = arrayFromMatrix4x4(matrix_invert(viewMatrix));
-                
-                
-                // Send also the interface orientation
-                cameraInformation[@"interfaceOrientation"] = @(self.interfaceOrientation);
-                
-                NSMutableDictionary *cvInformation = [NSMutableDictionary new];
-                NSMutableDictionary *frameInformation = [NSMutableDictionary new];
-                NSInteger timestamp = (NSInteger) ([frame timestamp] * 1000.0);
-                frameInformation[@"timestamp"] = @(timestamp);
-                
-                // TODO: prepare depth data
-                frameInformation[@"capturedDepthData"] = nil;
-                frameInformation[@"capturedDepthDataTimestamp"] = nil;
-                
-                // Computer vision data
-                [self updateBase64BuffersFrom:frame.capturedImage];
-                
-                NSMutableDictionary *lumaBufferDictionary = [NSMutableDictionary new];
-                lumaBufferDictionary[@"size"] = @{
-                                        @"width": @(self.lumaBufferSize.width),
-                                        @"height": @(self.lumaBufferSize.height),
-                                        @"bytesPerRow": @(self.lumaBufferSize.width * sizeof(Pixel_8)),
-                                        @"bytesPerPixel": @(sizeof(Pixel_8))
-                                        };
-                lumaBufferDictionary[@"buffer"] = self.lumaBase64StringBuffer;
-                
-                
-                NSMutableDictionary *chromaBufferDictionary = [NSMutableDictionary new];
-                chromaBufferDictionary[@"size"] = @{
-                                        @"width": @(self.chromaBufferSize.width),
-                                        @"height": @(self.chromaBufferSize.height),
-                                        @"bytesPerRow": @(self.chromaBufferSize.width * sizeof(Pixel_16U)),
-                                        @"bytesPerPixel": @(sizeof(Pixel_16U))
-                                        };
-                chromaBufferDictionary[@"buffer"] = self.chromaBase64StringBuffer;
-                
-                frameInformation[@"buffers"] = @[lumaBufferDictionary, chromaBufferDictionary];
-                frameInformation[@"pixelFormatType"] = [self stringFor:CVPixelBufferGetPixelFormatType(frame.capturedImage)];
-                
-                cvInformation[@"frame"] = frameInformation;
-                cvInformation[@"camera"] = cameraInformation;
-                
-                os_unfair_lock_lock(&(lock));
-                computerVisionData = [cvInformation copy];
-                os_unfair_lock_unlock(&(lock));
-            }
-
-            newData[WEB_AR_3D_GEOALIGNED_OPTION] = @([[self configuration] worldAlignment] == ARWorldAlignmentGravityAndHeading ? YES : NO);
-            newData[WEB_AR_3D_VIDEO_ACCESS_OPTION] = @([self computerVisionDataEnabled] ? YES : NO);
-            
-            os_unfair_lock_lock(&(lock));
-            arkData = [newData copy];
-            os_unfair_lock_unlock(&(lock));
-        }
-    }
-}
 
 - (NSString *)trackingState {
     return trackingState([[[self session] currentFrame] camera]);
