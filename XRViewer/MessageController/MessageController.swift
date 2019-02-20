@@ -41,7 +41,17 @@ class MessageController: NSObject {
     }
 
     @objc func showMessageAboutWebError(_ error: Error?, withCompletion reloadCompletion: @escaping (_ reload: Bool) -> Void) {
-        let popup = PopupDialog(title: "Cannot open the page", message: "Please check the URL and try again", image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
+        let popup = PopupDialog(
+            title: "Cannot open the page",
+            message: "Please check the URL and try again",
+            image: nil,
+            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
+            transitionStyle: .bounceUp,
+            preferredWidth: 340.0,
+            tapGestureDismissal: false,
+            panGestureDismissal: false,
+            hideStatusBar: true
+        )
 
         let cancel = CancelButton(title: "Ok", height: 40, dismissOnTap: true, action: {
                 reloadCompletion(false)
@@ -62,7 +72,17 @@ class MessageController: NSObject {
 
     @objc func showMessageAboutARInterruption(_ interrupt: Bool) {
         if interrupt && arPopup == nil {
-            let popup = PopupDialog(title: "AR Interruption Occurred", message: "Please wait, it should be fixed automatically", image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
+            let popup = PopupDialog(
+                title: "AR Interruption Occurred",
+                message: "Please wait, it should be fixed automatically",
+                image: nil,
+                buttonAlignment: NSLayoutConstraint.Axis.horizontal,
+                transitionStyle: .bounceUp,
+                preferredWidth: 340.0,
+                tapGestureDismissal: false,
+                panGestureDismissal: false,
+                hideStatusBar: true
+            )
 
             self.arPopup = popup
 
@@ -77,7 +97,17 @@ class MessageController: NSObject {
     }
 
     @objc func showMessageAboutFailSession(withMessage message: String?, completion: @escaping () -> Void) {
-        let popup = PopupDialog(title: "AR Session Failed", message: message, image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
+        let popup = PopupDialog(
+            title: "AR Session Failed",
+            message: message,
+            image: nil,
+            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
+            transitionStyle: .bounceUp,
+            preferredWidth: 340.0,
+            tapGestureDismissal: false,
+            panGestureDismissal: false,
+            hideStatusBar: true
+        )
 
         let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
                 popup.dismiss(animated: true)
@@ -91,7 +121,17 @@ class MessageController: NSObject {
     }
 
     @objc func showMessage(withTitle title: String?, message: String?, hideAfter seconds: Int) {
-        let popup = PopupDialog(title: title, message: message, image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .zoomIn, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
+        let popup = PopupDialog(
+            title: title,
+            message: message,
+            image: nil,
+            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
+            transitionStyle: .zoomIn,
+            preferredWidth: 340.0,
+            tapGestureDismissal: false,
+            panGestureDismissal: false,
+            hideStatusBar: true
+        )
 
         viewController?.present(popup, animated: true)
 
@@ -101,7 +141,17 @@ class MessageController: NSObject {
     }
 
     @objc func showMessageAboutMemoryWarning(withCompletion completion: @escaping () -> Void) {
-        let popup = PopupDialog(title: "Memory Issue Occurred", message: "There was not enough memory for the application to keep working", image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
+        let popup = PopupDialog(
+            title: "Memory Issue Occurred",
+            message: "There was not enough memory for the application to keep working",
+            image: nil,
+            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
+            transitionStyle: .bounceUp,
+            preferredWidth: 340.0,
+            tapGestureDismissal: false,
+            panGestureDismissal: false,
+            hideStatusBar: true
+        )
 
         let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
                 popup.dismiss(animated: true)
@@ -117,7 +167,17 @@ class MessageController: NSObject {
     }
 
     @objc func showMessageAboutConnectionRequired() {
-        let popup = PopupDialog(title: "Internet connection is unavailable", message: "Application will restart automatically when a connection becomes available", image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
+        let popup = PopupDialog(
+            title: "Internet connection is unavailable",
+            message: "Application will restart automatically when a connection becomes available",
+            image: nil,
+            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
+            transitionStyle: .bounceUp,
+            preferredWidth: 340.0,
+            tapGestureDismissal: false,
+            panGestureDismissal: false,
+            hideStatusBar: true
+        )
 
         let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
                 popup.dismiss(animated: true)
@@ -131,7 +191,17 @@ class MessageController: NSObject {
     }
 
     @objc func showMessageAboutResetTracking(_ responseBlock: @escaping (ResetTrackingOption) -> Void) {
-        let popup = PopupDialog(title: "Reset tracking", message: "Please select one of the options below", image: nil, buttonAlignment: NSLayoutConstraint.Axis.vertical, transitionStyle: .bounceUp, preferredWidth: 200.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
+        let popup = PopupDialog(
+            title: "Reset tracking",
+            message: "Please select one of the options below",
+            image: nil,
+            buttonAlignment: NSLayoutConstraint.Axis.vertical,
+            transitionStyle: .bounceUp,
+            preferredWidth: 340.0,
+            tapGestureDismissal: false,
+            panGestureDismissal: false,
+            hideStatusBar: true
+        )
 
         let resetTracking = DefaultButton(title: "Completely restart tracking", height: 40, dismissOnTap: true, action: {
                 responseBlock(.ResetTracking)
@@ -158,7 +228,17 @@ class MessageController: NSObject {
     }
 
     @objc func showMessageAboutAccessingTheCapturedImage(_ granted: @escaping (Bool) -> Void) {
-        let popup = PopupDialog(title: "Video Camera Image Access", message: "WebXR Viewer displays video from your camera without giving the web page access to the video.\n\nThis page is requesting access to images from the video camera. Allow?", image: nil, buttonAlignment: NSLayoutConstraint.Axis.horizontal, transitionStyle: .bounceUp, preferredWidth: 340.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
+        let popup = PopupDialog(
+            title: "Video Camera Image Access",
+            message: "WebXR Viewer displays video from your camera without giving the web page access to the video.\n\nThis page is requesting access to images from the video camera. Allow?",
+            image: nil,
+            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
+            transitionStyle: .bounceUp,
+            preferredWidth: 340.0,
+            tapGestureDismissal: false,
+            panGestureDismissal: false,
+            hideStatusBar: true
+        )
 
         let ok = DefaultButton(title: "YES", height: 40, dismissOnTap: true, action: {
                 granted(true)
@@ -177,8 +257,15 @@ class MessageController: NSObject {
         viewController.view.translatesAutoresizingMaskIntoConstraints = true
         viewController.view.heightAnchor.constraint(equalToConstant: 300.0).isActive = true
 
-        let dialog = PopupDialog(viewController: viewController, buttonAlignment: NSLayoutConstraint.Axis.vertical, transitionStyle: .bounceUp, preferredWidth: UIScreen.main.bounds.size.width / 2.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true) {
-            }
+        let dialog = PopupDialog(
+            viewController: viewController,
+            buttonAlignment: NSLayoutConstraint.Axis.vertical,
+            transitionStyle: .bounceUp,
+            preferredWidth: UIScreen.main.bounds.size.width / 2.0,
+            tapGestureDismissal: false,
+            panGestureDismissal: false,
+            hideStatusBar: true
+        )
 
         self.viewController?.present(dialog, animated: true)
     }
@@ -205,7 +292,17 @@ class MessageController: NSObject {
             }
         }
 
-        let popup = PopupDialog(title: "Access to World Sensing", message: "This webpage wants to use your camera to look for faces and things in the real world. (For details, see our Privacy Notice in Settings.) Allow?", image: nil, buttonAlignment: NSLayoutConstraint.Axis.vertical /* Horizontal */, transitionStyle: .bounceUp, preferredWidth: 340.0, tapGestureDismissal: false, panGestureDismissal: false, hideStatusBar: true)
+        let popup = PopupDialog(
+            title: "Access to World Sensing",
+            message: "This webpage wants to use your camera to look for faces and things in the real world. (For details, see our Privacy Notice in Settings.) Allow?",
+            image: nil,
+            buttonAlignment: NSLayoutConstraint.Axis.vertical /* Horizontal */,
+            transitionStyle: .bounceUp,
+            preferredWidth: 340.0,
+            tapGestureDismissal: false,
+            panGestureDismissal: false,
+            hideStatusBar: true
+        )
 
         let always = DefaultButton(title: "Always for this site", height: 40, dismissOnTap: true, action: {
 
