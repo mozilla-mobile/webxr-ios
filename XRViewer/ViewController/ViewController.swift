@@ -878,7 +878,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         overlayController = nil
     }
 
-// MARK: Splash
+    // MARK: Splash
+    
     func showSplash(with completion: @escaping UICompletion) {
         splashLayerView.alpha = 1
         RUN_UI_COMPLETION_ASYNC_MAIN(c: completion)
@@ -889,7 +890,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         RUN_UI_COMPLETION_ASYNC_MAIN(c: completion)
     }
 
-// MARK: MemoryWarning
+    // MARK: MemoryWarning
+    
     func processMemoryWarning() {
         stateController.saveDidReceiveMemoryWarning(onURL: webController?.lastURL)
         cleanupCommonControllers()
@@ -906,7 +908,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         })
     }
 
-// MARK: Data
+    // MARK: Data
+    
     func commonData() -> [AnyHashable : Any] {
         var dictionary = [AnyHashable : Any]()
 
