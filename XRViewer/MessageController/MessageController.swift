@@ -42,7 +42,7 @@ class MessageController: NSObject {
 
     @objc func showMessageAboutWebError(_ error: Error?, withCompletion reloadCompletion: @escaping (_ reload: Bool) -> Void) {
         let popup = PopupDialog(
-            title: "Cannot open the page",
+            title: "Cannot Open the Page",
             message: "Please check the URL and try again",
             image: nil,
             buttonAlignment: NSLayoutConstraint.Axis.horizontal,
@@ -168,7 +168,7 @@ class MessageController: NSObject {
 
     @objc func showMessageAboutConnectionRequired() {
         let popup = PopupDialog(
-            title: "Internet connection is unavailable",
+            title: "Internet Connection is Unavailable",
             message: "Application will restart automatically when a connection becomes available",
             image: nil,
             buttonAlignment: NSLayoutConstraint.Axis.horizontal,
@@ -192,7 +192,7 @@ class MessageController: NSObject {
 
     @objc func showMessageAboutResetTracking(_ responseBlock: @escaping (ResetTrackingOption) -> Void) {
         let popup = PopupDialog(
-            title: "Reset tracking",
+            title: "Reset Tracking",
             message: "Please select one of the options below",
             image: nil,
             buttonAlignment: NSLayoutConstraint.Axis.vertical,
@@ -308,7 +308,7 @@ class MessageController: NSObject {
 
                 // don't set global permission...
                 // [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:alwaysAllowWorldSensingKey];
-                self.showMessage(withTitle: "Site will not Require Permission in the Future", message: "'Reset Allowed World Sensing' in Settings to reset for all sites.", hideAfter: 3)
+                self.showMessage(withTitle: "Site Will Not Require Permission in the Future", message: "'Reset Allowed World Sensing' in Settings to reset for all sites.", hideAfter: 3)
 
                 // instead, encode the domain/site into the allowed list
                 var newDict = [AnyHashable : Any]()
