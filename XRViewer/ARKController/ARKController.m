@@ -8,9 +8,6 @@
 @interface ARKController () {
 }
 
-@property(nonatomic) ShowMode showMode;
-@property(nonatomic) ShowOptions showOptions;
-
 @end
 
 @implementation ARKController {
@@ -120,56 +117,6 @@
     self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
 }
 
-- (NSDictionary*)getARKData {
-    NSDictionary* data;
-    os_unfair_lock localLock;
-    localLock = self.lock;
-    os_unfair_lock_lock(&(localLock));
-    data = self.arkData;
-    os_unfair_lock_unlock(&(localLock));
-    self.lock = localLock;
-    
-    return data;
-}
-
-- (NSDictionary*)getComputerVisionData {
-    NSDictionary* data;
-    os_unfair_lock localLock;
-    localLock = self.lock;
-    os_unfair_lock_lock(&(localLock));
-    data = self.computerVisionData;
-    self.computerVisionData = NULL;
-    os_unfair_lock_unlock(&(localLock));
-    self.lock = localLock;
-    
-    return data;
-}
-
-- (void)setShowMode:(ShowMode)showMode
-{
-    _showMode = showMode;
-    
-    [[self controller] setShowMode:showMode];
-}
-
-- (void)setShowOptions:(ShowOptions)showOptions
-{
-    _showOptions = showOptions;
-    
-    [[self controller] setShowOptions:showOptions];
-}
-
-- (NSArray *)hitTestNormPoint:(CGPoint)normPoint types:(NSUInteger)type
-{
-    CGSize renderSize = [[[self controller] getRenderView] bounds].size;
-    
-    CGPoint point = CGPointMake(normPoint.x * renderSize.width, normPoint.y * renderSize.height);
-    
-    NSArray *result = [[self controller] hitTest:point with:type];
-    
-    return hitTestResultArrayFromResult(result);
-}
-
 - (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)authorizationStatus {
     _sendingWorldSensingDataAuthorizationStatus = authorizationStatus;
     
@@ -246,10 +193,6 @@
 }
 
 #pragma mark Private
-
-- (NSString *)trackingState {
-    return trackingState([[[self session] currentFrame] camera]);
-}
 
 - (void)updateFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
     NSMutableDictionary *geometryDictionary = faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION];

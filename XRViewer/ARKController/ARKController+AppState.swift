@@ -161,4 +161,63 @@ extension ARKController {
         guard let ts = session.currentFrame?.camera.trackingState.presentationString else { return false }
         return ts == ARCamera.TrackingState.normal.presentationString
     }
+    
+    func setShowMode(_ showMode: ShowMode) {
+        self.showMode = showMode
+        controller?.setShowMode(showMode)
+    }
+    
+    func setShowOptions(_ showOptions: ShowOptions) {
+        self.showOptions = showOptions
+        controller?.setShowOptions(showOptions)
+    }
+    
+    /**
+     ARKit data creates a copy of the current AR data and returns it
+     
+     @return the dictionary that's going to be sent to JS
+     */
+    func getARKData() -> [AnyHashable : Any]? {
+        var data: [AnyHashable : Any]
+        var localLock = os_unfair_lock()
+        localLock = lock
+        os_unfair_lock_lock(&(localLock))
+        data = arkData
+        os_unfair_lock_unlock(&(localLock))
+        lock = localLock
+        
+        return data
+    }
+    
+    /**
+     computer vision data creates a copy of the current CV data and returns it
+     
+     @return the dictionary of CV data that's going to be sent to JS
+     */
+    func getComputerVisionData() -> [AnyHashable : Any]? {
+        var data: [AnyHashable : Any]
+        var localLock = os_unfair_lock()
+        localLock = lock
+        os_unfair_lock_lock(&(localLock))
+        data = computerVisionData
+        computerVisionData = [:]
+        os_unfair_lock_unlock(&(localLock))
+        lock = localLock
+        
+        return data
+    }
+    
+    /**
+     Performs a hit test over the scene
+     
+     @param point source point for the ray casting in normalized coordinates
+     @param type A bit mask representing the hit test types to be considered
+     @return an array of hit tests
+     */
+    func hitTestNormPoint(_ normPoint: CGPoint, types type: Int) -> [Any]? {
+        let renderSize: CGSize? = controller.getRenderView().bounds.size
+        let point = CGPoint(x: normPoint.x * (renderSize?.width ?? 0.0), y: normPoint.y * (renderSize?.height ?? 0.0))
+        let result = controller.hitTest(point, with: ARHitTestResult.ResultType(rawValue: UInt(type)))
+        return hitTestResultArrayFromResult(result)
+    }
 }

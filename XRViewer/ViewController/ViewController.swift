@@ -689,7 +689,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onHitTest = { mask, x, y, result in
-            let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: UInt(mask))
+            let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask)
             result(array)
         }
 
