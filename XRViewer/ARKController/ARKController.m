@@ -181,10 +181,11 @@
                 self.getWorldMapPromise = nil;
             }
 
-            for (NSDictionary* referenceImageDictionary in self.detectionImageCreationRequests) {
-                DetectionImageCreatedCompletionType block = self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]];
-                block(NO, @"The user denied access to world sensing data");
-            }
+            // Tony 2/26/19: Below for loop causing a crash when denying world access
+//            for (NSDictionary* referenceImageDictionary in self.detectionImageCreationRequests) {
+//                DetectionImageCreatedCompletionType block = self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]];
+//                block(NO, @"The user denied access to world sensing data");
+//            }
             [self.detectionImageCreationRequests removeAllObjects];
             [self.detectionImageCreationPromises removeAllObjects];
             break;
