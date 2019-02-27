@@ -19,7 +19,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </view>
-                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="qHr-Ni-uhX">
+                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="qHr-Ni-uhX">
                     <rect key="frame" x="0.0" y="10" width="375" height="40"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mqO-Dv-xI4">
@@ -33,14 +33,14 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Feq-Eq-O9v">
-                            <rect key="frame" x="33.5" y="9" width="31.5" height="22"/>
+                            <rect key="frame" x="31.5" y="9" width="31.5" height="22"/>
                             <state key="normal" image="forwardSelected"/>
                             <connections>
                                 <action selector="forwardAction:" destination="iN0-l3-epB" eventType="touchDown" id="5l8-zq-29a"/>
                             </connections>
                         </button>
                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="T5z-0b-MVG" customClass="URLTextField">
-                            <rect key="frame" x="67" y="5.5" width="98" height="29.5"/>
+                            <rect key="frame" x="63" y="5.5" width="112" height="29.5"/>
                             <color key="backgroundColor" red="0.87058823529411766" green="0.87450980392156863" blue="0.87058823529411766" alpha="0.69512521404109584" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="29.5" id="JiL-UK-7MC"/>
@@ -50,7 +50,7 @@
                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" textContentType="url"/>
                         </textField>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1FE-vv-bxo" userLabel="Switch Camera Btn">
-                            <rect key="frame" x="167" y="0.0" width="40" height="40"/>
+                            <rect key="frame" x="175" y="0.0" width="40" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="40" id="UkG-je-1mY"/>
                                 <constraint firstAttribute="width" constant="40" id="h2P-8t-A1Q"/>
@@ -62,7 +62,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kX6-cA-A5y">
-                            <rect key="frame" x="209" y="0.0" width="40" height="40"/>
+                            <rect key="frame" x="215" y="0.0" width="40" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="40" id="UuK-oG-BRL"/>
                                 <constraint firstAttribute="height" constant="40" id="o0v-lK-Ja8"/>
@@ -72,7 +72,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gip-B1-QYb" userLabel="Debug Btn">
-                            <rect key="frame" x="251" y="0.0" width="40" height="40"/>
+                            <rect key="frame" x="255" y="0.0" width="40" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="40" id="6a9-Uk-Fsa"/>
                                 <constraint firstAttribute="height" constant="40" id="NOS-Zy-W2Y"/>
@@ -84,7 +84,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="fill" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eTd-Vy-1bs">
-                            <rect key="frame" x="293" y="0.0" width="40" height="40"/>
+                            <rect key="frame" x="295" y="0.0" width="40" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="40" id="O0k-SP-qAC"/>
                                 <constraint firstAttribute="width" constant="40" id="q5O-jT-1cJ"/>
