@@ -38,7 +38,7 @@ class BarView: UIView, UITextFieldDelegate {
     @IBOutlet private weak var settingsBtn: UIButton!
     private weak var reloadBtn: UIButton?
     private weak var cancelBtn: UIButton?
-    private weak var ai: UIActivityIndicatorView?
+    weak var permissionLevelButton: ActivityIndicatorButton?
     @IBOutlet private weak var restartTrackingBtn: UIButton!
     @IBOutlet private weak var switchCameraBtn: UIButton!
 
@@ -58,11 +58,13 @@ class BarView: UIView, UITextFieldDelegate {
 
         urlField.delegate = self
 
-        let i = UIActivityIndicatorView(style: .gray)
-        urlField.leftView = i
+        let permissionButton = ActivityIndicatorButton(type: .custom)
+        permissionButton.setImage(nil, for: .normal)
+        permissionButton.frame = CGRect(x: 0, y: 0, width: CGFloat(URL_FIELD_HEIGHT), height: CGFloat(URL_FIELD_HEIGHT))
+        permissionButton.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        urlField.leftView = permissionButton
         urlField.leftViewMode = .unlessEditing
-        i.hidesWhenStopped = true
-        self.ai = i
+        self.permissionLevelButton = permissionButton
 
         urlField.clearButtonMode = .whileEditing
         urlField.returnKeyType = .go
@@ -125,14 +127,14 @@ class BarView: UIView, UITextFieldDelegate {
     // MARK: - Actions
     
     @objc func startLoading(_ url: String?) {
-        ai?.startAnimating()
+        permissionLevelButton?.startAnimating()
         cancelBtn?.isHidden = false
         reloadBtn?.isHidden = true
         urlField.text = url
     }
     
     @objc func finishLoading(_ url: String?) {
-        ai?.stopAnimating()
+        permissionLevelButton?.stopAnimating()
         cancelBtn?.isHidden = true
         reloadBtn?.isHidden = false
     }
