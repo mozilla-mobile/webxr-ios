@@ -356,7 +356,10 @@
         objects.enumerateKeysAndObjects { key, obj, stop in
             guard let key = key as? String else { return }
             guard let dict = self.objects.value(forKey: key) as? [AnyHashable: Any] else { return }
-            if self.sendingWorldSensingDataAuthorizationStatus == .authorized || self.sendingWorldSensingDataAuthorizationStatus == .singlePlane || (dict[WEB_AR_MUST_SEND_OPTION] as? NSNumber)?.boolValue ?? false
+            if self.webXRAuthorizationStatus == .videoCameraAccess ||
+                self.webXRAuthorizationStatus == .worldSensing ||
+                self.webXRAuthorizationStatus == .lite ||
+                (dict[WEB_AR_MUST_SEND_OPTION] as? NSNumber)?.boolValue ?? false
             {
                 if let type = dict[WEB_AR_ANCHOR_TYPE] as? String, type == "face" {
                     if self.numberOfFramesWithoutSendingFaceGeometry < 1 {

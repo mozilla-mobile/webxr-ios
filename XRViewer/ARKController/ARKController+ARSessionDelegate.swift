@@ -24,7 +24,9 @@ extension ARKController: ARSessionDelegate {
                 continue
             }
             
-            if shouldSend(addedAnchor) || sendingWorldSensingDataAuthorizationStatus == .authorized
+            if shouldSend(addedAnchor) ||
+                webXRAuthorizationStatus == .worldSensing ||
+                webXRAuthorizationStatus == .videoCameraAccess ||
             // Tony: Initially I implemented a line below to allow face-based and image-based AR
             // experiences to work when operating in .singlePlane/AR Lite Mode.  However
             // if the user is choosing to operate in AR Lite Mode (i.e. a mode focused on
@@ -32,7 +34,7 @@ extension ARKController: ARSessionDelegate {
             // utilize any recognized ARFaceAnchors nor, potentially, ARImageAnchors.
             // Tony: Spoke with Blair briefly about this 2/4/19, allowing ARFaceAnchors
             //       but not ARImageAnchors
-            || (sendingWorldSensingDataAuthorizationStatus == .singlePlane && addedAnchor is ARFaceAnchor)
+                (webXRAuthorizationStatus == .lite && addedAnchor is ARFaceAnchor)
             {
                 
                 let addedAnchorDictionary = createDictionary(for: addedAnchor)
