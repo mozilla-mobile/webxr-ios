@@ -33,11 +33,26 @@ let BackgroundOrPausedDateKey = "backgroundOrPausedDate"
 /// anchors on the next session run
 let PauseTimeInSecondsToRemoveAnchors: Double = 10.0
 /// The NSUserDefaults key for the boolean that tells us whether
-/// the allow world sensing dialog should be shown (globally)
-let AlwaysAllowWorldSensingKey = "alwaysAllowWorldSensing"
+/// the user allowed minimal WebXR access (globally)
+let MinimalWebXREnabledKey = "minimalWebXREnabled"
+/// The NSUserDefaults key for the boolean that tells us whether
+/// the user activated WebXR Lite Mode (globally)
+let LiteModeWebXREnabledKey = "liteModeWebXREnabled"
+/// The NSUserDefaults key for the boolean that tells us whether
+/// the user has enabled world sensing
+let WorldSensingWebXREnabledKey = "worldSensingWebXREnabled"
 /// The NSUserDefaults key for the boolean that tells us whether
 /// the allow world sensing dialog should be shown for sites
 let AllowedWorldSensingSitesKey = "allowedWorldSensingSites"
+/// The NSUserDefaults key for the boolean that tells us whether
+/// the allow world sensing dialog should be shown (globally)
+let AlwaysAllowWorldSensingKey = "alwaysAllowWorldSensing"
+/// The NSUserDefaults key for the boolean that tells us whether
+/// the user has enabled video camera access
+let VideoCameraAccessWebXREnabledKey = "videoCameraAccessWebXREnabled"
+/// The NSUserDefaults key for the boolean that tells us whether
+/// the site has been approved to always allow video camera access
+let AllowedVideoCameraSitesKey = "allowedVideoCameraSites"
 /// The NSUserDefaults key for the boolean that tells us whether
 /// we should preload the webxr.js file to expose a WebXR API
 let ExposeWebXRAPIKey = "exposeWebXRAPI"
@@ -55,8 +70,13 @@ let BOX_SIZE: CGFloat = 0.05
     static func sessionInBackgroundDefaultTimeInSeconds() -> Int { return SessionInBackgroundDefaultTimeInSeconds }
     static func distantAnchorsDefaultDistanceInMeters() -> Float { return DistantAnchorsDefaultDistanceInMeters }
     @objc static func pauseTimeInSecondsToRemoveAnchors() -> Double { return PauseTimeInSecondsToRemoveAnchors }
-    static func alwaysAllowWorldSensingKey() -> String { return AlwaysAllowWorldSensingKey }
+    static func minimalWebXREnabled() -> String { return MinimalWebXREnabledKey }
+    static func liteModeWebXREnabled() -> String { return LiteModeWebXREnabledKey }
+    static func worldSensingWebXREnabled() -> String { return WorldSensingWebXREnabledKey }
     static func allowedWorldSensingSitesKey() -> String { return AllowedWorldSensingSitesKey }
+    static func alwaysAllowWorldSensingKey() -> String { return AlwaysAllowWorldSensingKey }
+    static func videoCameraAccessWebXREnabled() -> String { return VideoCameraAccessWebXREnabledKey }
+    static func allowedVideoCameraSitesKey() -> String { return AllowedVideoCameraSitesKey }
     static func exposeWebXRAPIKey() -> String { return ExposeWebXRAPIKey }
     
     @objc static func swipeGestureAreaHeight() -> CGFloat { return 200 }
