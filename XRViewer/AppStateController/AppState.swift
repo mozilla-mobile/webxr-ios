@@ -1,10 +1,5 @@
 import Foundation
 
-let SHOW_MODE_BY_DEFAULT = ShowMode.nothing
-let SHOW_OPTIONS_BY_DEFAULT = ShowOptions.init(rawValue: 0)
-let POPUP_ENABLED_BY_DEFAULT = true
-let USER_GRANTED_SENDING_COMPUTER_VISION_DATA_BY_DEFAULT = false
-
 /**
  The app internal state
  */
@@ -28,13 +23,13 @@ let USER_GRANTED_SENDING_COMPUTER_VISION_DATA_BY_DEFAULT = false
     class func defaultState() -> AppState {
         let state = AppState()
 
-        state.showMode = SHOW_MODE_BY_DEFAULT
-        state.showOptions = SHOW_OPTIONS_BY_DEFAULT
-        state.shouldShowSessionStartedPopup = POPUP_ENABLED_BY_DEFAULT
+        state.showMode = ShowMode.nothing
+        state.showOptions = ShowOptions.init(rawValue: 0)
+        state.shouldShowSessionStartedPopup = true
         state.shouldShowLiteModePopup = true
         state.numberOfTimesSendNativeTimeWasCalled = 0
-        state.userGrantedSendingComputerVisionData = USER_GRANTED_SENDING_COMPUTER_VISION_DATA_BY_DEFAULT
         state.userGrantedSendingWorldStateData = .denied
+        state.userGrantedSendingComputerVisionData = false
         state.askedComputerVisionData = false
         state.askedWorldStateData = false
 
