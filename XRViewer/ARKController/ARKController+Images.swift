@@ -50,13 +50,13 @@
      @param completion the promise to be resolved when the image is created
      */
     func createDetectionImage(_ referenceImageDictionary: [AnyHashable : Any], completion: @escaping DetectionImageCreatedCompletionType) {
-        switch sendingWorldSensingDataAuthorizationStatus {
-        case .authorized:
+        switch webXRAuthorizationStatus {
+        case .worldSensing, .videoCameraAccess:
             detectionImageCreationPromises?[referenceImageDictionary["uid"] as Any] = completion
             _createDetectionImage(referenceImageDictionary)
-        case .singlePlane:
+        case .lite:
             completion(false, "The user only provided access to a single plane, not detection images")
-        case .denied:
+        case .minimal, .denied:
             completion(false, "The user denied access to world sensing data")
         case .notDetermined:
             print("Attempt to create a detection image but world sensing data authorization is not determined, enqueue the request")
