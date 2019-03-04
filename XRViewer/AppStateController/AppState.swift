@@ -17,7 +17,7 @@ import Foundation
     var numberOfTimesSendNativeTimeWasCalled: Int = 0
     @objc var userGrantedSendingComputerVisionData = false
     @objc var askedComputerVisionData = false
-    @objc var userGrantedSendingWorldStateData: SendWorldSensingDataAuthorizationState = .notDetermined
+    @objc var userGrantedSendingWorldStateData: WebXRAuthorizationState = .notDetermined
     @objc var askedWorldStateData = false
 
     class func defaultState() -> AppState {

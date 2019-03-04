@@ -980,7 +980,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         stateController.state.sendComputerVisionData = true
         stateController.state.askedComputerVisionData = false
         stateController.state.askedWorldStateData = false
-        arkController?.sendingWorldSensingDataAuthorizationStatus = .notDetermined
+        arkController?.webXRAuthorizationStatus = .notDetermined
 
         if request[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
             messageController?.showMessageAboutAccessingTheCapturedImage({ granted in

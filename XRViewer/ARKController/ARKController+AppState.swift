@@ -24,7 +24,7 @@ extension ARKController {
             computerVisionDataEnabled = state.userGrantedSendingComputerVisionData
         }
         if state.askedWorldStateData {
-            sendingWorldSensingDataAuthorizationStatus = state.userGrantedSendingWorldStateData
+            webXRAuthorizationStatus = state.userGrantedSendingWorldStateData
         }
         
         setupDeviceCamera()

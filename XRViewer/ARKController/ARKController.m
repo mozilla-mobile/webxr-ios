@@ -78,7 +78,7 @@
         self.computerVisionImageScaleFactor = 4.0;
         self.lumaBufferSize = CGSizeMake(0.0f, 0.0f);
 
-        self.sendingWorldSensingDataAuthorizationStatus = SendWorldSensingDataAuthorizationStateNotDetermined;
+        self.webXRAuthorizationStatus = WebXRAuthorizationStateNotDetermined;
         self.detectionImageActivationPromises = [NSMutableDictionary new];
         self.referenceImageMap = [NSMutableDictionary new];
         self.detectionImageCreationRequests = [NSMutableArray new];
@@ -117,12 +117,12 @@
     self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
 }
 
-- (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)authorizationStatus {
-    _sendingWorldSensingDataAuthorizationStatus = authorizationStatus;
+- (void)setWebXRAuthorizationStatus:(WebXRAuthorizationState)authorizationStatus {
+    _webXRAuthorizationStatus = authorizationStatus;
     
-    switch (self.sendingWorldSensingDataAuthorizationStatus) {
-        case SendWorldSensingDataAuthorizationStateNotDetermined: {
-            NSLog(@"World sensing auth changed to not determined");
+    switch (self.webXRAuthorizationStatus) {
+        case WebXRAuthorizationStateNotDetermined: {
+            NSLog(@"WebXR auth changed to not determined");
             break;
         }
         case SendWorldSensingDataAuthorizationStateAuthorized: {
@@ -146,8 +146,8 @@
             }
             break;
         }
-        case SendWorldSensingDataAuthorizationStateSinglePlane: {
-            NSLog(@"World sensing auth changed to single plane");
+        case WebXRAuthorizationStateLite: {
+            NSLog(@"WebXR auth changed to lite mode");
             if (self.getWorldMapPromise) {
                 [self _getWorldMap];
             }

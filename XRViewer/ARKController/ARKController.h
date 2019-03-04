@@ -87,7 +87,7 @@ typedef void (^ResultArrayBlock)(NSArray *);
  Enum representing the world sensing data sending authorization status
  @see SendWorldSensingDataAuthorizationState
  */
-@property(nonatomic) SendWorldSensingDataAuthorizationState sendingWorldSensingDataAuthorizationStatus;
+@property(nonatomic) WebXRAuthorizationState webXRAuthorizationStatus;
 
 @property (nonatomic, strong) ARSession *session;
 @property (nonatomic, copy) NSDictionary *request;
@@ -170,7 +170,7 @@ typedef void (^ResultArrayBlock)(NSArray *);
  */
 - (void)viewWillTransitionToSize:(CGSize)size;
 
-- (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
+- (void)setWebXRAuthorizationStatus:(WebXRAuthorizationState)webXRAuthorizationStatus;
 
 @end
 
