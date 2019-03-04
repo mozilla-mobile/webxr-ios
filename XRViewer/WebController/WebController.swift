@@ -73,6 +73,18 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     @objc var webViewRightAnchorConstraint: NSLayoutConstraint?
     @objc var lastXRVisitedURL = ""
 
+    @objc func hideCameraFlipButton() {
+        barView?.hideCameraFlipButton()
+    }
+    private weak var rootView: UIView?
+    @objc weak var webView: WKWebView?
+    private weak var contentController: WKUserContentController?
+    private var transferCallback = ""
+    @objc var lastURL = ""
+    weak var barView: BarView?
+    private weak var barViewTopAnchorConstraint: NSLayoutConstraint?
+    private var documentReadyState = ""
+    
     @objc init(rootView: UIView?) {
         super.init()
         
@@ -80,6 +92,10 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         setupWebContent()
         setupWebUI()
         setupBarView()
+    }
+    
+    deinit {
+        DDLogDebug("WebController dealloc")
     }
 
     @objc func viewWillTransition(to size: CGSize) {
@@ -249,22 +265,6 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": granted], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
     }
 
-    @objc func hideCameraFlipButton() {
-        barView?.hideCameraFlipButton()
-    }
-    private weak var rootView: UIView?
-    @objc weak var webView: WKWebView?
-    private weak var contentController: WKUserContentController?
-    private var transferCallback = ""
-    @objc var lastURL = ""
-    private weak var barView: BarView?
-    private weak var barViewTopAnchorConstraint: NSLayoutConstraint?
-    private var documentReadyState = ""
-
-// MARK: Interface
-
-    deinit {
-        DDLogDebug("WebController dealloc")
     }
 
     func goHome() {
@@ -277,7 +277,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         }
     }
 
-// MARK: WKScriptMessageHandler
+    // MARK: WKScriptMessageHandler
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         //DDLogDebug(@"Received message: %@ , body: %@", [message name], [message body]);
@@ -480,7 +480,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         webView?.evaluateJavaScript(jsScript, completionHandler: completion)
     }
 
-// MARK: WKUIDelegate, WKNavigationDelegate
+    // MARK: WKUIDelegate, WKNavigationDelegate
 
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         DDLogDebug("didStartProvisionalNavigation - \(navigation.debugDescription)\n on thread \(Thread.current.description)")
@@ -549,7 +549,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         return false
     }
 
-// MARK: Private
+    // MARK: Private
 
     func goFullScreen() {
         webViewTopAnchorConstraint?.constant = 0.0
