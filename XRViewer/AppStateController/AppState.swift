@@ -28,8 +28,8 @@ import Foundation
         state.shouldShowSessionStartedPopup = true
         state.shouldShowLiteModePopup = true
         state.numberOfTimesSendNativeTimeWasCalled = 0
-        state.userGrantedSendingWorldStateData = .denied
         state.userGrantedSendingComputerVisionData = false
+        state.userGrantedSendingWorldStateData = .notDetermined
         state.askedComputerVisionData = false
         state.askedWorldStateData = false
 
