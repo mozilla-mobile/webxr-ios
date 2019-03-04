@@ -51,6 +51,8 @@
 		B654FED221EF99150004F001 /* ARKController+AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B654FED121EF99150004F001 /* ARKController+AppState.swift */; };
 		B654FED421F1179B0004F001 /* ARKController+Anchors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B654FED321F1179B0004F001 /* ARKController+Anchors.swift */; };
 		B658C0F221BF43D500538D57 /* WebController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B658C0F121BF43D500538D57 /* WebController.swift */; };
+		B6679353222894C600939804 /* SegmentedControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6679351222894C600939804 /* SegmentedControlTableViewCell.swift */; };
+		B6679354222894C600939804 /* SegmentedControlTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B6679352222894C600939804 /* SegmentedControlTableViewCell.xib */; };
 		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
 		B67D979721C4404E0075FE0A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D979621C4404E0075FE0A /* Utils.swift */; };
 		B67D97A321C8453F0075FE0A /* UIOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A221C8453F0075FE0A /* UIOverlayController.swift */; };
@@ -125,6 +127,8 @@
 		B654FED121EF99150004F001 /* ARKController+AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+AppState.swift"; sourceTree = "<group>"; };
 		B654FED321F1179B0004F001 /* ARKController+Anchors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Anchors.swift"; sourceTree = "<group>"; };
 		B658C0F121BF43D500538D57 /* WebController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebController.swift; sourceTree = "<group>"; };
+		B6679351222894C600939804 /* SegmentedControlTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlTableViewCell.swift; sourceTree = "<group>"; };
+		B6679352222894C600939804 /* SegmentedControlTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SegmentedControlTableViewCell.xib; sourceTree = "<group>"; };
 		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
 		B67D979621C4404E0075FE0A /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		B67D97A221C8453F0075FE0A /* UIOverlayController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIOverlayController.swift; sourceTree = "<group>"; };
@@ -334,6 +338,8 @@
 				62242ABF201F037F00506412 /* SettingsViewController.swift */,
 				62242AC1201F2A0700506412 /* TextInputTableViewCell.swift */,
 				62242AC2201F2A0700506412 /* TextInputTableViewCell.xib */,
+				B6679351222894C600939804 /* SegmentedControlTableViewCell.swift */,
+				B6679352222894C600939804 /* SegmentedControlTableViewCell.xib */,
 				62242AC5201F2AE100506412 /* SwitchInputTableViewCell.swift */,
 				62242AC6201F2AE100506412 /* SwitchInputTableViewCell.xib */,
 				62242AC9201F2D3600506412 /* TextTableViewCell.swift */,
@@ -430,6 +436,7 @@
 				0401E04B1F612C240075D823 /* BarView.xib in Resources */,
 				041503D21F28944F00887400 /* Main.storyboard in Resources */,
 				625FA2E7202046BF00F62698 /* TermsAndConditionsTableViewCell.xib in Resources */,
+				B6679354222894C600939804 /* SegmentedControlTableViewCell.xib in Resources */,
 				62242AC4201F2A0700506412 /* TextInputTableViewCell.xib in Resources */,
 				04A8156A1F419F840082D31D /* Assets.xcassets in Resources */,
 				620D24A11FC48994002127FD /* Settings.bundle in Resources */,
@@ -518,6 +525,7 @@
 				B654FED221EF99150004F001 /* ARKController+AppState.swift in Sources */,
 				B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */,
 				62242AC3201F2A0700506412 /* TextInputTableViewCell.swift in Sources */,
+				B6679353222894C600939804 /* SegmentedControlTableViewCell.swift in Sources */,
 				B62CE86A21CC4AFF0053F9B3 /* ViewController+ARSCNViewDelegate.swift in Sources */,
 				B67D979721C4404E0075FE0A /* Utils.swift in Sources */,
 				B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */,
