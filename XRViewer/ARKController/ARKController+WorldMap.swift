@@ -111,13 +111,13 @@ import Compression
         }
         
         #if ALLOW_GET_WORLDMAP
-        switch sendingWorldSensingDataAuthorizationStatus {
-        case .authorized:
+        switch webXRAuthorizationStatus {
+        case .worldSensing, .videoCameraAccess:
             getWorldMapPromise = completion
             _getWorldMap()
-        case .singlePlane:
+        case .lite:
             completion(false, "The user only granted access to a single plane, so cannot get map", nil)
-        case .denied:
+        case .minimal, .denied:
             completion(false, "The user denied access to world sensing data", nil)
         case .notDetermined:
             print("Attempt to get World Map but world sensing data authorization is not determined, enqueue the request")
@@ -222,8 +222,8 @@ import Compression
             setWorldMapPromise(false, "World Map set request cancelled by subsequent call to set World Map.")
         }
         
-        switch sendingWorldSensingDataAuthorizationStatus {
-        case .authorized:
+        switch webXRAuthorizationStatus {
+        case .worldSensing, .videoCameraAccess:
             setWorldMapPromise = completion
             // we do it here (rather than above) because if a nil is passed in, we don't want to replace the previously saved
             // value (since a user could still reload it with the browser menu)
@@ -238,9 +238,9 @@ import Compression
                     setWorldMapPromise = nil
                 }
             }
-        case .singlePlane:
+        case .lite:
             completion(false, "The user only provided access to a single plane, so cannot set map")
-        case .denied:
+        case .minimal, .denied:
             completion(false, "The user denied access to world sensing data, so cannot set map")
         case .notDetermined:
             print("Attempt to get World Map but world sensing data authorization is not determined, enqueue the request")
