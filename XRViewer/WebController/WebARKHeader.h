@@ -54,18 +54,24 @@ typedef NS_OPTIONS(NSUInteger, ShowOptions)
 };
 
 /**
- Enum representing the world sensing authorization status
+ Enum representing the WebXR authorization status
  
- - SendWorldSensingDataAuthorizationStateNotDetermined: The user didn't say anything about the world sensing
- - SendWorldSensingDataAuthorizationStateAuthorized: The user allowed sending wold sensing data
- - SendWorldSensingDataAuthorizationStateDenied: The user denied sending world sensing data
+ - WebXRAuthorizationStateNotDetermined: The user didn't say anything about the world sensing
+ - WebXRAuthorizationStateDenied: The user denied sending world sensing data
+ - WebXRAuthorizationStateMinimal: The user allowed sending wold sensing data
+ - WebXRAuthorizationStateLite: The user allowed sending wold sensing data
+ - WebXRAuthorizationStateWorldSensing: The user allowed sending wold sensing data
+ - WebXRAuthorizationStateVideoCameraAccess: The user allowed access to the video camera and sending wold sensing data
+ 
  */
-typedef NS_ENUM(NSUInteger, SendWorldSensingDataAuthorizationState)
+typedef NS_ENUM(NSUInteger, WebXRAuthorizationState)
 {
-    SendWorldSensingDataAuthorizationStateNotDetermined,
-    SendWorldSensingDataAuthorizationStateAuthorized,
-    SendWorldSensingDataAuthorizationStateSinglePlane,
-    SendWorldSensingDataAuthorizationStateDenied
+    WebXRAuthorizationStateNotDetermined,
+    WebXRAuthorizationStateDenied,
+    WebXRAuthorizationStateMinimal,
+    WebXRAuthorizationStateLite,
+    WebXRAuthorizationStateWorldSensing,
+    WebXRAuthorizationStateVideoCameraAccess
 };
 
 // URL
