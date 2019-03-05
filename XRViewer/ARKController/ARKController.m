@@ -125,8 +125,9 @@
             NSLog(@"WebXR auth changed to not determined");
             break;
         }
-        case SendWorldSensingDataAuthorizationStateAuthorized: {
-            NSLog(@"World sensing auth changed to authorized");
+        case WebXRAuthorizationStateWorldSensing:
+        case WebXRAuthorizationStateVideoCameraAccess: {
+            NSLog(@"WebXR auth changed to world sensing authorized");
             
             // make sure all the anchors are in the objects[] array, and mark them as added
             NSArray *anchors = [[[self session] currentFrame] anchors];
@@ -146,16 +147,15 @@
             }
             break;
         }
-        case WebXRAuthorizationStateLite: {
-            NSLog(@"WebXR auth changed to lite mode");
-            if (self.getWorldMapPromise) {
-                [self _getWorldMap];
-            }
-            break;
-        }
-        case SendWorldSensingDataAuthorizationStateDenied: {
-            NSLog(@"World sensing auth changed to denied");
+        case WebXRAuthorizationStateLite:
+        case WebXRAuthorizationStateMinimal:
+        case WebXRAuthorizationStateDenied: {
+            NSLog(@"WebXR auth changed to lite/minimal/denied");
 
+            // Tony 3/5/19 TODO: Come back and revisit what encompasses a "required" anchor
+            //                  (i.e. per the old comment on the next line) given the
+            //                  WebXRAuthorizationState is being set to .denied/.minimal/.lite
+            //
             // still need to send the "required" anchors
             NSArray *anchors = [[[self session] currentFrame] anchors];
             for (ARAnchor* addedAnchor in anchors) {
