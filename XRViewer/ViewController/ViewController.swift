@@ -976,47 +976,53 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         arkController?.computerVisionDataEnabled = false
         stateController.state.userGrantedSendingComputerVisionData = false
-        stateController.state.userGrantedSendingWorldStateData = .denied
-        stateController.state.sendComputerVisionData = true
+        stateController.state.userGrantedSendingWorldStateData = .notDetermined
+        stateController.state.sendComputerVisionData = false
         stateController.state.askedComputerVisionData = false
         stateController.state.askedWorldStateData = false
         arkController?.webXRAuthorizationStatus = .notDetermined
+        
+        guard let url = webController?.webView?.url else { return }
+        blockSelf?.arkController?.controller.previewingSinglePlane = false
+        blockSelf?.chooseSinglePlaneButton.removeFromSuperview()
 
         if request[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
-            messageController?.showMessageAboutAccessingTheCapturedImage({ granted in
+            messageController?.showMessageAboutEnteringXR(.videoCameraAccess, authorizationGranted: { access in
+                
+                blockSelf?.stateController.state.askedComputerVisionData = true
+                blockSelf?.stateController.state.askedWorldStateData = true
+                let granted = access == .videoCameraAccess ? true : false
                 blockSelf?.webController?.userGrantedComputerVisionData(granted)
+                
                 if blockSelf?.arkController != nil {
                     blockSelf?.arkController?.computerVisionDataEnabled = granted
-
+                    
                     // Approving computer vision data implicitly approves the world sensing data
-                    blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = granted ? .authorized : .denied
+                    blockSelf?.arkController?.webXRAuthorizationStatus = granted ? .videoCameraAccess : .denied
                 }
-                blockSelf?.stateController.state.askedComputerVisionData = true
+                
                 blockSelf?.stateController.state.userGrantedSendingComputerVisionData = granted
-
-                blockSelf?.stateController.state.askedWorldStateData = true
-                blockSelf?.stateController.state.userGrantedSendingWorldStateData = granted ? .authorized : .denied
-            })
+                blockSelf?.stateController.state.userGrantedSendingWorldStateData = granted ? .worldSensing : .denied
+                
+                blockSelf?.stateController.setWebXR(granted)
+            }, url: url)
         } else if request[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
-            blockSelf?.arkController?.controller.previewingSinglePlane = false
-            blockSelf?.chooseSinglePlaneButton.removeFromSuperview()
-            messageController?.showMessageAboutAccessingWorldSensingData({ access in
+            messageController?.showMessageAboutEnteringXR(.worldSensing, authorizationGranted: { access in
                 
                 blockSelf?.stateController.state.askedWorldStateData = true
+                
+                blockSelf?.webController?.userGrantedSendingWorldSensingData(access)
+                blockSelf?.arkController?.webXRAuthorizationStatus = access
+                blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
                 
                 switch access {
-                case SendWorldSensingDataAuthorizationState.authorized,
-                     SendWorldSensingDataAuthorizationState.singlePlane:
-                    blockSelf?.webController?.userGrantedSendingWorldSensingData(true)
-                    blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = access
-                    blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
+                case .worldSensing, .lite, .videoCameraAccess:
+                    blockSelf?.stateController.setWebXR(true)
                 default:
-                    blockSelf?.webController?.userGrantedSendingWorldSensingData(false)
-                    blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = .denied
-                    blockSelf?.stateController.state.userGrantedSendingWorldStateData = .denied
+                    blockSelf?.stateController.setWebXR(false)
                 }
                 
-                if access == SendWorldSensingDataAuthorizationState.singlePlane {
+                if access == .lite {
                     guard let state = blockSelf?.stateController.state else { return }
                     blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
                     blockSelf?.arkController?.controller.previewingSinglePlane = true
@@ -1026,14 +1032,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                         blockSelf?.messageController?.showMessage(withTitle: "Lite Mode Started", message: "Choose one plane to share with this website.", hideAfter: 2)
                     }
                 }
-            }, url: webController?.webView?.url)
+            }, url: url)
         } else {
-            // if neither is requested, we'll actually set it to denied!
-            blockSelf?.arkController?.sendingWorldSensingDataAuthorizationStatus = .denied
+            // if neither is requested, we'll request .minimal WebXR authorization!
+            messageController?.showMessageAboutEnteringXR(.minimal, authorizationGranted: { access in
+                blockSelf?.arkController?.webXRAuthorizationStatus = access
+                switch access {
+                case .minimal, .lite, .worldSensing, .videoCameraAccess:
+                    blockSelf?.stateController.setWebXR(true)
+                case .denied, .notDetermined:
+                    blockSelf?.stateController.setWebXR(false)
+                }
+            }, url: url)
         }
 
         stateController.setARRequest(request)
-        stateController.setWebXR(true)
         stateController.state.numberOfTimesSendNativeTimeWasCalled = 0
     }
     
