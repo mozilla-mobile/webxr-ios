@@ -243,10 +243,6 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         })
     }
 
-    @objc func userGrantedComputerVisionData(_ granted: Bool) {
-        callWebMethod(WEB_AR_IOS_USER_GRANTED_CV_DATA, paramJSON: ["granted": granted], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
-    }
-
     @objc func isDebugButtonSelected() -> Bool {
         return barView?.isDebugButtonSelected() ?? false
     }
@@ -261,10 +257,45 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         })
     }
 
-    @objc func userGrantedSendingWorldSensingData(_ granted: Bool) {
-        callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": granted], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
-    }
-
+    @objc func userGrantedWebXRAuthorizationState(_ access: WebXRAuthorizationState) {
+        switch access {
+        case .videoCameraAccess:
+            let image = UIImage(named: "camera")
+            let tintedImage = image?.withRenderingMode(.alwaysTemplate)
+            barView?.permissionLevelButton?.setImage(tintedImage, for: .normal)
+            barView?.permissionLevelButton?.tintColor = .red
+        case .worldSensing:
+            let image = UIImage(named: "globe")
+            let tintedImage = image?.withRenderingMode(.alwaysTemplate)
+            barView?.permissionLevelButton?.setImage(tintedImage, for: .normal)
+            barView?.permissionLevelButton?.tintColor = .red
+        case .lite:
+            let image = UIImage(named: "view_off")
+            let tintedImage = image?.withRenderingMode(.alwaysTemplate)
+            barView?.permissionLevelButton?.setImage(tintedImage, for: .normal)
+            barView?.permissionLevelButton?.tintColor = .red
+        case .minimal:
+            let image = UIImage(named: "circle_ok")
+            let tintedImage = image?.withRenderingMode(.alwaysTemplate)
+            barView?.permissionLevelButton?.setImage(tintedImage, for: .normal)
+            barView?.permissionLevelButton?.tintColor = .green
+        case .denied:
+            let image = UIImage(named: "block")
+            let tintedImage = image?.withRenderingMode(.alwaysTemplate)
+            barView?.permissionLevelButton?.setImage(tintedImage, for: .normal)
+            barView?.permissionLevelButton?.tintColor = .green
+        case .notDetermined:
+            barView?.permissionLevelButton?.setImage(nil, for: .normal)
+        }
+        
+        switch access {
+        case .videoCameraAccess:
+            callWebMethod(WEB_AR_IOS_USER_GRANTED_CV_DATA, paramJSON: ["granted": true], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
+        case .worldSensing, .lite:
+            callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": true], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
+        case .notDetermined, .minimal, .denied:
+            callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": false], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
+        }
     }
 
     func goHome() {

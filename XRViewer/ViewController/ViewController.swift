@@ -300,6 +300,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.webController?.lastXRVisitedURL = blockSelf?.webController?.webView?.url?.absoluteString ?? ""
             } else {
                 blockSelf?.stateController.setShowMode(.nothing)
+                blockSelf?.webController?.barView?.permissionLevelButton?.buttonImage = nil
                 if blockSelf?.arkController?.arSessionState == .ARKSessionRunning {
                     blockSelf?.timerSessionRunningInBackground?.invalidate()
                     let timerSeconds: Int = UserDefaults.standard.integer(forKey: Constant.secondsInBackgroundKey())
@@ -992,7 +993,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.stateController.state.askedComputerVisionData = true
                 blockSelf?.stateController.state.askedWorldStateData = true
                 let granted = access == .videoCameraAccess ? true : false
-                blockSelf?.webController?.userGrantedComputerVisionData(granted)
                 
                 if blockSelf?.arkController != nil {
                     blockSelf?.arkController?.computerVisionDataEnabled = granted
@@ -1005,13 +1005,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.stateController.state.userGrantedSendingWorldStateData = granted ? .worldSensing : .denied
                 
                 blockSelf?.stateController.setWebXR(granted)
+                blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
             }, url: url)
         } else if request[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
             messageController?.showMessageAboutEnteringXR(.worldSensing, authorizationGranted: { access in
                 
                 blockSelf?.stateController.state.askedWorldStateData = true
-                
-                blockSelf?.webController?.userGrantedSendingWorldSensingData(access)
                 blockSelf?.arkController?.webXRAuthorizationStatus = access
                 blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
                 
@@ -1021,6 +1020,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 default:
                     blockSelf?.stateController.setWebXR(false)
                 }
+                
+                blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
                 
                 if access == .lite {
                     guard let state = blockSelf?.stateController.state else { return }
@@ -1043,6 +1044,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 case .denied, .notDetermined:
                     blockSelf?.stateController.setWebXR(false)
                 }
+                
+                blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
             }, url: url)
         }
 
