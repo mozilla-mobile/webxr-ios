@@ -363,6 +363,10 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                         UserDefaults.standard.set(newDict, forKey: Constant.allowedWorldSensingSitesKey())
                     }
                     authorizationGranted(.worldSensing)
+                } else if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) {
+                    authorizationGranted(.lite)
+                } else if standardUserDefaults.bool(forKey: Constant.minimalWebXREnabled()) {
+                    authorizationGranted(.minimal)
                 } else {
                     authorizationGranted(.denied)
                 }
@@ -378,6 +382,12 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                         UserDefaults.standard.set(newDict, forKey: Constant.allowedVideoCameraSitesKey())
                     }
                     authorizationGranted(.videoCameraAccess)
+                } else if standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled()) {
+                    authorizationGranted(.worldSensing)
+                } else if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) {
+                    authorizationGranted(.lite)
+                } else if standardUserDefaults.bool(forKey: Constant.minimalWebXREnabled()) {
+                    authorizationGranted(.minimal)
                 } else {
                     authorizationGranted(.denied)
                 }
