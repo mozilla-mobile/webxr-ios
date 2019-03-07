@@ -117,8 +117,8 @@ extension SettingsViewController: UITableViewDataSource {
                 cell = switchInputCell
             case 5:
                 let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
-                switchInputCell.labelTitle?.text = "Reset Allowed World Sensing"
-                switchInputCell.switchControl.isOn = UserDefaults.standard.object(forKey: Constant.allowedWorldSensingSitesKey()) == nil && !UserDefaults.standard.bool(forKey: Constant.alwaysAllowWorldSensingKey())
+                switchInputCell.labelTitle?.text = "Forget WebXR Permissions for All Sites"
+                switchInputCell.switchControl.isOn = false
                 switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
                 switchInputCell.switchControl.tag = 5
                 cell = switchInputCell
@@ -156,9 +156,11 @@ extension SettingsViewController: UITableViewDataSource {
         } else if switchControl.tag == 5 {
             // Forget any sites remembered
             UserDefaults.standard.removeObject(forKey: Constant.allowedWorldSensingSitesKey())
-            // Assume that if they are resetting, should NOT be always-on.
-            // FIXME: This doesn't update the always-on switch control?
+            UserDefaults.standard.removeObject(forKey: Constant.allowedVideoCameraSitesKey())
+            // Assume that if they are resetting, World Sensing should NOT be always-on.
             UserDefaults.standard.set(false, forKey: Constant.alwaysAllowWorldSensingKey())
+            let alwaysAllowSwitch = tableView.cellForRow(at: IndexPath(row: 4, section: 1)) as? SwitchInputTableViewCell
+            alwaysAllowSwitch?.switchControl.setOn(false, animated: true)
         } else if switchControl.tag == 6 {
             UserDefaults.standard.set(switchControl.isOn, forKey: Constant.exposeWebXRAPIKey())
         }
