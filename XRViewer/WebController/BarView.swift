@@ -64,7 +64,7 @@ class BarView: UIView, UITextFieldDelegate {
         permissionButton.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         urlField.leftView = permissionButton
         urlField.leftViewMode = .unlessEditing
-        self.permissionLevelButton = permissionButton
+        permissionLevelButton = permissionButton
 
         urlField.clearButtonMode = .whileEditing
         urlField.returnKeyType = .go
@@ -76,13 +76,13 @@ class BarView: UIView, UITextFieldDelegate {
 
         let reloadButton = UIButton(type: .custom)
         reloadButton.setImage(UIImage(named: "reload"), for: .normal)
-        reloadButton.addTarget(self, action: #selector(BarView.reloadAction(_:)), for: .touchDown)
+        reloadButton.addTarget(self, action: #selector(BarView.reloadAction(_:)), for: .touchUpInside)
         reloadButton.frame = CGRect(x: 0, y: 0, width: CGFloat(URL_FIELD_HEIGHT), height: CGFloat(URL_FIELD_HEIGHT))
         reloadButton.isHidden = false
 
         let cancelButton = UIButton(type: .custom)
         cancelButton.setImage(UIImage(named: "cancel"), for: .normal)
-        cancelButton.addTarget(self, action: #selector(BarView.cancelAction(_:)), for: .touchDown)
+        cancelButton.addTarget(self, action: #selector(BarView.cancelAction(_:)), for: .touchUpInside)
         cancelButton.frame = CGRect(x: 0, y: 0, width: CGFloat(URL_FIELD_HEIGHT), height: CGFloat(URL_FIELD_HEIGHT))
         cancelButton.isHidden = true
 
