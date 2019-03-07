@@ -676,6 +676,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.stateController.setWebXR(false)
             blockSelf?.stateController.setShowMode(.nothing)
         }
+        
+        webController?.onShowPermissions = {
+            blockSelf?.messageController?.forceShowPermissionsPopup = true
+        }
 
         webController?.onJSUpdateData = {
             return blockSelf?.commonData() ?? [:]

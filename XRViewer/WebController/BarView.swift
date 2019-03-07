@@ -9,6 +9,7 @@ typealias ForwardAction = (Any?) -> Void
 typealias HomeAction = (Any?) -> Void
 typealias ReloadAction = (Any?) -> Void
 typealias CancelAction = (Any?) -> Void
+typealias ShowPermissionsAction = (Any?) -> Void
 typealias GoAction = (String?) -> Void
 typealias DebugButtonToggledAction = (Bool) -> Void
 typealias SettingsAction = () -> Void
@@ -24,6 +25,7 @@ class BarView: UIView, UITextFieldDelegate {
     @objc var homeActionBlock: HomeAction?
     @objc var reloadActionBlock: ReloadAction?
     @objc var cancelActionBlock: CancelAction?
+    @objc var showPermissionsActionBlock: ShowPermissionsAction?
     @objc var goActionBlock: GoAction?
     @objc var debugButtonToggledAction: DebugButtonToggledAction?
     @objc var settingsActionBlock: SettingsAction?
@@ -60,6 +62,7 @@ class BarView: UIView, UITextFieldDelegate {
 
         let permissionButton = ActivityIndicatorButton(type: .custom)
         permissionButton.setImage(nil, for: .normal)
+        permissionButton.addTarget(self, action: #selector(BarView.showPermissionsAction(_:)), for: .touchUpInside)
         permissionButton.frame = CGRect(x: 0, y: 0, width: CGFloat(URL_FIELD_HEIGHT), height: CGFloat(URL_FIELD_HEIGHT))
         permissionButton.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         urlField.leftView = permissionButton
@@ -200,6 +203,13 @@ class BarView: UIView, UITextFieldDelegate {
         DDLogDebug("cancelAction")
         urlField.resignFirstResponder()
         cancelActionBlock?(sender)
+    }
+    
+    @IBAction func showPermissionsAction(_ sender: Any) {
+        DDLogDebug("showPermissionsAction")
+        urlField.resignFirstResponder()
+        showPermissionsActionBlock?(sender)
+        reloadActionBlock?(sender)
     }
 
     @IBAction func debugAction(_ sender: Any) {

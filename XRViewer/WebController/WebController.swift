@@ -57,6 +57,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     @objc var onStopAR: OnStopAR?
     @objc var onResetTrackingButtonTapped: OnResetTrackingButtonTapped?
     @objc var onSwitchCameraButtonTapped: OnSwitchCameraButtonTapped?
+    @objc var onShowPermissions: (() -> Void)?
     @objc var onStartSendingComputerVisionData: OnStartSendingComputerVisionData?
     @objc var onStopSendingComputerVisionData: OnStopSendingComputerVisionData?
     @objc var onAddImageAnchor: OnAddImageAnchor?
@@ -658,6 +659,10 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
         barView?.reloadActionBlock = { sender in
             blockSelf?.loadURL?(blockBar?.urlFieldText())
+        }
+        
+        barView?.showPermissionsActionBlock = { sender in
+            blockSelf?.onShowPermissions?()
         }
 
         barView?.goActionBlock = { url in

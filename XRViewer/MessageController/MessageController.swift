@@ -15,6 +15,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     private weak var arPopup: PopupDialog?
     private var tableViewController = UITableViewController()
     private var webXRAuthorizationRequested: WebXRAuthorizationState = .notDetermined
+    var forceShowPermissionsPopup = false
 
     @objc init(viewController vc: UIViewController?) {
         super.init()
@@ -291,6 +292,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         // Check whether .minimal WebXR has been granted
         if authorizationRequested == .minimal
             && standardUserDefaults.bool(forKey: Constant.minimalWebXREnabled())
+            && !forceShowPermissionsPopup
         {
             authorizationGranted(.minimal)
             return
@@ -299,6 +301,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         // Check global world sensing permission
         if authorizationRequested == .worldSensing
             && standardUserDefaults.bool(forKey: Constant.alwaysAllowWorldSensingKey())
+            && !forceShowPermissionsPopup
         {
             authorizationGranted(.worldSensing)
             return
@@ -308,6 +311,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         if authorizationRequested == .worldSensing
             && standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled())
             && allowedWorldSensingSites != nil
+            && !forceShowPermissionsPopup
         {
             if allowedWorldSensingSites?[site] != nil {
                 authorizationGranted(.worldSensing)
@@ -317,13 +321,14 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         if authorizationRequested == .videoCameraAccess
             && standardUserDefaults.bool(forKey: Constant.videoCameraAccessWebXREnabled())
             && allowedVideoCameraSites != nil
+            && !forceShowPermissionsPopup
         {
             if allowedVideoCameraSites?[site] != nil {
                 authorizationGranted(.videoCameraAccess)
                 return
             }
         }
-        
+        forceShowPermissionsPopup = false
         var title: String
         var message: String
         switch webXRAuthorizationRequested {
