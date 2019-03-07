@@ -298,6 +298,17 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             return
         }
         
+        // Check whether Lite Mode is enabled
+        if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled())
+            && (authorizationRequested == .lite
+                || authorizationRequested == .worldSensing
+                || authorizationRequested == .videoCameraAccess)
+            && !forceShowPermissionsPopup
+        {
+            authorizationGranted(.lite)
+            return
+        }
+        
         // Check global world sensing permission
         if authorizationRequested == .worldSensing
             && standardUserDefaults.bool(forKey: Constant.alwaysAllowWorldSensingKey())
