@@ -15,6 +15,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     private weak var arPopup: PopupDialog?
     private var tableViewController = UITableViewController()
     private var webXRAuthorizationRequested: WebXRAuthorizationState = .notDetermined
+    private var site: String?
     var forceShowPermissionsPopup = false
 
     @objc init(viewController vc: UIViewController?) {
@@ -288,6 +289,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         if let port = url.port {
             site = site + ":\(port)"
         }
+        self.site = site
         
         // Check whether .minimal WebXR has been granted
         if authorizationRequested == .minimal
@@ -370,14 +372,18 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             case .worldSensing:
                 if standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled()) {
                     guard let worldControl = self.tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SegmentedControlTableViewCell else { return }
-                    if worldControl.segmentedControl.selectedSegmentIndex == 1 {
-                        var newDict = [AnyHashable : Any]()
-                        if let dict = allowedWorldSensingSites {
-                            newDict = dict
-                        }
-                        newDict[site] = "YES"
-                        UserDefaults.standard.set(newDict, forKey: Constant.allowedWorldSensingSitesKey())
+                    
+                    var newDict = [AnyHashable : Any]()
+                    if let dict = allowedWorldSensingSites {
+                        newDict = dict
                     }
+                    if worldControl.segmentedControl.selectedSegmentIndex == 1 {
+                        newDict[site] = "YES"
+                    } else {
+                        newDict[site] = nil
+                    }
+                    UserDefaults.standard.set(newDict, forKey: Constant.allowedWorldSensingSitesKey())
+                    
                     authorizationGranted(.worldSensing)
                 } else if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) {
                     authorizationGranted(.lite)
@@ -389,14 +395,18 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             case .videoCameraAccess:
                 if standardUserDefaults.bool(forKey: Constant.videoCameraAccessWebXREnabled()) {
                     guard let videoControl = self.tableViewController.tableView.cellForRow(at: IndexPath(row: 5, section: 0)) as? SegmentedControlTableViewCell else { return }
-                    if videoControl.segmentedControl.selectedSegmentIndex == 1 {
-                        var newDict = [AnyHashable : Any]()
-                        if let dict = allowedVideoCameraSites {
-                            newDict = dict
-                        }
-                        newDict[site] = "YES"
-                        UserDefaults.standard.set(newDict, forKey: Constant.allowedVideoCameraSitesKey())
+                    
+                    var newDict = [AnyHashable : Any]()
+                    if let dict = allowedVideoCameraSites {
+                        newDict = dict
                     }
+                    if videoControl.segmentedControl.selectedSegmentIndex == 1 {
+                        newDict[site] = "YES"
+                    } else {
+                        newDict[site] = nil
+                    }
+                    UserDefaults.standard.set(newDict, forKey: Constant.allowedVideoCameraSitesKey())
+                    
                     authorizationGranted(.videoCameraAccess)
                 } else if standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled()) {
                     authorizationGranted(.worldSensing)
@@ -530,9 +540,17 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 if !UserDefaults.standard.bool(forKey: Constant.worldSensingWebXREnabled()) {
                     cell.segmentedControl.isEnabled = false
                 }
+                let allowedWorldSensingSites = UserDefaults.standard.dictionary(forKey: Constant.allowedWorldSensingSitesKey())
+                if let site = site, allowedWorldSensingSites?[site] != nil {
+                    cell.segmentedControl.selectedSegmentIndex = 1
+                }
             } else {
                 if !UserDefaults.standard.bool(forKey: Constant.videoCameraAccessWebXREnabled()) {
                     cell.segmentedControl.isEnabled = false
+                }
+                let allowedVideoCameraSites = UserDefaults.standard.dictionary(forKey: Constant.allowedVideoCameraSitesKey())
+                if let site = site, allowedVideoCameraSites?[site] != nil {
+                    cell.segmentedControl.selectedSegmentIndex = 1
                 }
             }
             return cell
