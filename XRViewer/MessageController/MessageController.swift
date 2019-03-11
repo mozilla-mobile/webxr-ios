@@ -373,7 +373,9 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             case .lite:
                 authorizationGranted(standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) ? .lite : .denied)
             case .worldSensing:
-                if standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled()) {
+                if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) {
+                    authorizationGranted(.lite)
+                } else if standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled()) {
                     guard let worldControl = self.tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SegmentedControlTableViewCell else { return }
                     
                     var newDict = [AnyHashable : Any]()
@@ -387,8 +389,6 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                     }
                     UserDefaults.standard.set(newDict, forKey: Constant.allowedWorldSensingSitesKey())
                     authorizationGranted(.worldSensing)
-                } else if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) {
-                    authorizationGranted(.lite)
                 } else if standardUserDefaults.bool(forKey: Constant.minimalWebXREnabled()) {
                     authorizationGranted(.minimal)
                 } else {
@@ -409,10 +409,10 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                     }
                     UserDefaults.standard.set(newDict, forKey: Constant.allowedVideoCameraSitesKey())
                     authorizationGranted(.videoCameraAccess)
-                } else if standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled()) {
-                    authorizationGranted(.worldSensing)
                 } else if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) {
                     authorizationGranted(.lite)
+                } else if standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled()) {
+                    authorizationGranted(.worldSensing)
                 } else if standardUserDefaults.bool(forKey: Constant.minimalWebXREnabled()) {
                     authorizationGranted(.minimal)
                 } else {
@@ -489,9 +489,9 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         case 1:
             UserDefaults.standard.set(sender.isOn, forKey: Constant.liteModeWebXREnabled())
             if sender.isOn {
-                UserDefaults.standard.set(false, forKey: Constant.worldSensingWebXREnabled())
+                UserDefaults.standard.set(true, forKey: Constant.worldSensingWebXREnabled())
                 UserDefaults.standard.set(false, forKey: Constant.videoCameraAccessWebXREnabled())
-                worldSensingCell?.switchControl.setOn(false, animated: true)
+                worldSensingCell?.switchControl.setOn(true, animated: true)
                 worldSensingCell?.switchControl.isEnabled = false
                 worldSensingCell?.labelTitle.isEnabled = false
                 videoCameraAccessCell?.switchControl.setOn(false, animated: true)
@@ -502,6 +502,9 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             } else {
                 worldSensingCell?.switchControl.isEnabled = true
                 worldSensingCell?.labelTitle.isEnabled = true
+                worldControl?.segmentedControl.isEnabled = true
+                videoCameraAccessCell?.switchControl.isEnabled = true
+                videoCameraAccessCell?.labelTitle.isEnabled = true
             }
         case 2:
             UserDefaults.standard.set(sender.isOn, forKey: Constant.worldSensingWebXREnabled())
@@ -582,7 +585,9 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "SegmentedControlTableViewCell", for: indexPath) as! SegmentedControlTableViewCell
                 cell.segmentedControl.tag = indexPath.row
                 
-                if !UserDefaults.standard.bool(forKey: Constant.worldSensingWebXREnabled()) {
+                if !UserDefaults.standard.bool(forKey: Constant.worldSensingWebXREnabled())
+                    || UserDefaults.standard.bool(forKey: Constant.liteModeWebXREnabled())
+                {
                     cell.segmentedControl.isEnabled = false
                 }
                 let allowedWorldSensingSites = UserDefaults.standard.dictionary(forKey: Constant.allowedWorldSensingSitesKey())
