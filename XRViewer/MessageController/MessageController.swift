@@ -16,6 +16,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     private var tableViewController = UITableViewController()
     private var webXRAuthorizationRequested: WebXRAuthorizationState = .notDetermined
     private var site: String?
+    private var permissionsPopup: UIAlertController?
     var forceShowPermissionsPopup = false
 
     @objc init(viewController vc: UIViewController?) {
@@ -446,6 +447,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         tableViewController.tableView.register(UINib(nibName: "SegmentedControlTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "SegmentedControlTableViewCell")
         alertController.setValue(tableViewController, forKey: "contentViewController")
         
+        permissionsPopup = alertController
         viewController?.present(alertController, animated: true)
     }
     
@@ -542,6 +544,8 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 cell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.minimalWebXREnabled())
             } else if indexPath.row == 1 {
                 cell.labelTitle.text = "Lite Mode"
+                cell.learnMoreButton.isHidden = false
+                cell.learnMoreButton.addTarget(self, action: #selector(learnMoreLiteModeTapped), for: .touchUpInside)
                 cell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.liteModeWebXREnabled())
                 if !UserDefaults.standard.bool(forKey: Constant.minimalWebXREnabled()) {
                     cell.switchControl.isEnabled = false
@@ -627,5 +631,12 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         DestructiveButton.appearance().titleColor = UIColor.red
         DestructiveButton.appearance().titleFont = largeFont
+    }
+    
+    @objc func learnMoreLiteModeTapped() {
+        let alert = UIAlertController(title: "What's Lite Mode?", message: "Lite Mode is privacy-focused and sends less information to WebXR sites. \n\nWhen Lite Mode is activated, only one plane from the real world is shared with WebXR sites. \nLite Mode enables face-based experiences, but it will not recognize images nor provide video camera access to WebXR sites.", preferredStyle: .alert)
+        let ok = UIAlertAction(title: "Ok", style: .default, handler: nil)
+        alert.addAction(ok)
+        permissionsPopup?.present(alert, animated: true)
     }
 }
