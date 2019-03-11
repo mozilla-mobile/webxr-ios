@@ -463,17 +463,22 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             UserDefaults.standard.set(sender.isOn, forKey: Constant.minimalWebXREnabled())
             if sender.isOn {
                 liteCell?.switchControl.isEnabled = true
+                liteCell?.labelTitle.isEnabled = true
                 worldSensingCell?.switchControl.isEnabled = true
+                worldSensingCell?.labelTitle.isEnabled = true
             } else {
                 UserDefaults.standard.set(false, forKey: Constant.liteModeWebXREnabled())
                 UserDefaults.standard.set(false, forKey: Constant.worldSensingWebXREnabled())
                 UserDefaults.standard.set(false, forKey: Constant.videoCameraAccessWebXREnabled())
                 liteCell?.switchControl.setOn(false, animated: true)
                 liteCell?.switchControl.isEnabled = false
+                liteCell?.labelTitle.isEnabled = false
                 worldSensingCell?.switchControl.setOn(false, animated: true)
                 worldSensingCell?.switchControl.isEnabled = false
+                worldSensingCell?.labelTitle.isEnabled = false
                 videoCameraAccessCell?.switchControl.setOn(false, animated: true)
                 videoCameraAccessCell?.switchControl.isEnabled = false
+                videoCameraAccessCell?.labelTitle.isEnabled = false
                 worldControl?.segmentedControl.isEnabled = false
                 videoControl?.segmentedControl.isEnabled = false
             }
@@ -484,22 +489,27 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 UserDefaults.standard.set(false, forKey: Constant.videoCameraAccessWebXREnabled())
                 worldSensingCell?.switchControl.setOn(false, animated: true)
                 worldSensingCell?.switchControl.isEnabled = false
+                worldSensingCell?.labelTitle.isEnabled = false
                 videoCameraAccessCell?.switchControl.setOn(false, animated: true)
                 videoCameraAccessCell?.switchControl.isEnabled = false
+                videoCameraAccessCell?.labelTitle.isEnabled = false
                 worldControl?.segmentedControl.isEnabled = false
                 videoControl?.segmentedControl.isEnabled = false
             } else {
                 worldSensingCell?.switchControl.isEnabled = true
+                worldSensingCell?.labelTitle.isEnabled = true
             }
         case 2:
             UserDefaults.standard.set(sender.isOn, forKey: Constant.worldSensingWebXREnabled())
             if sender.isOn {
                 videoCameraAccessCell?.switchControl.isEnabled = true
+                videoCameraAccessCell?.labelTitle.isEnabled = true
                 worldControl?.segmentedControl.isEnabled = true
             } else {
                 UserDefaults.standard.set(false, forKey: Constant.videoCameraAccessWebXREnabled())
                 videoCameraAccessCell?.switchControl.setOn(false, animated: true)
                 videoCameraAccessCell?.switchControl.isEnabled = false
+                videoCameraAccessCell?.labelTitle.isEnabled = false
                 worldControl?.segmentedControl.isEnabled = false
                 videoControl?.segmentedControl.isEnabled = false
             }
@@ -549,6 +559,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 cell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.liteModeWebXREnabled())
                 if !UserDefaults.standard.bool(forKey: Constant.minimalWebXREnabled()) {
                     cell.switchControl.isEnabled = false
+                    cell.labelTitle.isEnabled = false
                 }
             } else if indexPath.row == 2 {
                 cell.labelTitle.text = "World Sensing"
@@ -557,6 +568,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                     || UserDefaults.standard.bool(forKey: Constant.liteModeWebXREnabled())
                 {
                     cell.switchControl.isEnabled = false
+                    cell.labelTitle.isEnabled = false
                 }
             }
             return cell
@@ -586,6 +598,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                     || !UserDefaults.standard.bool(forKey: Constant.worldSensingWebXREnabled())
                 {
                     cell.switchControl.isEnabled = false
+                    cell.labelTitle.isEnabled = false
                 }
                 return cell
             }
