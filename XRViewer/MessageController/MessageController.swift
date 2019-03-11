@@ -422,6 +422,10 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 authorizationGranted(.denied)
             }
         })
+        let denyAction = UIAlertAction(title: "Deny", style: .cancel) { _ in
+            authorizationGranted(.denied)
+        }
+        alertController.addAction(denyAction)
         alertController.addAction(confirmAction)
         
         var height = CGFloat()
