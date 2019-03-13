@@ -373,10 +373,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         stateController.onMemoryWarning = { url in
-            self.arkController?.controller.previewingSinglePlane = false
-            self.chooseSinglePlaneButton.removeFromSuperview()
+            blockSelf?.arkController?.controller.previewingSinglePlane = false
+            blockSelf?.chooseSinglePlaneButton.removeFromSuperview()
             blockSelf?.messageController?.showMessageAboutMemoryWarning(withCompletion: {
-                self.webController?.loadBlankHTMLString()
+                blockSelf?.webController?.loadBlankHTMLString()
             })
 
             blockSelf?.webController?.didReceiveError(error: NSError(domain: MEMORY_ERROR_DOMAIN, code: MEMORY_ERROR_CODE, userInfo: [NSLocalizedDescriptionKey: MEMORY_ERROR_MESSAGE]))
@@ -390,7 +390,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 print("\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********")
                 blockSelf?.startNewARKitSession(withRequest: dict)
                 guard let session = blockSelf?.arkController?.session else { return }
-                self.sceneView.session = session
+                blockSelf?.sceneView.session = session
             } else {
                 guard let arSessionState = blockSelf?.arkController?.arSessionState else { return }
                 guard let state = blockSelf?.stateController.state else { return }
@@ -988,8 +988,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         arkController?.webXRAuthorizationStatus = .notDetermined
         
         guard let url = webController?.webView?.url else { return }
-        blockSelf?.arkController?.controller.previewingSinglePlane = false
-        blockSelf?.chooseSinglePlaneButton.removeFromSuperview()
+        arkController?.controller.previewingSinglePlane = false
+        chooseSinglePlaneButton.removeFromSuperview()
 
         if request[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
             messageController?.showMessageAboutEnteringXR(.videoCameraAccess, authorizationGranted: { access in

@@ -218,8 +218,6 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
     // Tony: Doesn't appear a Bool previously returned by sendARData was used anywhere, I removed the return during conversion to Swift
     @objc func sendARData(_ data: [AnyHashable : Any]) {
-        // Tony: Unclear what this bool was used for in Objective-C
-//        let CHECK_UPDATE_CALL = false
         if transferCallback != ""  {
             callWebMethod(transferCallback, paramJSON: data, webCompletion: nil)
 //            print("sendARData success")
