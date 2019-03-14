@@ -118,78 +118,79 @@
 }
 
 - (void)setWebXRAuthorizationStatus:(WebXRAuthorizationState)authorizationStatus {
-    _webXRAuthorizationStatus = authorizationStatus;
     
-    switch (self.webXRAuthorizationStatus) {
-        case WebXRAuthorizationStateNotDetermined: {
-            NSLog(@"WebXR auth changed to not determined");
-            break;
-        }
-        case WebXRAuthorizationStateWorldSensing:
-        case WebXRAuthorizationStateVideoCameraAccess: {
-            NSLog(@"WebXR auth changed to world sensing authorized");
-            
-            // make sure all the anchors are in the objects[] array, and mark them as added
-            NSArray *anchors = [[[self session] currentFrame] anchors];
-            for (ARAnchor* addedAnchor in anchors) {
-                if (!self.objects[[self anchorIDFor:addedAnchor]]) {
-                    NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:addedAnchor] mutableCopy];
-                    self.objects[[self anchorIDFor:addedAnchor]] = addedAnchorDictionary;
-                }
-                [self.addedAnchorsSinceLastFrame addObject: self.objects[[self anchorIDFor:addedAnchor]]];
+    if (self.webXRAuthorizationStatus != authorizationStatus) {
+        _webXRAuthorizationStatus = authorizationStatus;
+        switch (self.webXRAuthorizationStatus) {
+            case WebXRAuthorizationStateNotDetermined: {
+                NSLog(@"WebXR auth changed to not determined");
+                break;
             }
-            
-            [self createRequestedDetectionImages];
-
-            // Only need to do this if there's an outstanding world map request
-            if (self.getWorldMapPromise) {
-                [self _getWorldMap];
-            }
-            break;
-        }
-        case WebXRAuthorizationStateLite:
-        case WebXRAuthorizationStateMinimal:
-        case WebXRAuthorizationStateDenied: {
-            NSLog(@"WebXR auth changed to lite/minimal/denied");
-
-            // Tony 3/5/19 TODO: Come back and revisit what encompasses a "required" anchor
-            //                  (i.e. per the old comment "still need to send the 'required' anchors")
-            //                  given the WebXRAuthorizationState is being set to
-            //                  .denied/.minimal/.lite
-            //
-            // still need to send the "required" anchors
-            NSArray *anchors = [[[self session] currentFrame] anchors];
-            for (ARAnchor* addedAnchor in anchors) {
-                if (self.objects[[self anchorIDFor:addedAnchor]]) {
-                    // if the anchor is in the current object list, and is now not being sent
-                    // mark it as removed and remove from the object list
-                    if (![self shouldSend:addedAnchor]) {
-                        [self.removedAnchorsSinceLastFrame addObject:[self anchorIDFor:addedAnchor]];
-                        self.objects[[self anchorIDFor:addedAnchor]] = nil;
-                    }
-                } else {
-                    // if the anchor was not being sent but is in the approved list, start sending it
-                    if ([self shouldSend:addedAnchor]) {
+            case WebXRAuthorizationStateWorldSensing:
+            case WebXRAuthorizationStateVideoCameraAccess: {
+                NSLog(@"WebXR auth changed to video camera access/world sensing");
+                
+                // make sure all the anchors are in the objects[] array, and mark them as added
+                NSArray *anchors = [[[self session] currentFrame] anchors];
+                for (ARAnchor* addedAnchor in anchors) {
+                    if (!self.objects[[self anchorIDFor:addedAnchor]]) {
                         NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:addedAnchor] mutableCopy];
-                        [self.addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
                         self.objects[[self anchorIDFor:addedAnchor]] = addedAnchorDictionary;
                     }
+                    [self.addedAnchorsSinceLastFrame addObject: self.objects[[self anchorIDFor:addedAnchor]]];
                 }
+                
+                [self createRequestedDetectionImages];
+                
+                // Only need to do this if there's an outstanding world map request
+                if (self.getWorldMapPromise) {
+                    [self _getWorldMap];
+                }
+                break;
             }
-            
-            if (self.getWorldMapPromise) {
-                self.getWorldMapPromise(NO, @"The user denied access to world sensing data", nil);
-                self.getWorldMapPromise = nil;
+            case WebXRAuthorizationStateLite:
+            case WebXRAuthorizationStateMinimal:
+            case WebXRAuthorizationStateDenied: {
+                NSLog(@"WebXR auth changed to lite/minimal/denied");
+                
+                // Tony 3/5/19 TODO: Come back and revisit what encompasses a "required" anchor
+                //                  (i.e. per the old comment "still need to send the 'required'
+                //                  anchors") given the WebXRAuthorizationState is being set to
+                //                  .denied/.minimal/.lite
+                //
+                // still need to send the "required" anchors
+                NSArray *anchors = [[[self session] currentFrame] anchors];
+                for (ARAnchor* addedAnchor in anchors) {
+                    if (self.objects[[self anchorIDFor:addedAnchor]]) {
+                        // if the anchor is in the current object list, and is now not being sent
+                        // mark it as removed and remove from the object list
+                        if (![self shouldSend:addedAnchor]) {
+                            [self.removedAnchorsSinceLastFrame addObject:[self anchorIDFor:addedAnchor]];
+                            self.objects[[self anchorIDFor:addedAnchor]] = nil;
+                        }
+                    } else {
+                        // if the anchor was not being sent but is in the approved list, start sending it
+                        if ([self shouldSend:addedAnchor]) {
+                            NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:addedAnchor] mutableCopy];
+                            [self.addedAnchorsSinceLastFrame addObject: addedAnchorDictionary];
+                            self.objects[[self anchorIDFor:addedAnchor]] = addedAnchorDictionary;
+                        }
+                    }
+                }
+                
+                if (self.getWorldMapPromise) {
+                    self.getWorldMapPromise(NO, @"The user denied access to world sensing data", nil);
+                    self.getWorldMapPromise = nil;
+                }
+                
+                // Tony 2/26/19: Below for loop causing a crash when denying world access
+                //            for (NSDictionary* referenceImageDictionary in self.detectionImageCreationRequests) {
+                //                DetectionImageCreatedCompletionType block = self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]];
+                //                block(NO, @"The user denied access to world sensing data");
+                //            }
+                
+                break;
             }
-
-            // Tony 2/26/19: Below for loop causing a crash when denying world access
-//            for (NSDictionary* referenceImageDictionary in self.detectionImageCreationRequests) {
-//                DetectionImageCreatedCompletionType block = self.detectionImageCreationPromises[referenceImageDictionary[@"uid"]];
-//                block(NO, @"The user denied access to world sensing data");
-//            }
-            [self.detectionImageCreationRequests removeAllObjects];
-            [self.detectionImageCreationPromises removeAllObjects];
-            break;
         }
     }
 }

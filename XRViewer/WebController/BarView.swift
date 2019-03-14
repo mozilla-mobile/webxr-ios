@@ -209,7 +209,6 @@ class BarView: UIView, UITextFieldDelegate {
         DDLogDebug("showPermissionsAction")
         urlField.resignFirstResponder()
         showPermissionsActionBlock?(sender)
-        reloadActionBlock?(sender)
     }
 
     @IBAction func debugAction(_ sender: Any) {

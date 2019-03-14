@@ -343,8 +343,6 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             }
         }
         
-        forceShowPermissionsPopup = false
-        
         var title: String
         var message: String
         switch webXRAuthorizationRequested {
@@ -366,6 +364,17 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
         
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let negativeAction: UIAlertAction
+        if forceShowPermissionsPopup {
+            negativeAction = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
+        } else {
+            negativeAction = UIAlertAction(title: "Deny", style: .cancel) { _ in
+                authorizationGranted(.denied)
+            }
+        }
+        alertController.addAction(negativeAction)
+        forceShowPermissionsPopup = false
+        
         let confirmAction = UIAlertAction(title: "Confirm", style: .default, handler: { _ in
             switch self.webXRAuthorizationRequested {
             case .minimal:
@@ -422,10 +431,6 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 authorizationGranted(.denied)
             }
         })
-        let denyAction = UIAlertAction(title: "Deny", style: .cancel) { _ in
-            authorizationGranted(.denied)
-        }
-        alertController.addAction(denyAction)
         alertController.addAction(confirmAction)
         
         var height = CGFloat()

@@ -646,6 +646,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 if (lastURL == currentURL) {
                     // Page reload
                     blockSelf?.arkController?.removeAllAnchorsExceptPlanes()
+                } else {
+                    blockSelf?.arkController?.detectionImageCreationPromises.removeAllObjects()
+                    blockSelf?.arkController?.detectionImageCreationRequests.removeAllObjects()
                 }
             }
             blockSelf?.stateController.setWebXR(false)
@@ -669,7 +672,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onWatchAR = { request in
-            blockSelf?.handleOnWatchAR(withRequest: request)
+            blockSelf?.handleOnWatchAR(withRequest: request, initialLoad: true)
         }
 
         webController?.onStopAR = {
@@ -679,6 +682,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         
         webController?.onShowPermissions = {
             blockSelf?.messageController?.forceShowPermissionsPopup = true
+            guard let request = blockSelf?.stateController.state.aRRequest else { return }
+            blockSelf?.handleOnWatchAR(withRequest: request, initialLoad: false)
         }
 
         webController?.onJSUpdateData = {
@@ -976,16 +981,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         stateController.setWebXR(false)
     }
 
-    func handleOnWatchAR(withRequest request: [AnyHashable : Any]) {
+    func handleOnWatchAR(withRequest request: [AnyHashable : Any], initialLoad: Bool) {
         weak var blockSelf: ViewController? = self
 
-        arkController?.computerVisionDataEnabled = false
-        stateController.state.userGrantedSendingComputerVisionData = false
-        stateController.state.userGrantedSendingWorldStateData = .notDetermined
-        stateController.state.sendComputerVisionData = false
-        stateController.state.askedComputerVisionData = false
-        stateController.state.askedWorldStateData = false
-        arkController?.webXRAuthorizationStatus = .notDetermined
+        if initialLoad {
+            arkController?.computerVisionDataEnabled = false
+            stateController.state.userGrantedSendingComputerVisionData = false
+            stateController.state.userGrantedSendingWorldStateData = .notDetermined
+            stateController.state.sendComputerVisionData = false
+            stateController.state.askedComputerVisionData = false
+            stateController.state.askedWorldStateData = false
+            arkController?.webXRAuthorizationStatus = .notDetermined
+        }
         
         guard let url = webController?.webView?.url else { return }
         arkController?.controller.previewingSinglePlane = false
