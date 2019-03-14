@@ -34,7 +34,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         if arPopup != nil {
             arPopup?.dismiss(animated: false)
             
-            self.arPopup = nil
+            arPopup = nil
         }
         
         if viewController?.presentedViewController != nil {
@@ -51,6 +51,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
 
     @objc func showMessageAboutWebError(_ error: Error?, withCompletion reloadCompletion: @escaping (_ reload: Bool) -> Void) {
+        weak var blockSelf: MessageController? = self
         let popup = PopupDialog(
             title: "Cannot Open the Page",
             message: "Please check the URL and try again",
@@ -66,13 +67,13 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         let cancel = CancelButton(title: "Ok", height: 40, dismissOnTap: true, action: {
                 reloadCompletion(false)
 
-                self.didHideMessageByUser?()
+                blockSelf?.didHideMessageByUser?()
             })
 
         let ok = DefaultButton(title: "Reload", height: 40, dismissOnTap: true, action: {
                 reloadCompletion(true)
 
-                self.didHideMessageByUser?()
+                blockSelf?.didHideMessageByUser?()
             })
 
         popup.addButtons([cancel, ok])
@@ -94,19 +95,18 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 hideStatusBar: true
             )
 
-            self.arPopup = popup
-
+            arPopup = popup
             viewController?.present(popup, animated: true)
-
             didShowMessage?()
         } else if !interrupt && arPopup != nil {
             arPopup?.dismiss(animated: true)
-            self.arPopup = nil
+            arPopup = nil
             didHideMessage?()
         }
     }
 
     @objc func showMessageAboutFailSession(withMessage message: String?, completion: @escaping () -> Void) {
+        weak var blockSelf: MessageController? = self
         let popup = PopupDialog(
             title: "AR Session Failed",
             message: message,
@@ -121,7 +121,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
 
         let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
                 popup.dismiss(animated: true)
-                self.didHideMessageByUser?()
+                blockSelf?.didHideMessageByUser?()
                 completion()
             })
 
@@ -151,6 +151,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
 
     @objc func showMessageAboutMemoryWarning(withCompletion completion: @escaping () -> Void) {
+        weak var blockSelf: MessageController? = self
         let popup = PopupDialog(
             title: "Memory Issue Occurred",
             message: "There was not enough memory for the application to keep working",
@@ -168,7 +169,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
 
                 completion()
             
-                self.didHideMessageByUser?()
+                blockSelf?.didHideMessageByUser?()
             })
 
         popup.addButtons([ok])
@@ -177,6 +178,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
 
     @objc func showMessageAboutConnectionRequired() {
+        weak var blockSelf: MessageController? = self
         let popup = PopupDialog(
             title: "Internet Connection is Unavailable",
             message: "Application will restart automatically when a connection becomes available",
@@ -192,7 +194,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
                 popup.dismiss(animated: true)
 
-                self.didHideMessageByUser?()
+                blockSelf?.didHideMessageByUser?()
             })
 
         popup.addButtons([ok])
@@ -263,12 +265,12 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
 
     @objc func showPermissionsPopup() {
-        let viewController = RequestPermissionsViewController()
-        viewController.view.translatesAutoresizingMaskIntoConstraints = true
-        viewController.view.heightAnchor.constraint(equalToConstant: 300.0).isActive = true
+        let permissionsViewController = RequestPermissionsViewController()
+        permissionsViewController.view.translatesAutoresizingMaskIntoConstraints = true
+        permissionsViewController.view.heightAnchor.constraint(equalToConstant: 300.0).isActive = true
 
         let dialog = PopupDialog(
-            viewController: viewController,
+            viewController: permissionsViewController,
             buttonAlignment: NSLayoutConstraint.Axis.vertical,
             transitionStyle: .bounceUp,
             preferredWidth: UIScreen.main.bounds.size.width / 2.0,
@@ -277,20 +279,21 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             hideStatusBar: true
         )
 
-        self.viewController?.present(dialog, animated: true)
+        viewController?.present(dialog, animated: true)
     }
     
     @objc func showMessageAboutEnteringXR(_ authorizationRequested: WebXRAuthorizationState, authorizationGranted: @escaping (WebXRAuthorizationState) -> Void, url: URL) {
+        weak var blockSelf: MessageController? = self
         let standardUserDefaults = UserDefaults.standard
         let allowedWorldSensingSites = standardUserDefaults.dictionary(forKey: Constant.allowedWorldSensingSitesKey())
         let allowedVideoCameraSites = standardUserDefaults.dictionary(forKey: Constant.allowedVideoCameraSitesKey())
-        guard var site: String = url.host else { return }
+        guard var currentSite: String = url.host else { return }
         webXRAuthorizationRequested = authorizationRequested
         
         if let port = url.port {
-            site = site + ":\(port)"
+            currentSite = currentSite + ":\(port)"
         }
-        self.site = site
+        site = currentSite
         
         // Check whether .minimal WebXR has been granted
         if authorizationRequested == .minimal
@@ -327,7 +330,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             && allowedWorldSensingSites != nil
             && !forceShowPermissionsPopup
         {
-            if allowedWorldSensingSites?[site] != nil {
+            if allowedWorldSensingSites?[currentSite] != nil {
                 authorizationGranted(.worldSensing)
                 return
             }
@@ -337,7 +340,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             && allowedVideoCameraSites != nil
             && !forceShowPermissionsPopup
         {
-            if allowedVideoCameraSites?[site] != nil {
+            if allowedVideoCameraSites?[currentSite] != nil {
                 authorizationGranted(.videoCameraAccess)
                 return
             }
@@ -376,25 +379,38 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         forceShowPermissionsPopup = false
         
         let confirmAction = UIAlertAction(title: "Confirm", style: .default, handler: { _ in
-            switch self.webXRAuthorizationRequested {
-            case .minimal:
+            if let minimalCell = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SwitchInputTableViewCell {
+                standardUserDefaults.set(minimalCell.switchControl.isOn, forKey: Constant.minimalWebXREnabled())
+            }
+            if let liteCell = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SwitchInputTableViewCell {
+                standardUserDefaults.set(liteCell.switchControl.isOn, forKey: Constant.liteModeWebXREnabled())
+            }
+            if let worldSensingCell = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SwitchInputTableViewCell {
+                standardUserDefaults.set(worldSensingCell.switchControl.isOn, forKey: Constant.worldSensingWebXREnabled())
+            }
+            if let videoCameraAccessCell = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SwitchInputTableViewCell {
+                standardUserDefaults.set(videoCameraAccessCell.switchControl.isOn, forKey: Constant.videoCameraAccessWebXREnabled())
+            }
+            
+            switch blockSelf?.webXRAuthorizationRequested {
+            case .minimal?:
                 authorizationGranted(standardUserDefaults.bool(forKey: Constant.minimalWebXREnabled()) ? .minimal : .denied)
-            case .lite:
+            case .lite?:
                 authorizationGranted(standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) ? .lite : .denied)
-            case .worldSensing:
+            case .worldSensing?:
                 if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) {
                     authorizationGranted(.lite)
                 } else if standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled()) {
-                    guard let worldControl = self.tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SegmentedControlTableViewCell else { return }
+                    guard let worldControl = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SegmentedControlTableViewCell else { return }
                     
                     var newDict = [AnyHashable : Any]()
                     if let dict = allowedWorldSensingSites {
                         newDict = dict
                     }
                     if worldControl.segmentedControl.selectedSegmentIndex == 1 {
-                        newDict[site] = "YES"
+                        newDict[currentSite] = "YES"
                     } else {
-                        newDict[site] = nil
+                        newDict[currentSite] = nil
                     }
                     UserDefaults.standard.set(newDict, forKey: Constant.allowedWorldSensingSitesKey())
                     authorizationGranted(.worldSensing)
@@ -403,18 +419,18 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 } else {
                     authorizationGranted(.denied)
                 }
-            case .videoCameraAccess:
+            case .videoCameraAccess?:
                 if standardUserDefaults.bool(forKey: Constant.videoCameraAccessWebXREnabled()) {
-                    guard let videoControl = self.tableViewController.tableView.cellForRow(at: IndexPath(row: 4, section: 0)) as? SegmentedControlTableViewCell else { return }
+                    guard let videoControl = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 4, section: 0)) as? SegmentedControlTableViewCell else { return }
                     
                     var newDict = [AnyHashable : Any]()
                     if let dict = allowedVideoCameraSites {
                         newDict = dict
                     }
                     if videoControl.segmentedControl.selectedSegmentIndex == 1 {
-                        newDict[site] = "YES"
+                        newDict[currentSite] = "YES"
                     } else {
-                        newDict[site] = nil
+                        newDict[currentSite] = nil
                     }
                     UserDefaults.standard.set(newDict, forKey: Constant.allowedVideoCameraSitesKey())
                     authorizationGranted(.videoCameraAccess)
@@ -469,16 +485,12 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         switch sender.tag {
         case 0:
-            UserDefaults.standard.set(sender.isOn, forKey: Constant.minimalWebXREnabled())
             if sender.isOn {
                 liteCell?.switchControl.isEnabled = true
                 liteCell?.labelTitle.isEnabled = true
                 worldSensingCell?.switchControl.isEnabled = true
                 worldSensingCell?.labelTitle.isEnabled = true
             } else {
-                UserDefaults.standard.set(false, forKey: Constant.liteModeWebXREnabled())
-                UserDefaults.standard.set(false, forKey: Constant.worldSensingWebXREnabled())
-                UserDefaults.standard.set(false, forKey: Constant.videoCameraAccessWebXREnabled())
                 liteCell?.switchControl.setOn(false, animated: true)
                 liteCell?.switchControl.isEnabled = false
                 liteCell?.labelTitle.isEnabled = false
@@ -492,10 +504,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 videoControl?.segmentedControl.isEnabled = false
             }
         case 1:
-            UserDefaults.standard.set(sender.isOn, forKey: Constant.liteModeWebXREnabled())
             if sender.isOn {
-                UserDefaults.standard.set(true, forKey: Constant.worldSensingWebXREnabled())
-                UserDefaults.standard.set(false, forKey: Constant.videoCameraAccessWebXREnabled())
                 worldSensingCell?.switchControl.setOn(true, animated: true)
                 worldSensingCell?.switchControl.isEnabled = false
                 worldSensingCell?.labelTitle.isEnabled = false
@@ -512,13 +521,11 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 videoCameraAccessCell?.labelTitle.isEnabled = true
             }
         case 2:
-            UserDefaults.standard.set(sender.isOn, forKey: Constant.worldSensingWebXREnabled())
             if sender.isOn {
                 videoCameraAccessCell?.switchControl.isEnabled = true
                 videoCameraAccessCell?.labelTitle.isEnabled = true
                 worldControl?.segmentedControl.isEnabled = true
             } else {
-                UserDefaults.standard.set(false, forKey: Constant.videoCameraAccessWebXREnabled())
                 videoCameraAccessCell?.switchControl.setOn(false, animated: true)
                 videoCameraAccessCell?.switchControl.isEnabled = false
                 videoCameraAccessCell?.labelTitle.isEnabled = false
@@ -526,7 +533,6 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 videoControl?.segmentedControl.isEnabled = false
             }
         case 3:
-            UserDefaults.standard.set(sender.isOn, forKey: Constant.videoCameraAccessWebXREnabled())
             if sender.isOn {
                 videoControl?.segmentedControl.isEnabled = true
             } else {
