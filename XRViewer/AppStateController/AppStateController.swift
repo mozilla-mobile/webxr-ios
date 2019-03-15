@@ -1,13 +1,5 @@
 import UIKit
 
-typealias ASValueChangedAction = (Int) -> Void
-typealias ASBoolChangedAction = (Bool) -> Void
-typealias ASShowModeChangedAction = (ShowMode) -> Void
-typealias ASShowOptionsChangedAction = (ShowOptions) -> Void
-typealias ASOnRequestAction = ([AnyHashable : Any]?) -> Void
-typealias ASURLAction = (String?) -> Void
-
-typealias ExclusiveAction = () -> Void
 enum ExclusiveStateType: Int {
     case exclusiveStateMessage
     case exclusiveStateMemory
@@ -17,14 +9,14 @@ enum ExclusiveStateType: Int {
 
 class AppStateController: NSObject {
     @objc var state: AppState
-    @objc var onModeUpdate: ASShowModeChangedAction?
-    @objc var onOptionsUpdate: ASShowOptionsChangedAction?
-    @objc var onXRUpdate: ASBoolChangedAction?
-    @objc var onRequestUpdate: ASOnRequestAction?
-    @objc var onDebug: ASBoolChangedAction?
-    @objc var onMemoryWarning: ASURLAction?
-    @objc var onEnterForeground: ASURLAction?
-    @objc var onReachable: ASURLAction?
+    @objc var onModeUpdate: ((ShowMode) -> Void)?
+    @objc var onOptionsUpdate: ((ShowOptions) -> Void)?
+    @objc var onXRUpdate: ((Bool) -> Void)?
+    @objc var onRequestUpdate: (([AnyHashable : Any]?) -> Void)?
+    @objc var onDebug: ((Bool) -> Void)?
+    @objc var onMemoryWarning: ((String?) -> Void)?
+    @objc var onEnterForeground: ((String?) -> Void)?
+    @objc var onReachable: ((String?) -> Void)?
 
     @objc init(state: AppState) {
         self.state = state
@@ -233,7 +225,7 @@ class AppStateController: NSObject {
 }
 
 class ExclusiveState: NSObject {
-    var action: ExclusiveAction?
+    var action: (() -> Void)?
     var url = ""
     var type: ExclusiveStateType?
     var mode: ShowMode?

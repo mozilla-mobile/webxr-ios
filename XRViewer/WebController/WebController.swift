@@ -2,10 +2,6 @@ import Foundation
 import WebKit
 import CocoaLumberjack
 
-typealias OnLoad = () -> Void
-typealias OnInit = ([AnyHashable : Any]?) -> Void
-typealias OnWebError = (Error?) -> Void
-typealias OnUpdateTransfer = ([AnyHashable : Any]?) -> Void
 typealias ResultBlock = ([AnyHashable : Any]?) -> Void
 typealias ResultArrayBlock = ([Any]?) -> Void
 typealias ImageDetectedBlock = ([AnyHashable : Any]?) -> Void
@@ -13,60 +9,36 @@ typealias ActivateDetectionImageCompletionBlock = (Bool, String?, [AnyHashable :
 typealias CreateDetectionImageCompletionBlock = (Bool, String?) -> Void
 typealias GetWorldMapCompletionBlock = (Bool, String?, [AnyHashable : Any]?) -> Void
 typealias SetWorldMapCompletionBlock = (Bool, String?) -> Void
-typealias OnRemoveObjects = ([Any]) -> Void
-typealias OnJSUpdateData = () -> [AnyHashable : Any]
-typealias OnLoadURL = (String?) -> Void
-typealias OnSetUI = ([AnyHashable : Any]?) -> Void
-typealias OnHitTest = (Int, CGFloat, CGFloat, @escaping ResultArrayBlock) -> Void
-typealias OnAddAnchor = (String?, [Any]?, @escaping ResultBlock) -> Void
-typealias OnDebugButtonToggled = (Bool) -> Void
-typealias OnSettingsButtonTapped = () -> Void
-typealias OnWatchAR = ([AnyHashable : Any]) -> Void
-typealias OnComputerVisionDataRequested = () -> Void
-typealias OnStopAR = () -> Void
-typealias OnResetTrackingButtonTapped = () -> Void
-typealias OnSwitchCameraButtonTapped = () -> Void
-typealias OnStartSendingComputerVisionData = () -> Void
-typealias OnStopSendingComputerVisionData = () -> Void
-typealias OnAddImageAnchor = ([AnyHashable : Any]?, @escaping ImageDetectedBlock) -> Void
-typealias OnActivateDetectionImage = (String?, @escaping ActivateDetectionImageCompletionBlock) -> Void
-typealias OnDeactivateDetectionImage = (String, @escaping CreateDetectionImageCompletionBlock) -> Void
-typealias OnDestroyDetectionImage = (String, @escaping CreateDetectionImageCompletionBlock) -> Void
-typealias OnCreateDetectionImage = ([AnyHashable : Any], @escaping CreateDetectionImageCompletionBlock) -> Void
-typealias OnGetWorldMap = (@escaping GetWorldMapCompletionBlock) -> Void
-typealias OnSetWorldMap = ([AnyHashable : Any], @escaping SetWorldMapCompletionBlock) -> Void
 typealias WebCompletion = (Any?, Error?) -> Void
 
 class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler {
-    @objc var onInitAR: OnInit?
-    @objc var onError: OnWebError?
-    @objc var onIOSUpdate: OnUpdateTransfer?
-    @objc var loadURL: OnLoadURL?
-    @objc var onJSUpdate: OnUpdateTransfer?
-    @objc var onJSUpdateData: OnJSUpdateData?
-    @objc var onRemoveObjects: OnRemoveObjects?
-    @objc var onSetUI: OnSetUI?
-    @objc var onHitTest: OnHitTest?
-    @objc var onAddAnchor: OnAddAnchor?
-    @objc var onStartLoad: OnLoad?
-    @objc var onFinishLoad: OnLoad?
-    @objc var onDebugButtonToggled: OnDebugButtonToggled?
-    @objc var onSettingsButtonTapped: OnSettingsButtonTapped?
-    @objc var onWatchAR: OnWatchAR?
-    @objc var onComputerVisionDataRequested: OnComputerVisionDataRequested?
-    @objc var onStopAR: OnStopAR?
-    @objc var onResetTrackingButtonTapped: OnResetTrackingButtonTapped?
-    @objc var onSwitchCameraButtonTapped: OnSwitchCameraButtonTapped?
+    @objc var onInitAR: (([AnyHashable : Any]?) -> Void)?
+    @objc var onError: ((Error?) -> Void)?
+    @objc var loadURL: ((String?) -> Void)?
+    @objc var onJSUpdateData: (() -> [AnyHashable : Any])?
+    @objc var onRemoveObjects: (([Any]) -> Void)?
+    @objc var onSetUI: (([AnyHashable : Any]?) -> Void)?
+    @objc var onHitTest: ((Int, CGFloat, CGFloat, @escaping ResultArrayBlock) -> Void)?
+    @objc var onAddAnchor: ((String?, [Any]?, @escaping ResultBlock) -> Void)?
+    @objc var onStartLoad: (() -> Void)?
+    @objc var onFinishLoad: (() -> Void)?
+    @objc var onDebugButtonToggled: ((Bool) -> Void)?
+    @objc var onSettingsButtonTapped: (() -> Void)?
+    @objc var onWatchAR: (([AnyHashable : Any]) -> Void)?
+    @objc var onComputerVisionDataRequested: (() -> Void)?
+    @objc var onStopAR: (() -> Void)?
+    @objc var onResetTrackingButtonTapped: (() -> Void)?
+    @objc var onSwitchCameraButtonTapped: (() -> Void)?
     @objc var onShowPermissions: (() -> Void)?
-    @objc var onStartSendingComputerVisionData: OnStartSendingComputerVisionData?
-    @objc var onStopSendingComputerVisionData: OnStopSendingComputerVisionData?
-    @objc var onAddImageAnchor: OnAddImageAnchor?
-    @objc var onActivateDetectionImage: OnActivateDetectionImage?
-    @objc var onDeactivateDetectionImage: OnDeactivateDetectionImage?
-    @objc var onDestroyDetectionImage: OnDestroyDetectionImage?
-    @objc var onCreateDetectionImage: OnCreateDetectionImage?
-    @objc var onGetWorldMap: OnGetWorldMap?
-    @objc var onSetWorldMap: OnSetWorldMap?
+    @objc var onStartSendingComputerVisionData: (() -> Void)?
+    @objc var onStopSendingComputerVisionData: (() -> Void)?
+    @objc var onAddImageAnchor: (([AnyHashable : Any]?, @escaping ImageDetectedBlock) -> Void)?
+    @objc var onActivateDetectionImage: ((String?, @escaping ActivateDetectionImageCompletionBlock) -> Void)?
+    @objc var onDeactivateDetectionImage: ((String, @escaping CreateDetectionImageCompletionBlock) -> Void)?
+    @objc var onDestroyDetectionImage: ((String, @escaping CreateDetectionImageCompletionBlock) -> Void)?
+    @objc var onCreateDetectionImage: (([AnyHashable : Any], @escaping CreateDetectionImageCompletionBlock) -> Void)?
+    @objc var onGetWorldMap: ((@escaping GetWorldMapCompletionBlock) -> Void)?
+    @objc var onSetWorldMap: (([AnyHashable : Any], @escaping SetWorldMapCompletionBlock) -> Void)?
     @objc var animator: Animator?
     @objc weak var barViewHeightAnchorConstraint: NSLayoutConstraint?
     @objc weak var webViewTopAnchorConstraint: NSLayoutConstraint?
@@ -366,119 +338,97 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                 blockSelf?.callWebMethod(hitCallback, paramJSON: results, webCompletion: debugCompletion(name: "onAddAnchor"))
             })
         } else if message.name == WEB_AR_REQUEST_CV_DATA_MESSAGE {
-            if onComputerVisionDataRequested != nil {
-                onComputerVisionDataRequested?()
-            }
+            onComputerVisionDataRequested?()
         } else if message.name == WEB_AR_START_SENDING_CV_DATA_MESSAGE {
-            if onStartSendingComputerVisionData != nil {
-                onStartSendingComputerVisionData?()
-            }
+            onStartSendingComputerVisionData?()
         } else if message.name == WEB_AR_STOP_SENDING_CV_DATA_MESSAGE {
-            if onStopSendingComputerVisionData != nil {
-                onStopSendingComputerVisionData?()
-            }
+            onStopSendingComputerVisionData?()
         } else if message.name == WEB_AR_REMOVE_ANCHORS_MESSAGE {
             guard let anchorIDs = message.body as? [Any] else { return }
-            if onRemoveObjects != nil {
-                onRemoveObjects?(anchorIDs)
-            }
+            onRemoveObjects?(anchorIDs)
         } else if message.name == WEB_AR_ADD_IMAGE_ANCHOR {
             let imageAnchorInfoDictionary = messageBody
             guard let createImageAnchorCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
-            if onAddImageAnchor != nil {
-                onAddImageAnchor?(imageAnchorInfoDictionary, { imageAnchor in
-                    blockSelf?.callWebMethod(createImageAnchorCallback, paramJSON: imageAnchor, webCompletion: nil)
-                })
-            }
+            onAddImageAnchor?(imageAnchorInfoDictionary, { imageAnchor in
+                blockSelf?.callWebMethod(createImageAnchorCallback, paramJSON: imageAnchor, webCompletion: nil)
+            })
         } else if message.name == WEB_AR_CREATE_IMAGE_ANCHOR_MESSAGE {
             let imageAnchorInfoDictionary = messageBody
             guard let createDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
-            if onCreateDetectionImage != nil {
-                onCreateDetectionImage?(imageAnchorInfoDictionary, { success, errorString in
-                    var responseDictionary = [String : Any]()
-                    responseDictionary["created"] = success
-                    if errorString != nil {
-                        responseDictionary["error"] = errorString
-                    }
-                    blockSelf?.callWebMethod(createDetectionImageCallback, paramJSON: responseDictionary, webCompletion: nil)
-                })
-            }
+            onCreateDetectionImage?(imageAnchorInfoDictionary, { success, errorString in
+                var responseDictionary = [String : Any]()
+                responseDictionary["created"] = success
+                if errorString != nil {
+                    responseDictionary["error"] = errorString
+                }
+                blockSelf?.callWebMethod(createDetectionImageCallback, paramJSON: responseDictionary, webCompletion: nil)
+            })
         } else if message.name == WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE {
             let imageAnchorInfoDictionary = messageBody
             let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String
             guard let activateDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
-            if onActivateDetectionImage != nil {
-                onActivateDetectionImage?(imageName, { success, errorString, imageAnchor in
-                    var responseDictionary = [AnyHashable : Any]()
-                    responseDictionary["activated"] = success
-                    if errorString != nil {
-                        responseDictionary["error"] = errorString ?? ""
-                    } else {
-                        if let anAnchor = imageAnchor {
-                            responseDictionary["imageAnchor"] = anAnchor
-                        }
+            onActivateDetectionImage?(imageName, { success, errorString, imageAnchor in
+                var responseDictionary = [AnyHashable : Any]()
+                responseDictionary["activated"] = success
+                if errorString != nil {
+                    responseDictionary["error"] = errorString ?? ""
+                } else {
+                    if let anAnchor = imageAnchor {
+                        responseDictionary["imageAnchor"] = anAnchor
                     }
-                    blockSelf?.callWebMethod(activateDetectionImageCallback, paramJSON: responseDictionary, webCompletion: nil)
-                })
-            }
+                }
+                blockSelf?.callWebMethod(activateDetectionImageCallback, paramJSON: responseDictionary, webCompletion: nil)
+            })
         } else if message.name == WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE {
             let imageAnchorInfoDictionary = messageBody
             guard let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String else { return }
             guard let deactivateDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
-            if onDeactivateDetectionImage != nil {
-                onDeactivateDetectionImage?(imageName, { success, errorString in
-                    var responseDictionary = [AnyHashable : Any]()
-                    responseDictionary["deactivated"] = success
-                    if errorString != nil {
-                        responseDictionary["error"] = errorString ?? ""
-                    }
-                    blockSelf?.callWebMethod(deactivateDetectionImageCallback, paramJSON: responseDictionary, webCompletion: nil)
-                })
-            }
+            onDeactivateDetectionImage?(imageName, { success, errorString in
+                var responseDictionary = [AnyHashable : Any]()
+                responseDictionary["deactivated"] = success
+                if errorString != nil {
+                    responseDictionary["error"] = errorString ?? ""
+                }
+                blockSelf?.callWebMethod(deactivateDetectionImageCallback, paramJSON: responseDictionary, webCompletion: nil)
+            })
         } else if message.name == WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE {
             let imageAnchorInfoDictionary = messageBody
             guard let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String else { return }
             guard let destroyDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
-            if onDestroyDetectionImage != nil {
-                onDestroyDetectionImage?(imageName, { success, errorString in
-                    var responseDictionary = [AnyHashable : Any]()
-                    responseDictionary["destroyed"] = success
-                    if errorString != nil {
-                        responseDictionary["error"] = errorString ?? ""
-                    }
-                    blockSelf?.callWebMethod(destroyDetectionImageCallback, paramJSON: responseDictionary, webCompletion: nil)
-                })
-            }
+            onDestroyDetectionImage?(imageName, { success, errorString in
+                var responseDictionary = [AnyHashable : Any]()
+                responseDictionary["destroyed"] = success
+                if errorString != nil {
+                    responseDictionary["error"] = errorString ?? ""
+                }
+                blockSelf?.callWebMethod(destroyDetectionImageCallback, paramJSON: responseDictionary, webCompletion: nil)
+            })
         } else if message.name == WEB_AR_GET_WORLD_MAP_MESSAGE {
             guard let getWorldMapCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
-            if onGetWorldMap != nil {
-                onGetWorldMap?({ success, errorString, worldMap in
-                    var responseDictionary = [AnyHashable : Any]()
-                    responseDictionary["saved"] = success
-                    if errorString != nil {
-                        responseDictionary["error"] = errorString ?? ""
+            onGetWorldMap?({ success, errorString, worldMap in
+                var responseDictionary = [AnyHashable : Any]()
+                responseDictionary["saved"] = success
+                if errorString != nil {
+                    responseDictionary["error"] = errorString ?? ""
+                }
+                if worldMap != nil {
+                    if let aMap = worldMap {
+                        responseDictionary["worldMap"] = aMap
                     }
-                    if worldMap != nil {
-                        if let aMap = worldMap {
-                            responseDictionary["worldMap"] = aMap
-                        }
-                    }
-                    blockSelf?.callWebMethod(getWorldMapCallback, paramJSON: responseDictionary, webCompletion: nil)
-                })
-            }
+                }
+                blockSelf?.callWebMethod(getWorldMapCallback, paramJSON: responseDictionary, webCompletion: nil)
+            })
         } else if message.name == WEB_AR_SET_WORLD_MAP_MESSAGE {
             let worldMapInfoDictionary = messageBody
             guard let setWorldMapCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
-            if onSetWorldMap != nil {
-                onSetWorldMap?(worldMapInfoDictionary, { success, errorString in
-                    var responseDictionary = [AnyHashable : Any]()
-                    responseDictionary["loaded"] = success
-                    if errorString != nil {
-                        responseDictionary["error"] = errorString ?? ""
-                    }
-                    blockSelf?.callWebMethod(setWorldMapCallback, paramJSON: responseDictionary, webCompletion: nil)
-                })
-            }
+            onSetWorldMap?(worldMapInfoDictionary, { success, errorString in
+                var responseDictionary = [AnyHashable : Any]()
+                responseDictionary["loaded"] = success
+                if errorString != nil {
+                    responseDictionary["error"] = errorString ?? ""
+                }
+                blockSelf?.callWebMethod(setWorldMapCallback, paramJSON: responseDictionary, webCompletion: nil)
+            })
         } else {
             DDLogError("Unknown message: \(message.body) ,for name: \(message.name)")
         }
@@ -668,27 +618,19 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         }
 
         barView?.debugButtonToggledAction = { selected in
-            if blockSelf?.onDebugButtonToggled != nil {
-                blockSelf?.onDebugButtonToggled?(selected)
-            }
+            blockSelf?.onDebugButtonToggled?(selected)
         }
 
         barView?.settingsActionBlock = {
-            if blockSelf?.onSettingsButtonTapped != nil {
-                blockSelf?.onSettingsButtonTapped?()
-            }
+            blockSelf?.onSettingsButtonTapped?()
         }
 
         barView?.restartTrackingActionBlock = {
-            if blockSelf?.onResetTrackingButtonTapped != nil {
-                blockSelf?.onResetTrackingButtonTapped?()
-            }
+            blockSelf?.onResetTrackingButtonTapped?()
         }
 
         barView?.switchCameraActionBlock = {
-            if blockSelf?.onSwitchCameraButtonTapped != nil {
-                blockSelf?.onSwitchCameraButtonTapped?()
-            }
+            blockSelf?.onSwitchCameraButtonTapped?()
         }
     }
 

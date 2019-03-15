@@ -4,33 +4,21 @@ import CocoaLumberjack
 
 let URL_FIELD_HEIGHT = 29
 
-typealias BackAction = (Any?) -> Void
-typealias ForwardAction = (Any?) -> Void
-typealias HomeAction = (Any?) -> Void
-typealias ReloadAction = (Any?) -> Void
-typealias CancelAction = (Any?) -> Void
-typealias ShowPermissionsAction = (Any?) -> Void
-typealias GoAction = (String?) -> Void
-typealias DebugButtonToggledAction = (Bool) -> Void
-typealias SettingsAction = () -> Void
-typealias ResetTrackingAction = () -> Void
-typealias SwitchCameraAction = () -> Void
-
 class BarView: UIView, UITextFieldDelegate {
     
     // MARK: - Properties & Outlets
     
-    @objc var backActionBlock: BackAction?
-    @objc var forwardActionBlock: ForwardAction?
-    @objc var homeActionBlock: HomeAction?
-    @objc var reloadActionBlock: ReloadAction?
-    @objc var cancelActionBlock: CancelAction?
-    @objc var showPermissionsActionBlock: ShowPermissionsAction?
-    @objc var goActionBlock: GoAction?
-    @objc var debugButtonToggledAction: DebugButtonToggledAction?
-    @objc var settingsActionBlock: SettingsAction?
-    @objc var restartTrackingActionBlock: ResetTrackingAction?
-    @objc var switchCameraActionBlock: SwitchCameraAction?
+    @objc var backActionBlock: ((Any?) -> Void)?
+    @objc var forwardActionBlock: ((Any?) -> Void)?
+    @objc var homeActionBlock: ((Any?) -> Void)?
+    @objc var reloadActionBlock: ((Any?) -> Void)?
+    @objc var cancelActionBlock: ((Any?) -> Void)?
+    @objc var showPermissionsActionBlock: ((Any?) -> Void)?
+    @objc var goActionBlock: ((String?) -> Void)?
+    @objc var debugButtonToggledAction: ((Bool) -> Void)?
+    @objc var settingsActionBlock: (() -> Void)?
+    @objc var restartTrackingActionBlock: (() -> Void)?
+    @objc var switchCameraActionBlock: (() -> Void)?
 
     @IBOutlet private weak var urlField: URLTextField!
     @IBOutlet private weak var backBtn: UIButton!

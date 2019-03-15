@@ -2,15 +2,11 @@ import UIKit
 import PopupDialog
 import CocoaLumberjack
 
-typealias DidShowMessage = () -> Void
-typealias DidHideMessage = () -> Void
-typealias DidHideMessageByUser = () -> Void
-
 class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     
-    @objc var didShowMessage: DidShowMessage?
-    @objc var didHideMessage: DidHideMessage?
-    @objc var didHideMessageByUser: DidHideMessageByUser?
+    @objc var didShowMessage: (() -> Void)?
+    @objc var didHideMessage: (() -> Void)?
+    @objc var didHideMessageByUser: (() -> Void)?
     private weak var viewController: UIViewController?
     private weak var arPopup: PopupDialog?
     private var tableViewController = UITableViewController()
