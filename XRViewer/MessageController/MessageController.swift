@@ -29,7 +29,6 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     @objc func clean() {
         if arPopup != nil {
             arPopup?.dismiss(animated: false)
-            
             arPopup = nil
         }
         
@@ -281,6 +280,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     @objc func showMessageAboutEnteringXR(_ authorizationRequested: WebXRAuthorizationState, authorizationGranted: @escaping (WebXRAuthorizationState) -> Void, url: URL) {
         weak var blockSelf: MessageController? = self
         let standardUserDefaults = UserDefaults.standard
+        let allowedMinimalSites = standardUserDefaults.dictionary(forKey: Constant.allowedMinimalSitesKey())
         let allowedWorldSensingSites = standardUserDefaults.dictionary(forKey: Constant.allowedWorldSensingSitesKey())
         let allowedVideoCameraSites = standardUserDefaults.dictionary(forKey: Constant.allowedVideoCameraSitesKey())
         guard var currentSite: String = url.host else { return }
@@ -291,54 +291,58 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
         site = currentSite
         
-        // Check whether .minimal WebXR has been granted
-        if authorizationRequested == .minimal
-            && standardUserDefaults.bool(forKey: Constant.minimalWebXREnabled())
-            && !forceShowPermissionsPopup
-        {
-            authorizationGranted(.minimal)
-            return
-        }
-        
-        // Check whether Lite Mode is enabled
-        if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled())
-            && (authorizationRequested == .lite
-                || authorizationRequested == .worldSensing
-                || authorizationRequested == .videoCameraAccess)
-            && !forceShowPermissionsPopup
-        {
-            authorizationGranted(.lite)
-            return
-        }
-        
-        // Check global world sensing permission
-        if authorizationRequested == .worldSensing
-            && standardUserDefaults.bool(forKey: Constant.alwaysAllowWorldSensingKey())
-            && !forceShowPermissionsPopup
-        {
-            authorizationGranted(.worldSensing)
-            return
-        }
-        
-        // Check per-site permission
-        if authorizationRequested == .worldSensing
-            && standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled())
-            && allowedWorldSensingSites != nil
-            && !forceShowPermissionsPopup
-        {
+        switch authorizationRequested {
+        case .minimal:
+            if allowedMinimalSites?[currentSite] != nil {
+                standardUserDefaults.set(true, forKey: Constant.minimalWebXREnabled())
+            }
+        case .worldSensing:
             if allowedWorldSensingSites?[currentSite] != nil {
-                authorizationGranted(.worldSensing)
+                standardUserDefaults.set(true, forKey: Constant.minimalWebXREnabled())
+                standardUserDefaults.set(true, forKey: Constant.worldSensingWebXREnabled())
+            }
+        case .videoCameraAccess:
+            if allowedVideoCameraSites?[currentSite] != nil {
+                standardUserDefaults.set(true, forKey: Constant.minimalWebXREnabled())
+                standardUserDefaults.set(true, forKey: Constant.worldSensingWebXREnabled())
+                standardUserDefaults.set(true, forKey: Constant.videoCameraAccessWebXREnabled())
+            }
+        default:
+            break
+        }
+        
+        if !forceShowPermissionsPopup {
+            // Check whether Lite Mode is enabled
+            if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled())
+                && (authorizationRequested == .minimal
+                    || authorizationRequested == .lite
+                    || authorizationRequested == .worldSensing
+                    || authorizationRequested == .videoCameraAccess)
+            {
+                authorizationGranted(.lite)
                 return
             }
-        }
-        if authorizationRequested == .videoCameraAccess
-            && standardUserDefaults.bool(forKey: Constant.videoCameraAccessWebXREnabled())
-            && allowedVideoCameraSites != nil
-            && !forceShowPermissionsPopup
-        {
-            if allowedVideoCameraSites?[currentSite] != nil {
-                authorizationGranted(.videoCameraAccess)
-                return
+            
+            switch authorizationRequested {
+            case .minimal:
+                if allowedMinimalSites?[currentSite] != nil {
+                    authorizationGranted(.minimal)
+                    return
+                }
+            case .worldSensing:
+                if standardUserDefaults.bool(forKey: Constant.alwaysAllowWorldSensingKey())
+                    || allowedWorldSensingSites?[currentSite] != nil
+                {
+                    authorizationGranted(.worldSensing)
+                    return
+                }
+            case .videoCameraAccess:
+                if allowedVideoCameraSites?[currentSite] != nil {
+                    authorizationGranted(.videoCameraAccess)
+                    return
+                }
+            default:
+                break
             }
         }
         
@@ -390,7 +394,25 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             
             switch blockSelf?.webXRAuthorizationRequested {
             case .minimal?:
-                authorizationGranted(standardUserDefaults.bool(forKey: Constant.minimalWebXREnabled()) ? .minimal : .denied)
+                if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) {
+                    authorizationGranted(.lite)
+                } else if standardUserDefaults.bool(forKey: Constant.minimalWebXREnabled()) {
+                    guard let minimalControl = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SegmentedControlTableViewCell else { return }
+                    
+                    var newDict = [AnyHashable : Any]()
+                    if let dict = allowedMinimalSites {
+                        newDict = dict
+                    }
+                    if minimalControl.segmentedControl.selectedSegmentIndex == 1 {
+                        newDict[currentSite] = "YES"
+                    } else {
+                        newDict[currentSite] = nil
+                    }
+                    UserDefaults.standard.set(newDict, forKey: Constant.allowedMinimalSitesKey())
+                    authorizationGranted(.minimal)
+                } else {
+                    authorizationGranted(.denied)
+                }
             case .lite?:
                 authorizationGranted(standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) ? .lite : .denied)
             case .worldSensing?:
@@ -449,9 +471,9 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         let rowHeight: CGFloat = 44
         switch webXRAuthorizationRequested {
         case .minimal:
-            height = rowHeight * 1
+            height = rowHeight * 3
         case .lite:
-            height = rowHeight * 2
+            height = rowHeight * 3
         case .worldSensing:
             height = rowHeight * 4
         case .videoCameraAccess:
@@ -476,6 +498,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         let liteCell = tableViewController.tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SwitchInputTableViewCell
         let worldSensingCell = tableViewController.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SwitchInputTableViewCell
         let videoCameraAccessCell = tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SwitchInputTableViewCell
+        let minimalControl = tableViewController.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SegmentedControlTableViewCell
         let worldControl = tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SegmentedControlTableViewCell
         let videoControl = tableViewController.tableView.cellForRow(at: IndexPath(row: 4, section: 0)) as? SegmentedControlTableViewCell
         
@@ -486,6 +509,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 liteCell?.labelTitle.isEnabled = true
                 worldSensingCell?.switchControl.isEnabled = true
                 worldSensingCell?.labelTitle.isEnabled = true
+                minimalControl?.segmentedControl.isEnabled = true
             } else {
                 liteCell?.switchControl.setOn(false, animated: true)
                 liteCell?.switchControl.isEnabled = false
@@ -496,6 +520,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 videoCameraAccessCell?.switchControl.setOn(false, animated: true)
                 videoCameraAccessCell?.switchControl.isEnabled = false
                 videoCameraAccessCell?.labelTitle.isEnabled = false
+                minimalControl?.segmentedControl.isEnabled = false
                 worldControl?.segmentedControl.isEnabled = false
                 videoControl?.segmentedControl.isEnabled = false
             }
@@ -507,9 +532,11 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 videoCameraAccessCell?.switchControl.setOn(false, animated: true)
                 videoCameraAccessCell?.switchControl.isEnabled = false
                 videoCameraAccessCell?.labelTitle.isEnabled = false
+                minimalControl?.segmentedControl.isEnabled = false
                 worldControl?.segmentedControl.isEnabled = false
                 videoControl?.segmentedControl.isEnabled = false
             } else {
+                minimalControl?.segmentedControl.isEnabled = true
                 worldSensingCell?.switchControl.isEnabled = true
                 worldSensingCell?.labelTitle.isEnabled = true
                 worldControl?.segmentedControl.isEnabled = true
@@ -544,9 +571,9 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch webXRAuthorizationRequested {
         case .minimal:
-            return 1
+            return 3
         case .lite:
-            return 2
+            return 3
         case .worldSensing:
             return 4
         case .videoCameraAccess:
@@ -558,7 +585,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.row {
-        case 0, 1, 2:
+        case 0, 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
             cell.switchControl.addTarget(self, action: #selector(switchValueDidChange(sender:)), for: .touchUpInside)
             cell.switchControl.tag = indexPath.row
@@ -575,7 +602,29 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                     cell.switchControl.isEnabled = false
                     cell.labelTitle.isEnabled = false
                 }
-            } else if indexPath.row == 2 {
+            }
+            return cell
+        case 2:
+            switch webXRAuthorizationRequested {
+            case .minimal:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "SegmentedControlTableViewCell", for: indexPath) as! SegmentedControlTableViewCell
+                cell.segmentedControl.tag = indexPath.row
+                
+                if !UserDefaults.standard.bool(forKey: Constant.minimalWebXREnabled())
+                    || UserDefaults.standard.bool(forKey: Constant.liteModeWebXREnabled())
+                {
+                    cell.segmentedControl.isEnabled = false
+                }
+                let allowedMinimalSites = UserDefaults.standard.dictionary(forKey: Constant.allowedMinimalSitesKey())
+                if let site = site, allowedMinimalSites?[site] != nil {
+                    cell.segmentedControl.selectedSegmentIndex = 1
+                }
+                return cell
+            default:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
+                cell.switchControl.addTarget(self, action: #selector(switchValueDidChange(sender:)), for: .touchUpInside)
+                cell.switchControl.tag = indexPath.row
+                
                 cell.labelTitle.text = "World Sensing"
                 cell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.worldSensingWebXREnabled())
                 if !UserDefaults.standard.bool(forKey: Constant.minimalWebXREnabled())
@@ -584,8 +633,8 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                     cell.switchControl.isEnabled = false
                     cell.labelTitle.isEnabled = false
                 }
+                return cell
             }
-            return cell
         case 3:
             switch webXRAuthorizationRequested {
             case .worldSensing:

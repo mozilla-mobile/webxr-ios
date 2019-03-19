@@ -155,6 +155,7 @@ extension SettingsViewController: UITableViewDataSource {
             UserDefaults.standard.set(switchControl.isOn, forKey: Constant.alwaysAllowWorldSensingKey())
         } else if switchControl.tag == 5 {
             // Forget any sites remembered
+            UserDefaults.standard.removeObject(forKey: Constant.allowedMinimalSitesKey())
             UserDefaults.standard.removeObject(forKey: Constant.allowedWorldSensingSitesKey())
             UserDefaults.standard.removeObject(forKey: Constant.allowedVideoCameraSitesKey())
             // Assume that if they are resetting, World Sensing should NOT be always-on.

@@ -36,6 +36,9 @@ let PauseTimeInSecondsToRemoveAnchors: Double = 10.0
 /// the user allowed minimal WebXR access (globally)
 let MinimalWebXREnabledKey = "minimalWebXREnabled"
 /// The NSUserDefaults key for the boolean that tells us whether
+/// the allow minimal WebXR dialog should be shown for sites
+let AllowedMinimalSitesKey = "allowedMinimalSites"
+/// The NSUserDefaults key for the boolean that tells us whether
 /// the user activated WebXR Lite Mode (globally)
 let LiteModeWebXREnabledKey = "liteModeWebXREnabled"
 /// The NSUserDefaults key for the boolean that tells us whether
@@ -71,6 +74,7 @@ let BOX_SIZE: CGFloat = 0.05
     static func distantAnchorsDefaultDistanceInMeters() -> Float { return DistantAnchorsDefaultDistanceInMeters }
     @objc static func pauseTimeInSecondsToRemoveAnchors() -> Double { return PauseTimeInSecondsToRemoveAnchors }
     static func minimalWebXREnabled() -> String { return MinimalWebXREnabledKey }
+    static func allowedMinimalSitesKey() -> String { return AllowedMinimalSitesKey }
     static func liteModeWebXREnabled() -> String { return LiteModeWebXREnabledKey }
     static func worldSensingWebXREnabled() -> String { return WorldSensingWebXREnabledKey }
     static func allowedWorldSensingSitesKey() -> String { return AllowedWorldSensingSitesKey }
