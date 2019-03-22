@@ -22,7 +22,7 @@ class AppStateController: NSObject {
         self.state = state
         super.init()
 
-        self.exclusives = [ExclusiveState]()
+        exclusives = [ExclusiveState]()
     }
 
     @objc func setShowMode(_ mode: ShowMode) {
@@ -42,7 +42,7 @@ class AppStateController: NSObject {
     }
 
     @objc func setShowOptions(_ options: ShowOptions) {
-        self.state = state.updatedShowOptions(options)
+        state = state.updatedShowOptions(options)
         guard let onOptionsUpdate = onOptionsUpdate else { return }
         let showOptions = state.showOptions
         DispatchQueue.main.async {
@@ -51,7 +51,7 @@ class AppStateController: NSObject {
     }
 
     @objc func setWebXR(_ webXR: Bool) {
-        self.state = state.updatedWebXR(webXR)
+        state = state.updatedWebXR(webXR)
         guard let onXRUpdate = onXRUpdate else { return }
         let webXR = state.webXR
         DispatchQueue.main.async {
@@ -60,7 +60,7 @@ class AppStateController: NSObject {
     }
 
     @objc func setARRequest(_ dict: [AnyHashable : Any]) {
-        self.state = state.updated(withARRequest: dict)
+        state = state.updated(withARRequest: dict)
         guard let onRequestUpdate = onRequestUpdate else { return }
         DispatchQueue.main.async {
             onRequestUpdate(dict)

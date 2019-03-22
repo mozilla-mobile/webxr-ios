@@ -41,8 +41,8 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         super.init()
         
         setupAR(with: session, size: size)
-        self.planes = [UUID : PlaneNode]()
-        self.anchorsNodes = [AnchorNode]()
+        planes = [UUID : PlaneNode]()
+        anchorsNodes = [AnchorNode]()
 
         setupFocus()
     }
@@ -66,7 +66,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
         focus?.show(false)
 
-        self.planeHitTestResults = []
+        planeHitTestResults = []
     }
 
     func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [Any]? {
@@ -106,7 +106,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     func setupAR(with session: ARSession?, size: CGSize) {
         self.session = session
 
-        self.renderView = ARSCNView(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height), options: [:])
+        renderView = ARSCNView(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height), options: [:])
         if let aSession = session {
             renderView?.session = aSession
         }
@@ -117,7 +117,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         renderView?.preferredFramesPerSecond = Int(PREFER_FPS)
         renderView?.delegate = self
 
-        self.camera = renderView?.pointOfView?.camera
+        camera = renderView?.pointOfView?.camera
         camera?.wantsHDR = true
 
         renderView?.scene.lightingEnvironment.contents = UIColor.white
@@ -131,7 +131,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
             focus?.removeFromParentNode()
         }
 
-        self.focus = FocusNode()
+        focus = FocusNode()
         if let aFocus = focus {
             renderView?.scene.rootNode.addChildNode(aFocus)
         }
