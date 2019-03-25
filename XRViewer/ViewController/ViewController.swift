@@ -582,8 +582,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 if currentARRequest?[WEB_AR_WORLD_ALIGNMENT] as? Bool ?? false {
                     // The session failed because the compass (heading) couldn't be initialized. Fallback the session to ARWorldAlignmentGravity
                     currentARRequest?[WEB_AR_WORLD_ALIGNMENT] = false
-                    blockSelf?.stateController.setARRequest(currentARRequest ?? [:])
-                    return
+                    blockSelf?.stateController.setARRequest(currentARRequest ?? [:]) { () -> () in
+                        return
+                    }
                 }
             }
 
@@ -996,72 +997,84 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         
         guard let url = webController?.webView?.url else { return }
         arkController?.controller.previewingSinglePlane = false
+        arkController?.controller.focusedPlane = nil
         chooseSinglePlaneButton.removeFromSuperview()
 
-        if request[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
-            messageController?.showMessageAboutEnteringXR(.videoCameraAccess, authorizationGranted: { access in
-                
-                blockSelf?.stateController.state.askedComputerVisionData = true
-                blockSelf?.stateController.state.askedWorldStateData = true
-                let granted = access == .videoCameraAccess ? true : false
-                
-                if blockSelf?.arkController != nil {
-                    blockSelf?.arkController?.computerVisionDataEnabled = granted
-                    
-                    // Approving computer vision data implicitly approves the world sensing data
-                    blockSelf?.arkController?.webXRAuthorizationStatus = granted ? .videoCameraAccess : .denied
-                }
-                
-                blockSelf?.stateController.state.userGrantedSendingComputerVisionData = granted
-                blockSelf?.stateController.state.userGrantedSendingWorldStateData = granted ? .worldSensing : .denied
-                
-                blockSelf?.stateController.setWebXR(granted)
-                blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
-            }, url: url)
-        } else if request[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
-            messageController?.showMessageAboutEnteringXR(.worldSensing, authorizationGranted: { access in
-                
-                blockSelf?.stateController.state.askedWorldStateData = true
-                blockSelf?.arkController?.webXRAuthorizationStatus = access
-                blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
-                
-                switch access {
-                case .worldSensing, .lite, .videoCameraAccess:
-                    blockSelf?.stateController.setWebXR(true)
-                default:
-                    blockSelf?.stateController.setWebXR(false)
-                }
-                
-                blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
-                
-                if access == .lite {
-                    guard let state = blockSelf?.stateController.state else { return }
-                    blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
-                    blockSelf?.arkController?.controller.previewingSinglePlane = true
-                    blockSelf?.view.addSubview(blockSelf?.chooseSinglePlaneButton ?? UIButton())
-                    if blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {
-                        blockSelf?.stateController.state.shouldShowLiteModePopup = false
-                        blockSelf?.messageController?.showMessage(withTitle: "Lite Mode Started", message: "Choose one plane to share with this website.", hideAfter: 2)
-                    }
-                }
-            }, url: url)
-        } else {
-            // if neither is requested, we'll request .minimal WebXR authorization!
-            messageController?.showMessageAboutEnteringXR(.minimal, authorizationGranted: { access in
-                blockSelf?.arkController?.webXRAuthorizationStatus = access
-                switch access {
-                case .minimal, .lite, .worldSensing, .videoCameraAccess:
-                    blockSelf?.stateController.setWebXR(true)
-                case .denied, .notDetermined:
-                    blockSelf?.stateController.setWebXR(false)
-                }
-                
-                blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
-            }, url: url)
-        }
-
-        stateController.setARRequest(request)
         stateController.state.numberOfTimesSendNativeTimeWasCalled = 0
+        stateController.setARRequest(request) { () -> () in
+            if request[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
+                blockSelf?.messageController?.showMessageAboutEnteringXR(.videoCameraAccess, authorizationGranted: { access in
+                    
+                    blockSelf?.stateController.state.askedComputerVisionData = true
+                    blockSelf?.stateController.state.askedWorldStateData = true
+                    let granted = access == .videoCameraAccess ? true : false
+                    
+                    if blockSelf?.arkController != nil {
+                        blockSelf?.arkController?.computerVisionDataEnabled = granted
+                        
+                        // Approving computer vision data implicitly approves the world sensing data
+                        blockSelf?.arkController?.webXRAuthorizationStatus = granted ? .videoCameraAccess : .denied
+                    }
+                    
+                    blockSelf?.stateController.state.userGrantedSendingComputerVisionData = granted
+                    blockSelf?.stateController.state.userGrantedSendingWorldStateData = granted ? .videoCameraAccess : .denied
+                    
+                    blockSelf?.stateController.setWebXR(granted)
+                    blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
+                }, url: url)
+            } else if request[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
+                blockSelf?.messageController?.showMessageAboutEnteringXR(.worldSensing, authorizationGranted: { access in
+                    
+                    blockSelf?.stateController.state.askedWorldStateData = true
+                    blockSelf?.arkController?.webXRAuthorizationStatus = access
+                    blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
+                    
+                    switch access {
+                    case .worldSensing, .lite, .videoCameraAccess:
+                        blockSelf?.stateController.setWebXR(true)
+                    default:
+                        blockSelf?.stateController.setWebXR(false)
+                    }
+                    
+                    blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
+                    
+                    if access == .lite {
+//                        guard let state = blockSelf?.stateController.state else { return }
+//                        blockSelf?.arkController?.runSession(with: state)
+                        blockSelf?.arkController?.controller.previewingSinglePlane = true
+                        blockSelf?.view.addSubview(blockSelf?.chooseSinglePlaneButton ?? UIButton())
+                        if blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {
+                            blockSelf?.stateController.state.shouldShowLiteModePopup = false
+                            blockSelf?.messageController?.showMessage(withTitle: "Lite Mode Started", message: "Choose one plane to share with this website.", hideAfter: 2)
+                        }
+                    }
+                }, url: url)
+            } else {
+                // if neither is requested, we'll request .minimal WebXR authorization!
+                blockSelf?.messageController?.showMessageAboutEnteringXR(.minimal, authorizationGranted: { access in
+                    blockSelf?.arkController?.webXRAuthorizationStatus = access
+                    switch access {
+                    case .minimal, .lite, .worldSensing, .videoCameraAccess:
+                        blockSelf?.stateController.setWebXR(true)
+                    case .denied, .notDetermined:
+                        blockSelf?.stateController.setWebXR(false)
+                    }
+                    
+                    blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
+                    
+                    if access == .lite {
+//                        guard let state = blockSelf?.stateController.state else { return }
+//                        blockSelf?.arkController?.runSession(with: state)
+                        blockSelf?.arkController?.controller.previewingSinglePlane = true
+                        blockSelf?.view.addSubview(blockSelf?.chooseSinglePlaneButton ?? UIButton())
+                        if blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {
+                            blockSelf?.stateController.state.shouldShowLiteModePopup = false
+                            blockSelf?.messageController?.showMessage(withTitle: "Lite Mode Started", message: "Choose one plane to share with this website.", hideAfter: 2)
+                        }
+                    }
+                }, url: url)
+            }
+        }
     }
     
     func CLEAN_VIEW(v: LayerView) {
@@ -1073,15 +1086,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     @objc private func chooseSinglePlaneAction() {
         chooseSinglePlaneButton.removeFromSuperview()
         arkController?.controller.previewingSinglePlane = false
-        guard let chosenPlane = arkController?.controller.focusedPlane else { return }
-        if let anchorIdentifier = arkController?.controller.planes.someKey(forValue: chosenPlane) {
-            let allFrameAnchors = arkController?.session.currentFrame?.anchors
-            let anchor = allFrameAnchors?.filter { $0.identifier == anchorIdentifier }.first
-            if let anchor = anchor {
-                let addedAnchorDictionary = arkController?.createDictionary(for: anchor)
-                arkController?.addedAnchorsSinceLastFrame.add(addedAnchorDictionary ?? [:])
-                arkController?.objects[anchor.identifier.uuidString] = addedAnchorDictionary
-                arkController?.controller.focusedPlane = nil
+        
+        let videoCamAccess = stateController.state.aRRequest[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false
+        let worldSensing = stateController.state.aRRequest[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false
+        if videoCamAccess || worldSensing {
+            guard let chosenPlane = arkController?.controller.focusedPlane else { return }
+            if let anchorIdentifier = arkController?.controller.planes.someKey(forValue: chosenPlane) {
+                let allFrameAnchors = arkController?.session.currentFrame?.anchors
+                let anchor = allFrameAnchors?.filter { $0.identifier == anchorIdentifier }.first
+                if let anchor = anchor {
+                    let addedAnchorDictionary = arkController?.createDictionary(for: anchor)
+                    arkController?.addedAnchorsSinceLastFrame.add(addedAnchorDictionary ?? [:])
+                    arkController?.objects[anchor.identifier.uuidString] = addedAnchorDictionary
+                    arkController?.controller.focusedPlane = nil
+                }
             }
         }
     }

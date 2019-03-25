@@ -70,7 +70,19 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     }
 
     func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [Any]? {
-        return renderView?.hitTest(point, types: type)
+        if focusedPlane != nil {
+            guard let results = renderView?.hitTest(point, types: type) else { return [] }
+            guard let chosenPlane = focusedPlane else { return [] }
+            if let anchorIdentifier = planes.someKey(forValue: chosenPlane) {
+                let anchor = results.filter { $0.anchor?.identifier == anchorIdentifier }.first
+                if let anchor = anchor {
+                    return [anchor]
+                }
+            }
+            return []
+        } else {
+            return renderView?.hitTest(point, types: type)
+        }
     }
 
     func updateModes() {
@@ -157,7 +169,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         guard previewingSinglePlane else { return }
         guard let firstHitTestResult = renderView?.hitTest(hitTestFocusPoint, types: .existingPlaneUsingGeometry).first else { return }
         if let plane = firstHitTestResult.anchor as? ARPlaneAnchor {
-            let node = self.renderView?.node(for: plane)
+            let node = renderView?.node(for: plane)
             let child = node?.childNodes.first as? PlaneNode
             child?.opacity = 1
             focusedPlane = child

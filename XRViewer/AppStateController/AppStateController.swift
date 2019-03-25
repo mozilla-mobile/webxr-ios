@@ -59,11 +59,12 @@ class AppStateController: NSObject {
         }
     }
 
-    @objc func setARRequest(_ dict: [AnyHashable : Any]) {
+    @objc func setARRequest(_ dict: [AnyHashable : Any], completed: @escaping () -> ()) {
         state = state.updated(withARRequest: dict)
         guard let onRequestUpdate = onRequestUpdate else { return }
         DispatchQueue.main.async {
             onRequestUpdate(dict)
+            completed()
         }
     }
 
