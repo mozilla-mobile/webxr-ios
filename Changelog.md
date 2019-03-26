@@ -1,13 +1,16 @@
 # WebXR Viewer Changelog
-* Added Lite Mode option to only share a single plane during World Sensing
+* Added privacy-focused Lite Mode
+* Added button to URL bar to revisit permissions granted for each site
+* Revamped the permissioning process (new UI, new UX, more granular permissions)
 * Reconfigured Lite Mode so user can choose which plane to pass in
+* Changed popup widths for iPad compatibility
 * Added 'WEBSERVER' custom flag for Debug compilations
 * Converted, separated functions to ARKController+Anchors, ARKController+AppState, ARKController+Images, ARKController+ARSessionDelegate, ARKController+WorldMap, ARKController+Camera, ARKController+Frame
 * Moved ARSession methods to ViewController+ARSCNViewDelegate
 * Fixed dropped frames and CV low FPS issue with ARFaceAnchors
 * Fixed Settings.bundle check in AppDelegate
 * Removed: Legacy ARKit interruption code, legacy MessageController functions, unused hasPlanes & currentPlanesArray functions
-* Converted following to Swift: AppState, Prefix
+* Converted following to Swift: AppState, Prefix, ARKMetalController
 ---
 * Moved buildLabel to bottom left to prevent overlap with home indicator
 * Added TextManager class
