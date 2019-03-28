@@ -6,7 +6,6 @@
 #import "ARKController.h"
 #import "WebARKHeader.h"
 #import <CocoaLumberjack/CocoaLumberjack.h>
-#import "Renderer.h"
 
 #if DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
