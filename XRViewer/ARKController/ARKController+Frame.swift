@@ -12,7 +12,7 @@ extension ARKController {
             newData["timestamp"] = ts
             
             // status of ARKit World Mapping
-            newData[WEB_AR_WORLDMAPPING_STATUS_MESSAGE] = worldMappingState(frame)
+            newData[WEB_AR_WORLDMAPPING_STATUS_MESSAGE] = worldMappingState(frame: frame)
             
             if (request[WEB_AR_LIGHT_INTENSITY_OPTION] as? NSNumber)?.boolValue ?? false {
                 newData[WEB_AR_LIGHT_INTENSITY_OPTION] = frame.lightEstimate?.ambientIntensity ?? 0.0
@@ -157,6 +157,19 @@ extension ARKController {
             os_unfair_lock_lock(&(lock))
             arkData = newData
             os_unfair_lock_unlock(&(lock))
+        }
+    }
+    
+    private func worldMappingState(frame: ARFrame) -> NSString {
+        switch frame.worldMappingStatus {
+        case .notAvailable:
+            return WEB_AR_WORLDMAPPING_NOT_AVAILABLE as NSString
+        case .limited:
+            return WEB_AR_WORLDMAPPING_LIMITED as NSString
+        case .extending:
+            return WEB_AR_WORLDMAPPING_EXTENDING as NSString
+        case .mapped:
+            return WEB_AR_WORLDMAPPING_MAPPED as NSString
         }
     }
     

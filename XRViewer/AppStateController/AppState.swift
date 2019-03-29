@@ -7,7 +7,7 @@ import Foundation
     @objc var aRRequest: [AnyHashable : Any] = [:]
     var trackingState = ""
     @objc var showMode: ShowMode = .nothing
-    @objc var showOptions: ShowOptions = .init(rawValue: 0)
+    var showOptions: ShowOptions = .init(rawValue: 0)
     var webXR = false
     var computerVisionFrameRequested = false
     var shouldRemoveAnchorsOnNextARSession = false

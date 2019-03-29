@@ -661,7 +661,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onInitAR = { uiOptionsDict in
-            blockSelf?.stateController.setShowOptions(showOptionsFormDict(uiOptionsDict))
+            blockSelf?.stateController.setShowOptions(self.showOptionsFormDict(dict: uiOptionsDict))
             blockSelf?.stateController.applyOnEnterForegroundAction()
             blockSelf?.stateController.applyOnDidReceiveMemoryAction()
         }
@@ -696,7 +696,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onSetUI = { uiOptionsDict in
-            blockSelf?.stateController.setShowOptions(showOptionsFormDict(uiOptionsDict))
+            blockSelf?.stateController.setShowOptions(self.showOptionsFormDict(dict: uiOptionsDict))
         }
 
         webController?.onHitTest = { mask, x, y, result in
@@ -822,6 +822,53 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 }
             }
         }
+    }
+    
+    
+    private func showOptionsFormDict(dict: [AnyHashable : Any]?) -> ShowOptions {
+        if dict == nil {
+            return .Browser
+        }
+        
+        var options: ShowOptions = .init(rawValue: 0)
+        
+        if (dict?[WEB_AR_UI_BROWSER_OPTION] as? NSNumber)?.boolValue ?? false {
+            options = [options, .Browser]
+        }
+        
+        if (dict?[WEB_AR_UI_POINTS_OPTION] as? NSNumber)?.boolValue ?? false {
+            options = [options, .ARPoints]
+        }
+        
+        if (dict?[WEB_AR_UI_DEBUG_OPTION] as? NSNumber)?.boolValue ?? false {
+            options = [options, .Debug]
+        }
+        
+        if (dict?[WEB_AR_UI_STATISTICS_OPTION] as? NSNumber)?.boolValue ?? false {
+            options = [options, .ARStatistics]
+        }
+        
+        if (dict?[WEB_AR_UI_FOCUS_OPTION] as? NSNumber)?.boolValue ?? false {
+            options = [options, .ARFocus]
+        }
+        
+        if (dict?[WEB_AR_UI_BUILD_OPTION] as? NSNumber)?.boolValue ?? false {
+            options = [options, .BuildNumber]
+        }
+        
+        if (dict?[WEB_AR_UI_PLANE_OPTION] as? NSNumber)?.boolValue ?? false {
+            options = [options, .ARPlanes]
+        }
+        
+        if (dict?[WEB_AR_UI_WARNINGS_OPTION] as? NSNumber)?.boolValue ?? false {
+            options = [options, .ARWarnings]
+        }
+        
+        if (dict?[WEB_AR_UI_ANCHORS_OPTION] as? NSNumber)?.boolValue ?? false {
+            options = [options, .ARObject]
+        }
+        
+        return options
     }
 
     func setupOverlayController() {

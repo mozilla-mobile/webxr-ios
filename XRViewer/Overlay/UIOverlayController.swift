@@ -63,7 +63,7 @@ class UIOverlayController: NSObject {
         viewWillTransition(to: rootView?.bounds.size ?? CGSize.zero)
     }
 
-    @objc func setOptions(_ options: ShowOptions) {
+    func setOptions(_ options: ShowOptions) {
         showOptions = options
         touchView?.showOptions = options
         overlayVC?.setShowOptions(options, withAnimationCompletion: { finish in

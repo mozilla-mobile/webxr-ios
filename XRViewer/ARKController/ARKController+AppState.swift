@@ -218,6 +218,32 @@ extension ARKController {
         let renderSize: CGSize? = controller.getRenderView().bounds.size
         let point = CGPoint(x: normPoint.x * (renderSize?.width ?? 0.0), y: normPoint.y * (renderSize?.height ?? 0.0))
         let result = controller.hitTest(point, with: ARHitTestResult.ResultType(rawValue: UInt(type)))
-        return hitTestResultArrayFromResult(result)
+        return hitTestResultArrayFromResult(resultArray: result)
+    }
+    
+    private func hitTestResultArrayFromResult(resultArray: [Any]?) -> [Any]? {
+        var results = [Any](repeating: 0, count: resultArray?.count ?? 0)
+        
+        for result: ARHitTestResult in resultArray as? [ARHitTestResult] ?? [] {
+            var dict = [AnyHashable : Any]()
+            
+            dict[WEB_AR_TYPE_OPTION] = NSNumber(value: result.type.rawValue)
+            dict[WEB_AR_W_TRANSFORM_OPTION] = arrayFromMatrix4x4(result.worldTransform)
+            dict[WEB_AR_L_TRANSFORM_OPTION] = arrayFromMatrix4x4(result.localTransform)
+            dict[WEB_AR_DISTANCE_OPTION] = result.distance
+            dict[WEB_AR_UUID_OPTION] = result.anchor?.identifier.uuidString ?? ""
+            
+            if result.anchor is ARPlaneAnchor {
+                if let planeAnchor = result.anchor as? ARPlaneAnchor {
+                    dict[WEB_AR_ANCHOR_CENTER_OPTION] = dictFromVector3(planeAnchor.center)
+                    dict[WEB_AR_ANCHOR_EXTENT_OPTION] = dictFromVector3(planeAnchor.extent)
+                    dict[WEB_AR_ANCHOR_TRANSFORM_OPTION] = arrayFromMatrix4x4(planeAnchor.transform)
+                }
+            }
+            
+            results.append(dict)
+        }
+        
+        return results
     }
 }

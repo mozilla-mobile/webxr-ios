@@ -4,7 +4,6 @@
 
 #import "ARKHelper.h"
 #import "ARKController.h"
-#import "WebARKHeader.h"
 #import <CocoaLumberjack/CocoaLumberjack.h>
 
 #if DEBUG

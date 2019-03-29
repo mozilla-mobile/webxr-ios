@@ -5,7 +5,76 @@
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 #import <ARKit/ARKit.h>
-#import "WebARKHeader.h"
+
+/**
+ Enum representing the WebXR authorization status
+ 
+ - WebXRAuthorizationStateNotDetermined: The user didn't say anything about the world sensing
+ - WebXRAuthorizationStateDenied: The user denied sending world sensing data
+ - WebXRAuthorizationStateMinimal: The user allowed sending wold sensing data
+ - WebXRAuthorizationStateLite: The user allowed sending wold sensing data
+ - WebXRAuthorizationStateWorldSensing: The user allowed sending wold sensing data
+ - WebXRAuthorizationStateVideoCameraAccess: The user allowed access to the video camera and sending wold sensing data
+ 
+ */
+typedef NS_ENUM(NSUInteger, WebXRAuthorizationState)
+{
+    WebXRAuthorizationStateNotDetermined,
+    WebXRAuthorizationStateDenied,
+    WebXRAuthorizationStateMinimal,
+    WebXRAuthorizationStateLite,
+    WebXRAuthorizationStateWorldSensing,
+    WebXRAuthorizationStateVideoCameraAccess
+};
+
+/**
+ An enum representing the state of the app UI at a given time
+ 
+ - ShowNothing: Shows the warning labels
+ - ShowDebug: Shows the helper and build label, and the AR debug info
+ - ShowURL: Shows the URL Bar
+ - ShowURLDebug: Shows the URL Bar and the AR debug info
+ */
+// Tony (2/12/19): In making the ShowMode enum more descriptive, there's temporary
+//      awkwardness & bad style when using the enum in Swift (.URL & .urlDebug).
+//      This will be resolved when fully converted to Swift.
+typedef NS_ENUM(NSUInteger, ShowMode)
+{
+    ShowNothing,
+    ShowDebug,
+    ShowURL,
+    ShowURLDebug
+};
+
+/**
+ Show options. This option set is built from the AR Request dictionary received on initAR
+ 
+ - None: Shows nothing
+ - Browser: Shows in browser mode
+ - ARWarnings: Shows warnings reported by ARKit
+ - ARFocus: Shows a focus node
+ - ARObject: Shows AR objects
+ - Debug: Not used
+ - ARPlanes: Shows AR planes
+ - ARPoints: Shows AR feature points
+ - ARStatistics: Shows AR Statistics
+ - BuildNumber: Shows the app build number
+ - Full: Shows everything
+ */
+typedef NS_OPTIONS(NSUInteger, ShowOptions)
+{
+    None         = 0,
+    Browser      = (1 << 0),
+    ARWarnings   = (1 << 1),
+    ARFocus      = (1 << 2),
+    ARObject     = (1 << 3),
+    Debug        = (1 << 4),
+    ARPlanes     = (1 << 5),
+    ARPoints     = (1 << 6),
+    ARStatistics = (1 << 7),
+    BuildNumber  = (1 << 8),
+    Full         = NSUIntegerMax
+};
 
 static inline NSArray * arrayFromMatrix3x3(matrix_float3x3  matrix)
 {
@@ -66,36 +135,7 @@ static inline matrix_float4x4 matrixFromArray(NSArray *arr)
 
 static inline NSDictionary * dictFromVector3(vector_float3 vector)
 {
-    return @{WEB_AR_X_POSITION_OPTION : @(vector.x),  WEB_AR_Y_POSITION_OPTION : @(vector.y), WEB_AR_Z_POSITION_OPTION : @(vector.z)};
-}
-
-static inline vector_float3 vector3FromDictionary(NSDictionary *dict)
-{
-    vector_float3 vector;
-    
-    vector.x = [dict[WEB_AR_X_POSITION_OPTION] floatValue];
-    vector.y = [dict[WEB_AR_Y_POSITION_OPTION] floatValue];
-    vector.z = [dict[WEB_AR_Z_POSITION_OPTION] floatValue];
-    
-    return vector;
-}
-
-static inline ARHitTestResultType hitTypeFromString(NSString *string)
-{
-    if ([string isEqualToString:WEB_AR_HIT_TEST_PLANE_OPTION])
-    {
-        return ARHitTestResultTypeExistingPlaneUsingExtent;
-    }
-    else if ([string isEqualToString:WEB_AR_HIT_TEST_POINTS_OPTION])
-    {
-        return ARHitTestResultTypeFeaturePoint;
-    }
-    else if ([string isEqualToString:WEB_AR_HIT_TEST_ALL_OPTION])
-    {
-        return ARHitTestResultTypeExistingPlaneUsingExtent | ARHitTestResultTypeFeaturePoint;
-    }
-    
-    return ARHitTestResultTypeExistingPlaneUsingExtent;
+    return @{@"x" : @(vector.x), @"y" : @(vector.y), @"z" : @(vector.z)};
 }
 
 static inline NSDictionary * dictFromMatrix4x4(matrix_float4x4  matrix)
@@ -184,79 +224,4 @@ static inline matrix_float4x4 matrixFromKeyedArrayDictionary(NSDictionary *dict)
     return matrix;
 }
 
-static inline NSString *trackingState(ARCamera *camera)
-{
-    switch ([camera trackingState])
-    {
-        case ARTrackingStateNormal:
-            return WEB_AR_TRACKING_STATE_NORMAL;
-        case ARTrackingStateLimited:
-        {
-            switch ([camera trackingStateReason])
-            {
-                case ARTrackingStateReasonNone:
-                    return WEB_AR_TRACKING_STATE_LIMITED;
-                case ARTrackingStateReasonInitializing: //The AR session has not yet gathered enough camera or motion data to provide tracking information.
-                    //This value occurs temporarily after starting a new AR session or changing configurations.
-                    return WEB_AR_TRACKING_STATE_LIMITED_INITIALIZING;
-                case ARTrackingStateReasonExcessiveMotion: //The device is moving too fast for accurate image-based position tracking.
-                    return WEB_AR_TRACKING_STATE_LIMITED_MOTION;
-                case ARTrackingStateReasonInsufficientFeatures: //The scene visible to the camera does not contain enough distinguishable features for image-based position tracking.
-                    return WEB_AR_TRACKING_STATE_LIMITED_FEATURES;
-                case ARTrackingStateReasonRelocalizing: // trying to relocalize
-                    return WEB_AR_TRACKING_STATE_RELOCALIZING;
-            }
-        }
-        case ARTrackingStateNotAvailable:
-            return WEB_AR_TRACKING_STATE_NOT_AVAILABLE;
-    }
-}
-
-static inline NSString *worldMappingState(ARFrame *frame)
-{
-    switch ([frame worldMappingStatus])
-    {
-        case ARWorldMappingStatusNotAvailable:
-            return WEB_AR_WORLDMAPPING_NOT_AVAILABLE;
-            
-        case ARWorldMappingStatusLimited:
-            return WEB_AR_WORLDMAPPING_LIMITED;
-            
-        case ARWorldMappingStatusExtending:
-            return WEB_AR_WORLDMAPPING_EXTENDING;
-            
-        case ARWorldMappingStatusMapped:
-            return WEB_AR_WORLDMAPPING_MAPPED;
-    }
-}
-
-static inline NSArray *hitTestResultArrayFromResult(NSArray *resultArray)
-{
-    NSMutableArray *results = [NSMutableArray arrayWithCapacity:[resultArray count]];
-    
-    for (ARHitTestResult *result in resultArray)
-    {
-        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:3];
-        
-        dict[WEB_AR_TYPE_OPTION] = @([result type]);
-        dict[WEB_AR_W_TRANSFORM_OPTION] = arrayFromMatrix4x4([result worldTransform]);
-        dict[WEB_AR_L_TRANSFORM_OPTION] = arrayFromMatrix4x4([result localTransform]);
-        dict[WEB_AR_DISTANCE_OPTION] = @([result distance]);
-        dict[WEB_AR_UUID_OPTION] = [[[result anchor] identifier] UUIDString];
-        
-        if ([[result anchor] isKindOfClass:[ARPlaneAnchor class]])
-        {
-            ARPlaneAnchor *planeAnchor = (ARPlaneAnchor *)[result anchor];
-            dict[WEB_AR_ANCHOR_CENTER_OPTION] = dictFromVector3([planeAnchor center]);
-            dict[WEB_AR_ANCHOR_EXTENT_OPTION] = dictFromVector3([planeAnchor extent]);
-            dict[WEB_AR_ANCHOR_TRANSFORM_OPTION] = arrayFromMatrix4x4([planeAnchor transform]);
-        }
-        
-        [results addObject:dict];
-    }
-    
-    return [results copy];
-}
-
 #endif /* ARKHelper_h */
-

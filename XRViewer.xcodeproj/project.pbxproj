@@ -85,7 +85,6 @@
 		04A983651F32268900120CF8 /* ARKController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKController.m; sourceTree = "<group>"; };
 		04A983661F32268900120CF8 /* ARKController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKController.h; sourceTree = "<group>"; };
 		04A9836A1F3226A500120CF8 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
-		04A9836F1F3226E000120CF8 /* WebARKHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebARKHeader.h; sourceTree = "<group>"; };
 		04BB9D641F39BE40004328A2 /* ARKHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKHelper.h; sourceTree = "<group>"; };
 		23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.release.xcconfig"; sourceTree = "<group>"; };
 		6207254C206A90BF00887B1F /* RequestPermissionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestPermissionsViewController.swift; sourceTree = "<group>"; };
@@ -214,7 +213,6 @@
 		04A983611F32213800120CF8 /* WebController */ = {
 			isa = PBXGroup;
 			children = (
-				04A9836F1F3226E000120CF8 /* WebARKHeader.h */,
 				B658C0F121BF43D500538D57 /* WebController.swift */,
 				B679967821B06A7000612AF4 /* BarView.swift */,
 				B61E2B2622249D500031955F /* ActivityIndicatorButton.swift */,

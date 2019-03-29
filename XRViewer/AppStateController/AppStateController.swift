@@ -9,8 +9,8 @@ enum ExclusiveStateType: Int {
 
 class AppStateController: NSObject {
     @objc var state: AppState
-    @objc var onModeUpdate: ((ShowMode) -> Void)?
-    @objc var onOptionsUpdate: ((ShowOptions) -> Void)?
+    var onModeUpdate: ((ShowMode) -> Void)?
+    var onOptionsUpdate: ((ShowOptions) -> Void)?
     @objc var onXRUpdate: ((Bool) -> Void)?
     @objc var onRequestUpdate: (([AnyHashable : Any]?) -> Void)?
     @objc var onDebug: ((Bool) -> Void)?
@@ -25,7 +25,7 @@ class AppStateController: NSObject {
         exclusives = [ExclusiveState]()
     }
 
-    @objc func setShowMode(_ mode: ShowMode) {
+    func setShowMode(_ mode: ShowMode) {
         if mode != state.showMode {
             guard let onDebug = onDebug else { return }
             DispatchQueue.main.async {
@@ -41,7 +41,7 @@ class AppStateController: NSObject {
         }
     }
 
-    @objc func setShowOptions(_ options: ShowOptions) {
+    func setShowOptions(_ options: ShowOptions) {
         state = state.updatedShowOptions(options)
         guard let onOptionsUpdate = onOptionsUpdate else { return }
         let showOptions = state.showOptions

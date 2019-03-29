@@ -1,5 +1,4 @@
 #import "ARKController.h"
-#import "WebARKHeader.h"
 #import <AVFoundation/AVFoundation.h>
 #import <Accelerate/Accelerate.h>
 #import "Compression.h"
@@ -198,10 +197,10 @@
 #pragma mark Private
 
 - (void)updateFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
-    NSMutableDictionary *geometryDictionary = faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION];
+    NSMutableDictionary *geometryDictionary = faceAnchorDictionary[@"geometry"];
     if (!geometryDictionary) {
         geometryDictionary = [NSMutableDictionary new];
-        faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary;
+        faceAnchorDictionary[@"geometry"] = geometryDictionary;
     }
     NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.vertexCount];
     for (int i = 0; i < faceAnchor.geometry.vertexCount; i++) {
@@ -209,7 +208,7 @@
     }
     geometryDictionary[@"vertices"] = vertices;
     
-    NSMutableArray *blendShapesDictionary = faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION];
+    NSMutableArray *blendShapesDictionary = faceAnchorDictionary[@"blendshapes"];
     [self setBlendShapes:faceAnchor.blendShapes toArray:blendShapesDictionary];
     
     // Remove the rest of the geometry data, since it doesn't change
