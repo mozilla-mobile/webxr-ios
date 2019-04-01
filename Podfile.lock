@@ -42,7 +42,7 @@ DEPENDENCIES:
   - CocoaLumberjack/Swift
   - FontAwesomeKit
   - GCDWebServer (~> 3.0)
-  - MozillaTelemetry (from `https://github.com/mozilla-mobile/telemetry-ios.git`, branch `master`)
+  - MozillaTelemetry (from `https://github.com/robomex/telemetry-ios.git`, branch `swift4`)
   - pop
   - PopupDialog
 
@@ -57,13 +57,13 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   MozillaTelemetry:
-    :branch: master
-    :git: https://github.com/mozilla-mobile/telemetry-ios.git
+    :branch: swift4
+    :git: https://github.com/robomex/telemetry-ios.git
 
 CHECKOUT OPTIONS:
   MozillaTelemetry:
-    :commit: 09887f36488f34e4953d3ab9e5b68afe5df39bf2
-    :git: https://github.com/mozilla-mobile/telemetry-ios.git
+    :commit: 5b726ed819b90553491ec1cfcc36347dda9ad6a0
+    :git: https://github.com/robomex/telemetry-ios.git
 
 SPEC CHECKSUMS:
   CocoaLumberjack: db7cc9e464771f12054c22ff6947c5a58d43a0fd
@@ -74,6 +74,6 @@ SPEC CHECKSUMS:
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   PopupDialog: 03985b669c29802661c187513bf827340db1ae4d
 
-PODFILE CHECKSUM: 4af8cfdc9389013af90f09e3b0eb63a7b24bc8ee
+PODFILE CHECKSUM: 86955c65825a48fe30769ad7f0fa53b7ab0979b3
 
 COCOAPODS: 1.5.3
