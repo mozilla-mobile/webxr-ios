@@ -40,7 +40,7 @@ public enum ReachabilityError: Error {
 public let ReachabilityChangedNotification = NSNotification.Name("ReachabilityChangedNotification")
 
 public extension Notification.Name {
-    public static let reachabilityChanged = Notification.Name("reachabilityChanged")
+    static let reachabilityChanged = Notification.Name("reachabilityChanged")
 }
 
 public class Reachability {

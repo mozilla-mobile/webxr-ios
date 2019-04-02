@@ -102,8 +102,9 @@ class Renderer: NSObject {
         
         // Wait to ensure only kMaxBuffersInFlight are getting proccessed by any stage in the Metal
         //   pipeline (App, Metal, Drivers, GPU, etc)
-        guard let inFlight = inFlightSemaphore else { return }
-        // Commented when converted since unused and throwing errors
+        
+        // Commented when converted since unused and throwing errors/warnings
+//        guard let inFlight = inFlightSemaphore else { return }
 //        dispatch_semaphore_wait(inFlight, DispatchTime.distantFuture.uptimeNanoseconds)
         
         // Create a new command buffer for each renderpass to the current drawable
@@ -233,7 +234,7 @@ class Renderer: NSObject {
             capturedImagePipelineStateDescriptor.stencilAttachmentPixelFormat = depthStencilPixelFormat
         }
         
-        var error: Error? = nil
+        let error: Error? = nil
         capturedImagePipelineState = try! device?.makeRenderPipelineState(descriptor: capturedImagePipelineStateDescriptor)
         if capturedImagePipelineState == nil {
             if let error = error {
@@ -503,10 +504,10 @@ class Renderer: NSObject {
     
     func _updateImagePlane(with frame: ARFrame) {
         // Update the texture coordinates of our image plane to aspect fill the viewport
-        guard let orientation = orientation else { return }
-        let displayToCameraTransform: CGAffineTransform = frame.displayTransform(for: orientation, viewportSize: viewportSize).inverted()
-
         // Commented when converted since unused and throwing errors
+//        guard let orientation = orientation else { return }
+//        let displayToCameraTransform: CGAffineTransform = frame.displayTransform(for: orientation, viewportSize: viewportSize).inverted()
+
 //        if let vertexData = Float(imagePlaneVertexBuffer?.contents()) {
 //            for index in 0..<4 {
 //                let textureCoordIndex: Int = 4 * index + 2
