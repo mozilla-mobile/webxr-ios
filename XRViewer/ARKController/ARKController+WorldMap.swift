@@ -185,7 +185,7 @@ import Compression
                         if let anchorName = anchor.name {
                             var anchorDict = [AnyHashable : Any]()
                             anchorDict["name"] = anchorName
-                            anchorDict["transform"] = arrayFromMatrix4x4(anchor.transform)
+                            anchorDict["transform"] = anchor.transform.array()
                             anchorList.add(anchorDict)
                         }
                     }

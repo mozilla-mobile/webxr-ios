@@ -38,20 +38,14 @@ extension ARKController {
                                                                  viewportSize: size,
                                                                  zNear: CGFloat(AR_CAMERA_PROJECTION_MATRIX_Z_NEAR),
                                                                  zFar: CGFloat(AR_CAMERA_PROJECTION_MATRIX_Z_FAR))
-                if let projMatrix = arrayFromMatrix4x4(projectionMatrix) {
-                    newData[WEB_AR_PROJ_CAMERA_OPTION] = projMatrix
-                }
+                newData[WEB_AR_PROJ_CAMERA_OPTION] = projectionMatrix.array()
                 
                 var viewMatrix = matrix_float4x4()
                 viewMatrix = frame.camera.viewMatrix(for: interfaceOrientation)
                 let modelMatrix: matrix_float4x4 = viewMatrix.inverse
                 
-                if let modelArray = arrayFromMatrix4x4(modelMatrix) {
-                    newData[WEB_AR_CAMERA_TRANSFORM_OPTION] = modelArray
-                }
-                if let viewArray = arrayFromMatrix4x4(viewMatrix) {
-                    newData[WEB_AR_CAMERA_VIEW_OPTION] = viewArray
-                }
+                newData[WEB_AR_CAMERA_TRANSFORM_OPTION] = modelMatrix.array()
+                newData[WEB_AR_CAMERA_VIEW_OPTION] = viewMatrix.array()
             }
             if (request[WEB_AR_3D_OBJECTS_OPTION] as? NSNumber)?.boolValue ?? false {
                 let anchorsArray = currentAnchorsArray()
@@ -98,13 +92,13 @@ extension ARKController {
                                                                  viewportSize: viewportSize,
                                                                  zNear: CGFloat(AR_CAMERA_PROJECTION_MATRIX_Z_NEAR),
                                                                  zFar: CGFloat(AR_CAMERA_PROJECTION_MATRIX_Z_FAR))
-                cameraInformation["projectionMatrix"] = arrayFromMatrix4x4(projectionMatrix)
+                cameraInformation["projectionMatrix"] = projectionMatrix.array()
                 
                 // Get the view matrix
                 var viewMatrix = matrix_float4x4()
                 viewMatrix = frame.camera.viewMatrix(for: interfaceOrientation)
-                cameraInformation["viewMatrix"] = arrayFromMatrix4x4(viewMatrix)
-                cameraInformation["inverse_viewMatrix"] = arrayFromMatrix4x4(viewMatrix.inverse)
+                cameraInformation["viewMatrix"] = viewMatrix.array()
+                cameraInformation["inverse_viewMatrix"] = viewMatrix.inverse.array()
                 
                 // Send also the interface orientation
                 cameraInformation["interfaceOrientation"] = interfaceOrientation.rawValue

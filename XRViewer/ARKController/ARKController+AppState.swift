@@ -228,8 +228,8 @@ extension ARKController {
             var dict = [AnyHashable : Any]()
             
             dict[WEB_AR_TYPE_OPTION] = NSNumber(value: result.type.rawValue)
-            dict[WEB_AR_W_TRANSFORM_OPTION] = arrayFromMatrix4x4(result.worldTransform)
-            dict[WEB_AR_L_TRANSFORM_OPTION] = arrayFromMatrix4x4(result.localTransform)
+            dict[WEB_AR_W_TRANSFORM_OPTION] = result.worldTransform.array()
+            dict[WEB_AR_L_TRANSFORM_OPTION] = result.localTransform.array()
             dict[WEB_AR_DISTANCE_OPTION] = result.distance
             dict[WEB_AR_UUID_OPTION] = result.anchor?.identifier.uuidString ?? ""
             
@@ -237,7 +237,7 @@ extension ARKController {
                 if let planeAnchor = result.anchor as? ARPlaneAnchor {
                     dict[WEB_AR_ANCHOR_CENTER_OPTION] = dictFromVector3(planeAnchor.center)
                     dict[WEB_AR_ANCHOR_EXTENT_OPTION] = dictFromVector3(planeAnchor.extent)
-                    dict[WEB_AR_ANCHOR_TRANSFORM_OPTION] = arrayFromMatrix4x4(planeAnchor.transform)
+                    dict[WEB_AR_ANCHOR_TRANSFORM_OPTION] = planeAnchor.transform.array()
                 }
             }
             
