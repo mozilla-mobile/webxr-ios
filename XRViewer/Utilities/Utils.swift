@@ -34,6 +34,15 @@ class Utils: NSObject {
     }
 }
 
+extension vector_float2 {
+    func dictionary() -> NSDictionary {
+        return [
+            WEB_AR_X_POSITION_OPTION: self.x,
+            WEB_AR_Y_POSITION_OPTION: self.y
+        ]
+    }
+}
+
 extension vector_float3 {
     func dictionary() -> NSDictionary {
         return [
@@ -44,11 +53,18 @@ extension vector_float3 {
     }
 }
 
-extension vector_float2 {
-    func dictionary() -> NSDictionary {
+extension matrix_float3x3 {
+    func array() -> [Float] {
         return [
-            WEB_AR_X_POSITION_OPTION: self.x,
-            WEB_AR_Y_POSITION_OPTION: self.y
+            self.columns.0.x,
+            self.columns.0.y,
+            self.columns.0.z,
+            self.columns.1.x,
+            self.columns.1.y,
+            self.columns.1.z,
+            self.columns.2.x,
+            self.columns.2.y,
+            self.columns.2.z,
         ]
     }
 }

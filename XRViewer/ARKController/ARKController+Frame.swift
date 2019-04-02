@@ -83,7 +83,7 @@ extension ARKController {
                 resizedCameraIntrinsics.columns.2.y = cameraIntrinsics.columns.2.y / computerVisionImageScaleFactor
                 resizedCameraIntrinsics.columns.2.z = cameraIntrinsics.columns.2.z / computerVisionImageScaleFactor
                 resizedCameraIntrinsics.columns.2.z = 1.0
-                cameraInformation["cameraIntrinsics"] = arrayFromMatrix3x3(resizedCameraIntrinsics)
+                cameraInformation["cameraIntrinsics"] = resizedCameraIntrinsics.array()
                 
                 // Get the projection matrix
                 let viewportSize: CGSize = controller.getRenderView().frame.size
