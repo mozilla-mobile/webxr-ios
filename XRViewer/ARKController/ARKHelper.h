@@ -76,30 +76,6 @@ typedef NS_OPTIONS(NSUInteger, ShowOptions)
     Full         = NSUIntegerMax
 };
 
-static inline matrix_float4x4 matrixFromArray(NSArray *arr)
-{
-    matrix_float4x4 matrix;
-    
-    matrix.columns[0][0] = [arr[0] floatValue];
-    matrix.columns[0][1] = [arr[1] floatValue];
-    matrix.columns[0][2] = [arr[2] floatValue];
-    matrix.columns[0][3] = [arr[3] floatValue];
-    matrix.columns[1][0] = [arr[4] floatValue];
-    matrix.columns[1][1] = [arr[5] floatValue];
-    matrix.columns[1][2] = [arr[6] floatValue];
-    matrix.columns[1][3] = [arr[7] floatValue];
-    matrix.columns[2][0] = [arr[8] floatValue];
-    matrix.columns[2][1] = [arr[9] floatValue];
-    matrix.columns[2][2] = [arr[10] floatValue];
-    matrix.columns[2][3] = [arr[11] floatValue];
-    matrix.columns[3][0] = [arr[12] floatValue];
-    matrix.columns[3][1] = [arr[13] floatValue];
-    matrix.columns[3][2] = [arr[14] floatValue];
-    matrix.columns[3][3] = [arr[15] floatValue];
-    
-    return matrix;
-}
-
 static inline NSDictionary * dictFromVector3(vector_float3 vector)
 {
     return @{@"x" : @(vector.x), @"y" : @(vector.y), @"z" : @(vector.z)};

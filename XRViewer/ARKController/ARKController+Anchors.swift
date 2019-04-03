@@ -423,7 +423,10 @@
             return false
         }
         
-        let matrix: matrix_float4x4 = matrixFromArray(transform)
+        var matrix = matrix_float4x4()
+        if let transform = transform {
+            matrix = transform.matrix()
+        }
         let anchor = ARAnchor(name: userGeneratedAnchorID ?? "", transform: matrix)
         session.add(anchor: anchor)
         arkitGeneratedAnchorIDUserAnchorIDMap?[anchor.identifier.uuidString] = userGeneratedAnchorID ?? ""

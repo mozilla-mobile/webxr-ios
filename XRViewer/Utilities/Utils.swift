@@ -92,6 +92,30 @@ extension matrix_float4x4 {
     }
 }
 
+extension Array {
+    func matrix() -> matrix_float4x4 {
+        var matrix = matrix_float4x4()
+        matrix.columns.0.x = (self[0] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.0.y = (self[1] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.0.z = (self[2] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.0.w = (self[3] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.1.x = (self[4] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.1.y = (self[5] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.1.z = (self[6] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.1.w = (self[7] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.2.x = (self[8] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.2.y = (self[9] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.2.z = (self[10] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.2.w = (self[11] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.3.x = (self[12] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.3.y = (self[13] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.3.z = (self[14] as? NSNumber)?.floatValue ?? 0
+        matrix.columns.3.w = (self[15] as? NSNumber)?.floatValue ?? 0
+        
+        return matrix
+    }
+}
+
 extension Dictionary where Value: Equatable {
     func someKey(forValue val: Value) -> Key? {
         return first(where: { $1 == val })?.key
