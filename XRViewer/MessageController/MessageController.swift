@@ -291,26 +291,6 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
         site = currentSite
         
-        switch authorizationRequested {
-        case .minimal:
-            if allowedMinimalSites?[currentSite] != nil {
-                standardUserDefaults.set(true, forKey: Constant.minimalWebXREnabled())
-            }
-        case .worldSensing:
-            if allowedWorldSensingSites?[currentSite] != nil {
-                standardUserDefaults.set(true, forKey: Constant.minimalWebXREnabled())
-                standardUserDefaults.set(true, forKey: Constant.worldSensingWebXREnabled())
-            }
-        case .videoCameraAccess:
-            if allowedVideoCameraSites?[currentSite] != nil {
-                standardUserDefaults.set(true, forKey: Constant.minimalWebXREnabled())
-                standardUserDefaults.set(true, forKey: Constant.worldSensingWebXREnabled())
-                standardUserDefaults.set(true, forKey: Constant.videoCameraAccessWebXREnabled())
-            }
-        default:
-            break
-        }
-        
         if !forceShowPermissionsPopup {
             // Check whether Lite Mode is enabled
             if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled())
@@ -325,11 +305,14 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             
             switch authorizationRequested {
             case .minimal:
+                standardUserDefaults.set(true, forKey: Constant.minimalWebXREnabled())
                 if allowedMinimalSites?[currentSite] != nil {
                     authorizationGranted(.minimal)
                     return
                 }
             case .worldSensing:
+                standardUserDefaults.set(true, forKey: Constant.minimalWebXREnabled())
+                standardUserDefaults.set(true, forKey: Constant.worldSensingWebXREnabled())
                 if standardUserDefaults.bool(forKey: Constant.alwaysAllowWorldSensingKey())
                     || allowedWorldSensingSites?[currentSite] != nil
                 {
@@ -337,6 +320,9 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                     return
                 }
             case .videoCameraAccess:
+                standardUserDefaults.set(true, forKey: Constant.minimalWebXREnabled())
+                standardUserDefaults.set(true, forKey: Constant.worldSensingWebXREnabled())
+                standardUserDefaults.set(true, forKey: Constant.videoCameraAccessWebXREnabled())
                 if allowedVideoCameraSites?[currentSite] != nil {
                     authorizationGranted(.videoCameraAccess)
                     return
