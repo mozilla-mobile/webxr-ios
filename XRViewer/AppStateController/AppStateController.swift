@@ -1,5 +1,20 @@
 import UIKit
 
+/**
+ An enum representing the state of the app UI at a given time
+ 
+ - nothing: Shows the warning labels
+ - debug: Shows the helper and build label, and the AR debug info
+ - url: Shows the URL Bar
+ - urlDebug: Shows the URL Bar and the AR debug info
+ */
+@objc enum ShowMode: Int {
+    case nothing    = 0
+    case debug      = 1
+    case url        = 2
+    case urlDebug   = 3
+}
+
 enum ExclusiveStateType: Int {
     case exclusiveStateMessage
     case exclusiveStateMemory
@@ -69,7 +84,7 @@ class AppStateController: NSObject {
     }
 
     @objc func invertDebugMode() {
-        state.showMode == ShowMode.URL ? setShowMode(ShowMode.urlDebug) : setShowMode(ShowMode.URL)
+        state.showMode == ShowMode.url ? setShowMode(ShowMode.urlDebug) : setShowMode(ShowMode.url)
     }
 
     @objc func shouldShowURLBar() -> Bool {
@@ -81,7 +96,7 @@ class AppStateController: NSObject {
         } else {
             if state.showMode == .debug {
                 showURLBar = false
-            } else if state.showMode == .URL {
+            } else if state.showMode == .url {
                 showURLBar = true
             } else if state.showMode == .urlDebug {
                 showURLBar = true

@@ -138,7 +138,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             if debugSelected {
                 stateController.setShowMode(.urlDebug)
             } else {
-                stateController.setShowMode(.URL)
+                stateController.setShowMode(.url)
             }
         }
     }
@@ -719,7 +719,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onDebugButtonToggled = { selected in
-            blockSelf?.stateController.setShowMode(selected ? ShowMode.urlDebug : ShowMode.URL)
+            blockSelf?.stateController.setShowMode(selected ? ShowMode.urlDebug : ShowMode.url)
         }
         
         webController?.onSettingsButtonTapped = {
@@ -731,7 +731,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             settingsViewController.onDoneButtonTapped = {
                 weakSettingsViewController?.dismiss(animated: true)
                 blockSelf?.webController?.showBar(true)
-                blockSelf?.stateController.setShowMode(.URL)
+                blockSelf?.stateController.setShowMode(.url)
             }
 
             blockSelf?.webController?.showBar(false)

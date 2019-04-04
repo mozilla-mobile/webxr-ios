@@ -28,25 +28,6 @@ typedef NS_ENUM(NSUInteger, WebXRAuthorizationState)
 };
 
 /**
- An enum representing the state of the app UI at a given time
- 
- - ShowNothing: Shows the warning labels
- - ShowDebug: Shows the helper and build label, and the AR debug info
- - ShowURL: Shows the URL Bar
- - ShowURLDebug: Shows the URL Bar and the AR debug info
- */
-// Tony (2/12/19): In making the ShowMode enum more descriptive, there's temporary
-//      awkwardness & bad style when using the enum in Swift (.URL & .urlDebug).
-//      This will be resolved when fully converted to Swift.
-typedef NS_ENUM(NSUInteger, ShowMode)
-{
-    ShowNothing,
-    ShowDebug,
-    ShowURL,
-    ShowURLDebug
-};
-
-/**
  Show options. This option set is built from the AR Request dictionary received on initAR
  
  - None: Shows nothing

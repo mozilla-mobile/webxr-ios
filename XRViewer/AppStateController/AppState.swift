@@ -6,7 +6,7 @@ import Foundation
 @objc class AppState: NSObject, NSCopying {
     @objc var aRRequest: [AnyHashable : Any] = [:]
     var trackingState = ""
-    @objc var showMode: ShowMode = .nothing
+    var showMode: ShowMode = .nothing
     var showOptions: ShowOptions = .init(rawValue: 0)
     var webXR = false
     var computerVisionFrameRequested = false

@@ -163,7 +163,6 @@ extension ARKController {
     }
     
     func setShowMode(_ showMode: ShowMode) {
-        self.showMode = showMode
         controller?.setShowMode(showMode)
     }
     

@@ -38,7 +38,7 @@ class TouchView: UIView {
         updateIncreaseHotZoneValue()
     }
     
-    @objc func setShowMode(_ mode: ShowMode) {
+    func setShowMode(_ mode: ShowMode) {
         showMode = mode
     }
     

@@ -61,7 +61,7 @@ class OverlayViewController: UIViewController {
         guard let showOptions = showOptions else { return }
         var updRect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         
-        if showMode.rawValue >= ShowMode.URL.rawValue {
+        if showMode.rawValue >= ShowMode.url.rawValue {
             if showOptions.rawValue & ShowOptions.Browser.rawValue != 0 {
                 updRect.origin.y = CGFloat(Constant.urlBarHeight())
             }
@@ -80,7 +80,7 @@ class OverlayViewController: UIViewController {
             animator?.animate(buildLabel, toFade: true)
             timer?.invalidate()
             completion(true)
-        case .URL, .urlDebug:
+        case .url, .urlDebug:
             completion(true)
         }
     }

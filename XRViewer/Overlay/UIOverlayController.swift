@@ -39,7 +39,7 @@ class UIOverlayController: NSObject {
         guard let showMode = showMode else { return }
         guard let showOptions = showOptions else { return }
         
-        if showMode.rawValue >= ShowMode.URL.rawValue {
+        if showMode.rawValue >= ShowMode.url.rawValue {
             if showOptions.rawValue & ShowOptions.Browser.rawValue != 0 {
                 updRect.origin.y = CGFloat(Constant.urlBarHeight())
             }
@@ -52,7 +52,7 @@ class UIOverlayController: NSObject {
         return touchView
     }
 
-    @objc func setMode(_ mode: ShowMode) {
+    func setMode(_ mode: ShowMode) {
         showMode = mode
         overlayWindow?.alpha = mode == .nothing ? 0 : 1
         touchView?.showMode = mode
