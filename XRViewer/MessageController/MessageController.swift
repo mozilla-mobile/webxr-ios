@@ -2,6 +2,13 @@ import UIKit
 import PopupDialog
 import CocoaLumberjack
 
+enum ResetTrackingOption {
+    case resetTracking
+    case removeExistingAnchors
+    case saveWorldMap
+    case loadSavedWorldMap
+}
+
 class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     @objc var didShowMessage: (() -> Void)?
@@ -197,7 +204,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         didShowMessage?()
     }
 
-    @objc func showMessageAboutResetTracking(_ responseBlock: @escaping (ResetTrackingOption) -> Void) {
+    func showMessageAboutResetTracking(_ responseBlock: @escaping (ResetTrackingOption) -> Void) {
         let popup = PopupDialog(
             title: "Reset Tracking",
             message: "Please select one of the options below",
@@ -211,19 +218,19 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         )
 
         let resetTracking = DefaultButton(title: "Completely restart tracking", height: 40, dismissOnTap: true, action: {
-                responseBlock(.ResetTracking)
+                responseBlock(.resetTracking)
             })
 
         let removeExistingAnchors = DefaultButton(title: "Remove known anchors", height: 40, dismissOnTap: true, action: {
-                responseBlock(.RemoveExistingAnchors)
+                responseBlock(.removeExistingAnchors)
             })
 
         let saveWorldMap = DefaultButton(title: "Save World Map", height: 40, dismissOnTap: true, action: {
-                responseBlock(.SaveWorldMap)
+                responseBlock(.saveWorldMap)
             })
 
         let loadWorldMap = DefaultButton(title: "Load previously saved World Map", height: 40, dismissOnTap: true, action: {
-                responseBlock(.LoadSavedWorldMap)
+                responseBlock(.loadSavedWorldMap)
             })
 
         let cancelButton = CancelButton(title: "Cancel", height: 40, dismissOnTap: true, action: {

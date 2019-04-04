@@ -750,16 +750,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.messageController?.showMessageAboutResetTracking({ option in
                 guard let state = blockSelf?.stateController.state else { return }
                 switch option {
-                    case .ResetTracking:
+                    case .resetTracking:
                         blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
-                    case .RemoveExistingAnchors:
+                    case .removeExistingAnchors:
                         blockSelf?.arkController?.runSessionRemovingAnchors(with: state)
-                    case .SaveWorldMap:
+                    case .saveWorldMap:
                         blockSelf?.arkController?.saveWorldMap()
-                    case .LoadSavedWorldMap:
+                    case .loadSavedWorldMap:
                         blockSelf?.arkController?.loadSavedMap()
-                    default:
-                        break
                 }
             })
         }

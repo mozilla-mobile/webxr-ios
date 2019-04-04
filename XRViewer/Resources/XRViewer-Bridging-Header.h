@@ -12,11 +12,4 @@ static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
 static const DDLogLevel ddLogLevel = DDLogLevelWarning;
 #endif
 
-typedef NS_ENUM(NSInteger, ResetTrackingOption) {
-    ResetTracking,
-    RemoveExistingAnchors,
-    SaveWorldMap,
-    LoadSavedWorldMap
-};
-
 typedef void (^HotAction)(BOOL); // long
