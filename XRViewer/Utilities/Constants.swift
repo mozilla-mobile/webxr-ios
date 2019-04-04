@@ -239,3 +239,19 @@ let WEB_AR_TRACKING_STATE_RELOCALIZING = "ar_tracking_relocalizing"
 let WEB_AR_DETECTION_IMAGE_NAME_OPTION = "uid"
 let AR_CAMERA_PROJECTION_MATRIX_Z_NEAR = 0.001
 let AR_CAMERA_PROJECTION_MATRIX_Z_FAR = 1000.0
+
+// Old ViewController.h Constants
+
+let UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_MESSAGE = "The selected ARSessionConfiguration is not supported by the current device"
+let SENSOR_UNAVAILABLE_ARKIT_ERROR_MESSAGE = "A sensor required to run the session is not available"
+let SENSOR_FAILED_ARKIT_ERROR_MESSAGE = "A sensor failed to provide the required input.\nWe will try to restart the session using a Gravity World Alignment"
+let WORLD_TRACKING_FAILED_ARKIT_ERROR_MESSAGE = "World tracking has encountered a fatal error"
+
+let AR_SESSION_STARTED_POPUP_TITLE = "AR Session Started"
+let AR_SESSION_STARTED_POPUP_MESSAGE = "Swipe down to show the URL bar"
+let AR_SESSION_STARTED_POPUP_TIME_IN_SECONDS = 2
+
+let MEMORY_ERROR_DOMAIN = "Memory"
+let MEMORY_ERROR_CODE = 0
+let MEMORY_ERROR_MESSAGE = "Memory warning received"
+let WAITING_TIME_ON_MEMORY_WARNING = 0.5
