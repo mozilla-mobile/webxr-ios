@@ -11,10 +11,12 @@
  
  - WebXRAuthorizationStateNotDetermined: The user didn't say anything about the world sensing
  - WebXRAuthorizationStateDenied: The user denied sending world sensing data
- - WebXRAuthorizationStateMinimal: The user allowed sending wold sensing data
- - WebXRAuthorizationStateLite: The user allowed sending wold sensing data
- - WebXRAuthorizationStateWorldSensing: The user allowed sending wold sensing data
- - WebXRAuthorizationStateVideoCameraAccess: The user allowed access to the video camera and sending wold sensing data
+ - WebXRAuthorizationStateMinimal: The user allowed minimal sending world sensing data, which
+ displays video from the camera without giving the page access to the video
+ - WebXRAuthorizationStateLite: The user allowed Lite Mode world sensing data, which only shares
+ one plane from the real world with the site and enables face-based experiences
+ - WebXRAuthorizationStateWorldSensing: The user allowed sending world sensing data
+ - WebXRAuthorizationStateVideoCameraAccess: The user allowed access to the video camera and sending world sensing data
  
  */
 typedef NS_ENUM(NSUInteger, WebXRAuthorizationState)
