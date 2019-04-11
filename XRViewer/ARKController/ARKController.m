@@ -123,6 +123,7 @@
         switch (self.webXRAuthorizationStatus) {
             case WebXRAuthorizationStateNotDetermined: {
                 NSLog(@"WebXR auth changed to not determined");
+                self.objects = [NSMutableDictionary new];
                 break;
             }
             case WebXRAuthorizationStateWorldSensing:
@@ -135,8 +136,8 @@
                     if (!self.objects[[self anchorIDFor:addedAnchor]]) {
                         NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:addedAnchor] mutableCopy];
                         self.objects[[self anchorIDFor:addedAnchor]] = addedAnchorDictionary;
+                        [self.addedAnchorsSinceLastFrame addObject: self.objects[[self anchorIDFor:addedAnchor]]];
                     }
-                    [self.addedAnchorsSinceLastFrame addObject: self.objects[[self anchorIDFor:addedAnchor]]];
                 }
                 
                 [self createRequestedDetectionImages];
@@ -160,14 +161,7 @@
                 // still need to send the "required" anchors
                 NSArray *anchors = [[[self session] currentFrame] anchors];
                 for (ARAnchor* addedAnchor in anchors) {
-                    if (self.objects[[self anchorIDFor:addedAnchor]]) {
-                        // if the anchor is in the current object list, and is now not being sent
-                        // mark it as removed and remove from the object list
-                        if (![self shouldSend:addedAnchor]) {
-                            [self.removedAnchorsSinceLastFrame addObject:[self anchorIDFor:addedAnchor]];
-                            self.objects[[self anchorIDFor:addedAnchor]] = nil;
-                        }
-                    } else {
+                    if (!self.objects[[self anchorIDFor:addedAnchor]]) {
                         // if the anchor was not being sent but is in the approved list, start sending it
                         if ([self shouldSend:addedAnchor]) {
                             NSMutableDictionary *addedAnchorDictionary = [[self createDictionaryFor:addedAnchor] mutableCopy];

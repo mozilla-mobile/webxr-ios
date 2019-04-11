@@ -1040,17 +1040,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.stateController.state.askedWorldStateData = true
                     let granted = access == .videoCameraAccess ? true : false
                     
-                    if blockSelf?.arkController != nil {
-                        blockSelf?.arkController?.computerVisionDataEnabled = granted
-                        
-                        // Approving computer vision data implicitly approves the world sensing data
-                        blockSelf?.arkController?.webXRAuthorizationStatus = granted ? .videoCameraAccess : .denied
-                    }
+                    blockSelf?.arkController?.computerVisionDataEnabled = granted
+                    
+                    // Approving computer vision data implicitly approves the world sensing data
+                    blockSelf?.arkController?.webXRAuthorizationStatus = access
                     
                     blockSelf?.stateController.state.userGrantedSendingComputerVisionData = granted
-                    blockSelf?.stateController.state.userGrantedSendingWorldStateData = granted ? .videoCameraAccess : .denied
+                    blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
                     
-                    blockSelf?.stateController.setWebXR(granted)
+                    switch access {
+                    case .minimal, .lite, .worldSensing, .videoCameraAccess:
+                        blockSelf?.stateController.setWebXR(true)
+                    default:
+                        blockSelf?.stateController.setWebXR(false)
+                    }
                     blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
                 }, url: url)
             } else if request[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
@@ -1061,7 +1064,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
                     
                     switch access {
-                    case .worldSensing, .lite, .videoCameraAccess:
+                    case .minimal, .lite, .worldSensing, .videoCameraAccess:
                         blockSelf?.stateController.setWebXR(true)
                     default:
                         blockSelf?.stateController.setWebXR(false)
