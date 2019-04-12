@@ -343,17 +343,30 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         var message: String
         switch webXRAuthorizationRequested {
         case .minimal:
-            title = "This site is requesting basic WebXR authorization"
-            message = "Basic WebXR authorization displays video from your camera without giving this web page access to the video."
+            title = "This site is requesting WebXR authorization"
+            message = "WebXR displays video from your camera without giving this web page access to the video."
         case .lite:
             title = "This site is requesting Lite Mode authorization"
-            message = "Lite Mode allows this site to:\n-Use a single plane from the real world\n-Look for faces"
+            message = """
+                Lite Mode allows:
+                -Use of a single real world plane
+                -Looking for faces
+            """
         case .worldSensing:
             title = "This site is requesting World Sensing authorization"
-            message = "World Sensing allows this site to:\n-Use planes detected in the real world\n-Look for faces\n-Look for reference images"
+            message = """
+                World Sensing allows:
+                -Use of real world planes
+                -Looking for faces & images
+            """
         case .videoCameraAccess:
-            title = "This site is requesting Video Camera Access authorization"
-            message = "Video Camera Access allows this site to:\n-Access the live images from your video camera\n-Use planes detected in the real world\n-Look for faces \n-Look for reference images"
+            title = "This site is requesting Video Camera Access"
+            message = """
+                Video Camera Access allows:
+                -Access to your camera
+                -Use of real world planes
+                -Looking for faces & images
+            """
         default:
             title = "This site is not requesting WebXR authorization"
             message = "No video from your camera, planes, faces, or things in the real world will be shared with this site."
@@ -705,7 +718,12 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func learnMoreLiteModeTapped() {
-        let alert = UIAlertController(title: "What's Lite Mode?", message: "Lite Mode is privacy-focused and sends less information to WebXR sites. \n\nWhen Lite Mode is activated, only one plane from the real world is shared with WebXR sites. \nLite Mode enables face-based experiences, but it will not recognize images nor provide video camera access to WebXR sites.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "What's Lite Mode?", message: """
+            Lite Mode is privacy-focused and sends less information to WebXR sites.
+
+            When Lite Mode is on, only one real world plane is shared.
+            Lite Mode enables face-based experiences, but will not recognize images nor share camera access.
+        """, preferredStyle: .alert)
         let ok = UIAlertAction(title: "Ok", style: .default, handler: nil)
         alert.addAction(ok)
         permissionsPopup?.present(alert, animated: true)

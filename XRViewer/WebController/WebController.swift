@@ -188,7 +188,6 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         callWebMethod(WEB_AR_IOS_DID_RECEIVE_MEMORY_WARNING_MESSAGE, param: "", webCompletion: debugCompletion(name: "iosDidReceiveMemoryWarning"))
     }
 
-    // Tony: Doesn't appear a Bool previously returned by sendARData was used anywhere, I removed the return during conversion to Swift
     @objc func sendARData(_ data: [AnyHashable : Any]) {
         if transferCallback != ""  {
             callWebMethod(transferCallback, paramJSON: data, webCompletion: nil)

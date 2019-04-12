@@ -153,12 +153,6 @@
             case WebXRAuthorizationStateDenied: {
                 NSLog(@"WebXR auth changed to lite/minimal/denied");
                 
-                // Tony 3/5/19 TODO: Come back and revisit what encompasses a "required" anchor
-                //                  (i.e. per the old comment "still need to send the 'required'
-                //                  anchors") given the WebXRAuthorizationState is being set to
-                //                  .denied/.minimal/.lite
-                //
-                // still need to send the "required" anchors
                 NSArray *anchors = [[[self session] currentFrame] anchors];
                 for (ARAnchor* addedAnchor in anchors) {
                     if (!self.objects[[self anchorIDFor:addedAnchor]]) {
