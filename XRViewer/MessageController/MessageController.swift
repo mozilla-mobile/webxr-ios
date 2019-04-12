@@ -343,29 +343,29 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         var message: String
         switch webXRAuthorizationRequested {
         case .minimal:
-            title = "This site is requesting WebXR authorization"
+            title = "Allow WebXR functionality?"
             message = "WebXR displays video from your camera without giving this web page access to the video."
         case .lite:
-            title = "This site is requesting Lite Mode authorization"
+            title = "Allow Lite Mode?"
             message = """
-                Lite Mode allows:
-                -Use of a single real world plane
-                -Looking for faces
+                Lite Mode:
+                -Uses a single real world plane
+                -Looks for faces
             """
         case .worldSensing:
-            title = "This site is requesting World Sensing authorization"
+            title = "Allow World Sensing?"
             message = """
-                World Sensing allows:
-                -Use of real world planes
-                -Looking for faces & images
+                World Sensing:
+                -Uses real world planes
+                -Looks for faces & images
             """
         case .videoCameraAccess:
-            title = "This site is requesting Video Camera Access"
+            title = "Allow Video Camera Access?"
             message = """
-                Video Camera Access allows:
-                -Access to your camera
-                -Use of real world planes
-                -Looking for faces & images
+                Video Camera Access:
+                -Accesses your camera's live image
+                -Uses real world planes
+                -Looks for faces & images
             """
         default:
             title = "This site is not requesting WebXR authorization"
