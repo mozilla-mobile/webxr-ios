@@ -221,7 +221,7 @@ extension ARKController {
     }
     
     private func hitTestResultArrayFromResult(resultArray: [Any]?) -> [Any]? {
-        var results = [Any](repeating: 0, count: resultArray?.count ?? 0)
+        var results = [Any]()
         
         for result: ARHitTestResult in resultArray as? [ARHitTestResult] ?? [] {
             var dict = [AnyHashable : Any]()
@@ -232,12 +232,10 @@ extension ARKController {
             dict[WEB_AR_DISTANCE_OPTION] = result.distance
             dict[WEB_AR_UUID_OPTION] = result.anchor?.identifier.uuidString ?? ""
             
-            if result.anchor is ARPlaneAnchor {
-                if let planeAnchor = result.anchor as? ARPlaneAnchor {
-                    dict[WEB_AR_ANCHOR_CENTER_OPTION] = dictFromVector3(planeAnchor.center)
-                    dict[WEB_AR_ANCHOR_EXTENT_OPTION] = dictFromVector3(planeAnchor.extent)
-                    dict[WEB_AR_ANCHOR_TRANSFORM_OPTION] = planeAnchor.transform.array()
-                }
+            if let planeAnchor = result.anchor as? ARPlaneAnchor {
+                dict[WEB_AR_ANCHOR_CENTER_OPTION] = dictFromVector3(planeAnchor.center)
+                dict[WEB_AR_ANCHOR_EXTENT_OPTION] = dictFromVector3(planeAnchor.extent)
+                dict[WEB_AR_ANCHOR_TRANSFORM_OPTION] = planeAnchor.transform.array()
             }
             
             results.append(dict)
