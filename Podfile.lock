@@ -34,7 +34,7 @@ PODS:
   - GCDWebServer/Core (3.4.2)
   - MozillaTelemetry (1.1.0)
   - pop (1.0.12)
-  - PopupDialog (0.9.1):
+  - PopupDialog (1.1.0):
     - DynamicBlurView (~> 3.0.1)
 
 DEPENDENCIES:
@@ -44,7 +44,7 @@ DEPENDENCIES:
   - GCDWebServer (~> 3.0)
   - MozillaTelemetry (from `https://github.com/robomex/telemetry-ios.git`, branch `swift4`)
   - pop
-  - PopupDialog
+  - PopupDialog (from `https://github.com/robomex/PopupDialog.git`, branch `wide-alerts`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -53,17 +53,22 @@ SPEC REPOS:
     - FontAwesomeKit
     - GCDWebServer
     - pop
-    - PopupDialog
 
 EXTERNAL SOURCES:
   MozillaTelemetry:
     :branch: swift4
     :git: https://github.com/robomex/telemetry-ios.git
+  PopupDialog:
+    :branch: wide-alerts
+    :git: https://github.com/robomex/PopupDialog.git
 
 CHECKOUT OPTIONS:
   MozillaTelemetry:
     :commit: 5b726ed819b90553491ec1cfcc36347dda9ad6a0
     :git: https://github.com/robomex/telemetry-ios.git
+  PopupDialog:
+    :commit: a6213d7e5b24a61b43f9d004d778e77cfa03d978
+    :git: https://github.com/robomex/PopupDialog.git
 
 SPEC CHECKSUMS:
   CocoaLumberjack: db7cc9e464771f12054c22ff6947c5a58d43a0fd
@@ -72,8 +77,8 @@ SPEC CHECKSUMS:
   GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
   MozillaTelemetry: 09a819bd9cc9685c33a1e5fbe846423e770fd5c0
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
-  PopupDialog: 03985b669c29802661c187513bf827340db1ae4d
+  PopupDialog: 42fb7a0bc4fafdf89fef8b5b2b127a6023f3e1cc
 
-PODFILE CHECKSUM: 86955c65825a48fe30769ad7f0fa53b7ab0979b3
+PODFILE CHECKSUM: f33583a62cf7dd682e49aedf1d05a7db43ad61fa
 
 COCOAPODS: 1.5.3
