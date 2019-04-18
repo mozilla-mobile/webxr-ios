@@ -16,10 +16,10 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     @objc var didHideMessageByUser: (() -> Void)?
     private weak var viewController: UIViewController?
     private weak var arPopup: PopupDialog?
-    private var tableViewController = UITableViewController()
+    var requestXRPermissionsVC: RequestXRPermissionsViewController?
     private var webXRAuthorizationRequested: WebXRAuthorizationState = .notDetermined
     private var site: String?
-    private var permissionsPopup: UIAlertController?
+    var permissionsPopup: PopupDialog?
     var forceShowPermissionsPopup = false
 
     @objc init(viewController vc: UIViewController?) {
@@ -339,6 +339,30 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             }
         }
         
+        var height = CGFloat()
+        let rowHeight: CGFloat = 44
+        switch webXRAuthorizationRequested {
+        case .minimal:
+            height = rowHeight * 3
+        case .lite:
+            height = rowHeight * 3
+        case .worldSensing:
+            height = rowHeight * 4
+        case .videoCameraAccess:
+            height = rowHeight * 5
+        default:
+            height = rowHeight * 1
+        }
+        requestXRPermissionsVC = RequestXRPermissionsViewController()
+        guard let requestXRPermissionsVC = requestXRPermissionsVC else { return }
+        requestXRPermissionsVC.view.translatesAutoresizingMaskIntoConstraints = true
+        requestXRPermissionsVC.tableView.heightAnchor.constraint(equalToConstant: height).isActive = true
+        requestXRPermissionsVC.tableView.isScrollEnabled = false
+        requestXRPermissionsVC.tableView.delegate = self
+        requestXRPermissionsVC.tableView.dataSource = self
+        requestXRPermissionsVC.tableView.register(UINib(nibName: "SwitchInputTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "SwitchInputTableViewCell")
+        requestXRPermissionsVC.tableView.register(UINib(nibName: "SegmentedControlTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "SegmentedControlTableViewCell")
+        
         var title: String
         var message: String
         switch webXRAuthorizationRequested {
@@ -371,30 +395,38 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             title = "This site is not requesting WebXR authorization"
             message = "No video from your camera, planes, faces, or things in the real world will be shared with this site."
         }
-        
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let negativeAction: UIAlertAction
+        requestXRPermissionsVC.titleLabel.text = title
+        requestXRPermissionsVC.messageLabel.text = message
+        let alertController = PopupDialog(viewController: requestXRPermissionsVC,
+                                          buttonAlignment: .horizontal,
+                                          transitionStyle: .bounceUp,
+                                          preferredWidth: 300,
+                                          tapGestureDismissal: false,
+                                          panGestureDismissal: false,
+                                          hideStatusBar: false,
+                                          completion: nil)
+        let negativeAction: CancelButton
         if forceShowPermissionsPopup {
-            negativeAction = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
+            negativeAction = CancelButton(title: "Dismiss", action: nil)
         } else {
-            negativeAction = UIAlertAction(title: "Deny", style: .cancel) { _ in
+            negativeAction = CancelButton(title: "Deny") {
                 authorizationGranted(.denied)
             }
         }
-        alertController.addAction(negativeAction)
+        alertController.addButton(negativeAction)
         forceShowPermissionsPopup = false
         
-        let confirmAction = UIAlertAction(title: "Confirm", style: .default, handler: { _ in
-            if let minimalCell = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SwitchInputTableViewCell {
+        let confirmAction = DefaultButton(title: "Confirm") {
+            if let minimalCell = blockSelf?.requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SwitchInputTableViewCell {
                 standardUserDefaults.set(minimalCell.switchControl.isOn, forKey: Constant.minimalWebXREnabled())
             }
-            if let liteCell = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SwitchInputTableViewCell {
+            if let liteCell = blockSelf?.requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SwitchInputTableViewCell {
                 standardUserDefaults.set(liteCell.switchControl.isOn, forKey: Constant.liteModeWebXREnabled())
             }
-            if let worldSensingCell = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SwitchInputTableViewCell {
+            if let worldSensingCell = blockSelf?.requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SwitchInputTableViewCell {
                 standardUserDefaults.set(worldSensingCell.switchControl.isOn, forKey: Constant.worldSensingWebXREnabled())
             }
-            if let videoCameraAccessCell = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SwitchInputTableViewCell {
+            if let videoCameraAccessCell = blockSelf?.requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SwitchInputTableViewCell {
                 standardUserDefaults.set(videoCameraAccessCell.switchControl.isOn, forKey: Constant.videoCameraAccessWebXREnabled())
             }
             
@@ -403,7 +435,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) {
                     authorizationGranted(.lite)
                 } else if standardUserDefaults.bool(forKey: Constant.minimalWebXREnabled()) {
-                    guard let minimalControl = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SegmentedControlTableViewCell else { return }
+                    guard let minimalControl = blockSelf?.requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SegmentedControlTableViewCell else { return }
                     
                     var newDict = [AnyHashable : Any]()
                     if let dict = allowedMinimalSites {
@@ -425,7 +457,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled()) {
                     authorizationGranted(.lite)
                 } else if standardUserDefaults.bool(forKey: Constant.worldSensingWebXREnabled()) {
-                    guard let worldControl = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SegmentedControlTableViewCell else { return }
+                    guard let worldControl = blockSelf?.requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SegmentedControlTableViewCell else { return }
                     
                     var newDict = [AnyHashable : Any]()
                     if let dict = allowedWorldSensingSites {
@@ -445,7 +477,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                 }
             case .videoCameraAccess?:
                 if standardUserDefaults.bool(forKey: Constant.videoCameraAccessWebXREnabled()) {
-                    guard let videoControl = blockSelf?.tableViewController.tableView.cellForRow(at: IndexPath(row: 4, section: 0)) as? SegmentedControlTableViewCell else { return }
+                    guard let videoControl = blockSelf?.requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 4, section: 0)) as? SegmentedControlTableViewCell else { return }
                     
                     var newDict = [AnyHashable : Any]()
                     if let dict = allowedVideoCameraSites {
@@ -470,43 +502,20 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             default:
                 authorizationGranted(.denied)
             }
-        })
-        alertController.addAction(confirmAction)
-        
-        var height = CGFloat()
-        let rowHeight: CGFloat = 44
-        switch webXRAuthorizationRequested {
-        case .minimal:
-            height = rowHeight * 3
-        case .lite:
-            height = rowHeight * 3
-        case .worldSensing:
-            height = rowHeight * 4
-        case .videoCameraAccess:
-            height = rowHeight * 5
-        default:
-            height = rowHeight * 1
         }
-        tableViewController = UITableViewController()
-        tableViewController.preferredContentSize = CGSize(width: 272, height: height)
-        tableViewController.tableView.isScrollEnabled = false
-        tableViewController.tableView.delegate = self
-        tableViewController.tableView.dataSource = self
-        tableViewController.tableView.register(UINib(nibName: "SwitchInputTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "SwitchInputTableViewCell")
-        tableViewController.tableView.register(UINib(nibName: "SegmentedControlTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "SegmentedControlTableViewCell")
-        alertController.setValue(tableViewController, forKey: "contentViewController")
+        alertController.addButton(confirmAction)
         
         permissionsPopup = alertController
         viewController?.present(alertController, animated: true)
     }
     
     @objc func switchValueDidChange(sender: UISwitch) {
-        let liteCell = tableViewController.tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SwitchInputTableViewCell
-        let worldSensingCell = tableViewController.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SwitchInputTableViewCell
-        let videoCameraAccessCell = tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SwitchInputTableViewCell
-        let minimalControl = tableViewController.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SegmentedControlTableViewCell
-        let worldControl = tableViewController.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SegmentedControlTableViewCell
-        let videoControl = tableViewController.tableView.cellForRow(at: IndexPath(row: 4, section: 0)) as? SegmentedControlTableViewCell
+        let liteCell = requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SwitchInputTableViewCell
+        let worldSensingCell = requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SwitchInputTableViewCell
+        let videoCameraAccessCell = requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SwitchInputTableViewCell
+        let minimalControl = requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 2, section: 0)) as? SegmentedControlTableViewCell
+        let worldControl = requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 3, section: 0)) as? SegmentedControlTableViewCell
+        let videoControl = requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 4, section: 0)) as? SegmentedControlTableViewCell
         
         switch sender.tag {
         case 0:
@@ -691,13 +700,13 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     // MARK: private
 
     func setupAppearance() {
-        guard let largeFont = UIFont(name: "MyriadPro-Regular", size: 22) else { return }
-        guard let smallFont = UIFont(name: "MyriadPro-Regular", size: 18) else { return }
+        let largeFont = UIFont.boldSystemFont(ofSize: 17)
+        let smallFont = UIFont.systemFont(ofSize: 14)
         PopupDialogDefaultView.appearance().backgroundColor = UIColor.clear
         PopupDialogDefaultView.appearance().titleFont = largeFont
         PopupDialogDefaultView.appearance().titleColor = UIColor.black
         PopupDialogDefaultView.appearance().messageFont = smallFont
-        PopupDialogDefaultView.appearance().messageColor = UIColor.gray
+        PopupDialogDefaultView.appearance().messageColor = UIColor.black
 
         PopupDialogOverlayView.appearance().color = UIColor(white: 0, alpha: 0.5)
         PopupDialogOverlayView.appearance().blurRadius = 10

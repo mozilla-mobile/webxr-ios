@@ -1137,6 +1137,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             }
         }
     }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        var axis: NSLayoutConstraint.Axis
+        if view.traitCollection.verticalSizeClass == .compact {
+            messageController?.requestXRPermissionsVC?.view.widthAnchor.constraint(equalToConstant: 584).isActive = true
+            axis = NSLayoutConstraint.Axis.horizontal
+        } else {
+            axis = NSLayoutConstraint.Axis.vertical
+        }
+        messageController?.requestXRPermissionsVC?.stackView?.axis = axis
+    }
 }
 
 func RUN_UI_COMPLETION_ASYNC_MAIN(c: @escaping UICompletion) {
