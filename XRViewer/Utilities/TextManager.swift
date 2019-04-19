@@ -153,12 +153,12 @@ class TextManager {
     }
     
     func escalateFeedback(for trackingState: ARCamera.TrackingState, inSeconds seconds: TimeInterval) {
-        if self.trackingStateFeedbackEscalationTimer != nil {
-            self.trackingStateFeedbackEscalationTimer!.invalidate()
-            self.trackingStateFeedbackEscalationTimer = nil
+        if trackingStateFeedbackEscalationTimer != nil {
+            trackingStateFeedbackEscalationTimer!.invalidate()
+            trackingStateFeedbackEscalationTimer = nil
         }
         
-        self.trackingStateFeedbackEscalationTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false, block: { _ in
+        trackingStateFeedbackEscalationTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false, block: { _ in
             self.trackingStateFeedbackEscalationTimer?.invalidate()
             self.trackingStateFeedbackEscalationTimer = nil
             
@@ -194,7 +194,7 @@ class TextManager {
     
     // MARK: - Panel Visibility
     
-    private func showHideMessage(hide: Bool, animated: Bool) {
+    func showHideMessage(hide: Bool, animated: Bool) {
         if !animated {
             viewController.messageLabel.isHidden = hide
             return

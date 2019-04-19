@@ -301,7 +301,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             }
 
             blockSelf?.updateConstraints()
-
+            blockSelf?.textManager?.cancelAllScheduledMessages()
+            blockSelf?.textManager?.showHideMessage(hide: true, animated: true)
             blockSelf?.webController?.setup(forWebXR: xr)
         }
 
