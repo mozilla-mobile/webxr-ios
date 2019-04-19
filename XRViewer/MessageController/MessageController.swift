@@ -708,6 +708,8 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         PopupDialogDefaultView.appearance().messageFont = smallFont
         PopupDialogDefaultView.appearance().messageColor = UIColor.black
 
+        PopupDialogContainerView.appearance().cornerRadius = 13
+        
         PopupDialogOverlayView.appearance().color = UIColor(white: 0, alpha: 0.5)
         PopupDialogOverlayView.appearance().blurRadius = 10
         PopupDialogOverlayView.appearance().blurEnabled = true
