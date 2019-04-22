@@ -692,7 +692,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onAddAnchor = { name, transformArray, result in
-            if blockSelf?.arkController?.addAnchor(name, transform: transformArray) ?? false {
+            if blockSelf?.arkController?.addAnchor(name, transformHash: transformArray) ?? false {
                 if let anArray = transformArray {
                     result([WEB_AR_UUID_OPTION: name ?? 0, WEB_AR_TRANSFORM_OPTION: anArray])
                 }

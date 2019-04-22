@@ -19,7 +19,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     @objc var onRemoveObjects: (([Any]) -> Void)?
     @objc var onSetUI: (([AnyHashable : Any]?) -> Void)?
     @objc var onHitTest: ((Int, CGFloat, CGFloat, @escaping ResultArrayBlock) -> Void)?
-    @objc var onAddAnchor: ((String?, [Any]?, @escaping ResultBlock) -> Void)?
+    @objc var onAddAnchor: ((String?, [AnyHashable: Any]?, @escaping ResultBlock) -> Void)?
     @objc var onStartLoad: (() -> Void)?
     @objc var onFinishLoad: (() -> Void)?
     @objc var onDebugButtonToggled: ((Bool) -> Void)?
@@ -331,8 +331,12 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         } else if message.name == WEB_AR_ADD_ANCHOR_MESSAGE {
             guard let hitCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             let name = messageBody[WEB_AR_UUID_OPTION] as? String
-            guard let transform = messageBody[WEB_AR_TRANSFORM_OPTION] as? [Any] else { return }
-
+            guard let transform = messageBody[WEB_AR_TRANSFORM_OPTION] as? [AnyHashable: Any] else {
+                var responseDictionary = [AnyHashable : Any]()
+                responseDictionary["error"] = "invalid transform parameter"
+                blockSelf?.callWebMethod(hitCallback, paramJSON: responseDictionary, webCompletion: debugCompletion(name: "onAddAnchor"))
+                return
+            }
             onAddAnchor?(name, transform, { results in
                 blockSelf?.callWebMethod(hitCallback, paramJSON: results, webCompletion: debugCompletion(name: "onAddAnchor"))
             })
@@ -380,27 +384,38 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             })
         } else if message.name == WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE {
             let imageAnchorInfoDictionary = messageBody
-            guard let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String else { return }
             guard let deactivateDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
+            guard let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String else {
+                var responseDictionary = [AnyHashable : Any]()
+                responseDictionary["error"] = "invalid image name parameter"
+                blockSelf?.callWebMethod(deactivateDetectionImageCallback, paramJSON: responseDictionary, webCompletion: debugCompletion(name: "onDeactivateImage"))
+                return
+            }
+
             onDeactivateDetectionImage?(imageName, { success, errorString in
                 var responseDictionary = [AnyHashable : Any]()
                 responseDictionary["deactivated"] = success
                 if errorString != nil {
                     responseDictionary["error"] = errorString ?? ""
                 }
-                blockSelf?.callWebMethod(deactivateDetectionImageCallback, paramJSON: responseDictionary, webCompletion: nil)
+                blockSelf?.callWebMethod(deactivateDetectionImageCallback, paramJSON: responseDictionary, webCompletion: debugCompletion(name: "onDeactivateImage"))
             })
         } else if message.name == WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE {
             let imageAnchorInfoDictionary = messageBody
-            guard let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String else { return }
             guard let destroyDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
+            guard let imageName = imageAnchorInfoDictionary[WEB_AR_DETECTION_IMAGE_NAME_OPTION] as? String else {
+                var responseDictionary = [AnyHashable : Any]()
+                responseDictionary["error"] = "invalid image name parameter"
+                blockSelf?.callWebMethod(destroyDetectionImageCallback, paramJSON: responseDictionary, webCompletion: debugCompletion(name: "onDestroyDetectionImage"))
+                return
+            }
             onDestroyDetectionImage?(imageName, { success, errorString in
                 var responseDictionary = [AnyHashable : Any]()
                 responseDictionary["destroyed"] = success
                 if errorString != nil {
                     responseDictionary["error"] = errorString ?? ""
                 }
-                blockSelf?.callWebMethod(destroyDetectionImageCallback, paramJSON: responseDictionary, webCompletion: nil)
+                blockSelf?.callWebMethod(destroyDetectionImageCallback, paramJSON: responseDictionary, webCompletion: debugCompletion(name: "onDestroyDetectionImage"))
             })
         } else if message.name == WEB_AR_GET_WORLD_MAP_MESSAGE {
             guard let getWorldMapCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }

@@ -104,7 +104,26 @@ function create() {
   out[15] = 1;
   return out;
 }
-
+function clone(a) {
+  let out = new ARRAY_TYPE(16);
+  out[0] = a[0];
+  out[1] = a[1];
+  out[2] = a[2];
+  out[3] = a[3];
+  out[4] = a[4];
+  out[5] = a[5];
+  out[6] = a[6];
+  out[7] = a[7];
+  out[8] = a[8];
+  out[9] = a[9];
+  out[10] = a[10];
+  out[11] = a[11];
+  out[12] = a[12];
+  out[13] = a[13];
+  out[14] = a[14];
+  out[15] = a[15];
+  return out;
+}
 function copy(out, a) {
   out[0] = a[0];
   out[1] = a[1];
@@ -364,6 +383,43 @@ function perspective(out, fovy, aspect, near, far) {
     out[14] = -2 * near;
   }
   return out;
+}
+
+
+
+
+
+
+
+
+
+
+
+function equals$1(a, b) {
+  let a0  = a[0],  a1  = a[1],  a2  = a[2],  a3  = a[3];
+  let a4  = a[4],  a5  = a[5],  a6  = a[6],  a7  = a[7];
+  let a8  = a[8],  a9  = a[9],  a10 = a[10], a11 = a[11];
+  let a12 = a[12], a13 = a[13], a14 = a[14], a15 = a[15];
+  let b0  = b[0],  b1  = b[1],  b2  = b[2],  b3  = b[3];
+  let b4  = b[4],  b5  = b[5],  b6  = b[6],  b7  = b[7];
+  let b8  = b[8],  b9  = b[9],  b10 = b[10], b11 = b[11];
+  let b12 = b[12], b13 = b[13], b14 = b[14], b15 = b[15];
+  return (Math.abs(a0 - b0) <= EPSILON*Math.max(1.0, Math.abs(a0), Math.abs(b0)) &&
+          Math.abs(a1 - b1) <= EPSILON*Math.max(1.0, Math.abs(a1), Math.abs(b1)) &&
+          Math.abs(a2 - b2) <= EPSILON*Math.max(1.0, Math.abs(a2), Math.abs(b2)) &&
+          Math.abs(a3 - b3) <= EPSILON*Math.max(1.0, Math.abs(a3), Math.abs(b3)) &&
+          Math.abs(a4 - b4) <= EPSILON*Math.max(1.0, Math.abs(a4), Math.abs(b4)) &&
+          Math.abs(a5 - b5) <= EPSILON*Math.max(1.0, Math.abs(a5), Math.abs(b5)) &&
+          Math.abs(a6 - b6) <= EPSILON*Math.max(1.0, Math.abs(a6), Math.abs(b6)) &&
+          Math.abs(a7 - b7) <= EPSILON*Math.max(1.0, Math.abs(a7), Math.abs(b7)) &&
+          Math.abs(a8 - b8) <= EPSILON*Math.max(1.0, Math.abs(a8), Math.abs(b8)) &&
+          Math.abs(a9 - b9) <= EPSILON*Math.max(1.0, Math.abs(a9), Math.abs(b9)) &&
+          Math.abs(a10 - b10) <= EPSILON*Math.max(1.0, Math.abs(a10), Math.abs(b10)) &&
+          Math.abs(a11 - b11) <= EPSILON*Math.max(1.0, Math.abs(a11), Math.abs(b11)) &&
+          Math.abs(a12 - b12) <= EPSILON*Math.max(1.0, Math.abs(a12), Math.abs(b12)) &&
+          Math.abs(a13 - b13) <= EPSILON*Math.max(1.0, Math.abs(a13), Math.abs(b13)) &&
+          Math.abs(a14 - b14) <= EPSILON*Math.max(1.0, Math.abs(a14), Math.abs(b14)) &&
+          Math.abs(a15 - b15) <= EPSILON*Math.max(1.0, Math.abs(a15), Math.abs(b15)));
 }
 
 const PRIVATE$3 = Symbol('@@webxr-polyfill/XRDevicePose');
@@ -811,79 +867,17 @@ class XRDevice$1 extends EventTarget {
   }
 }
 
-let domPointROExport = ('DOMPointReadOnly' in _global) ? DOMPointReadOnly : null;
-if (!domPointROExport) {
-  const PRIVATE = Symbol('@@webxr-polyfill/DOMPointReadOnly');
-  domPointROExport = class DOMPointReadOnly {
-    constructor(x, y, z, w) {
-      if (arguments.length === 1) {
-        this[PRIVATE] = {
-          x: x.x,
-          y: x.y,
-          z: x.z,
-          w: x.w
-        };
-      } else if (arguments.length === 4) {
-        this[PRIVATE] = {
-          x: x,
-          y: y,
-          z: z,
-          w: w
-        };
-      } else {
-        throw new TypeError('Must supply either 1 or 4 arguments')
-      }
-    }
-    get x() { return this[PRIVATE].x }
-    get y() { return this[PRIVATE].y }
-    get z() { return this[PRIVATE].z }
-    get w() { return this[PRIVATE].w }
-  };
-}
-var DOMPointReadOnly$1 = domPointROExport;
-
-class XRRay {
-  constructor(origin=new DOMPointReadOnly$1(0, 0, 0, 1),
-              direction=new DOMPointReadOnly$1(0, 0, -1, 0),
-              transformMatrix=new Float32Array(16)) {
-    if (!(origin instanceof DOMPointReadOnly$1)) {
-      throw new Error('origin must be a DOMPointReadOnly');
-    }
-    if (!(direction instanceof DOMPointReadOnly$1)) {
-      throw new Error('direction must be a DOMPointReadOnly');
-    }
-    if (!(transformMatrix instanceof Float32Array)) {
-      throw new Error('transformMatrix must be a Float32Array');
-    }
-    Object.defineProperties(this, {
-      origin: {
-        value: origin,
-        writable: false,
-      },
-      direction: {
-        value: direction,
-        writable: false,
-      },
-      transformMatrix: {
-        value: transformMatrix,
-        writable: false,
-      },
-    });
-  }
-}
-
 const PRIVATE$12 = Symbol('@@webxr-polyfill/XRInputPose');
 class XRInputPose {
   constructor(inputSourceImpl, hasGripMatrix) {
     this[PRIVATE$12] = {
       inputSourceImpl,
-      targetRay: new XRRay(),
-      gripMatrix: hasGripMatrix ? create() : null,
+      pointerMatrix: identity(new Float32Array(16)),
+      gripMatrix: hasGripMatrix ? identity(new Float32Array(16)) : null,
     };
   }
-  get targetRay() { return this[PRIVATE$12].targetRay; }
-  set targetRay(value) { this[PRIVATE$12].targetRay = value; }
   get emulatedPosition() { return this[PRIVATE$12].inputSourceImpl.emulatedPosition; }
+  get pointerMatrix() { return this[PRIVATE$12].pointerMatrix; }
   get gripMatrix() { return this[PRIVATE$12].gripMatrix; }
 }
 
@@ -895,7 +889,7 @@ class XRInputSource {
     };
   }
   get handedness() { return this[PRIVATE$13].impl.handedness; }
-  get targetRayMode() { return this[PRIVATE$13].impl.targetRayMode; }
+  get pointerOrigin() { return this[PRIVATE$13].impl.pointerOrigin; }
 }
 
 class XRLayer {
@@ -969,8 +963,7 @@ var API = {
   XRStageBounds,
   XRStageBoundsPoint,
   XRInputPose,
-  XRInputSource,
-  XRRay,
+  XRInputSource
 };
 
 const extendContextCompatibleXRDevice = Context => {
@@ -1004,207 +997,6 @@ const extendGetContext = Canvas => {
   };
 };
 
-function create$1() {
-  let out = new ARRAY_TYPE(3);
-  if(ARRAY_TYPE != Float32Array) {
-    out[0] = 0;
-    out[1] = 0;
-    out[2] = 0;
-  }
-  return out;
-}
-function clone$1(a) {
-  var out = new ARRAY_TYPE(3);
-  out[0] = a[0];
-  out[1] = a[1];
-  out[2] = a[2];
-  return out;
-}
-function length(a) {
-  let x = a[0];
-  let y = a[1];
-  let z = a[2];
-  return Math.sqrt(x*x + y*y + z*z);
-}
-function fromValues$1(x, y, z) {
-  let out = new ARRAY_TYPE(3);
-  out[0] = x;
-  out[1] = y;
-  out[2] = z;
-  return out;
-}
-function copy$1(out, a) {
-  out[0] = a[0];
-  out[1] = a[1];
-  out[2] = a[2];
-  return out;
-}
-function set$1(out, x, y, z) {
-  out[0] = x;
-  out[1] = y;
-  out[2] = z;
-  return out;
-}
-function add$1(out, a, b) {
-  out[0] = a[0] + b[0];
-  out[1] = a[1] + b[1];
-  out[2] = a[2] + b[2];
-  return out;
-}
-function subtract$1(out, a, b) {
-  out[0] = a[0] - b[0];
-  out[1] = a[1] - b[1];
-  out[2] = a[2] - b[2];
-  return out;
-}
-
-
-
-
-
-
-
-function scale$1(out, a, b) {
-  out[0] = a[0] * b;
-  out[1] = a[1] * b;
-  out[2] = a[2] * b;
-  return out;
-}
-
-function distance(a, b) {
-  let x = b[0] - a[0];
-  let y = b[1] - a[1];
-  let z = b[2] - a[2];
-  return Math.sqrt(x*x + y*y + z*z);
-}
-
-
-
-
-function normalize(out, a) {
-  let x = a[0];
-  let y = a[1];
-  let z = a[2];
-  let len = x*x + y*y + z*z;
-  if (len > 0) {
-    len = 1 / Math.sqrt(len);
-    out[0] = a[0] * len;
-    out[1] = a[1] * len;
-    out[2] = a[2] * len;
-  }
-  return out;
-}
-function dot(a, b) {
-  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-}
-function cross(out, a, b) {
-  let ax = a[0], ay = a[1], az = a[2];
-  let bx = b[0], by = b[1], bz = b[2];
-  out[0] = ay * bz - az * by;
-  out[1] = az * bx - ax * bz;
-  out[2] = ax * by - ay * bx;
-  return out;
-}
-
-
-
-
-function transformMat4(out, a, m) {
-  let x = a[0], y = a[1], z = a[2];
-  let w = m[3] * x + m[7] * y + m[11] * z + m[15];
-  w = w || 1.0;
-  out[0] = (m[0] * x + m[4] * y + m[8] * z + m[12]) / w;
-  out[1] = (m[1] * x + m[5] * y + m[9] * z + m[13]) / w;
-  out[2] = (m[2] * x + m[6] * y + m[10] * z + m[14]) / w;
-  return out;
-}
-
-function transformQuat(out, a, q) {
-    let qx = q[0], qy = q[1], qz = q[2], qw = q[3];
-    let x = a[0], y = a[1], z = a[2];
-    let uvx = qy * z - qz * y,
-        uvy = qz * x - qx * z,
-        uvz = qx * y - qy * x;
-    let uuvx = qy * uvz - qz * uvy,
-        uuvy = qz * uvx - qx * uvz,
-        uuvz = qx * uvy - qy * uvx;
-    let w2 = qw * 2;
-    uvx *= w2;
-    uvy *= w2;
-    uvz *= w2;
-    uuvx *= 2;
-    uuvy *= 2;
-    uuvz *= 2;
-    out[0] = x + uvx + uuvx;
-    out[1] = y + uvy + uuvy;
-    out[2] = z + uvz + uuvz;
-    return out;
-}
-
-
-
-function angle(a, b) {
-  let tempA = fromValues$1(a[0], a[1], a[2]);
-  let tempB = fromValues$1(b[0], b[1], b[2]);
-  normalize(tempA, tempA);
-  normalize(tempB, tempB);
-  let cosine = dot(tempA, tempB);
-  if(cosine > 1.0) {
-    return 0;
-  }
-  else if(cosine < -1.0) {
-    return Math.PI;
-  } else {
-    return Math.acos(cosine);
-  }
-}
-
-
-
-const sub$1 = subtract$1;
-
-
-
-
-const len = length;
-
-const forEach = (function() {
-  let vec = create$1();
-  return function(a, stride, offset, count, fn, arg) {
-    let i, l;
-    if(!stride) {
-      stride = 3;
-    }
-    if(!offset) {
-      offset = 0;
-    }
-    if(count) {
-      l = Math.min((count * stride) + offset, a.length);
-    } else {
-      l = a.length;
-    }
-    for(i = offset; i < l; i += stride) {
-      vec[0] = a[i]; vec[1] = a[i+1]; vec[2] = a[i+2];
-      fn(vec, vec, arg);
-      a[i] = vec[0]; a[i+1] = vec[1]; a[i+2] = vec[2];
-    }
-    return a;
-  };
-})();
-
-const poseMatrixToXRRay = poseMatrix => {
-  const rayOrigin = [];
-  const rayDirection = [];
-  set$1(rayOrigin, 0, 0, 0);
-  transformMat4(rayOrigin, rayOrigin, poseMatrix);
-  set$1(rayDirection, 0, 0, -1);
-  transformMat4(rayDirection, rayDirection, poseMatrix);
-  sub$1(rayDirection, rayDirection, rayOrigin);
-  normalize(rayDirection, rayDirection);
-  return new XRRay(new DOMPointReadOnly$1(rayOrigin[0], rayOrigin[1], rayOrigin[2], 1.0),
-                   new DOMPointReadOnly$1(rayDirection[0], rayDirection[1], rayDirection[2], 0.0),
-                   poseMatrix);
-};
 const isMobile = global => {
   var check = false;
   (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)))check = true;})(global.navigator.userAgent||global.navigator.vendor||global.opera);
@@ -4424,79 +4216,107 @@ class PolyfilledXRDevice extends EventTarget {
   }
 }
 
-function create$2() {
-  let out = new ARRAY_TYPE(9);
-  if(ARRAY_TYPE != Float32Array) {
-    out[1] = 0;
-    out[2] = 0;
-    out[3] = 0;
-    out[5] = 0;
-    out[6] = 0;
-    out[7] = 0;
-  }
-  out[0] = 1;
-  out[4] = 1;
-  out[8] = 1;
-  return out;
-}
-
-function create$3() {
-  let out = new ARRAY_TYPE(4);
+function create$1() {
+  let out = new ARRAY_TYPE(3);
   if(ARRAY_TYPE != Float32Array) {
     out[0] = 0;
     out[1] = 0;
     out[2] = 0;
-    out[3] = 0;
   }
   return out;
 }
-function clone$3(a) {
-  let out = new ARRAY_TYPE(4);
-  out[0] = a[0];
-  out[1] = a[1];
-  out[2] = a[2];
-  out[3] = a[3];
-  return out;
-}
 
-function copy$3(out, a) {
-  out[0] = a[0];
-  out[1] = a[1];
-  out[2] = a[2];
-  out[3] = a[3];
-  return out;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function normalize$1(out, a) {
+function length(a) {
   let x = a[0];
   let y = a[1];
   let z = a[2];
-  let w = a[3];
-  let len = x*x + y*y + z*z + w*w;
+  return Math.sqrt(x*x + y*y + z*z);
+}
+function fromValues$1(x, y, z) {
+  let out = new ARRAY_TYPE(3);
+  out[0] = x;
+  out[1] = y;
+  out[2] = z;
+  return out;
+}
+
+function set$1(out, x, y, z) {
+  out[0] = x;
+  out[1] = y;
+  out[2] = z;
+  return out;
+}
+function add$1(out, a, b) {
+  out[0] = a[0] + b[0];
+  out[1] = a[1] + b[1];
+  out[2] = a[2] + b[2];
+  return out;
+}
+function subtract$1(out, a, b) {
+  out[0] = a[0] - b[0];
+  out[1] = a[1] - b[1];
+  out[2] = a[2] - b[2];
+  return out;
+}
+
+
+
+
+
+
+
+function scale$1(out, a, b) {
+  out[0] = a[0] * b;
+  out[1] = a[1] * b;
+  out[2] = a[2] * b;
+  return out;
+}
+
+function distance(a, b) {
+  let x = b[0] - a[0];
+  let y = b[1] - a[1];
+  let z = b[2] - a[2];
+  return Math.sqrt(x*x + y*y + z*z);
+}
+
+
+
+
+function normalize(out, a) {
+  let x = a[0];
+  let y = a[1];
+  let z = a[2];
+  let len = x*x + y*y + z*z;
   if (len > 0) {
     len = 1 / Math.sqrt(len);
-    out[0] = x * len;
-    out[1] = y * len;
-    out[2] = z * len;
-    out[3] = w * len;
+    out[0] = a[0] * len;
+    out[1] = a[1] * len;
+    out[2] = a[2] * len;
   }
+  return out;
+}
+function dot(a, b) {
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+function cross(out, a, b) {
+  let ax = a[0], ay = a[1], az = a[2];
+  let bx = b[0], by = b[1], bz = b[2];
+  out[0] = ay * bz - az * by;
+  out[1] = az * bx - ax * bz;
+  out[2] = ax * by - ay * bx;
+  return out;
+}
+
+
+
+
+function transformMat4(out, a, m) {
+  let x = a[0], y = a[1], z = a[2];
+  let w = m[3] * x + m[7] * y + m[11] * z + m[15];
+  w = w || 1.0;
+  out[0] = (m[0] * x + m[4] * y + m[8] * z + m[12]) / w;
+  out[1] = (m[1] * x + m[5] * y + m[9] * z + m[13]) / w;
+  out[2] = (m[2] * x + m[6] * y + m[10] * z + m[14]) / w;
   return out;
 }
 
@@ -4513,13 +4333,14 @@ function normalize$1(out, a) {
 
 
 
+const len = length;
 
-const forEach$1 = (function() {
-  let vec = create$3();
+const forEach = (function() {
+  let vec = create$1();
   return function(a, stride, offset, count, fn, arg) {
     let i, l;
     if(!stride) {
-      stride = 4;
+      stride = 3;
     }
     if(!offset) {
       offset = 0;
@@ -4530,355 +4351,16 @@ const forEach$1 = (function() {
       l = a.length;
     }
     for(i = offset; i < l; i += stride) {
-      vec[0] = a[i]; vec[1] = a[i+1]; vec[2] = a[i+2]; vec[3] = a[i+3];
+      vec[0] = a[i]; vec[1] = a[i+1]; vec[2] = a[i+2];
       fn(vec, vec, arg);
-      a[i] = vec[0]; a[i+1] = vec[1]; a[i+2] = vec[2]; a[i+3] = vec[3];
+      a[i] = vec[0]; a[i+1] = vec[1]; a[i+2] = vec[2];
     }
     return a;
   };
 })();
 
-function create$4() {
-  let out = new ARRAY_TYPE(4);
-  if(ARRAY_TYPE != Float32Array) {
-    out[0] = 0;
-    out[1] = 0;
-    out[2] = 0;
-  }
-  out[3] = 1;
-  return out;
-}
-
-function setAxisAngle(out, axis, rad) {
-  rad = rad * 0.5;
-  let s = Math.sin(rad);
-  out[0] = s * axis[0];
-  out[1] = s * axis[1];
-  out[2] = s * axis[2];
-  out[3] = Math.cos(rad);
-  return out;
-}
-
-function multiply$4(out, a, b) {
-  let ax = a[0], ay = a[1], az = a[2], aw = a[3];
-  let bx = b[0], by = b[1], bz = b[2], bw = b[3];
-  out[0] = ax * bw + aw * bx + ay * bz - az * by;
-  out[1] = ay * bw + aw * by + az * bx - ax * bz;
-  out[2] = az * bw + aw * bz + ax * by - ay * bx;
-  out[3] = aw * bw - ax * bx - ay * by - az * bz;
-  return out;
-}
-
-
-
-
-function slerp(out, a, b, t) {
-  let ax = a[0], ay = a[1], az = a[2], aw = a[3];
-  let bx = b[0], by = b[1], bz = b[2], bw = b[3];
-  let omega, cosom, sinom, scale0, scale1;
-  cosom = ax * bx + ay * by + az * bz + aw * bw;
-  if ( cosom < 0.0 ) {
-    cosom = -cosom;
-    bx = - bx;
-    by = - by;
-    bz = - bz;
-    bw = - bw;
-  }
-  if ( (1.0 - cosom) > EPSILON ) {
-    omega  = Math.acos(cosom);
-    sinom  = Math.sin(omega);
-    scale0 = Math.sin((1.0 - t) * omega) / sinom;
-    scale1 = Math.sin(t * omega) / sinom;
-  } else {
-    scale0 = 1.0 - t;
-    scale1 = t;
-  }
-  out[0] = scale0 * ax + scale1 * bx;
-  out[1] = scale0 * ay + scale1 * by;
-  out[2] = scale0 * az + scale1 * bz;
-  out[3] = scale0 * aw + scale1 * bw;
-  return out;
-}
-
-function invert$2(out, a) {
-  let a0 = a[0], a1 = a[1], a2 = a[2], a3 = a[3];
-  let dot$$1 = a0*a0 + a1*a1 + a2*a2 + a3*a3;
-  let invDot = dot$$1 ? 1.0/dot$$1 : 0;
-  out[0] = -a0*invDot;
-  out[1] = -a1*invDot;
-  out[2] = -a2*invDot;
-  out[3] = a3*invDot;
-  return out;
-}
-
-function fromMat3(out, m) {
-  let fTrace = m[0] + m[4] + m[8];
-  let fRoot;
-  if ( fTrace > 0.0 ) {
-    fRoot = Math.sqrt(fTrace + 1.0);
-    out[3] = 0.5 * fRoot;
-    fRoot = 0.5/fRoot;
-    out[0] = (m[5]-m[7])*fRoot;
-    out[1] = (m[6]-m[2])*fRoot;
-    out[2] = (m[1]-m[3])*fRoot;
-  } else {
-    let i = 0;
-    if ( m[4] > m[0] )
-      i = 1;
-    if ( m[8] > m[i*3+i] )
-      i = 2;
-    let j = (i+1)%3;
-    let k = (i+2)%3;
-    fRoot = Math.sqrt(m[i*3+i]-m[j*3+j]-m[k*3+k] + 1.0);
-    out[i] = 0.5 * fRoot;
-    fRoot = 0.5 / fRoot;
-    out[3] = (m[j*3+k] - m[k*3+j]) * fRoot;
-    out[j] = (m[j*3+i] + m[i*3+j]) * fRoot;
-    out[k] = (m[k*3+i] + m[i*3+k]) * fRoot;
-  }
-  return out;
-}
-function fromEuler(out, x, y, z) {
-    let halfToRad = 0.5 * Math.PI / 180.0;
-    x *= halfToRad;
-    y *= halfToRad;
-    z *= halfToRad;
-    let sx = Math.sin(x);
-    let cx = Math.cos(x);
-    let sy = Math.sin(y);
-    let cy = Math.cos(y);
-    let sz = Math.sin(z);
-    let cz = Math.cos(z);
-    out[0] = sx * cy * cz - cx * sy * sz;
-    out[1] = cx * sy * cz + sx * cy * sz;
-    out[2] = cx * cy * sz - sx * sy * cz;
-    out[3] = cx * cy * cz + sx * sy * sz;
-    return out;
-}
-
-const clone$4 = clone$3;
-
-const copy$4 = copy$3;
-
-
-
-
-
-
-
-
-
-
-const normalize$2 = normalize$1;
-
-
-const rotationTo = (function() {
-  let tmpvec3 = create$1();
-  let xUnitVec3 = fromValues$1(1,0,0);
-  let yUnitVec3 = fromValues$1(0,1,0);
-  return function(out, a, b) {
-    let dot$$1 = dot(a, b);
-    if (dot$$1 < -0.999999) {
-      cross(tmpvec3, xUnitVec3, a);
-      if (len(tmpvec3) < 0.000001)
-        cross(tmpvec3, yUnitVec3, a);
-      normalize(tmpvec3, tmpvec3);
-      setAxisAngle(out, tmpvec3, Math.PI);
-      return out;
-    } else if (dot$$1 > 0.999999) {
-      out[0] = 0;
-      out[1] = 0;
-      out[2] = 0;
-      out[3] = 1;
-      return out;
-    } else {
-      cross(tmpvec3, a, b);
-      out[0] = tmpvec3[0];
-      out[1] = tmpvec3[1];
-      out[2] = tmpvec3[2];
-      out[3] = 1 + dot$$1;
-      return normalize$2(out, out);
-    }
-  };
-})();
-const sqlerp = (function () {
-  let temp1 = create$4();
-  let temp2 = create$4();
-  return function (out, a, b, c, d, t) {
-    slerp(temp1, a, d, t);
-    slerp(temp2, b, c, t);
-    slerp(out, temp1, temp2, 2 * t * (1 - t));
-    return out;
-  };
-}());
-const setAxes = (function() {
-  let matr = create$2();
-  return function(out, view, right, up) {
-    matr[0] = right[0];
-    matr[3] = right[1];
-    matr[6] = right[2];
-    matr[1] = up[0];
-    matr[4] = up[1];
-    matr[7] = up[2];
-    matr[2] = -view[0];
-    matr[5] = -view[1];
-    matr[8] = -view[2];
-    return normalize$2(out, fromMat3(out, matr));
-  };
-})();
-
-const HEAD_ELBOW_OFFSET_RIGHTHANDED = fromValues$1(0.155, -0.465, -0.15);
-const HEAD_ELBOW_OFFSET_LEFTHANDED = fromValues$1(-0.155, -0.465, -0.15);
-const ELBOW_WRIST_OFFSET = fromValues$1(0, 0, -0.25);
-const WRIST_CONTROLLER_OFFSET = fromValues$1(0, 0, 0.05);
-const ARM_EXTENSION_OFFSET = fromValues$1(-0.08, 0.14, 0.08);
-const ELBOW_BEND_RATIO = 0.4;
-const EXTENSION_RATIO_WEIGHT = 0.4;
-const MIN_ANGULAR_SPEED = 0.61;
-const MIN_ANGLE_DELTA = 0.175;
-const MIN_EXTENSION_COS = 0.12;
-const MAX_EXTENSION_COS = 0.87;
-const RAD_TO_DEG = 180 / Math.PI;
-function eulerFromQuaternion(out, q, order) {
-  function clamp(value, min$$1, max$$1) {
-    return (value < min$$1 ? min$$1 : (value > max$$1 ? max$$1 : value));
-  }
-  var sqx = q[0] * q[0];
-  var sqy = q[1] * q[1];
-  var sqz = q[2] * q[2];
-  var sqw = q[3] * q[3];
-  if ( order === 'XYZ' ) {
-    out[0] = Math.atan2( 2 * ( q[0] * q[3] - q[1] * q[2] ), ( sqw - sqx - sqy + sqz ) );
-    out[1] = Math.asin(  clamp( 2 * ( q[0] * q[2] + q[1] * q[3] ), -1, 1 ) );
-    out[2] = Math.atan2( 2 * ( q[2] * q[3] - q[0] * q[1] ), ( sqw + sqx - sqy - sqz ) );
-  } else if ( order ===  'YXZ' ) {
-    out[0] = Math.asin(  clamp( 2 * ( q[0] * q[3] - q[1] * q[2] ), -1, 1 ) );
-    out[1] = Math.atan2( 2 * ( q[0] * q[2] + q[1] * q[3] ), ( sqw - sqx - sqy + sqz ) );
-    out[2] = Math.atan2( 2 * ( q[0] * q[1] + q[2] * q[3] ), ( sqw - sqx + sqy - sqz ) );
-  } else if ( order === 'ZXY' ) {
-    out[0] = Math.asin(  clamp( 2 * ( q[0] * q[3] + q[1] * q[2] ), -1, 1 ) );
-    out[1] = Math.atan2( 2 * ( q[1] * q[3] - q[2] * q[0] ), ( sqw - sqx - sqy + sqz ) );
-    out[2] = Math.atan2( 2 * ( q[2] * q[3] - q[0] * q[1] ), ( sqw - sqx + sqy - sqz ) );
-  } else if ( order === 'ZYX' ) {
-    out[0] = Math.atan2( 2 * ( q[0] * q[3] + q[2] * q[1] ), ( sqw - sqx - sqy + sqz ) );
-    out[1] = Math.asin(  clamp( 2 * ( q[1] * q[3] - q[0] * q[2] ), -1, 1 ) );
-    out[2] = Math.atan2( 2 * ( q[0] * q[1] + q[2] * q[3] ), ( sqw + sqx - sqy - sqz ) );
-  } else if ( order === 'YZX' ) {
-    out[0] = Math.atan2( 2 * ( q[0] * q[3] - q[2] * q[1] ), ( sqw - sqx + sqy - sqz ) );
-    out[1] = Math.atan2( 2 * ( q[1] * q[3] - q[0] * q[2] ), ( sqw + sqx - sqy - sqz ) );
-    out[2] = Math.asin(  clamp( 2 * ( q[0] * q[1] + q[2] * q[3] ), -1, 1 ) );
-  } else if ( order === 'XZY' ) {
-    out[0] = Math.atan2( 2 * ( q[0] * q[3] + q[1] * q[2] ), ( sqw - sqx + sqy - sqz ) );
-    out[1] = Math.atan2( 2 * ( q[0] * q[2] + q[1] * q[3] ), ( sqw + sqx - sqy - sqz ) );
-    out[2] = Math.asin(  clamp( 2 * ( q[2] * q[3] - q[0] * q[1] ), -1, 1 ) );
-  } else {
-    console.log('No order given for quaternion to euler conversion.');
-    return;
-  }
-}
-class OrientationArmModel {
-  constructor() {
-    this.hand = 'right';
-    this.headElbowOffset = HEAD_ELBOW_OFFSET_RIGHTHANDED;
-    this.controllerQ = create$4();
-    this.lastControllerQ = create$4();
-    this.headQ = create$4();
-    this.headPos = create$1();
-    this.elbowPos = create$1();
-    this.wristPos = create$1();
-    this.time = null;
-    this.lastTime = null;
-    this.rootQ = create$4();
-    this.position = create$1();
-  }
-  setHandedness(hand) {
-    if (this.hand != hand) {
-      this.hand = hand;
-      if (this.hand == 'left') {
-        this.headElbowOffset = HEAD_ELBOW_OFFSET_LEFTHANDED;
-      } else {
-        this.headElbowOffset = HEAD_ELBOW_OFFSET_RIGHTHANDED;
-      }
-    }
-  }
-  update(controllerOrientation, headPoseMatrix) {
-    this.time = now$1();
-    if (controllerOrientation) {
-      copy$4(this.lastControllerQ, this.controllerQ);
-      copy$4(this.controllerQ, controllerOrientation);
-    }
-    if (headPoseMatrix) {
-      getTranslation(this.headPos, headPoseMatrix);
-      getRotation(this.headQ, headPoseMatrix);
-    }
-    let headYawQ = this.getHeadYawOrientation_();
-    let angleDelta = this.quatAngle_(this.lastControllerQ, this.controllerQ);
-    let timeDelta = (this.time - this.lastTime) / 1000;
-    let controllerAngularSpeed = angleDelta / timeDelta;
-    if (controllerAngularSpeed > MIN_ANGULAR_SPEED) {
-      slerp(this.rootQ, this.rootQ, headYawQ,
-                 Math.min(angleDelta / MIN_ANGLE_DELTA, 1.0));
-    } else {
-      copy$4(this.rootQ, headYawQ);
-    }
-    let controllerForward = fromValues$1(0, 0, -1.0);
-    transformQuat(controllerForward, controllerForward, this.controllerQ);
-    let controllerDotY = dot(controllerForward, [0, 1, 0]);
-    let extensionRatio = this.clamp_(
-        (controllerDotY - MIN_EXTENSION_COS) / MAX_EXTENSION_COS, 0.0, 1.0);
-    let controllerCameraQ = clone$4(this.rootQ);
-    invert$2(controllerCameraQ, controllerCameraQ);
-    multiply$4(controllerCameraQ, controllerCameraQ, this.controllerQ);
-    let elbowPos = this.elbowPos;
-    copy$1(elbowPos, this.headPos);
-    add$1(elbowPos, elbowPos, this.headElbowOffset);
-    let elbowOffset = clone$1(ARM_EXTENSION_OFFSET);
-    scale$1(elbowOffset, elbowOffset, extensionRatio);
-    add$1(elbowPos, elbowPos, elbowOffset);
-    let totalAngle = this.quatAngle_(controllerCameraQ, create$4());
-    let totalAngleDeg = totalAngle * RAD_TO_DEG;
-    let lerpSuppression = 1 - Math.pow(totalAngleDeg / 180, 4);let elbowRatio = ELBOW_BEND_RATIO;
-    let wristRatio = 1 - ELBOW_BEND_RATIO;
-    let lerpValue = lerpSuppression *
-        (elbowRatio + wristRatio * extensionRatio * EXTENSION_RATIO_WEIGHT);
-    let wristQ = create$4();
-    slerp(wristQ, wristQ, controllerCameraQ, lerpValue);
-    let invWristQ = invert$2(create$4(), wristQ);
-    let elbowQ = clone$4(controllerCameraQ);
-    multiply$4(elbowQ, elbowQ, invWristQ);
-    let wristPos = this.wristPos;
-    copy$1(wristPos, WRIST_CONTROLLER_OFFSET);
-    transformQuat(wristPos, wristPos, wristQ);
-    add$1(wristPos, wristPos, ELBOW_WRIST_OFFSET);
-    transformQuat(wristPos, wristPos, elbowQ);
-    add$1(wristPos, wristPos, elbowPos);
-    let offset = clone$1(ARM_EXTENSION_OFFSET);
-    scale$1(offset, offset, extensionRatio);
-    add$1(this.position, this.wristPos, offset);
-    transformQuat(this.position, this.position, this.rootQ);
-    this.lastTime = this.time;
-  }
-  getPosition() {
-    return this.position;
-  }
-  getHeadYawOrientation_() {
-    let headEuler = create$1();
-    eulerFromQuaternion(headEuler, this.headQ, 'YXZ');
-    let destinationQ = fromEuler(create$4(), 0, headEuler[1] * RAD_TO_DEG, 0);
-    return destinationQ;
-  }
-  clamp_(value, min$$1, max$$1) {
-    return Math.min(Math.max(value, min$$1), max$$1);
-  }
-  quatAngle_(q1, q2) {
-    let vec1 = [0, 0, -1];
-    let vec2 = [0, 0, -1];
-    transformQuat(vec1, vec1, q1);
-    transformQuat(vec2, vec2, q2);
-    return angle(vec1, vec2);
-  }
-}
-
+const HEAD_CONTROLLER_RIGHT_OFFSET = fromValues$1(0.155, -0.465, -0.35);
+const HEAD_CONTROLLER_LEFT_OFFSET = fromValues$1(-0.155, -0.465, -0.35);
 class GamepadXRInputSource {
   constructor(polyfill, primaryButtonIndex = 0) {
     this.polyfill = polyfill;
@@ -4891,17 +4373,16 @@ class GamepadXRInputSource {
     this.primaryButtonIndex = primaryButtonIndex;
     this.primaryActionPressed = false;
     this.handedness = '';
-    this.targetRayMode = 'gaze';
-    this.armModel = null;
+    this.pointerOrigin = 'head';
   }
   updateFromGamepad(gamepad) {
     this.gamepad = gamepad;
     this.handedness = gamepad.hand;
     if (gamepad.pose) {
-      this.targetRayMode = 'tracked-pointer';
+      this.pointerOrigin = 'hand';
       this.emulatedPosition = !gamepad.pose.hasPosition;
     } else if (gamepad.hand === '') {
-      this.targetRayMode = 'gaze';
+      this.pointerOrigin = 'head';
       this.emulatedPosition = false;
     }
   }
@@ -4915,12 +4396,11 @@ class GamepadXRInputSource {
       }
       if (!position) {
         if (!pose.hasPosition) {
-          if (!this.armModel) {
-            this.armModel = new OrientationArmModel();
+          if (this.gamepad.hand == 'left') {
+            position = HEAD_CONTROLLER_LEFT_OFFSET;
+          } else {
+            position = HEAD_CONTROLLER_RIGHT_OFFSET;
           }
-          this.armModel.setHandedness(this.gamepad.hand);
-          this.armModel.update(orientation, this.polyfill.getBasePoseMatrix());
-          position = this.armModel.getPosition();
         } else {
           position = this.lastPosition;
         }
@@ -4942,9 +4422,7 @@ class GamepadXRInputSource {
       inputPose = new XRInputPose(this, this.gamepad && this.gamepad.pose);
       this.inputPoses.set(coordinateSystem, inputPose);
     }
-    const rayTransformMatrix = new Float32Array(16);
-    coordinateSystem.transformBasePoseMatrix(rayTransformMatrix, this.basePoseMatrix);
-    inputPose.targetRay = poseMatrixToXRRay(rayTransformMatrix);
+    coordinateSystem.transformBasePoseMatrix(inputPose.pointerMatrix, this.basePoseMatrix);
     if (inputPose.gripMatrix) {
       coordinateSystem.transformBasePoseMatrix(inputPose.gripMatrix, this.basePoseMatrix);
     }
@@ -5373,8 +4851,346 @@ class WebXRPolyfill {
   }
 }
 
+function create$2() {
+  let out = new ARRAY_TYPE(9);
+  if(ARRAY_TYPE != Float32Array) {
+    out[1] = 0;
+    out[2] = 0;
+    out[3] = 0;
+    out[5] = 0;
+    out[6] = 0;
+    out[7] = 0;
+  }
+  out[0] = 1;
+  out[4] = 1;
+  out[8] = 1;
+  return out;
+}
+
+function create$3() {
+  let out = new ARRAY_TYPE(4);
+  if(ARRAY_TYPE != Float32Array) {
+    out[0] = 0;
+    out[1] = 0;
+    out[2] = 0;
+    out[3] = 0;
+  }
+  return out;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function normalize$1(out, a) {
+  let x = a[0];
+  let y = a[1];
+  let z = a[2];
+  let w = a[3];
+  let len = x*x + y*y + z*z + w*w;
+  if (len > 0) {
+    len = 1 / Math.sqrt(len);
+    out[0] = x * len;
+    out[1] = y * len;
+    out[2] = z * len;
+    out[3] = w * len;
+  }
+  return out;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const forEach$1 = (function() {
+  let vec = create$3();
+  return function(a, stride, offset, count, fn, arg) {
+    let i, l;
+    if(!stride) {
+      stride = 4;
+    }
+    if(!offset) {
+      offset = 0;
+    }
+    if(count) {
+      l = Math.min((count * stride) + offset, a.length);
+    } else {
+      l = a.length;
+    }
+    for(i = offset; i < l; i += stride) {
+      vec[0] = a[i]; vec[1] = a[i+1]; vec[2] = a[i+2]; vec[3] = a[i+3];
+      fn(vec, vec, arg);
+      a[i] = vec[0]; a[i+1] = vec[1]; a[i+2] = vec[2]; a[i+3] = vec[3];
+    }
+    return a;
+  };
+})();
+
+function create$4() {
+  let out = new ARRAY_TYPE(4);
+  if(ARRAY_TYPE != Float32Array) {
+    out[0] = 0;
+    out[1] = 0;
+    out[2] = 0;
+  }
+  out[3] = 1;
+  return out;
+}
+
+function setAxisAngle(out, axis, rad) {
+  rad = rad * 0.5;
+  let s = Math.sin(rad);
+  out[0] = s * axis[0];
+  out[1] = s * axis[1];
+  out[2] = s * axis[2];
+  out[3] = Math.cos(rad);
+  return out;
+}
+
+
+
+
+
+
+function slerp(out, a, b, t) {
+  let ax = a[0], ay = a[1], az = a[2], aw = a[3];
+  let bx = b[0], by = b[1], bz = b[2], bw = b[3];
+  let omega, cosom, sinom, scale0, scale1;
+  cosom = ax * bx + ay * by + az * bz + aw * bw;
+  if ( cosom < 0.0 ) {
+    cosom = -cosom;
+    bx = - bx;
+    by = - by;
+    bz = - bz;
+    bw = - bw;
+  }
+  if ( (1.0 - cosom) > EPSILON ) {
+    omega  = Math.acos(cosom);
+    sinom  = Math.sin(omega);
+    scale0 = Math.sin((1.0 - t) * omega) / sinom;
+    scale1 = Math.sin(t * omega) / sinom;
+  } else {
+    scale0 = 1.0 - t;
+    scale1 = t;
+  }
+  out[0] = scale0 * ax + scale1 * bx;
+  out[1] = scale0 * ay + scale1 * by;
+  out[2] = scale0 * az + scale1 * bz;
+  out[3] = scale0 * aw + scale1 * bw;
+  return out;
+}
+
+
+
+function fromMat3(out, m) {
+  let fTrace = m[0] + m[4] + m[8];
+  let fRoot;
+  if ( fTrace > 0.0 ) {
+    fRoot = Math.sqrt(fTrace + 1.0);
+    out[3] = 0.5 * fRoot;
+    fRoot = 0.5/fRoot;
+    out[0] = (m[5]-m[7])*fRoot;
+    out[1] = (m[6]-m[2])*fRoot;
+    out[2] = (m[1]-m[3])*fRoot;
+  } else {
+    let i = 0;
+    if ( m[4] > m[0] )
+      i = 1;
+    if ( m[8] > m[i*3+i] )
+      i = 2;
+    let j = (i+1)%3;
+    let k = (i+2)%3;
+    fRoot = Math.sqrt(m[i*3+i]-m[j*3+j]-m[k*3+k] + 1.0);
+    out[i] = 0.5 * fRoot;
+    fRoot = 0.5 / fRoot;
+    out[3] = (m[j*3+k] - m[k*3+j]) * fRoot;
+    out[j] = (m[j*3+i] + m[i*3+j]) * fRoot;
+    out[k] = (m[k*3+i] + m[i*3+k]) * fRoot;
+  }
+  return out;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const normalize$2 = normalize$1;
+
+
+const rotationTo = (function() {
+  let tmpvec3 = create$1();
+  let xUnitVec3 = fromValues$1(1,0,0);
+  let yUnitVec3 = fromValues$1(0,1,0);
+  return function(out, a, b) {
+    let dot$$1 = dot(a, b);
+    if (dot$$1 < -0.999999) {
+      cross(tmpvec3, xUnitVec3, a);
+      if (len(tmpvec3) < 0.000001)
+        cross(tmpvec3, yUnitVec3, a);
+      normalize(tmpvec3, tmpvec3);
+      setAxisAngle(out, tmpvec3, Math.PI);
+      return out;
+    } else if (dot$$1 > 0.999999) {
+      out[0] = 0;
+      out[1] = 0;
+      out[2] = 0;
+      out[3] = 1;
+      return out;
+    } else {
+      cross(tmpvec3, a, b);
+      out[0] = tmpvec3[0];
+      out[1] = tmpvec3[1];
+      out[2] = tmpvec3[2];
+      out[3] = 1 + dot$$1;
+      return normalize$2(out, out);
+    }
+  };
+})();
+const sqlerp = (function () {
+  let temp1 = create$4();
+  let temp2 = create$4();
+  return function (out, a, b, c, d, t) {
+    slerp(temp1, a, d, t);
+    slerp(temp2, b, c, t);
+    slerp(out, temp1, temp2, 2 * t * (1 - t));
+    return out;
+  };
+}());
+const setAxes = (function() {
+  let matr = create$2();
+  return function(out, view, right, up) {
+    matr[0] = right[0];
+    matr[3] = right[1];
+    matr[6] = right[2];
+    matr[1] = up[0];
+    matr[4] = up[1];
+    matr[7] = up[2];
+    matr[2] = -view[0];
+    matr[5] = -view[1];
+    matr[8] = -view[2];
+    return normalize$2(out, fromMat3(out, matr));
+  };
+})();
+
+class XRAnchor extends EventTarget {
+	constructor(transform, uid=null){
+		super();
+		this._uid = uid || XRAnchor._generateUID();
+		this._transform = clone(transform);
+	}
+	get modelMatrix () {  return this._transform };
+	set modelMatrix (transform) {
+		for ( var i = 0; i < 16; i ++ ) {
+			this._transform[ i ] = transform[ i ];
+		}
+	}
+	notifyOfUpdate() {
+		try {
+			this.dispatchEvent( "update", { source: this });
+		} catch(e) {
+			console.error('XRAnchor update event error', e);
+		}
+	}
+	notifyOfRemoval() {
+		try {
+			this.dispatchEvent( "removed", { source: this });
+		} catch(e) {
+			console.error('XRAnchor removed event error', e);
+		}
+	}
+	get position(){
+		return getTranslation(new Float32Array(3), this._poseMatrix)
+	}
+	get orientation(){
+		return getRotation(new Float32Array(4), this._poseMatrix)
+	}
+	get uid(){ return this._uid }
+	static _generateUID(){
+		return 'anchor-' + new Date().getTime() + '-' + Math.floor((Math.random() * Number.MAX_SAFE_INTEGER))
+	}
+}
+
+class XRAnchorOffset extends XRAnchor {
+	constructor(anchor, offset=null){
+		super(offset);
+		this._anchor = anchor;
+		this._tempArray = new Float32Array(16);
+		this._offsetMatrix = create();
+		if (offset) {
+			copy(this._offsetMatrix, offset);
+		}
+		multiply(this._transform, anchor.modelMatrix, this._offsetMatrix);
+		this._handleAnchorUpdateListener = this._handleAnchorUpdate.bind(this);
+		this._notifyOfRemovalListener = this.notifyOfRemoval.bind(this);
+		this._handleReplaceAnchorListener = this._handleReplaceAnchor.bind(this);
+		anchor.addEventListener("update", this._handleAnchorUpdateListener);
+		anchor.addEventListener("removal", this._notifyOfRemovalListener);
+		anchor.addEventListener("replaceAnchor", this._handleReplaceAnchorListener);
+	}
+	_handleReplaceAnchor(detail) {
+		this._anchor = detail;
+		this._anchor.deleteEv("update", this._handleAnchorUpdateListener);
+		this._anchor.addEventListener("removal", this._notifyOfRemovalListener);
+		this._anchor.addEventListener("replaceAnchor", this._handleReplaceAnchorListener);
+		this._anchor.addEventListener("update", this._handleAnchorUpdateListener);
+		this._anchor.addEventListener("removal", this._notifyOfRemovalListener);
+		this._anchor.addEventListener("replaceAnchor", this._handleReplaceAnchorListener);
+	}
+	_handleAnchorUpdate() {
+		multiply(this._tempArray, anchor.modelMatrix, this._offsetMatrix);
+		this.modelMatrix = this._tempArray;
+		this.notifyOfRemoval();
+	}
+	get modelMatrix () { return this._transform }
+	set modelMatrix (transform) {
+		throw new Error("can't set the modelMatrix on XRAnchorOffset")
+	}
+	get anchor(){ return this._anchor }
+	get offsetMatrix(){ return this._offsetMatrix }
+	set offsetMatrix(array16){
+		copy(this._offsetMatrix, array16);
+	}
+}
+
 class XRHitResult {
-	constructor(hitMatrix=null){
+	constructor(hitMatrix=null, hit=null){
+		this._hit = hit;
 		this._hitMatrix = hitMatrix || new Float32Array(16);
 	}
 	get hitMatrix(){
@@ -5677,11 +5493,14 @@ class ARKitWrapper extends EventTarget {
 		this._rawARData = null;
 		this._projectionMatrix = new Float32Array(16);
 		this._viewMatrix = new Float32Array(16);
+		this._cameraTransform = new Float32Array(16);
 		this._planes = new Map();
 		this._anchors = new Map();
+		this._anchorOffsets = new Map();
 		this._timeOffsets = [];
 		this._timeOffset = 0;
 		this._timeOffsetComputed = false;
+		this._worldMappingStatus = ARKitWrapper.WEB_AR_WORLDMAPPING_NOT_AVAILABLE;
 		this._globalCallbacksMap = {};
 		let callbackNames = ['onInit', 'onWatch'];
 		for(let i=0; i < callbackNames.length; i++){
@@ -5792,7 +5611,7 @@ class ARKitWrapper extends EventTarget {
 		return Array.from(this._planes.values())
 	}
 	getData(key=null){
-		if (key === null){
+		if (!key){
 			return this._rawARData
 		}
 		if(this._rawARData && typeof this._rawARData[key] !== 'undefined'){
@@ -5805,7 +5624,7 @@ class ARKitWrapper extends EventTarget {
 			return null
 		}
 		const objects = this.getKey('objects');
-		if(objects === null) return null
+		if(!objects) return null
 		for(const object of objects){
 			if(object.uuid === uuid){
 				return object
@@ -5855,7 +5674,7 @@ class ARKitWrapper extends EventTarget {
 		}
 		return null
 	}
-    addAnchor(uid, transform){
+  addAnchor(uid, transform){
 		return new Promise((resolve, reject) => {
 			if (!this._isInitialized){
 				reject(new Error('ARKit is not initialized'));
@@ -5868,10 +5687,64 @@ class ARKitWrapper extends EventTarget {
 			});
 		})
 	}
+	createAnchor(anchorInWorldMatrix) {
+		return new Promise((resolve, reject) => {
+			var anchor = new XRAnchor(anchorInWorldMatrix);
+			this.addAnchor(anchor.uid, anchorInWorldMatrix).then(detail => {
+				if (detail.error) {
+					reject(detail.error);
+				}
+				var _anchor = this._anchors.get(detail.uuid);
+				if(!_anchor){
+					this._anchors.set(detail.uuid, {
+						id: detail.uuid,
+						object: anchor
+					});
+				}else{
+					anchor = _anchor;
+					anchor.modelMatrix = detail.transform;
+				}
+				resolve(anchor);
+			}).catch((...params) => {
+				console.error('could not create anchor', ...params);
+				reject();
+			});
+		});
+	}
+	addAnchorFromHit(hit) {
+		return new Promise((resolve, reject) => {
+			if (hit.anchor_transform) {
+				let anchor = this._anchors.get(hit.uuid);
+				if(!anchor){
+					anchor = this._planes.get(hit.uuid);
+					if (!anchor) {
+						anchor = new XRAnchor(hit.anchor_transform, hit.uuid);
+						console.log('created dummy anchor (for plane) from hit test');
+						anchor.placeholder = true;
+						this._anchors.set(hit.uuid, anchor);
+					}
+				}
+				const wt = multiply(create(), hit.anchor_transform, hit.local_transform);
+				const anchorOffset = new XRAnchorOffset(anchor, hit.local_transform);
+				resolve(anchorOffset);
+			} else {
+				let anchor = this._anchors.get(hit.uuid);
+				if(!anchor){
+					anchor = new XRAnchor(hit.world_transform, hit.uuid);
+					console.log('created dummy anchor (not a plane) from hit test');
+					anchor.placeholder = true;
+					this._anchors.set(hit.uuid, anchor);
+				} else {
+					console.log('hit test resulted in a hit on an existing anchor, without an offset');
+				}
+				resolve(anchor);
+			}
+		})
+	}
 	removeAnchor(uid) {
 		window.webkit.messageHandlers.removeAnchors.postMessage([uid]);
 	}
-    createImageAnchor(uid, buffer, width, height, physicalWidthInMeters) {
+  createImageAnchor(uid, buffer, width, height, physicalWidthInMeters) {
 		return new Promise((resolve, reject) => {
             if (!this._isInitialized){
                 reject(new Error('ARKit is not initialized'));
@@ -5884,7 +5757,7 @@ class ARKitWrapper extends EventTarget {
                 imageWidth: width,
                 imageHeight: height,
                 physicalWidth: physicalWidthInMeters,
-				callback: this._createPromiseCallback('createImageAnchor', resolve)
+								callback: this._createPromiseCallback('createImageAnchor', resolve)
             });
 		})
 	}
@@ -5900,6 +5773,29 @@ class ARKitWrapper extends EventTarget {
             });
         })
 	}
+		getWorldMap() {
+			return new Promise((resolve, reject) => {
+					 if (!this._isInitialized){
+							 reject(new Error('ARKit is not initialized'));
+							 return;
+					 }
+					 window.webkit.messageHandlers.getWorldMap.postMessage({
+							 callback: this._createPromiseCallback('getWorldMap', resolve)
+					 });
+			})
+		}
+		setWorldMap(worldMap) {
+			return new Promise((resolve, reject) => {
+					 if (!this._isInitialized){
+							 reject(new Error('ARKit is not initialized'));
+							 return;
+					 }
+					 window.webkit.messageHandlers.setWorldMap.postMessage({
+						 worldMap: worldMap.worldMap,
+							 callback: this._createPromiseCallback('setWorldMap', resolve)
+					 });
+			})
+		}
 	stop(){
 		return new Promise((resolve, reject) => {
 			if (!this._isWatching){
@@ -5920,7 +5816,10 @@ class ARKitWrapper extends EventTarget {
 			return true
 		}
 		this._isWatching = true;
-		const newO = Object.assign({}, this._defaultOptions, options);
+		var newO = Object.assign({}, this._defaultOptions);
+		if(options != null) {
+			newO = Object.assign(newO, options);
+		}
 		if (newO.videoFrames) {
 			delete newO.videoFrames;
 			newO.computer_vision_data = true;
@@ -5957,84 +5856,139 @@ class ARKitWrapper extends EventTarget {
             console.error('INIT_EVENT event error', e);
         }
 	}
+	_createOrUpdateAnchorObject(element) {
+		if(element.plane_center){
+			var plane = this._planes.get(element.uuid);
+			var anchor = this._anchors.get(element.uuid);
+			if(!plane){
+				var planeObject = new XRPlaneAnchor(element.transform,
+					element.uuid,
+					element.plane_center,
+					[element.plane_extent.x, element.plane_extent.z],
+					element.plane_alignment,
+					element.geometry);
+				if (anchor) {
+					try {
+						anchor.dispatchEvent("replaceAnchor",
+							new CustomEvent("replaceAnchor", {
+								source: anchor,
+								detail: plane
+							})
+						);
+					} catch(e) {
+							console.error('replaceAnchor event error', e);
+					}
+					console.log('replaced dummy anchor created from hit test with plane');
+					this._anchors.delete(element.uuid);
+				}
+				this._planes.set(element.uuid, {
+					id: element.uuid,
+					object: planeObject
+				});
+				element.object = planeObject;
+			} else {
+				plane.object.updatePlaneData(element.plane_center, [element.plane_extent.x,element.plane_extent.y], element.plane_alignment, element.geometry);
+				if (!equals$1(plane.object.modelMatrix, element.transform)) {
+					plane.object.modelMatrix = element.transform;
+					plane.object.notifyOfUpdate();
+				}
+				element.object = plane.object;
+			}
+		}else{
+			anchor = this._anchors.get(element.uuid);
+			if(!anchor || anchor.placeholder){
+				let anchorObject;
+				switch (element.type) {
+					case ARKitWrapper.ANCHOR_TYPE_FACE:
+						anchorObject = new XRFaceAnchor(element.transform, element.uuid, element.geometry, element.blendShapes);
+						break
+					case ARKitWrapper.ANCHOR_TYPE_ANCHOR:
+						anchorObject = new XRAnchor(element.transform, element.uuid);
+						break
+					case ARKitWrapper.ANCHOR_TYPE_IMAGE:
+						anchorObject = new XRImageAnchor(element.transform, element.uuid);
+						break
+				}
+				if (anchor) {
+					try {
+						anchor.dispatchEvent("replaceAnchor",
+							new CustomEvent("replaceAnchor", {
+								source: anchor,
+								detail: anchorObject
+							})
+						);
+					} catch(e) {
+							console.error('replaceAnchor event error', e);
+					}
+					console.log('replaced dummy anchor created from hit test with new anchor');
+				}
+				this._anchors.set(element.uuid, {
+					id: element.uuid,
+					object: anchorObject
+				});
+				element.object = anchorObject;
+			} else {
+				switch (element.type) {
+					case ARKitWrapper.ANCHOR_TYPE_FACE:
+						anchor.object.updateFaceData(element.transform, element.geometry, element.blendShapes);
+						break
+				}
+				if (!equals$1(anchor.object.modelMatrix, element.transform)) {
+					anchor.object.modelMatrix = element.transform;
+					anchor.object.notifyOfUpdate();
+				}
+				element.object = anchor.object;
+			}
+		}
+	}
 	_onWatch(data){
 		this._rawARData = data;
-		try {
-			this.dispatchEvent(
-				ARKitWrapper.WATCH_EVENT,
-				new CustomEvent(ARKitWrapper.WATCH_EVENT, {
-					source: this,
-					detail: this._rawARData
-				})
-			);
-        } catch(e) {
-            console.error('WATCH_EVENT event error', e);
-        }
 		this._timestamp = this._adjustARKitTime(data.timestamp);
 		this._lightIntensity = data.light_intensity;
-		this._viewMatrix = data.camera_view;
-		this._projectionMatrix = data.projection_camera;
+		copy(this._cameraTransform, data.camera_transform);
+		copy(this._viewMatrix, data.camera_view);
+		copy(this._projectionMatrix, data.projection_camera);
+		this._worldMappingStatus = data.worldMappingStatus;
 		if(data.newObjects.length){
 			for (let i = 0; i < data.newObjects.length; i++) {
 				const element = data.newObjects[i];
-				if(element.plane_center){
-					this._planes.set(element.uuid, {
-						id: element.uuid,
-						center: element.plane_center,
-						extent: [element.plane_extent.x, element.plane_extent.z],
-						modelMatrix: element.transform,
-						alignment: element.plane_alignment
-					});
-				}else{
-					this._anchors.set(element.uuid, {
-						id: element.uuid,
-						modelMatrix: element.transform
-					});
-				}
+				this._createOrUpdateAnchorObject(element);
 			}
 		}
 		if(data.removedObjects.length){
 			for (let i = 0; i < data.removedObjects.length; i++) {
 				const element = data.removedObjects[i];
-				if(this._planes.get(element)){
+				const plane = this._planes.get(element);
+				if(plane){
+					plane.notifyOfRemoval();
 					this._planes.delete(element);
 				}else{
-					this._anchors.delete(element);
+					const anchor = this._anchors.get(element);
+					if (anchor) {
+						anchor.notifyOfRemoval();
+						this._anchors.delete(element);
+					} else {
+						console.error("app signalled removal of non-existant anchor/plane");
+					}
 				}
 			}
 		}
 		if(data.objects.length){
 			for (let i = 0; i < data.objects.length; i++) {
 				const element = data.objects[i];
-				if(element.plane_center){
-					var plane = this._planes.get(element.uuid);
-					if(!plane){
-						this._planes.set(element.uuid, {
-							id: element.uuid,
-							center: element.plane_center,
-							extent: [element.plane_extent.x, element.plane_extent.z],
-							modelMatrix: element.transform,
-							alignment: element.plane_alignment
-						});
-					} else {
-						plane.center = element.plane_center;
-						plane.extent[0] = element.plane_extent.x;
-						plane.extent[1] = element.plane_extent.y;
-						plane.modelMatrix = element.transform;
-						plane.alignment = element.plane_alignment;
-					}
-				}else{
-					var anchor = this._anchors.get(element.uuid);
-					if(!anchor){
-						this._anchors.set(element.uuid, {
-							id: element.uuid,
-							modelMatrix: element.transform
-						});
-					}else{
-						anchor.modelMatrix = element.transform;
-					}
-				}
+				this._createOrUpdateAnchorObject(element);
 			}
+		}
+		try {
+			this.dispatchEvent(
+				ARKitWrapper.WATCH_EVENT,
+				new CustomEvent(ARKitWrapper.WATCH_EVENT, {
+					source: this,
+					detail: this
+				})
+			);
+		} catch(e) {
+				console.error('WATCH_EVENT event error', e);
 		}
 	}
 	_onStop(){
@@ -6157,6 +6111,10 @@ ARKitWrapper.ORIENTATION_LEFT_MIRRORED = 5;
 ARKitWrapper.ORIENTATION_RIGHT = 6;
 ARKitWrapper.ORIENTATION_RIGHT_MIRRORED = 7;
 ARKitWrapper.ORIENTATION_LEFT = 8;
+ARKitWrapper.WEB_AR_WORLDMAPPING_NOT_AVAILABLE = "ar_worldmapping_not_available";
+ARKitWrapper.WEB_AR_WORLDMAPPING_LIMITED       = "ar_worldmapping_limited";
+ARKitWrapper.WEB_AR_WORLDMAPPING_EXTENDING     = "ar_worldmapping_extending";
+ARKitWrapper.WEB_AR_WORLDMAPPING_MAPPED        = "ar_worldmapping_mapped";
 ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT = 1;
 ARKitWrapper.HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE = 2;
 ARKitWrapper.HIT_TEST_TYPE_ESTIMATED_VERTICAL_PLANE = 4;
@@ -6256,6 +6214,10 @@ class ARKitDevice extends PolyfilledXRDevice {
 	onBaseLayerSet(sessionId, layer){
 		this._sessions.get(sessionId).baseLayer = layer;
 		this._wrapperDiv.appendChild(layer.context.canvas);
+		layer.context.canvas.style.width = "100%";
+		layer.context.canvas.style.height = "100%";
+		layer.width = layer.context.canvas.width = this._wrapperDiv.clientWidth;
+		layer.height = layer.context.canvas.height = this._wrapperDiv.clientHeight;
 	}
 	requestAnimationFrame(callback){
 		return window.requestAnimationFrame(callback)
@@ -6280,7 +6242,7 @@ class ARKitDevice extends PolyfilledXRDevice {
 			case 'eye-level':
 				return this._eyeLevelMatrix
 			case 'stage':
-				return this._stageMatrix
+				throw new Error('stage not supported', type)
 			default:
 				throw new Error('Unsupported frame of reference type', type)
 		}
@@ -6329,7 +6291,13 @@ class ARKitDevice extends PolyfilledXRDevice {
 	getInputPose(inputSource, coordinateSystem){
 		return null
 	}
-	onWindowResize(){}
+	onWindowResize(){
+		this._sessions.forEach((value, key) => {
+			var layer = value.baseLayer;
+			layer.width = layer.context.canvas.width = this._wrapperDiv.clientWidth;
+			layer.height = layer.context.canvas.height = this._wrapperDiv.clientHeight;
+		});
+	}
 }
 let SESSION_ID$1 = 100;
 class Session$1 {
@@ -6346,18 +6314,8 @@ class ARWatcher extends ARKitWatcher {
 		this._arKitDevice = arKitDevice;
 	}
 	handleARKitUpdate(event){
-		const cameraTransformMatrix = this._arKitWrapper.getData('camera_transform');
-		if (cameraTransformMatrix) {
-			this._arKitDevice.setBaseViewMatrix(cameraTransformMatrix);
-		} else {
-			console.log('no camera transform', this._arKitWrapper.rawARData);
-		}
-		const cameraProjectionMatrix = this._arKitWrapper.getData('projection_camera');
-		if(cameraProjectionMatrix){
-			this._arKitDevice.setProjectionMatrix(cameraProjectionMatrix);
-		} else {
-			console.log('no projection camera', this._arKitWrapper.rawARData);
-		}
+		this._arKitDevice.setBaseViewMatrix(this._arKitWrapper._cameraTransform);
+		this._arKitDevice.setProjectionMatrix(this._arKitWrapper._projectionMatrix);
 	}
 	handleOnError(...args){
 		console.error('ARKit error', ...args);
@@ -6367,7 +6325,8 @@ class ARWatcher extends ARKitWatcher {
 const _workingMatrix = create();
 const PI_OVER_180$1 = Math.PI / 180;
 WebXRPolyfill.prototype._patchRequestDevice = function(){
-    this.xr = new XR(new XRDevice(new ARKitDevice(this.global)));
+	  var _arKitDevice = new ARKitDevice(this.global);
+    this.xr = new XR(new XRDevice(_arKitDevice));
     Object.defineProperty(this.global.navigator, 'xr', {
       value: this.xr,
       configurable: true,
@@ -6396,15 +6355,13 @@ async function _xrSessionRequestHitTest(origin, direction, coordinateSystem) {
 	}
 	return new Promise((resolve, reject) => {
 		const normalizedScreenCoordinates = _convertRayToARKitScreenCoordinates(direction, _arKitWrapper._projectionMatrix);
-		console.log('and back', ...normalizedScreenCoordinates);
 		_arKitWrapper.hitTest(...normalizedScreenCoordinates, ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_GEOMETRY).then(hits => {
 			if(hits.length === 0) resolve([]);
 			this.requestFrameOfReference('eye-level').then(eyeLevelFrameOfReference => {
 				const csTransform = eyeLevelFrameOfReference.getTransformTo(coordinateSystem);
 				resolve(hits.map(hit => {
-					const hitInHeadMatrix = multiply(create(), hit.world_transform, csTransform);
-					console.log('world transform', getTranslation(create$1(), hit.world_transform), getRotation(new Float32Array(4), hit.world_transform));
-					return new XRHitResult(hitInHeadMatrix)
+					const hitInHeadMatrix = multiply(create(), csTransform, hit.world_transform);
+					return new XRHitResult(hitInHeadMatrix, hit)
 				}));
 			});
 		}).catch((...params) => {
@@ -6413,9 +6370,38 @@ async function _xrSessionRequestHitTest(origin, direction, coordinateSystem) {
 		});
 	})
 }
+async function                          _addAnchor(value, frameOfReference) {
+	  if (value instanceof XRHitResult) {
+			return _arKitWrapper.addAnchorFromHit(value._hit)
+		} else if (value instanceof Float32Array) {
+			return new Promise((resolve, reject) => {
+				this.requestFrameOfReference('eye-level').then(eyeLevelFrameOfReference => {
+					const transform = frameOfReference.getTransformTo(eyeLevelFrameOfReference);
+					const anchorInWorldMatrix = multiply(create(), transform, value);
+					_arKitWrapper.createAnchor(anchorInWorldMatrix).then(anchor => {
+						resolve(anchor);
+					}).catch((...params) => {
+						console.error('could not create anchor', ...params);
+						reject();
+					});
+				}).catch((...params) => {
+					console.error('could not create eye-level frame of reference', ...params);
+					reject();
+				});
+			});
+		}	else {
+			console.error('invalid value passed to addAnchor', value);
+			reject();
+		}
+}
+async function                       _removeAnchor(anchor) {
+	return new Promise((resolve, reject) => {
+		_arKitWrapper.removeAnchor(anchor);
+		resolve();
+	})
+}
 function _convertRayToARKitScreenCoordinates(ray, projectionMatrix){
 	var proj = transformMat4(create$1(), ray, projectionMatrix);
-	console.log('project', ...proj);
 	let x = (proj[0] + 1)/2;
 	let y = (-proj[1] + 1)/2;
 	return [x, y]
@@ -6424,6 +6410,8 @@ function _installExtensions(){
 	if(!navigator.xr) return
 	if(window.XRSession){
 		XRSession.prototype.requestHitTest = _xrSessionRequestHitTest;
+		XRSession.prototype.addAnchor = _addAnchor;
+		XRSession.prototype.removeAnchor = _removeAnchor;
 	}
 	if(window.XRFrameOfReference){
 		XRFrameOfReference.prototype.getTransformTo = _xrFrameOfReferenceGetTransformTo;

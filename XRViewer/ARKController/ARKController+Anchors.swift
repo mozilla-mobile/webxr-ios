@@ -417,16 +417,20 @@
      @param transform the transform of the anchor
      @return YES if the anchorID didn't exist already
      */
-    func addAnchor(_ userGeneratedAnchorID: String?, transform: [Any]?) -> Bool {
+    func addAnchor(_ userGeneratedAnchorID: String?, transformHash: [AnyHashable: Any]?) -> Bool {
         if userGeneratedAnchorID == nil || (arkitGeneratedAnchorIDUserAnchorIDMap.allValues as NSArray).contains(userGeneratedAnchorID ?? "") {
             DDLogError("Duplicate or nil anchor name: \(userGeneratedAnchorID ?? "nil")")
             return false
         }
         
-        var matrix = matrix_float4x4()
-        if let transform = transform {
-            matrix = transform.matrix()
+        var transform : [Double] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        for n in 0...15 {
+            transform[n] = transformHash?[String(describing: n)] as? Double ?? 0
         }
+        var matrix = matrix_float4x4()
+       // if let transform = transform {
+            matrix = transform.matrix()
+        //}
         let anchor = ARAnchor(name: userGeneratedAnchorID ?? "", transform: matrix)
         session.add(anchor: anchor)
         arkitGeneratedAnchorIDUserAnchorIDMap?[anchor.identifier.uuidString] = userGeneratedAnchorID ?? ""
