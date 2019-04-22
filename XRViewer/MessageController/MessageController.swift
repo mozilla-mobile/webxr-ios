@@ -275,7 +275,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             viewController: permissionsViewController,
             buttonAlignment: NSLayoutConstraint.Axis.vertical,
             transitionStyle: .bounceUp,
-            preferredWidth: UIScreen.main.bounds.size.width / 2.0,
+            preferredWidth: 340,
             tapGestureDismissal: false,
             panGestureDismissal: false,
             hideStatusBar: true
