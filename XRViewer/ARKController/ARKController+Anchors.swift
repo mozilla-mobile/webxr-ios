@@ -423,14 +423,12 @@
             return false
         }
         
-        var transform : [Double] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        var transform: [Double] = Array.init(repeating: 0, count: 16)
         for n in 0...15 {
             transform[n] = transformHash?[String(describing: n)] as? Double ?? 0
         }
         var matrix = matrix_float4x4()
-       // if let transform = transform {
-            matrix = transform.matrix()
-        //}
+        matrix = transform.matrix()
         let anchor = ARAnchor(name: userGeneratedAnchorID ?? "", transform: matrix)
         session.add(anchor: anchor)
         arkitGeneratedAnchorIDUserAnchorIDMap?[anchor.identifier.uuidString] = userGeneratedAnchorID ?? ""
