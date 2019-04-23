@@ -15,21 +15,32 @@ extension ARKController {
             newData[WEB_AR_WORLDMAPPING_STATUS_MESSAGE] = worldMappingState(frame: frame)
             
             if (request[WEB_AR_LIGHT_INTENSITY_OPTION] as? NSNumber)?.boolValue ?? false {
-                newData[WEB_AR_LIGHT_INTENSITY_OPTION] = frame.lightEstimate?.ambientIntensity ?? 0.0
-                
-                let lightDictionary = NSMutableDictionary.init()
-                lightDictionary[WEB_AR_LIGHT_INTENSITY_OPTION] = frame.lightEstimate?.ambientIntensity ?? 0.0
-                lightDictionary[WEB_AR_LIGHT_AMBIENT_COLOR_TEMPERATURE_OPTION] = frame.lightEstimate?.ambientColorTemperature ?? 0.0
-                
-                if frame.lightEstimate is ARDirectionalLightEstimate, let directionalLightEstimate = frame.lightEstimate as? ARDirectionalLightEstimate {
-                    lightDictionary[WEB_AR_PRIMARY_LIGHT_DIRECTION_OPTION] = [
-                        "x": directionalLightEstimate.primaryLightDirection.x,
-                        "y": directionalLightEstimate.primaryLightDirection.y,
-                        "z": directionalLightEstimate.primaryLightDirection.z
-                    ]
-                    lightDictionary[WEB_AR_PRIMARY_LIGHT_INTENSITY_OPTION] = directionalLightEstimate.primaryLightIntensity
+                // If .videoCameraAccess, .worldSensing, or .lite is granted, use lightEstimate
+                if webXRAuthorizationStatus == .videoCameraAccess
+                    || webXRAuthorizationStatus == .worldSensing
+                    || webXRAuthorizationStatus == .lite
+                {
+                    newData[WEB_AR_LIGHT_INTENSITY_OPTION] = frame.lightEstimate?.ambientIntensity ?? 0.0
+                    
+                    let lightDictionary = NSMutableDictionary.init()
+                    lightDictionary[WEB_AR_LIGHT_INTENSITY_OPTION] = frame.lightEstimate?.ambientIntensity ?? 0.0
+                    lightDictionary[WEB_AR_LIGHT_AMBIENT_COLOR_TEMPERATURE_OPTION] = frame.lightEstimate?.ambientColorTemperature ?? 0.0
+                    
+                    if frame.lightEstimate is ARDirectionalLightEstimate, let directionalLightEstimate = frame.lightEstimate as? ARDirectionalLightEstimate {
+                        lightDictionary[WEB_AR_PRIMARY_LIGHT_DIRECTION_OPTION] = [
+                            "x": directionalLightEstimate.primaryLightDirection.x,
+                            "y": directionalLightEstimate.primaryLightDirection.y,
+                            "z": directionalLightEstimate.primaryLightDirection.z
+                        ]
+                        lightDictionary[WEB_AR_PRIMARY_LIGHT_INTENSITY_OPTION] = directionalLightEstimate.primaryLightIntensity
+                    }
+                    newData[WEB_AR_LIGHT_OBJECT_OPTION] = lightDictionary
+                } else {
+                    // If none of .videoCameraAccess, .worldSensing, nor .lite is granted but site
+                    // expects a lightEstimate, use 1000, i.e. "neutral" ambient lighting per
+                    // https://developer.apple.com/documentation/arkit/arlightestimate/2878308-ambientintensity
+                    newData[WEB_AR_LIGHT_INTENSITY_OPTION] = 1000
                 }
-                newData[WEB_AR_LIGHT_OBJECT_OPTION] = lightDictionary
             }
             if (request[WEB_AR_CAMERA_OPTION] as? NSNumber)?.boolValue ?? false {
                 let size: CGSize = controller.getRenderView().frame.size
