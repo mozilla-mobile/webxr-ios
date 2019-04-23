@@ -107,6 +107,7 @@ let LAST_URL_KEY = "lastURL"
 // MESSAGES
 let WEB_AR_INIT_MESSAGE = "initAR"
 let WEB_AR_START_WATCH_MESSAGE = "watchAR"
+let WEB_AR_REQUEST_MESSAGE = "requestSession"
 let WEB_AR_STOP_WATCH_MESSAGE = "stopAR"
 let WEB_AR_LOAD_URL_MESSAGE = "loadUrl"
 let WEB_AR_SET_UI_MESSAGE = "setUIOptions"
