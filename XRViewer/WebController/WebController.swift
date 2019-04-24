@@ -267,7 +267,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": false], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA))
         case .worldSensing, .lite:
             callWebMethod(WEB_AR_IOS_USER_GRANTED_CV_DATA, paramJSON: ["granted": false], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
-           callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": true], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA))
+            callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": true], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA))
         case .notDetermined, .minimal, .denied:
             callWebMethod(WEB_AR_IOS_USER_GRANTED_CV_DATA, paramJSON: ["granted": false], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
             callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": false], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA))
