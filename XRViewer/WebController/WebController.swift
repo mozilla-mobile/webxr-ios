@@ -25,6 +25,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     @objc var onDebugButtonToggled: ((Bool) -> Void)?
     @objc var onSettingsButtonTapped: (() -> Void)?
     @objc var onWatchAR: (([AnyHashable : Any]) -> Void)?
+    @objc var onRequestSession: (([AnyHashable: Any], @escaping ResultBlock) -> Void)?
     @objc var onComputerVisionDataRequested: (() -> Void)?
     @objc var onStopAR: (() -> Void)?
     @objc var onResetTrackingButtonTapped: (() -> Void)?
@@ -258,12 +259,17 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             barView?.permissionLevelButton?.setImage(nil, for: .normal)
         }
         
+        // should probably switch this to one method that updates all aspects of the state we want
+        // the page to know
         switch access {
         case .videoCameraAccess:
             callWebMethod(WEB_AR_IOS_USER_GRANTED_CV_DATA, paramJSON: ["granted": true], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
+            callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": false], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA))
         case .worldSensing, .lite:
+            callWebMethod(WEB_AR_IOS_USER_GRANTED_CV_DATA, paramJSON: ["granted": false], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
             callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": true], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA))
         case .notDetermined, .minimal, .denied:
+            callWebMethod(WEB_AR_IOS_USER_GRANTED_CV_DATA, paramJSON: ["granted": false], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
             callWebMethod(WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA, paramJSON: ["granted": false], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_WORLD_SENSING_DATA))
         }
     }
@@ -308,6 +314,18 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             self.transferCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String ?? ""
 
             onWatchAR?(messageBody[WEB_AR_REQUEST_OPTION] as? [AnyHashable: Any] ?? [:])
+        } else if message.name == WEB_AR_REQUEST_MESSAGE {
+            guard let requestSessionCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
+            guard let transferCallback = messageBody[WEB_AR_DATA_CALLBACK_OPTION] as? String else {
+                var responseDictionary = [AnyHashable : Any]()
+                responseDictionary["error"] = "not data_callback parameter"
+                blockSelf?.callWebMethod(requestSessionCallback, paramJSON: responseDictionary, webCompletion: debugCompletion(name: "requestSession"))
+                return
+            }
+            self.transferCallback = transferCallback
+            onRequestSession?(messageBody[WEB_AR_REQUEST_OPTION] as? [AnyHashable: Any] ?? [:], { permissions in
+                blockSelf?.callWebMethod(requestSessionCallback, paramJSON: permissions, webCompletion: debugCompletion(name: "onRequestSession"))
+            })
         } else if message.name == WEB_AR_ON_JS_UPDATE_MESSAGE {
             sendARData(blockSelf?.onJSUpdateData?() ?? [:])
         } else if message.name == WEB_AR_STOP_WATCH_MESSAGE {
@@ -651,6 +669,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     func setupWebContent() {
         contentController?.add(self, name: WEB_AR_INIT_MESSAGE)
         contentController?.add(self, name: WEB_AR_START_WATCH_MESSAGE)
+        contentController?.add(self, name: WEB_AR_REQUEST_MESSAGE)
         contentController?.add(self, name: WEB_AR_STOP_WATCH_MESSAGE)
         contentController?.add(self, name: WEB_AR_ON_JS_UPDATE_MESSAGE)
         contentController?.add(self, name: WEB_AR_LOAD_URL_MESSAGE)
@@ -673,6 +692,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     func cleanWebContent() {
         contentController?.removeScriptMessageHandler(forName: WEB_AR_INIT_MESSAGE)
         contentController?.removeScriptMessageHandler(forName: WEB_AR_START_WATCH_MESSAGE)
+        contentController?.removeScriptMessageHandler(forName: WEB_AR_REQUEST_MESSAGE)
         contentController?.removeScriptMessageHandler(forName: WEB_AR_STOP_WATCH_MESSAGE)
         contentController?.removeScriptMessageHandler(forName: WEB_AR_ON_JS_UPDATE_MESSAGE)
         contentController?.removeScriptMessageHandler(forName: WEB_AR_LOAD_URL_MESSAGE)

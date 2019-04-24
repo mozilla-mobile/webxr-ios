@@ -661,7 +661,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onWatchAR = { request in
-            blockSelf?.handleOnWatchAR(withRequest: request, initialLoad: true)
+            blockSelf?.handleOnWatchAR(withRequest: request, initialLoad: true, grantedPermissionsBlock: nil)
+        }
+        
+        webController?.onRequestSession = { request, grantedPermissions in
+            blockSelf?.handleOnWatchAR(withRequest: request, initialLoad: true, grantedPermissionsBlock: grantedPermissions)
         }
 
         webController?.onStopAR = {
@@ -672,7 +676,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         webController?.onShowPermissions = {
             blockSelf?.messageController?.forceShowPermissionsPopup = true
             guard let request = blockSelf?.stateController.state.aRRequest else { return }
-            blockSelf?.handleOnWatchAR(withRequest: request, initialLoad: false)
+            blockSelf?.handleOnWatchAR(withRequest: request, initialLoad: false, grantedPermissionsBlock: nil)
         }
 
         webController?.onJSUpdateData = {
@@ -1015,7 +1019,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         stateController.setWebXR(false)
     }
 
-    func handleOnWatchAR(withRequest request: [AnyHashable : Any], initialLoad: Bool) {
+    func handleOnWatchAR(withRequest request: [AnyHashable : Any], initialLoad: Bool, grantedPermissionsBlock: ResultBlock?) {
         weak var blockSelf: ViewController? = self
 
         if initialLoad {
@@ -1028,7 +1032,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             arkController?.webXRAuthorizationStatus = .notDetermined
         }
         
-        guard let url = webController?.webView?.url else { return }
+        guard let url = webController?.webView?.url else {
+            grantedPermissionsBlock?([ "error" : "no web page loaded, should not happen"])
+            return
+        }
         arkController?.controller.previewingSinglePlane = false
         arkController?.controller.focusedPlane = nil
         chooseSinglePlaneButton.removeFromSuperview()
@@ -1040,14 +1047,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     
                     blockSelf?.stateController.state.askedComputerVisionData = true
                     blockSelf?.stateController.state.askedWorldStateData = true
-                    let granted = access == .videoCameraAccess ? true : false
+                    let grantedCameraAccess = access == .videoCameraAccess ? true : false
+                    let grantedWorldAccess = (access == .videoCameraAccess || access == .worldSensing || access == .lite) ? true : false
                     
-                    blockSelf?.arkController?.computerVisionDataEnabled = granted
+                    blockSelf?.arkController?.computerVisionDataEnabled = grantedCameraAccess
                     
                     // Approving computer vision data implicitly approves the world sensing data
                     blockSelf?.arkController?.webXRAuthorizationStatus = access
                     
-                    blockSelf?.stateController.state.userGrantedSendingComputerVisionData = granted
+                    blockSelf?.stateController.state.userGrantedSendingComputerVisionData = grantedCameraAccess
                     blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
                     
                     switch access {
@@ -1057,6 +1065,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                         blockSelf?.stateController.setWebXR(false)
                     }
                     blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
+                    let permissions = [
+                        "cameraAccess": grantedCameraAccess,
+                        "worldAccess": grantedWorldAccess,
+                        "webXRAccess": blockSelf?.stateController.state.webXR ?? false
+                    ]
+                    grantedPermissionsBlock?(permissions)
                 }, url: url)
             } else if request[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
                 blockSelf?.messageController?.showMessageAboutEnteringXR(.worldSensing, authorizationGranted: { access in
@@ -1064,6 +1078,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.stateController.state.askedWorldStateData = true
                     blockSelf?.arkController?.webXRAuthorizationStatus = access
                     blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
+                    let grantedWorldAccess = (access == .worldSensing || access == .lite) ? true : false
                     
                     switch access {
                     case .minimal, .lite, .worldSensing, .videoCameraAccess:
@@ -1073,6 +1088,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     }
                     
                     blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
+                    let permissions = [
+                        "cameraAccess": false,
+                        "worldAccess": grantedWorldAccess,
+                        "webXRAccess": blockSelf?.stateController.state.webXR ?? false
+                    ]
+                    grantedPermissionsBlock?(permissions)
                     
                     if access == .lite {
 //                        guard let state = blockSelf?.stateController.state else { return }
@@ -1089,6 +1110,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 // if neither is requested, we'll request .minimal WebXR authorization!
                 blockSelf?.messageController?.showMessageAboutEnteringXR(.minimal, authorizationGranted: { access in
                     blockSelf?.arkController?.webXRAuthorizationStatus = access
+                    
                     switch access {
                     case .minimal, .lite, .worldSensing, .videoCameraAccess:
                         blockSelf?.stateController.setWebXR(true)
@@ -1097,6 +1119,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     }
                     
                     blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
+                    let permissions = [
+                        "cameraAccess": false,
+                        "worldAccess": false,
+                        "webXRAccess": blockSelf?.stateController.state.webXR ?? false
+                    ]
+                    grantedPermissionsBlock?(permissions)
                     
                     if access == .lite {
 //                        guard let state = blockSelf?.stateController.state else { return }

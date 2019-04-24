@@ -107,6 +107,7 @@ let LAST_URL_KEY = "lastURL"
 // MESSAGES
 let WEB_AR_INIT_MESSAGE = "initAR"
 let WEB_AR_START_WATCH_MESSAGE = "watchAR"
+let WEB_AR_REQUEST_MESSAGE = "requestSession"
 let WEB_AR_STOP_WATCH_MESSAGE = "stopAR"
 let WEB_AR_LOAD_URL_MESSAGE = "loadUrl"
 let WEB_AR_SET_UI_MESSAGE = "setUIOptions"
@@ -151,6 +152,8 @@ let WEB_AR_IOS_ERROR_MESSAGE_PARAMETER = "message"
 
 // OPTIONS
 let WEB_AR_CALLBACK_OPTION = "callback"
+let WEB_AR_DATA_CALLBACK_OPTION = "data_callback"
+
 let WEB_AR_REQUEST_OPTION = "options"
 let WEB_AR_UI_OPTION = "ui"
 let WEB_AR_UI_BROWSER_OPTION = "browser"
