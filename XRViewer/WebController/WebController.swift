@@ -259,8 +259,10 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             barView?.permissionLevelButton?.setImage(nil, for: .normal)
         }
         
-        // should probably switch this to one method that updates all aspects of the state we want
+        // This may change, in one of two ways:
+        // - should probably switch this to one method that updates all aspects of the state we want
         // the page to know
+        // - may want to remove entirely: do we even need to notify the page what the current state is?
         switch access {
         case .videoCameraAccess:
             callWebMethod(WEB_AR_IOS_USER_GRANTED_CV_DATA, paramJSON: ["granted": true], webCompletion: debugCompletion(name: WEB_AR_IOS_USER_GRANTED_CV_DATA))
