@@ -126,23 +126,22 @@
                     // so it can be detected again
                     guard let anchors = session.currentFrame?.anchors else { return }
                     for anchor in anchors {
-                        if anchor is ARImageAnchor {
-                            let imageAnchor = anchor as? ARImageAnchor
-                            if imageAnchor?.referenceImage.name == imageName {
-                                // Remove the reference image from the session configuration and run again
-                                currentDetectionImages?.remove(referenceImage)
-                                if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
-                                    worldTrackingConfiguration?.detectionImages = currentDetectionImages
-                                }
-                                session?.run(configuration, options: [])
-                                
-                                // When the anchor is removed and didRemoveAnchor callback gets called, look in this map
-                                // and see if there is a promise for the recently removed image anchor. If so, call
-                                // activateDetectionImage again with the image name of the removed anchor, and the completion set here
-                                detectionImageActivationAfterRemovalPromises[referenceImage.name ?? ""] = completion
-                                session?.remove(anchor: anchor)
-                                return
+                        if let imageAnchor = anchor as? ARImageAnchor,
+                            imageAnchor.referenceImage.name == imageName
+                        {
+                            // Remove the reference image from the session configuration and run again
+                            currentDetectionImages?.remove(referenceImage)
+                            if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
+                                worldTrackingConfiguration?.detectionImages = currentDetectionImages
                             }
+                            session?.run(configuration, options: [])
+                            
+                            // When the anchor is removed and didRemoveAnchor callback gets called, look in this map
+                            // and see if there is a promise for the recently removed image anchor. If so, call
+                            // activateDetectionImage again with the image name of the removed anchor, and the completion set here
+                            detectionImageActivationAfterRemovalPromises[referenceImage.name ?? ""] = completion
+                            session?.remove(anchor: anchor)
+                            return
                         }
                     }
                 }

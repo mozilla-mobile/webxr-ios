@@ -24,9 +24,9 @@ extension ARKController: ARSessionDelegate {
                 continue
             }
             
-            if shouldSend(addedAnchor) ||
-                webXRAuthorizationStatus == .worldSensing ||
-                webXRAuthorizationStatus == .videoCameraAccess ||
+            if shouldSend(addedAnchor)
+                || webXRAuthorizationStatus == .worldSensing
+                || webXRAuthorizationStatus == .videoCameraAccess
             // Tony: Initially I implemented a line below to allow face-based and image-based AR
             // experiences to work when operating in .singlePlane/AR Lite Mode.  However
             // if the user is choosing to operate in AR Lite Mode (i.e. a mode focused on
@@ -34,22 +34,26 @@ extension ARKController: ARSessionDelegate {
             // utilize any recognized ARFaceAnchors nor, potentially, ARImageAnchors.
             // Tony: Spoke with Blair briefly about this 2/4/19, allowing ARFaceAnchors
             //       but not ARImageAnchors
-                (webXRAuthorizationStatus == .lite && addedAnchor is ARFaceAnchor)
+                || (webXRAuthorizationStatus == .lite && addedAnchor is ARFaceAnchor)
             {
                 
                 let addedAnchorDictionary = createDictionary(for: addedAnchor)
                 addedAnchorsSinceLastFrame.add(addedAnchorDictionary)
                 objects[anchorID(for: addedAnchor)] = addedAnchorDictionary
-                
-                if addedAnchor is ARImageAnchor {
-                    let addedImageAnchor = addedAnchor as? ARImageAnchor
-                    guard let name = addedImageAnchor?.referenceImage.name else { return }
+            }
+            
+            if let addedAnchor = addedAnchor as? ARImageAnchor {
+                if webXRAuthorizationStatus == .worldSensing || webXRAuthorizationStatus == .videoCameraAccess {
+                    guard let name = addedAnchor.referenceImage.name else { return }
+                    let addedAnchorDictionary = createDictionary(for: addedAnchor)
                     if detectionImageActivationPromises[name] != nil {
                         let promise = detectionImageActivationPromises[name] as? ActivateDetectionImageCompletionBlock
                         // Call the detection image block
-                        promise?(true, nil, addedAnchorDictionary as? [AnyHashable : Any])
+                        promise?(true, nil, addedAnchorDictionary as? [AnyHashable: Any])
                         detectionImageActivationPromises[name] = nil
                     }
+                } else if webXRAuthorizationStatus == .minimal || webXRAuthorizationStatus == .lite {
+                    session.remove(anchor: addedAnchor)
                 }
             }
         }
@@ -84,14 +88,10 @@ extension ARKController: ARSessionDelegate {
                 objects[anchorID] = nil
                 
                 arkitGeneratedAnchorIDUserAnchorIDMap[removedAnchor.identifier.uuidString] = nil
-                if removedAnchor is ARImageAnchor {
-                    let imageAnchor = removedAnchor as? ARImageAnchor
-                    let completion = detectionImageActivationAfterRemovalPromises[imageAnchor?.referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
-                    if completion != nil {
-                        if let completion = completion {
-                            activateDetectionImage(imageAnchor?.referenceImage.name, completion: completion)
-                        }
-                        detectionImageActivationAfterRemovalPromises[imageAnchor?.referenceImage.name ?? ""] = nil
+                if let imageAnchor = removedAnchor as? ARImageAnchor {
+                    if let completion = detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock {
+                        activateDetectionImage(imageAnchor.referenceImage.name, completion: completion)
+                        detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name ?? ""] = nil
                     }
                 }
             } else {
