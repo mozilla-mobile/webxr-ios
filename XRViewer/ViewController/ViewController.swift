@@ -1031,7 +1031,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             arkController?.webXRAuthorizationStatus = .notDetermined
         }
         
-        guard let url = webController?.webView?.url else { return }
+        guard let url = webController?.webView?.url else {
+            grantedPermissionsBlock?([ "error" : "no web page loaded, should not happen"])
+            return
+        }
         arkController?.controller.previewingSinglePlane = false
         arkController?.controller.focusedPlane = nil
         chooseSinglePlaneButton.removeFromSuperview()
@@ -1063,7 +1066,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
                     let permissions = [
                         "cameraAccess": grantedCameraAccess,
-                        "worldAccess": grantedWorldAccess
+                        "worldAccess": grantedWorldAccess,
+                        "webXRAccess": blockSelf?.stateController.state.webXR ?? false
                     ]
                     grantedPermissionsBlock?(permissions)
                 }, url: url)
@@ -1085,7 +1089,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
                     let permissions = [
                         "cameraAccess": false,
-                        "worldAccess": grantedWorldAccess
+                        "worldAccess": grantedWorldAccess,
+                        "webXRAccess": blockSelf?.stateController.state.webXR ?? false
                     ]
                     grantedPermissionsBlock?(permissions)
                     
@@ -1115,7 +1120,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.webController?.userGrantedWebXRAuthorizationState(access)
                     let permissions = [
                         "cameraAccess": false,
-                        "worldAccess": false
+                        "worldAccess": false,
+                        "webXRAccess": blockSelf?.stateController.state.webXR ?? false
                     ]
                     grantedPermissionsBlock?(permissions)
                     
