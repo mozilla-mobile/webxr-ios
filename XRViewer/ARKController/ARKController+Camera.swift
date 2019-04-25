@@ -65,8 +65,7 @@
             let undetectedImageNames = detectionImageActivationPromises.allKeys
             var newDetectionImages = Set<ARReferenceImage>()
             for imageName: String in undetectedImageNames as? [String] ?? [] {
-                let referenceImage = referenceImageMap[imageName] as? ARReferenceImage
-                if let referenceImage = referenceImage {
+                if let referenceImage = referenceImageMap[imageName] as? ARReferenceImage {
                     _ = newDetectionImages.insert(referenceImage)
                 }
             }
