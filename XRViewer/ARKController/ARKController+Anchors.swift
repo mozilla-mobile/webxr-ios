@@ -99,7 +99,6 @@
     
     func addFaceGeometryData(_ faceGeometry: ARFaceGeometry, toDictionary geometryDictionary: NSMutableDictionary) {
         geometryDictionary["vertexCount"] = faceGeometry.vertices.count
-        let geometryArrays = UserDefaults.standard.bool(forKey: Constant.geometryArraysKey())
         
         let vertices = NSMutableArray.init(capacity: faceGeometry.vertices.count)
         for i in 0..<faceGeometry.vertices.count {
@@ -194,7 +193,6 @@
     func updatePlaneGeometryData(_ planeGeometry: ARPlaneGeometry, toDictionary planeGeometryDictionary: NSMutableDictionary) {
         
         planeGeometryDictionary["vertexCount"] = NSNumber(value: planeGeometry.vertices.count)
-        let geometryArrays = UserDefaults.standard.bool(forKey: Constant.geometryArraysKey())
         let vertices = NSMutableArray.init(capacity: planeGeometry.vertices.count)
         for i in 0..<planeGeometry.vertices.count {
             if geometryArrays {

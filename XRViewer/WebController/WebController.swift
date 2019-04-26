@@ -23,6 +23,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     @objc var onStartLoad: (() -> Void)?
     @objc var onFinishLoad: (() -> Void)?
     @objc var onDebugButtonToggled: ((Bool) -> Void)?
+    var onGeometryArraysSet: ((Bool) -> Void)?
     @objc var onSettingsButtonTapped: (() -> Void)?
     @objc var onWatchAR: (([AnyHashable : Any]) -> Void)?
     @objc var onRequestSession: (([AnyHashable: Any], @escaping ResultBlock) -> Void)?
@@ -304,11 +305,8 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                     DDLogDebug("Init AR Success")
                     guard let arRequestOption = messageBody[WEB_AR_REQUEST_OPTION] as? [String: Any] else { return }
                     guard let arUIOption = arRequestOption[WEB_AR_UI_OPTION] as? [String: Any] else { return }
-                    if messageBody[WEB_AR_GEOMETRY_ARRAYS] as? Bool ?? false {
-                        UserDefaults.standard.set(true, forKey: Constant.geometryArraysKey())
-                    } else {
-                        UserDefaults.standard.set(false, forKey: Constant.geometryArraysKey())
-                    }
+                    let geometryArrays = messageBody[WEB_AR_GEOMETRY_ARRAYS] as? Bool ?? false
+                    blockSelf?.onGeometryArraysSet?(geometryArrays)
                     blockSelf?.onInitAR?(arUIOption)
                 } else {
                     DDLogDebug("Init AR Error")

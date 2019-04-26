@@ -9,6 +9,7 @@ import Foundation
     var showMode: ShowMode = .nothing
     var showOptions: ShowOptions = .init(rawValue: 0)
     var webXR = false
+    var geometryArrays = false
     var computerVisionFrameRequested = false
     var shouldRemoveAnchorsOnNextARSession = false
     var sendComputerVisionData = false
@@ -26,6 +27,7 @@ import Foundation
         state.showMode = ShowMode.nothing
         state.showOptions = ShowOptions.init(rawValue: 0)
         state.shouldShowSessionStartedPopup = true
+        state.geometryArrays = false
         state.shouldShowLiteModePopup = true
         state.numberOfTimesSendNativeTimeWasCalled = 0
         state.userGrantedSendingComputerVisionData = false
@@ -64,6 +66,7 @@ import Foundation
         copy.showOptions = showOptions
         copy.showMode = showMode
         copy.webXR = webXR
+        copy.geometryArrays = geometryArrays
         copy.aRRequest = aRRequest
         copy.computerVisionFrameRequested = computerVisionFrameRequested
         copy.shouldRemoveAnchorsOnNextARSession = shouldRemoveAnchorsOnNextARSession

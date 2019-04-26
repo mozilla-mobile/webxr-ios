@@ -59,11 +59,6 @@ let AllowedVideoCameraSitesKey = "allowedVideoCameraSites"
 /// The NSUserDefaults key for the boolean that tells us whether
 /// we should preload the webxr.js file to expose a WebXR API
 let ExposeWebXRAPIKey = "exposeWebXRAPI"
-/// The NSUserDefaults key for the boolean that tells us whether
-/// geometry data in updatePlaneGeometry & addFaceGeometryData
-/// should be passed in as dictionaries (the legacy/default option)
-/// or arrays
-let GeometryArraysKey = "geometryArrays"
 let BOX_SIZE: CGFloat = 0.05
 
 @objc class Constant: NSObject {
@@ -87,7 +82,6 @@ let BOX_SIZE: CGFloat = 0.05
     static func videoCameraAccessWebXREnabled() -> String { return VideoCameraAccessWebXREnabledKey }
     static func allowedVideoCameraSitesKey() -> String { return AllowedVideoCameraSitesKey }
     static func exposeWebXRAPIKey() -> String { return ExposeWebXRAPIKey }
-    static func geometryArraysKey() -> String { return GeometryArraysKey }
     
     @objc static func swipeGestureAreaHeight() -> CGFloat { return 200 }
     @objc static func recordSize() -> CGFloat { return 60.5 }

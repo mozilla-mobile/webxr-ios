@@ -34,6 +34,7 @@
         self.removedAnchorsSinceLastFrame = [NSMutableArray new];
         self.arkitGeneratedAnchorIDUserAnchorIDMap = [NSMutableDictionary new];
         [self setShouldUpdateWindowSize:YES];
+        [self setGeometryArrays:NO];
 
         [self setSession:[ARSession new]];
         [[self session] setDelegate:self];
@@ -190,12 +191,10 @@
         geometryDictionary = [NSMutableDictionary new];
         faceAnchorDictionary[@"geometry"] = geometryDictionary;
     }
-    
-    bool  geometryArrays = [[NSUserDefaults standardUserDefaults] boolForKey: @"geometryArrays"];
  
     NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.vertexCount];
     for (int i = 0; i < faceAnchor.geometry.vertexCount; i++) {
-        if (geometryArrays) {
+        if (self.geometryArrays) {
             [vertices addObject:[NSNumber numberWithFloat:faceAnchor.geometry.vertices[i].x]];
             [vertices addObject:[NSNumber numberWithFloat:faceAnchor.geometry.vertices[i].y]];
             [vertices addObject:[NSNumber numberWithFloat:faceAnchor.geometry.vertices[i].z]];

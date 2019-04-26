@@ -714,6 +714,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.stateController.setShowMode(selected ? ShowMode.urlDebug : ShowMode.url)
         }
         
+        webController?.onGeometryArraysSet = { geometryArrays in
+            blockSelf?.stateController.state.geometryArrays = geometryArrays
+        }
+        
         webController?.onSettingsButtonTapped = {
             // Before showing the settings popup, we hide the bar and the debug buttons so they are not in the way
             // After dismissing the popup, we show them again.
@@ -1036,6 +1040,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             grantedPermissionsBlock?([ "error" : "no web page loaded, should not happen"])
             return
         }
+        arkController?.geometryArrays = stateController.state.geometryArrays
         arkController?.controller.previewingSinglePlane = false
         arkController?.controller.focusedPlane = nil
         chooseSinglePlaneButton.removeFromSuperview()

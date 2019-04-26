@@ -78,6 +78,11 @@ typedef void (^ResultArrayBlock)(NSArray *);
 @property(nonatomic) bool computerVisionDataEnabled;
 
 /**
+ A flag representing whether geometry is being sent in arrays (true) or dictionaries (false)
+ */
+@property(nonatomic) bool geometryArrays;
+
+/**
  Request a CV frame
  */
 @property(nonatomic) BOOL computerVisionFrameRequested;
