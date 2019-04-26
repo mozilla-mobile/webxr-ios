@@ -305,7 +305,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                     DDLogDebug("Init AR Success")
                     guard let arRequestOption = messageBody[WEB_AR_REQUEST_OPTION] as? [String: Any] else { return }
                     guard let arUIOption = arRequestOption[WEB_AR_UI_OPTION] as? [String: Any] else { return }
-                    let geometryArrays = messageBody[WEB_AR_GEOMETRY_ARRAYS] as? Bool ?? false
+                    let geometryArrays = arRequestOption[WEB_AR_GEOMETRY_ARRAYS] as? Bool ?? false
                     blockSelf?.onGeometryArraysSet?(geometryArrays)
                     blockSelf?.onInitAR?(arUIOption)
                 } else {
