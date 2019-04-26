@@ -116,7 +116,12 @@
         let textureCoordinates = NSMutableArray.init(capacity: faceGeometry.textureCoordinates.count)
         geometryDictionary["textureCoordinateCount"] = faceGeometry.textureCoordinates.count
         for i in 0..<faceGeometry.textureCoordinates.count {
-            textureCoordinates.add(faceGeometry.textureCoordinates[i].dictionary())
+            if geometryArrays {
+                textureCoordinates.add(faceGeometry.textureCoordinates[i].x)
+                textureCoordinates.add(faceGeometry.textureCoordinates[i].y)
+            } else {
+                textureCoordinates.add(faceGeometry.textureCoordinates[i].dictionary())
+            }
         }
         geometryDictionary["textureCoordinates"] = textureCoordinates
         
@@ -205,7 +210,12 @@
         let textureCoordinates = NSMutableArray.init(capacity: planeGeometry.textureCoordinates.count)
         planeGeometryDictionary["textureCoordinateCount"] = NSNumber(value: planeGeometry.textureCoordinates.count)
         for i in 0..<planeGeometry.textureCoordinates.count {
-            textureCoordinates.add(planeGeometry.textureCoordinates[i].dictionary())
+            if geometryArrays {
+                textureCoordinates.add(planeGeometry.textureCoordinates[i].x)
+                textureCoordinates.add(planeGeometry.textureCoordinates[i].y)
+            } else {
+                textureCoordinates.add(planeGeometry.textureCoordinates[i].dictionary())
+            }
         }
         planeGeometryDictionary["textureCoordinates"] = textureCoordinates
         
@@ -219,7 +229,13 @@
         planeGeometryDictionary["boundaryVertexCount"] = NSNumber(value: planeGeometry.boundaryVertices.count)
         let boundaryVertices = NSMutableArray.init(capacity: planeGeometry.boundaryVertices.count)
         for i in 0..<planeGeometry.boundaryVertices.count {
-            boundaryVertices.add(planeGeometry.boundaryVertices[i].dictionary())
+            if geometryArrays {
+                boundaryVertices.add(planeGeometry.boundaryVertices[i].x)
+                boundaryVertices.add(planeGeometry.boundaryVertices[i].y)
+                boundaryVertices.add(planeGeometry.boundaryVertices[i].z)
+            } else {
+                boundaryVertices.add(planeGeometry.boundaryVertices[i].dictionary())
+            }
         }
         planeGeometryDictionary["boundaryVertices"] = boundaryVertices
     }

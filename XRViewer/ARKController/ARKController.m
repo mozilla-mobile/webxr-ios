@@ -190,9 +190,18 @@
         geometryDictionary = [NSMutableDictionary new];
         faceAnchorDictionary[@"geometry"] = geometryDictionary;
     }
+    
+    bool  geometryArrays = [[NSUserDefaults standardUserDefaults] boolForKey: @"geometryArrays"];
+ 
     NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.vertexCount];
     for (int i = 0; i < faceAnchor.geometry.vertexCount; i++) {
-        [vertices addObject:dictFromVector3(faceAnchor.geometry.vertices[i])];
+        if (geometryArrays) {
+            [vertices addObject:[NSNumber numberWithFloat:faceAnchor.geometry.vertices[i].x]];
+            [vertices addObject:[NSNumber numberWithFloat:faceAnchor.geometry.vertices[i].y]];
+            [vertices addObject:[NSNumber numberWithFloat:faceAnchor.geometry.vertices[i].z]];
+        } else {
+            [vertices addObject:dictFromVector3(faceAnchor.geometry.vertices[i])];
+        }
     }
     geometryDictionary[@"vertices"] = vertices;
     
