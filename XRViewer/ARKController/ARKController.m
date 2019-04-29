@@ -55,7 +55,6 @@
         
         [worldTrackingConfiguration setPlaneDetection:ARPlaneDetectionHorizontal | ARPlaneDetectionVertical];
         [worldTrackingConfiguration setWorldAlignment:ARWorldAlignmentGravityAndHeading];
-        [worldTrackingConfiguration setMaximumNumberOfTrackedImages: 2];
         [self setConfiguration: worldTrackingConfiguration];
         
         Class cls = (type == ARKMetal) ? [ARKMetalController class] : [ARKSceneKitController class];

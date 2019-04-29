@@ -766,6 +766,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         webController?.onStopSendingComputerVisionData = {
             blockSelf?.stateController.state.sendComputerVisionData = false
         }
+        
+        webController?.onSetNumberOfTrackedImages = { number in
+            blockSelf?.stateController.state.numberOfTrackedImages = number
+            blockSelf?.arkController?.setNumberOfTrackedImages(number)
+        }
 
         webController?.onActivateDetectionImage = { imageName, completion in
             blockSelf?.arkController?.activateDetectionImage(imageName, completion: completion)
@@ -793,7 +798,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onSwitchCameraButtonTapped = {
-            blockSelf?.arkController?.switchCameraButtonTapped()
+           let numberOfImages = blockSelf?.stateController.state.numberOfTrackedImages ?? 0
+            blockSelf?.arkController?.switchCameraButtonTapped(numberOfImages)
         }
 
         if stateController.wasMemoryWarning() {

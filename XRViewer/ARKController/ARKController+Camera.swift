@@ -46,7 +46,7 @@
      Otherwise, create an ARWorldTrackingConfiguration, add the images that were not detected
      in the previous ARWorldTrackingConfiguration session, and run the session.
      */
-    func switchCameraButtonTapped() {
+    func switchCameraButtonTapped(_ numberOfTrackedImages: Int) {
         guard let currentFrame = session.currentFrame else { return }
         for anchor in currentFrame.anchors {
             session.remove(anchor: anchor)
@@ -60,7 +60,7 @@
             let worldTrackingConfiguration = ARWorldTrackingConfiguration()
             worldTrackingConfiguration.planeDetection = [.horizontal, .vertical]
             worldTrackingConfiguration.worldAlignment = .gravityAndHeading
-            worldTrackingConfiguration.maximumNumberOfTrackedImages = 2
+            worldTrackingConfiguration.maximumNumberOfTrackedImages = numberOfTrackedImages
             
             // Configure all the active images that weren't detected in the previous back camera session
             let undetectedImageNames = detectionImageActivationPromises.allKeys

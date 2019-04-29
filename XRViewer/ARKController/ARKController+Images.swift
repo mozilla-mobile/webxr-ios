@@ -415,4 +415,15 @@
         
         print("\n\nnumberOfPlanes: \(capturedImageNumberOfPlanes)\npixelBufferWidth: \(capturedImagePixelBufferWidth)\npixelBufferHeight: \(capturedImagePixelBufferHeight)\npixelBufferTypeID: \(capturedImagePixelBufferTypeID)\npixelBufferDataSize: \(capturedImagePixelBufferDataSize)\npixelBufferBytesPerRow: \(capturedImagePixelBufferBytesPerRow)\npixelBufferPIxelFormatType:" + string(for: capturedImagePixelBufferPixelFormatType) + "\npixelBufferBaseAddress: \(String(describing: capturedImagePixelBufferBaseAddress))\n")
     }
+    
+    // MARK: - Helpers
+    
+    func setNumberOfTrackedImages(_ numberOfTrackedImages: Int) {
+        if let trackingConfiguration = configuration as? ARWorldTrackingConfiguration {
+            trackingConfiguration.maximumNumberOfTrackedImages = numberOfTrackedImages
+            session?.run(trackingConfiguration, options: [])
+        } else {
+            print("Error: Cannot set tracked images on an ARFaceTrackingConfiguration session.")
+        }
+    }
 }

@@ -34,6 +34,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     @objc var onShowPermissions: (() -> Void)?
     @objc var onStartSendingComputerVisionData: (() -> Void)?
     @objc var onStopSendingComputerVisionData: (() -> Void)?
+    var onSetNumberOfTrackedImages: ((Int) -> Void)?
     @objc var onAddImageAnchor: (([AnyHashable : Any]?, @escaping ImageDetectedBlock) -> Void)?
     @objc var onActivateDetectionImage: ((String?, @escaping ActivateDetectionImageCompletionBlock) -> Void)?
     @objc var onDeactivateDetectionImage: ((String, @escaping CreateDetectionImageCompletionBlock) -> Void)?
@@ -378,6 +379,9 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             onAddImageAnchor?(imageAnchorInfoDictionary, { imageAnchor in
                 blockSelf?.callWebMethod(createImageAnchorCallback, paramJSON: imageAnchor, webCompletion: nil)
             })
+        } else if message.name == WEB_AR_TRACKED_IMAGES_MESSAGE {
+            let numberOfTrackedImages = messageBody[WEB_AR_NUMBER_OF_TRACKED_IMAGES_OPTION] as? Int ?? 0
+            onSetNumberOfTrackedImages?(numberOfTrackedImages)
         } else if message.name == WEB_AR_CREATE_IMAGE_ANCHOR_MESSAGE {
             let imageAnchorInfoDictionary = messageBody
             guard let createDetectionImageCallback = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }

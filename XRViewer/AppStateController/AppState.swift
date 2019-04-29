@@ -16,6 +16,7 @@ import Foundation
     var shouldShowSessionStartedPopup = false
     var shouldShowLiteModePopup = false
     var numberOfTimesSendNativeTimeWasCalled: Int = 0
+    var numberOfTrackedImages: Int = 0
     @objc var userGrantedSendingComputerVisionData = false
     @objc var askedComputerVisionData = false
     @objc var userGrantedSendingWorldStateData: WebXRAuthorizationState = .notDetermined
@@ -30,6 +31,7 @@ import Foundation
         state.geometryArrays = false
         state.shouldShowLiteModePopup = true
         state.numberOfTimesSendNativeTimeWasCalled = 0
+        state.numberOfTrackedImages = 0
         state.userGrantedSendingComputerVisionData = false
         state.userGrantedSendingWorldStateData = .notDetermined
         state.askedComputerVisionData = false
@@ -74,6 +76,7 @@ import Foundation
         copy.shouldShowSessionStartedPopup = shouldShowSessionStartedPopup
         copy.shouldShowLiteModePopup = shouldShowLiteModePopup
         copy.numberOfTimesSendNativeTimeWasCalled = numberOfTimesSendNativeTimeWasCalled
+        copy.numberOfTrackedImages = numberOfTrackedImages
         copy.userGrantedSendingComputerVisionData = userGrantedSendingComputerVisionData
         copy.askedComputerVisionData = askedComputerVisionData
         copy.userGrantedSendingWorldStateData = userGrantedSendingWorldStateData
