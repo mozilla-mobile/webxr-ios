@@ -96,11 +96,11 @@ extension ARKController: ARSessionDelegate {
                 objects[anchorID] = nil
                 
                 arkitGeneratedAnchorIDUserAnchorIDMap[removedAnchor.identifier.uuidString] = nil
-                if let imageAnchor = removedAnchor as? ARImageAnchor {
-                    if let completion = detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock {
-                        activateDetectionImage(imageAnchor.referenceImage.name, completion: completion)
-                        detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name ?? ""] = nil
-                    }
+                if let imageAnchor = removedAnchor as? ARImageAnchor,
+                    let completion = detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
+                {
+                    activateDetectionImage(imageAnchor.referenceImage.name, completion: completion)
+                    detectionImageActivationAfterRemovalPromises[imageAnchor.referenceImage.name ?? ""] = nil
                 }
             } else {
                 if arkitGeneratedAnchorIDUserAnchorIDMap[removedAnchor.identifier.uuidString] != nil {

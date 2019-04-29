@@ -60,13 +60,13 @@
             let worldTrackingConfiguration = ARWorldTrackingConfiguration()
             worldTrackingConfiguration.planeDetection = [.horizontal, .vertical]
             worldTrackingConfiguration.worldAlignment = .gravityAndHeading
+            worldTrackingConfiguration.maximumNumberOfTrackedImages = 2
             
             // Configure all the active images that weren't detected in the previous back camera session
             let undetectedImageNames = detectionImageActivationPromises.allKeys
             var newDetectionImages = Set<ARReferenceImage>()
             for imageName: String in undetectedImageNames as? [String] ?? [] {
-                let referenceImage = referenceImageMap[imageName] as? ARReferenceImage
-                if let referenceImage = referenceImage {
+                if let referenceImage = referenceImageMap[imageName] as? ARReferenceImage {
                     _ = newDetectionImages.insert(referenceImage)
                 }
             }
