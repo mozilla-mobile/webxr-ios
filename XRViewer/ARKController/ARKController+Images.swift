@@ -51,11 +51,11 @@
      */
     func createDetectionImage(_ referenceImageDictionary: [AnyHashable : Any], completion: @escaping DetectionImageCreatedCompletionType) {
         switch webXRAuthorizationStatus {
-        case .worldSensing, .videoCameraAccess:
+        case .lite, .worldSensing, .videoCameraAccess:
             detectionImageCreationPromises?[referenceImageDictionary["uid"] as Any] = completion
             _createDetectionImage(referenceImageDictionary)
-        case .lite:
-            completion(false, "The user only provided access to a single plane, not detection images")
+//        case .lite:
+//            completion(false, "The user only provided access to a single plane, not detection images")
         case .minimal, .denied:
             completion(false, "The user denied access to world sensing data")
         case .notDetermined:
