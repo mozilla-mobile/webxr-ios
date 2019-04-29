@@ -684,6 +684,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.loadURL = { url in
+            blockSelf?.arkController?.webXRAuthorizationStatus = .notDetermined
             blockSelf?.webController?.loadURL(url)
         }
 

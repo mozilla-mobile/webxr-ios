@@ -24,6 +24,14 @@ extension ARKController: ARSessionDelegate {
                 continue
             }
             
+            if addedAnchor is ARFaceAnchor
+                && configuration is ARFaceTrackingConfiguration
+                && webXRAuthorizationStatus == .notDetermined
+            {
+                session.remove(anchor: addedAnchor)
+                continue
+            }
+            
             if shouldSend(addedAnchor)
                 || webXRAuthorizationStatus == .worldSensing
                 || webXRAuthorizationStatus == .videoCameraAccess
