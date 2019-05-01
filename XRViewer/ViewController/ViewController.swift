@@ -652,6 +652,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.stateController.setShowOptions(self.showOptionsFormDict(dict: uiOptionsDict))
             blockSelf?.stateController.applyOnEnterForegroundAction()
             blockSelf?.stateController.applyOnDidReceiveMemoryAction()
+            blockSelf?.stateController.state.numberOfTrackedImages = 0
+            blockSelf?.arkController?.setNumberOfTrackedImages(0)
         }
 
         webController?.onError = { error in
