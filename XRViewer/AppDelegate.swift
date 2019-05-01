@@ -53,7 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         //Be ready to open URLs like "wxrv://ios-viewer.webxrexperiments.com/viewer.html"
-        if (url.scheme == "wxrv") {
+        if let scheme = url.scheme?.lowercased(), scheme == "wxrv" {
             // Extract the scheme part of the URL
             let absoluteString = url.absoluteString
             let index = absoluteString.index(absoluteString.startIndex, offsetBy: 7)
