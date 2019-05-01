@@ -367,7 +367,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         var message: String
         switch webXRAuthorizationRequested {
         case .minimal:
-            title = "Allow WebXR functionality?"
+            title = "Allow usage of Device Motion?"
             message = "WebXR displays video from your camera without giving this web page access to the video."
         case .lite:
             title = "Allow Lite Mode?"
@@ -606,7 +606,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             cell.switchControl.tag = indexPath.row
             
             if indexPath.row == 0 {
-                cell.labelTitle.text = "WebXR"
+                cell.labelTitle.text = "Device Motion"
                 cell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.minimalWebXREnabled())
             } else if indexPath.row == 1 {
                 cell.labelTitle.text = "Lite Mode"
