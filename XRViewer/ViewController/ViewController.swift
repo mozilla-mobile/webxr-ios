@@ -1108,8 +1108,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     grantedPermissionsBlock?(permissions)
                     
                     if access == .lite {
-//                        guard let state = blockSelf?.stateController.state else { return }
-//                        blockSelf?.arkController?.runSession(with: state)
                         blockSelf?.arkController?.controller.previewingSinglePlane = true
                         blockSelf?.view.addSubview(blockSelf?.chooseSinglePlaneButton ?? UIButton())
                         if blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {
@@ -1139,8 +1137,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     grantedPermissionsBlock?(permissions)
                     
                     if access == .lite {
-//                        guard let state = blockSelf?.stateController.state else { return }
-//                        blockSelf?.arkController?.runSession(with: state)
                         blockSelf?.arkController?.controller.previewingSinglePlane = true
                         blockSelf?.view.addSubview(blockSelf?.chooseSinglePlaneButton ?? UIButton())
                         if blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {

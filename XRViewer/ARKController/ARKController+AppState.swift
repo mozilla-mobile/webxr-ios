@@ -70,6 +70,8 @@ extension ARKController {
      
      @param state The current app state
      */
+    
+    // The session was paused, which implies it was off of the AR page, somewhere 2D, for a bit
     func resumeSession(with state: AppState) {
         request = state.aRRequest
         
@@ -101,6 +103,8 @@ extension ARKController {
      
      @param state The current app state
      */
+    
+    // The app was backgrounded, so try to reactivate the session map
     func resumeSession(fromBackground state: AppState) {
         request = state.aRRequest
         
@@ -129,8 +133,6 @@ extension ARKController {
         arSessionState = .ARKSessionPaused
     }
     
-    // The session was paused, which implies it was off of the AR page, somewhere 2D, for a bit
-    // The app was backgrounded, so try to reactivate the session map
     func updateARConfiguration(with state: AppState) {
         request = state.aRRequest
         
