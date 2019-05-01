@@ -380,7 +380,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             title = "Allow World Sensing?"
             message = """
                 World Sensing:
-                -Uses real world planes
+                -Uses real world planes & lighting
                 -Looks for faces & images
             """
         case .videoCameraAccess:
@@ -388,7 +388,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             message = """
                 Video Camera Access:
                 -Accesses your camera's live image
-                -Uses real world planes
+                -Uses real world planes & lighting
                 -Looks for faces & images
             """
         default:
