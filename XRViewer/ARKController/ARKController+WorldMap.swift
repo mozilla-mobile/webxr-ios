@@ -296,7 +296,7 @@ import Compression
     func getDecompressedData(_ compressed: Data) -> Data? {
         var dst_buffer_size: size_t = compressed.count * 8
         
-        var src_buffer = UInt8(compressed.count)
+        var src_buffer = [UInt8](repeating: 0, count: compressed.count)
         compressed.copyBytes(to: &src_buffer, count: compressed.count)
         
         while true {
@@ -315,7 +315,7 @@ import Compression
                 free(dst_buffer)
                 continue
             }
-            let decompressed = Data(bytes: &dst_buffer, count: decompressedSize)
+            let decompressed = Data(bytes: dst_buffer, count: decompressedSize)
             free(dst_buffer)
             return decompressed
         }
@@ -324,7 +324,7 @@ import Compression
     func getCompressedData(_ input: Data?) -> Data? {
         var dst_buffer_size: size_t = max((input?.count ?? 0) / 8, 10)
         
-        var src_buffer = UInt8(input?.count ?? 0)
+        var src_buffer = [UInt8](repeating: 0, count: input?.count ?? 0)
         input?.copyBytes(to: &src_buffer, count: input?.count ?? 0)
         
         while true {
@@ -337,7 +337,7 @@ import Compression
                 free(dst_buffer)
                 continue
             }
-            let compressed = Data(bytes: &dst_buffer, count: compressedSize)
+            let compressed = Data(bytes: dst_buffer, count: compressedSize)
             free(dst_buffer)
             return compressed
         }
