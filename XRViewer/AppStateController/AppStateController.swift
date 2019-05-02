@@ -32,6 +32,7 @@ class AppStateController: NSObject {
     @objc var onMemoryWarning: ((String?) -> Void)?
     @objc var onEnterForeground: ((String?) -> Void)?
     @objc var onReachable: ((String?) -> Void)?
+    private var exclusives: [ExclusiveState] = []
 
     @objc init(state: AppState) {
         self.state = state
@@ -172,7 +173,6 @@ class AppStateController: NSObject {
     @objc func applyOnReachableAction() {
         apply(on: .exclusiveStateReachability)
     }
-    private var exclusives: [ExclusiveState] = []
 
 // MARK: Private
 
@@ -195,21 +195,30 @@ class AppStateController: NSObject {
                 }
             case .exclusiveStateMemory:
                 state.action = {
-                    guard let onMemoryWarning = blockSelf?.onMemoryWarning else { return }
+                    guard let onMemoryWarning = blockSelf?.onMemoryWarning else {
+                        print("Unable to set onMemoryWarning")
+                        return
+                    }
                     DispatchQueue.main.async {
                         onMemoryWarning(url)
                     }
                 }
             case .exclusiveStateBackground:
                 state.action = {
-                    guard let onEnterForeground = blockSelf?.onEnterForeground else { return }
+                    guard let onEnterForeground = blockSelf?.onEnterForeground else {
+                        print("Unable to set onEnterForeground")
+                        return
+                    }
                     DispatchQueue.main.async {
                         onEnterForeground(url)
                     }
                 }
             case .exclusiveStateReachability:
                 state.action = {
-                    guard let onReachable = blockSelf?.onReachable else { return }
+                    guard let onReachable = blockSelf?.onReachable else {
+                        print("Unable to set onReachable")
+                        return
+                    }
                     DispatchQueue.main.async {
                         onReachable(url)
                     }
