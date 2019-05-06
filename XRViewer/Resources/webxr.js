@@ -240,7 +240,25 @@ function multiply(out, a, b) {
 
 
 
-
+function fromTranslation(out, v) {
+  out[0] = 1;
+  out[1] = 0;
+  out[2] = 0;
+  out[3] = 0;
+  out[4] = 0;
+  out[5] = 1;
+  out[6] = 0;
+  out[7] = 0;
+  out[8] = 0;
+  out[9] = 0;
+  out[10] = 1;
+  out[11] = 0;
+  out[12] = v[0];
+  out[13] = v[1];
+  out[14] = v[2];
+  out[15] = 1;
+  return out;
+}
 
 
 
@@ -4208,12 +4226,7 @@ function create$1() {
   return out;
 }
 
-function length(a) {
-  let x = a[0];
-  let y = a[1];
-  let z = a[2];
-  return Math.sqrt(x*x + y*y + z*z);
-}
+
 function fromValues$1(x, y, z) {
   let out = new ARRAY_TYPE(3);
   out[0] = x;
@@ -4222,47 +4235,41 @@ function fromValues$1(x, y, z) {
   return out;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function normalize(out, a) {
-  let x = a[0];
-  let y = a[1];
-  let z = a[2];
-  let len = x*x + y*y + z*z;
-  if (len > 0) {
-    len = 1 / Math.sqrt(len);
-    out[0] = a[0] * len;
-    out[1] = a[1] * len;
-    out[2] = a[2] * len;
-  }
+function set$1(out, x, y, z) {
+  out[0] = x;
+  out[1] = y;
+  out[2] = z;
   return out;
 }
-function dot(a, b) {
-  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-}
-function cross(out, a, b) {
-  let ax = a[0], ay = a[1], az = a[2];
-  let bx = b[0], by = b[1], bz = b[2];
-  out[0] = ay * bz - az * by;
-  out[1] = az * bx - ax * bz;
-  out[2] = ax * by - ay * bx;
+function add$1(out, a, b) {
+  out[0] = a[0] + b[0];
+  out[1] = a[1] + b[1];
+  out[2] = a[2] + b[2];
   return out;
 }
+function subtract$1(out, a, b) {
+  out[0] = a[0] - b[0];
+  out[1] = a[1] - b[1];
+  out[2] = a[2] - b[2];
+  return out;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -4276,7 +4283,13 @@ function transformMat4(out, a, m) {
   out[2] = (m[2] * x + m[6] * y + m[10] * z + m[14]) / w;
   return out;
 }
-
+function transformMat3(out, a, m) {
+  let x = a[0], y = a[1], z = a[2];
+  out[0] = x * m[0] + y * m[3] + z * m[6];
+  out[1] = x * m[1] + y * m[4] + z * m[7];
+  out[2] = x * m[2] + y * m[5] + z * m[8];
+  return out;
+}
 
 
 
@@ -4296,7 +4309,7 @@ function equals$2(a, b) {
 
 
 
-const len = length;
+
 
 const forEach = (function() {
   let vec = create$1();
@@ -4814,277 +4827,6 @@ class WebXRPolyfill {
   }
 }
 
-function create$2() {
-  let out = new ARRAY_TYPE(9);
-  if(ARRAY_TYPE != Float32Array) {
-    out[1] = 0;
-    out[2] = 0;
-    out[3] = 0;
-    out[5] = 0;
-    out[6] = 0;
-    out[7] = 0;
-  }
-  out[0] = 1;
-  out[4] = 1;
-  out[8] = 1;
-  return out;
-}
-
-function create$3() {
-  let out = new ARRAY_TYPE(4);
-  if(ARRAY_TYPE != Float32Array) {
-    out[0] = 0;
-    out[1] = 0;
-    out[2] = 0;
-    out[3] = 0;
-  }
-  return out;
-}
-
-function fromValues$3(x, y, z, w) {
-  let out = new ARRAY_TYPE(4);
-  out[0] = x;
-  out[1] = y;
-  out[2] = z;
-  out[3] = w;
-  return out;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function normalize$1(out, a) {
-  let x = a[0];
-  let y = a[1];
-  let z = a[2];
-  let w = a[3];
-  let len = x*x + y*y + z*z + w*w;
-  if (len > 0) {
-    len = 1 / Math.sqrt(len);
-    out[0] = x * len;
-    out[1] = y * len;
-    out[2] = z * len;
-    out[3] = w * len;
-  }
-  return out;
-}
-
-
-
-function transformMat4$1(out, a, m) {
-  let x = a[0], y = a[1], z = a[2], w = a[3];
-  out[0] = m[0] * x + m[4] * y + m[8] * z + m[12] * w;
-  out[1] = m[1] * x + m[5] * y + m[9] * z + m[13] * w;
-  out[2] = m[2] * x + m[6] * y + m[10] * z + m[14] * w;
-  out[3] = m[3] * x + m[7] * y + m[11] * z + m[15] * w;
-  return out;
-}
-
-
-
-
-
-
-
-
-
-
-
-const forEach$1 = (function() {
-  let vec = create$3();
-  return function(a, stride, offset, count, fn, arg) {
-    let i, l;
-    if(!stride) {
-      stride = 4;
-    }
-    if(!offset) {
-      offset = 0;
-    }
-    if(count) {
-      l = Math.min((count * stride) + offset, a.length);
-    } else {
-      l = a.length;
-    }
-    for(i = offset; i < l; i += stride) {
-      vec[0] = a[i]; vec[1] = a[i+1]; vec[2] = a[i+2]; vec[3] = a[i+3];
-      fn(vec, vec, arg);
-      a[i] = vec[0]; a[i+1] = vec[1]; a[i+2] = vec[2]; a[i+3] = vec[3];
-    }
-    return a;
-  };
-})();
-
-function create$4() {
-  let out = new ARRAY_TYPE(4);
-  if(ARRAY_TYPE != Float32Array) {
-    out[0] = 0;
-    out[1] = 0;
-    out[2] = 0;
-  }
-  out[3] = 1;
-  return out;
-}
-
-function setAxisAngle(out, axis, rad) {
-  rad = rad * 0.5;
-  let s = Math.sin(rad);
-  out[0] = s * axis[0];
-  out[1] = s * axis[1];
-  out[2] = s * axis[2];
-  out[3] = Math.cos(rad);
-  return out;
-}
-
-
-
-
-
-
-function slerp(out, a, b, t) {
-  let ax = a[0], ay = a[1], az = a[2], aw = a[3];
-  let bx = b[0], by = b[1], bz = b[2], bw = b[3];
-  let omega, cosom, sinom, scale0, scale1;
-  cosom = ax * bx + ay * by + az * bz + aw * bw;
-  if ( cosom < 0.0 ) {
-    cosom = -cosom;
-    bx = - bx;
-    by = - by;
-    bz = - bz;
-    bw = - bw;
-  }
-  if ( (1.0 - cosom) > EPSILON ) {
-    omega  = Math.acos(cosom);
-    sinom  = Math.sin(omega);
-    scale0 = Math.sin((1.0 - t) * omega) / sinom;
-    scale1 = Math.sin(t * omega) / sinom;
-  } else {
-    scale0 = 1.0 - t;
-    scale1 = t;
-  }
-  out[0] = scale0 * ax + scale1 * bx;
-  out[1] = scale0 * ay + scale1 * by;
-  out[2] = scale0 * az + scale1 * bz;
-  out[3] = scale0 * aw + scale1 * bw;
-  return out;
-}
-
-
-
-function fromMat3(out, m) {
-  let fTrace = m[0] + m[4] + m[8];
-  let fRoot;
-  if ( fTrace > 0.0 ) {
-    fRoot = Math.sqrt(fTrace + 1.0);
-    out[3] = 0.5 * fRoot;
-    fRoot = 0.5/fRoot;
-    out[0] = (m[5]-m[7])*fRoot;
-    out[1] = (m[6]-m[2])*fRoot;
-    out[2] = (m[1]-m[3])*fRoot;
-  } else {
-    let i = 0;
-    if ( m[4] > m[0] )
-      i = 1;
-    if ( m[8] > m[i*3+i] )
-      i = 2;
-    let j = (i+1)%3;
-    let k = (i+2)%3;
-    fRoot = Math.sqrt(m[i*3+i]-m[j*3+j]-m[k*3+k] + 1.0);
-    out[i] = 0.5 * fRoot;
-    fRoot = 0.5 / fRoot;
-    out[3] = (m[j*3+k] - m[k*3+j]) * fRoot;
-    out[j] = (m[j*3+i] + m[i*3+j]) * fRoot;
-    out[k] = (m[k*3+i] + m[i*3+k]) * fRoot;
-  }
-  return out;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const normalize$2 = normalize$1;
-
-
-const rotationTo = (function() {
-  let tmpvec3 = create$1();
-  let xUnitVec3 = fromValues$1(1,0,0);
-  let yUnitVec3 = fromValues$1(0,1,0);
-  return function(out, a, b) {
-    let dot$$1 = dot(a, b);
-    if (dot$$1 < -0.999999) {
-      cross(tmpvec3, xUnitVec3, a);
-      if (len(tmpvec3) < 0.000001)
-        cross(tmpvec3, yUnitVec3, a);
-      normalize(tmpvec3, tmpvec3);
-      setAxisAngle(out, tmpvec3, Math.PI);
-      return out;
-    } else if (dot$$1 > 0.999999) {
-      out[0] = 0;
-      out[1] = 0;
-      out[2] = 0;
-      out[3] = 1;
-      return out;
-    } else {
-      cross(tmpvec3, a, b);
-      out[0] = tmpvec3[0];
-      out[1] = tmpvec3[1];
-      out[2] = tmpvec3[2];
-      out[3] = 1 + dot$$1;
-      return normalize$2(out, out);
-    }
-  };
-})();
-const sqlerp = (function () {
-  let temp1 = create$4();
-  let temp2 = create$4();
-  return function (out, a, b, c, d, t) {
-    slerp(temp1, a, d, t);
-    slerp(temp2, b, c, t);
-    slerp(out, temp1, temp2, 2 * t * (1 - t));
-    return out;
-  };
-}());
-const setAxes = (function() {
-  let matr = create$2();
-  return function(out, view, right, up) {
-    matr[0] = right[0];
-    matr[3] = right[1];
-    matr[6] = right[2];
-    matr[1] = up[0];
-    matr[4] = up[1];
-    matr[7] = up[2];
-    matr[2] = -view[0];
-    matr[5] = -view[1];
-    matr[8] = -view[2];
-    return normalize$2(out, fromMat3(out, matr));
-  };
-})();
-
 class XRAnchor extends EventTarget {
 	constructor(transform, uid=null, timestamp = 0){
 		super();
@@ -5151,10 +4893,10 @@ class XRAnchorOffset extends XRAnchor {
 		anchor.addEventListener("replaceAnchor", this._handleReplaceAnchorListener);
 	}
 	_handleReplaceAnchor(detail) {
+		this._anchor.removeEventListener("update", this._handleAnchorUpdateListener);
+		this._anchor.removeEventListener("removal", this._notifyOfRemovalListener);
+		this._anchor.removeEventListener("replaceAnchor", this._handleReplaceAnchorListener);
 		this._anchor = detail;
-		this._anchor.deleteEv("update", this._handleAnchorUpdateListener);
-		this._anchor.addEventListener("removal", this._notifyOfRemovalListener);
-		this._anchor.addEventListener("replaceAnchor", this._handleReplaceAnchorListener);
 		this._anchor.addEventListener("update", this._handleAnchorUpdateListener);
 		this._anchor.addEventListener("removal", this._notifyOfRemovalListener);
 		this._anchor.addEventListener("replaceAnchor", this._handleReplaceAnchorListener);
@@ -5431,7 +5173,7 @@ class XRHitResult {
 	constructor(hitMatrix=null, hit=null, ts){
 		this._hit = hit;
 		this._timestamp = ts;
-		this._hitMatrix = hitMatrix || new Float32Array(16);
+		this._hitMatrix = clone(hitMatrix);
 	}
 	get hitMatrix(){
 		return this._hitMatrix
@@ -5456,6 +5198,91 @@ class XRLightEstimate {
 	}
 }
 
+function create$2() {
+  let out = new ARRAY_TYPE(4);
+  if(ARRAY_TYPE != Float32Array) {
+    out[0] = 0;
+    out[1] = 0;
+    out[2] = 0;
+    out[3] = 0;
+  }
+  return out;
+}
+
+function fromValues$2(x, y, z, w) {
+  let out = new ARRAY_TYPE(4);
+  out[0] = x;
+  out[1] = y;
+  out[2] = z;
+  out[3] = w;
+  return out;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function transformMat4$1(out, a, m) {
+  let x = a[0], y = a[1], z = a[2], w = a[3];
+  out[0] = m[0] * x + m[4] * y + m[8] * z + m[12] * w;
+  out[1] = m[1] * x + m[5] * y + m[9] * z + m[13] * w;
+  out[2] = m[2] * x + m[6] * y + m[10] * z + m[14] * w;
+  out[3] = m[3] * x + m[7] * y + m[11] * z + m[15] * w;
+  return out;
+}
+
+
+
+
+
+
+
+
+
+
+
+const forEach$1 = (function() {
+  let vec = create$2();
+  return function(a, stride, offset, count, fn, arg) {
+    let i, l;
+    if(!stride) {
+      stride = 4;
+    }
+    if(!offset) {
+      offset = 0;
+    }
+    if(count) {
+      l = Math.min((count * stride) + offset, a.length);
+    } else {
+      l = a.length;
+    }
+    for(i = offset; i < l; i += stride) {
+      vec[0] = a[i]; vec[1] = a[i+1]; vec[2] = a[i+2]; vec[3] = a[i+3];
+      fn(vec, vec, arg);
+      a[i] = vec[0]; a[i+1] = vec[1]; a[i+2] = vec[2]; a[i+3] = vec[3];
+    }
+    return a;
+  };
+})();
+
 class XRPlaneMesh extends XRMesh {
 	constructor(transform, center, extent, alignment, geometry, uid=null, timestamp=0) {
 		super(transform, null, uid, timestamp);
@@ -5463,8 +5290,8 @@ class XRPlaneMesh extends XRMesh {
 		this._extent = extent;
 		this._alignment = alignment;
 		this._planeFeatureChanged = true;
-		this._yAxis = fromValues$3(0,1,0, 0);
-        this._normal = create$3();
+		this._yAxis = fromValues$2(0,1,0, 0);
+        this._normal = create$2();
 		this._boundaryVerticesChanged = true;
 		this._boundaryVertices = [];
 		this._geometry = geometry;
@@ -5776,6 +5603,460 @@ XRVideoFrame.IMAGEFORMAT = [
     XRVideoFrame.IMAGEFORMAT_NULL
 ];
 
+function create$3() {
+  let out = new ARRAY_TYPE(9);
+  if(ARRAY_TYPE != Float32Array) {
+    out[1] = 0;
+    out[2] = 0;
+    out[3] = 0;
+    out[5] = 0;
+    out[6] = 0;
+    out[7] = 0;
+  }
+  out[0] = 1;
+  out[4] = 1;
+  out[8] = 1;
+  return out;
+}
+function fromMat4(out, a) {
+  out[0] = a[0];
+  out[1] = a[1];
+  out[2] = a[2];
+  out[3] = a[4];
+  out[4] = a[5];
+  out[5] = a[6];
+  out[6] = a[8];
+  out[7] = a[9];
+  out[8] = a[10];
+  return out;
+}
+
+function MapzenTerrariumTerrainProvider(options) {
+    this._token = options.token;
+    this._url = options.url;
+    var resource = Cesium.Resource.createIfNeeded(options.url);
+    this._resource = resource;
+    this._tilingScheme = options.tilingScheme;
+    if (!Cesium.defined(this._tilingScheme)) {
+        this._tilingScheme = new Cesium.WebMercatorTilingScheme({
+            numberOfLevelZeroTilesX:1,
+            numberOfLevelZeroTilesY:1,
+            ellipsoid : Cesium.defaultValue(options.ellipsoid, Cesium.Ellipsoid.WGS84)
+        });
+    }
+    this._heightmapWidth = 64;
+    this._levelZeroMaximumGeometricError = Cesium.TerrainProvider.getEstimatedLevelZeroGeometricErrorForAHeightmap(this._tilingScheme.ellipsoid, this._heightmapWidth, this._tilingScheme.getNumberOfXTilesAtLevel(0));
+    this._proxy = options.proxy;
+    this._terrainDataStructure = {
+        heightScale : 1.0 / 256.0,
+        heightOffset : -32768.0,
+        elementsPerHeight : 3,
+        stride : 4,
+        elementMultiplier : 256.0,
+        isBigEndian : true,
+        lowestEncodedHeight : 0,
+        highestEncodedHeight : 256 * 256 * 256 - 1
+    };
+    this._errorEvent = new Cesium.Event();
+    var credit = options.credit;
+    if (typeof credit === 'string') {
+        credit = new Cesium.Credit(credit);
+    }
+    this._credit = credit;
+    this._readyPromise = Promise.resolve(true);
+    this._terrainPromises = {};
+}
+Object.defineProperties(MapzenTerrariumTerrainProvider.prototype, {
+    errorEvent : {
+        get : function() {
+            return this._errorEvent;
+        }
+    },
+    credit : {
+        get : function() {
+            return this._credit;
+        }
+    },
+    tilingScheme : {
+        get : function() {
+            return this._tilingScheme;
+        }
+    },
+    ready : {
+        get : function() {
+            return true;
+        }
+    },
+    readyPromise : {
+        get : function() {
+            return this._readyPromise;
+        }
+    },
+    hasWaterMask : {
+        get : function() {
+            return false;
+        }
+    },
+    hasVertexNormals : {
+        get : function() {
+            return false;
+        }
+    }
+});
+MapzenTerrariumTerrainProvider.prototype.requestTileGeometry = function(x, y, level, request) {
+    var url = this._url+level+'/'+x+'/'+y+'.png';
+    var proxy = this._proxy;
+    if (Cesium.defined(proxy)) {
+        url = proxy.getURL(url);
+    }
+    var resource = this._resource.getDerivedResource({
+        url : url,
+        queryParameters : {
+            cesium : true
+        },
+        request : request
+    });
+    var promise = resource.fetchImage({
+        preferImageBitmap: true
+    });
+    if (!Cesium.defined(promise)) {
+        return undefined;
+    }
+    var that = this;
+    return promise.then(function(image) {
+        return new Cesium.HeightmapTerrainData({
+            buffer : Cesium.getImagePixels(image, that._heightmapWidth, that._heightmapWidth),
+            width : that._heightmapWidth,
+            height : that._heightmapWidth,
+            childTileMask : level < 16 ? 0 : 15,
+            structure : that._terrainDataStructure
+        });
+    });
+};
+MapzenTerrariumTerrainProvider.prototype.getLevelMaximumGeometricError = function(level) {
+    return this._levelZeroMaximumGeometricError / (1 << level);
+};
+MapzenTerrariumTerrainProvider.prototype.getTileDataAvailable = function(x, y, level) {
+    return level < 16 ? true : undefined;
+};
+
+if (window.hasOwnProperty("Cesium")) {
+    var __XRDevice_requestSession = XRDevice$1.prototype.requestSession;
+    XRDevice$1.prototype.requestSession = async function (options) {
+        let bindrequest = __XRDevice_requestSession.bind(this);
+        let session = await bindrequest(options);
+        if (options.alignEUS && options.geolocation) {
+            const onSessionEnd = () => {
+                _XRsession = null;
+                if (_watchID) {
+                    navigator.geolocation.clearWatch(_watchID);
+                    _watchID = 0;
+                }
+                resetState();
+                session.removeEventListener('end', onSessionEnd);
+            };
+            session.addEventListener('end', onSessionEnd);
+            await useSession(session);
+        }
+        return session
+    };
+    async function useSession(session) {
+        _XRsession = session;
+        try {
+            let _headLevelFrameOfReference = await session.requestFrameOfReference('head-model');
+            _eyeLevelFrameOfReference = await session.requestFrameOfReference('eye-level');
+            if (!("geolocation" in navigator)) {
+                return false
+            }
+            _watchID = navigator.geolocation.watchPosition(updatePositionCallback, geoErrorCallback, _geo_options);
+            return true;
+        } catch (err) {
+            console.error("Can't start geolocation to XR mapping", err);
+            return false;
+        }
+    }
+}
+const _geo_options = {
+    enableHighAccuracy: true,
+    maximumAge        : 30000
+};
+const _identity = create();
+var _scratchVec3 = create$1();
+var _scratch2Vec3 = create$1();
+var _scratchMat4 = create();
+var _scratchMat3 = create$3();
+var _scratchCartesian = null;
+if (window.hasOwnProperty("Cesium")) {
+    _scratchCartesian = new Cesium.Cartesian3();
+}
+var _XRsession = null;
+var _geoOrigin = null;
+var _geoOriginAnchor = null;
+var _geoCartesian = null;
+var _geoAnchorsWaiting = [];
+var _eastUpSouthToFixedFrame = null;
+if (window.hasOwnProperty("Cesium")) {
+    _eastUpSouthToFixedFrame = Cesium.Transforms.localFrameToFixedFrameGenerator('east','up');
+}
+var _fixedToLocal = create();
+var _localToFixed = create();
+var _eyeLevelFrameOfReference = null;
+var _overrideGeolocation = false;
+var _overrideCartesian = null;
+var _overrideLocationAnchor = null;
+var _overrideGeoOrientation = false;
+var _overrideOrientationAnchor = null;
+var _watchID = 0;
+function currentGeoOriginAnchor() {
+    return _overrideGeolocation ? _overrideLocationAnchor : _geoOriginAnchor
+}
+function currentGeoOriginCartesian() {
+    
+}
+function resetState() {
+    _geoOrigin = null;
+    _geoOriginAnchor = null;
+    _overrideGeolocation = false;
+    _overrideGeoOrientation = false;
+    _geoAnchorsWaiting = [];
+}
+async function getAltitude(cart) {
+    await updateHeightFromTerrain(cart);
+    return cart.height
+}
+var defaultTerrainProvider = null;
+if (window.hasOwnProperty("Cesium")) {
+    defaultTerrainProvider = new MapzenTerrariumTerrainProvider({
+        url : 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/',
+        requestWaterMask : true,
+        requestVertexNormals : true
+    });
+}
+function updateHeightFromTerrain(cartographic) {
+    return Promise.resolve(Cesium.sampleTerrain(defaultTerrainProvider, 15, [cartographic]).then(results => {
+        return results[0]
+    }))
+}
+async function cartesianToFixed(longitude, latitude, altitude=null) {
+    if (!altitude) {
+        let cart = Cesium.Cartographic.fromDegrees(longitude,latitude);
+        altitude = await getAltitude(cart);
+    }
+    return Cesium.Cartesian3.fromDegrees(longitude, latitude, altitude);
+}
+function updateECEFToLocal(cartesian) {
+    _eastUpSouthToFixedFrame(cartesian, undefined, _localToFixed);
+    Cesium.Matrix4.inverseTransformation(_localToFixed, _fixedToLocal);
+}
+ function sendNewGeoAnchorEvent (oldAnchor, newAnchor) {
+    try {
+        oldAnchor.dispatchEvent( "newGeoAnchor", {
+            oldAnchor: oldAnchor,
+            newAnchor: newAnchor
+         });
+    } catch(e) {
+        console.error('newGeoAnchor event error', e);
+    }
+ }
+ function updateGeoCartesian(cartesian, anchor) {
+    updateECEFToLocal(cartesian);
+    for (let i = 0; i < _geoAnchorsWaiting.length; i++) {
+        const callback = _geoAnchorsWaiting[i];
+        try {
+            callback();
+        } catch(e) {
+            console.error("lazy finalization of geoanchor failed: ", e);
+        }
+    }
+    _geoAnchorsWaiting = [];
+    try {
+        anchor.dispatchEvent( "updateCartesian");
+    } catch(e) {
+        console.error('updateCartesian event error', e);
+    }
+ }
+var _updatingOrigin = false;
+async function updatePositionCallback (position)
+{
+    if (!_updatingOrigin &&
+        (!_geoOrigin ||
+            _geoOrigin.coords.accuracy > position.coords.accuracy ||
+            (_geoOrigin.coords.accuracy == position.coords.accuracy &&
+                _geoOrigin.coords.altitudeAccuracy > position.coords.altitudeAccuracy))) {
+        _updatingOrigin = true;
+        try {
+            let _headLevelFrameOfReference = await _XRsession.requestFrameOfReference('head-model');
+            let newAnchor = await _XRsession.addAnchor(_identity, _headLevelFrameOfReference);
+            newAnchor._isInternalGeoAnchor = true;
+            if (!_overrideGeolocation && _geoOriginAnchor) {
+                sendNewGeoAnchorEvent (_geoOriginAnchor, newAnchor);
+                await _XRsession.removeAnchor(_geoOriginAnchor);
+            }
+            _geoOriginAnchor = newAnchor;
+            _geoOrigin = position;
+            _geoCartesian = await cartesianToFixed(position.coords.longitude, position.coords.latitude, position.coords.altitude);
+            if (!_overrideGeolocation) {
+                updateGeoCartesian(_geoCartesian, _geoOriginAnchor);
+            }
+            _updatingOrigin = false;
+        } catch(e) {
+            _updatingOrigin = false;
+            console.error("error setting the geospatial origin: ", e);
+        }
+    }
+}
+function geoErrorCallback (positionError)
+{
+    switch(positionError.code) {
+        case 1:
+        case 2:
+        case 3:
+    }
+    console.error("watchPosition failed: ", positionError.message);
+}
+function generateUID() {
+    return 'geoAnchor-' + new Date().getTime() + '-' + Math.floor((Math.random() * Number.MAX_SAFE_INTEGER))
+}
+function enqueueOrExec(callback) {
+    if (_geoOrigin) {
+        callback();
+    } else {
+        _geoAnchorsWaiting.push(callback);
+    }
+}
+class XRGeospatialAnchor extends XRAnchor {
+    constructor(cartographic) {
+		let uid = generateUID();
+        super(_identity, uid);
+        this._cartographic = cartographic;
+        this._localCartesian = create$1();
+        this._cartesian = Cesium.Cartographic.toCartesian(cartographic);
+        this._newGeoOriginNotifier = this._newGeoAnchor.bind(this);
+        this._updateCartesianNotifier = this._updateLocalCartesian.bind(this);
+        this._updateLocalNotifier = this._updateLocalMatrix.bind(this);
+        let anchor = currentGeoOriginAnchor();
+        anchor.addEventListener("newGeoAnchor", this._newGeoOriginNotifier);
+        anchor.addEventListener("updateCartesian", this._updateCartesianNotifier);
+        anchor.addEventListener("update", this._updateLocalNotifier);
+        this._updateLocalCartesian();
+    }
+    get cartesian() { return this._cartesian}
+    get cartographic() { return this._cartographic}
+    _newGeoAnchor(event) {
+        event.oldAnchor.removeEventListener("newGeoAnchor", this._newGeoOriginNotifier);
+        event.oldAnchor.removeEventListener("updateCartesian", this._updateCartesianNotifier);
+        event.oldAnchor.removeEventListener("update", this._updateLocalNotifier);
+        event.newAnchor.addEventListener("newGeoAnchor", this._newGeoOriginNotifier);
+        event.newAnchor.addEventListener("updateCartesian", this._updateCartesianNotifier);
+        event.newAnchor.addEventListener("update", this._updateLocalNotifier);
+    }
+    _updateLocalCartesian() {
+        set$1(_scratchVec3, this._cartesian.x, this._cartesian.y, this._cartesian.z);
+        transformMat4(this._localCartesian, _scratchVec3, _fixedToLocal);
+        if (_overrideGeoOrientation) {
+            fromMat4(_scratchMat3, _overrideOrientationAnchor.modelMatrix);
+            transformMat3(_this._localCartesian, this._localCartesian, _scratchMat3);
+        }
+        this._updateLocalMatrix();
+    }
+    _updateLocalMatrix() {
+        getTranslation(_scratchVec3, currentGeoOriginAnchor().modelMatrix);
+        add$1(_scratchVec3, _scratchVec3, this._localCartesian);
+        fromTranslation(_scratchMat4, _scratchVec3);
+        super.updateModelMatrix(_scratchMat4, currentGeoOriginAnchor.timeStamp);
+    }
+    static getOriginCartesian() {
+        return currentGeoOriginCartesian()
+    }
+    static createGeoAnchor(cartographic) {
+        return new Promise((resolve, reject) => {
+            if (!window.hasOwnProperty("Cesium")) {
+                var e = "must load Cesium.js for XRGeospatialAnchor to work";
+                console.error (e);
+                reject(e);
+            }
+            const createAnchor = () => {
+                resolve(new XRGeospatialAnchor(cartographic));
+            };
+            enqueueOrExec(createAnchor);
+        })
+    }
+    static overrideGeoOrientation(anchor){
+        _overrideGeoOrientation = true;
+        _overrideOrientationAnchor = anchor;
+    }
+    static overrideGeoLocation (cartesian, anchor) {
+        if (!_overrideGeolocation && _geoOriginAnchor) {
+            sendNewGeoAnchorEvent (_geoOriginAnchor, anchor);
+        } else if (_overrideGeolocation) {
+            sendNewGeoAnchorEvent (_overrideLocationAnchor, anchor);
+        }
+        _overrideGeolocation = true;
+        _overrideCartesian = cartesian;
+        _overrideLocationAnchor = anchor;
+        updateGeoCartesian(_overrideCartesian, _overrideLocationAnchor);
+    }
+    static overrideGeoLocationOrientation(cartesian, anchor) {
+        if (!_overrideGeolocation && _geoOriginAnchor) {
+            sendNewGeoAnchorEvent (_geoOriginAnchor, anchor);
+        } else if (_overrideGeolocation) {
+            sendNewGeoAnchorEvent (_overrideLocationAnchor, anchor);
+        }
+        _overrideGeoOrientation = true;
+        _overrideOrientationAnchor = anchor;
+        _overrideGeolocation = true;
+        _overrideCartesian = cartesian;
+        _overrideLocationAnchor = anchor;
+        updateGeoCartesian(_overrideCartesian, _overrideLocationAnchor);
+    }
+    static useDeviceGeolocation() {
+        if (_overrideGeolocation && _geoOriginAnchor) {
+            sendNewGeoAnchorEvent (_overrideLocationAnchor, _geoOriginAnchor);
+        }
+        _overrideGeoOrientation = false;
+        _overrideOrientationAnchor = null;
+        _overrideGeolocation = false;
+        _overrideCartesian = null;
+        _overrideLocationAnchor = null;
+        if (_geoOrigin) {
+            updateGeoCartesian(_geoCartesian, _geoOriginAnchor);
+        }
+    }
+    static async getDefaultElevation(cartographic) {
+        return await getAltitude(cartographic)
+    }
+    static getDeviceElevation () {
+        return new Promise((resolve, reject) => {
+            enqueueOrExec( () => {
+                _XRsession.requestFrameOfReference('head-model').then(_headLevelFrameOfReference => {
+                    _headLevelFrameOfReference.getTransformTo(_eyeLevelFrameOfReference,_scratchMat4);
+                    getTranslation(_scratchVec3, _scratchMat4);
+                    let deviceLocalY = _scratchVec3[1];
+                    getTranslation(_scratchVec3, currentGeoOriginAnchor().modelMatrix);
+                    let geoAnchorY = _scratchVec3[1];
+                    let altitudeDiff = deviceLocalY - geoAnchorY;
+                    resolve(_geoOrigin.coords.altitude + altitudeDiff);
+                });
+            });
+        })
+    }
+    static async getDeviceCartographic() {
+        return new Promise((resolve, reject) => {
+            enqueueOrExec( () => {
+                _XRsession.requestFrameOfReference('head-model').then(_headLevelFrameOfReference => {
+                    _headLevelFrameOfReference.getTransformTo(_eyeLevelFrameOfReference, _scratchMat4);
+                    getTranslation(_scratchVec3, _scratchMat4);
+                    getTranslation(_scratch2Vec3, currentGeoOriginAnchor().modelMatrix);
+                    subtract$1(_scratchVec3, _scratchVec3, _scratch2Vec3);
+                    transformMat4(_scratchVec3, _scratchVec3, _localToFixed);
+                    let cartesian = Cesium.Cartesian3.unpack(_scratchVec3, 0, _scratchCartesian);
+                    resolve(Cesium.Cartographic.fromCartesian(cartesian));
+                });
+            });
+        })
+    }
+}
+
 var API$1 = {
     XRAnchor,
     XRAnchorOffset,
@@ -5785,7 +6066,8 @@ var API$1 = {
     XRLightEstimate,
     XRMesh,
     XRPlaneMesh,
-    XRVideoFrame
+    XRVideoFrame,
+    XRGeospatialAnchor
 }
 
 let throttle = function(func, wait, leading=true, trailing=true) {
@@ -6672,6 +6954,12 @@ class ARKitWatcher {
 	handleComputerVisionData(){}
 }
 
+var styleEl = document.createElement('style');
+document.head.appendChild(styleEl);
+var styleSheet = styleEl.sheet;
+styleSheet.insertRule('.arkit-device-wrapper { z-index: -1; }', 0);
+styleSheet.insertRule('.arkit-device-wrapper, .xr-canvas { position: absolute; top: 0; left: 0; bottom: 0; right: 0; }', 0);
+styleSheet.insertRule('.arkit-device-wrapper, .arkit-device-wrapper canvas { width: 100%; height: 100%; padding: 0; margin: 0; -webkit-user-select: none; user-select: none; }', 0);
 class ARKitDevice extends PolyfilledXRDevice {
 	constructor(global){
 		super(global);
@@ -6688,6 +6976,8 @@ class ARKitDevice extends PolyfilledXRDevice {
 		this._eyeLevelMatrix = identity(create());
 		this._stageMatrix = identity(create());
 		this._stageMatrix[13] = -1.3;
+		this._baseFrameSet = false;
+		this._frameOfRefRequestsWaiting = [];
 		this._depthNear = 0.1;
 		this._depthFar = 1000;
 		try{
@@ -6704,7 +6994,7 @@ class ARKitDevice extends PolyfilledXRDevice {
 	get depthFar(){ return this._depthFar }
 	set depthFar(val){ this._depthFar = val; }
 	supportsSession(options={}){
-		return options.immersive === false
+		return  !(!options.alignEUS && options.geolocation) && !options.immersive
 	}
 	async requestSession(options={}){
 		if(!this.supportsSession(options)){
@@ -6723,11 +7013,15 @@ class ARKitDevice extends PolyfilledXRDevice {
 		if (options.worldSensing) {
 			ARKitOptions.worldSensing = options.worldSensing;
 		}
-		if (options.useComputerVision) {
+		if (options.computerVision) {
 			ARKitOptions.videoFrames = options.useComputerVision;
 		}
 		if (options.alignEUS) {
 			ARKitOptions.alignEUS = options.alignEUS;
+		}
+		var geolocation = false;
+		if (options.geolocation && options.alignEUS) {
+			geolocation = true;
 		}
 		let initResult = await this._arKitWrapper.waitForInit().then(() => {
 		}).catch((...params) => {
@@ -6738,6 +7032,7 @@ class ARKitDevice extends PolyfilledXRDevice {
 			const session = new Session$1(options.outputContext || null);
 			this._sessions.set(session.id, session);
 			this._activeSession = session;
+			session._useGeolocation = geolocation;
 			return Promise.resolve(session.id)
 		}).catch((...params) => {
 			console.error("session request failed: ", ...params);
@@ -6769,17 +7064,33 @@ class ARKitDevice extends PolyfilledXRDevice {
 			getRotation(new Float32Array(4), this._headModelMatrix)
 		);
 	}
-	async requestFrameOfReferenceTransform(type, options){
-		switch(type){
-			case 'head-model':
-				return this._headModelMatrix
-			case 'eye-level':
-				return this._eyeLevelMatrix
-			case 'stage':
-				throw new Error('stage not supported', type)
-			default:
-				throw new Error('Unsupported frame of reference type', type)
-		}
+	requestFrameOfReferenceTransform(type, options){
+		var that = this;
+        return new Promise((resolve, reject) => {
+			let enqueueOrExec = function (callback) {
+				if (that._baseFrameSet) {
+					callback();
+				} else {
+					that._frameOfRefRequestsWaiting.push(callback);
+				}
+			};
+			switch(type){
+				case 'head-model':
+					enqueueOrExec(function () {
+						resolve(that._headModelMatrix);
+					});
+					return
+				case 'eye-level':
+					enqueueOrExec(function () {
+						resolve(that._eyeLevelMatrix);
+					});
+					return
+				case 'stage':
+					reject(new Error('stage not supported', type));
+				default:
+					reject(new Error('Unsupported frame of reference type', type));
+			}
+		})
 	}
 	endSession(sessionId){
 		const session = this._sessions.get(sessionId);
@@ -6791,6 +7102,9 @@ class ARKitDevice extends PolyfilledXRDevice {
 		}
 		if(session.baseLayer !== null){
 			this._wrapperDiv.removeChild(session.baseLayer.context.canvas);
+		}
+		if (session._useGeolocation) {
+			XRGeospatialAnchor.closeSession();
 		}
 	}
 	getViewport(sessionId, eye, layer, target){
@@ -6815,6 +7129,18 @@ class ARKitDevice extends PolyfilledXRDevice {
 	}
 	setBaseViewMatrix(matrix){
 		copy(this._headModelMatrix, matrix);
+		if (!this._baseFrameSet) {
+			this._baseFrameSet = true;
+			for (let i = 0; i < this._frameOfRefRequestsWaiting.length; i++) {
+				const callback = this._frameOfRefRequestsWaiting[i];
+				try {
+					callback();
+				} catch(e) {
+					console.error("finalization of reference frame requests failed: ", e);
+				}
+			}
+			this._frameOfRefRequestsWaiting = [];
+		}
 	}
 	requestStageBounds(){
 		return null
@@ -6857,10 +7183,11 @@ class ARWatcher extends ARKitWatcher {
 }
 
 const _workingMatrix = create();
-const PI_OVER_180$1 = Math.PI / 180;
+const _workingMatrix2 = create();
 WebXRPolyfill.prototype._patchRequestDevice = function(){
 	  var _arKitDevice = new ARKitDevice(this.global);
-    this.xr = new XR(new XRDevice(_arKitDevice));
+		this.xr = new XR(new XRDevice(_arKitDevice));
+		this.xr._mozillaXRViewer = true;
     Object.defineProperty(this.global.navigator, 'xr', {
       value: this.xr,
       configurable: true,
@@ -6870,14 +7197,12 @@ const xrPolyfill = new WebXRPolyfill(null, {
 	webvr: false,
 	cardboard: false
 });
-function _xrFrameOfReferenceGetTransformTo(otherFoR){
-	return _getTransformTo(this[PRIVATE$9].transform, otherFoR[PRIVATE$9].transform)
+function _xrFrameOfReferenceGetTransformTo(otherFoR, out){
+	return _getTransformTo(this[PRIVATE$9].transform, otherFoR[PRIVATE$9].transform, out)
 }
-function _getTransformTo(sourceMatrix, destinationMatrix){
+function _getTransformTo(sourceMatrix, destinationMatrix, out){
 	invert(_workingMatrix, destinationMatrix);
-	let out = identity(create());
-	multiply(out, _workingMatrix, out);
-	return multiply(out, sourceMatrix, out)
+	return multiply(out, sourceMatrix, _workingMatrix)
 }
 const _arKitWrapper = ARKitWrapper.GetOrCreate();
 function _updateWorldSensingState (options) {
@@ -6898,10 +7223,10 @@ async function _xrSessionRequestHitTest(origin, direction, coordinateSystem) {
 		_arKitWrapper.hitTest(...normalizedScreenCoordinates, ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_GEOMETRY).then(hits => {
 			if(hits.length === 0) resolve([]);
 			this.requestFrameOfReference('eye-level').then(eyeLevelFrameOfReference => {
-				const csTransform = eyeLevelFrameOfReference.getTransformTo(coordinateSystem);
+				eyeLevelFrameOfReference.getTransformTo(coordinateSystem, _workingMatrix);
 				resolve(hits.map(hit => {
-					const hitInHeadMatrix = multiply(create(), csTransform, hit.world_transform);
-					return new XRHitResult(hitInHeadMatrix, hit, _arKitWrapper._timestamp)
+					multiply(_workingMatrix2, _workingMatrix, hit.world_transform);
+					return new XRHitResult(_workingMatrix2, hit, _arKitWrapper._timestamp)
 				}));
 			}).catch((...params) => {
 				console.error('Error testing for hits', ...params);
@@ -6919,8 +7244,8 @@ async function                          _addAnchor(value, frameOfReference) {
 		} else if (value instanceof Float32Array) {
 			return new Promise((resolve, reject) => {
 				this.requestFrameOfReference('eye-level').then(eyeLevelFrameOfReference => {
-					const transform = frameOfReference.getTransformTo(eyeLevelFrameOfReference);
-					const anchorInWorldMatrix = multiply(create(), transform, value);
+					frameOfReference.getTransformTo(eyeLevelFrameOfReference, _workingMatrix);
+					const anchorInWorldMatrix = multiply(create(), _workingMatrix, value);
 					_arKitWrapper.createAnchor(anchorInWorldMatrix).then(anchor => {
 						resolve(anchor);
 					}).catch((...params) => {
