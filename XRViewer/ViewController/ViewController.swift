@@ -456,7 +456,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main, using: { note in
             self.arkController?.controller.previewingSinglePlane = false
             self.chooseSinglePlaneButton.removeFromSuperview()
-            guard let arSessionState = blockSelf?.arkController?.arSessionState else { return }
+            var arSessionState: ARKitSessionState
+            if blockSelf?.arkController?.arSessionState != nil {
+                arSessionState = (blockSelf?.arkController?.arSessionState)!
+            } else {
+                arSessionState = .ARKSessionUnknown
+            }
             switch arSessionState {
                 case .ARKSessionUnknown:
                     print("\n\n*********\n\nMoving to background while ARKit is not initialized, nothing to do\n\n*********")
