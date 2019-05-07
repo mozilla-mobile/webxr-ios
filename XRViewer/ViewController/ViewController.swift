@@ -805,8 +805,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onSwitchCameraButtonTapped = {
-           let numberOfImages = blockSelf?.stateController.state.numberOfTrackedImages ?? 0
-            blockSelf?.arkController?.switchCameraButtonTapped(numberOfImages)
+//            let numberOfImages = blockSelf?.stateController.state.numberOfTrackedImages ?? 0
+//            blockSelf?.arkController?.switchCameraButtonTapped(numberOfImages)
+            guard let state = blockSelf?.stateController.state else { return }
+            blockSelf?.arkController?.switchCameraButtonTapped(state)
         }
 
         if stateController.wasMemoryWarning() {
