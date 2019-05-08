@@ -30,15 +30,15 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <visualEffectView opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="scaleToFill" verticalHuggingPriority="1000" verticalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="DtY-LL-sKx" userLabel="Message Panel">
-                                <rect key="frame" x="15" y="70" width="113" height="35.333333333333343"/>
+                                <rect key="frame" x="15" y="70" width="113" height="35.666666666666657"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="fOX-09-2g6">
-                                    <rect key="frame" x="0.0" y="0.0" width="113" height="35"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="113" height="35.666666666666657"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="k7x-iF-JuZ">
-                                            <rect key="frame" x="0.0" y="0.0" width="113" height="35.333333333333336"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="113" height="35.666666666666664"/>
                                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="PIW-lX-eKU">
-                                                <rect key="frame" x="0.0" y="0.0" width="113" height="35"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="113" height="35.666666666666664"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="2rD-k6-CbN">
@@ -66,13 +66,13 @@
                                             </vibrancyEffect>
                                         </visualEffectView>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstItem="k7x-iF-JuZ" firstAttribute="height" secondItem="fOX-09-2g6" secondAttribute="height" id="AJ9-cF-pOX"/>
+                                        <constraint firstItem="k7x-iF-JuZ" firstAttribute="width" secondItem="fOX-09-2g6" secondAttribute="width" id="NQ2-9i-y8B"/>
+                                        <constraint firstItem="k7x-iF-JuZ" firstAttribute="centerX" secondItem="fOX-09-2g6" secondAttribute="centerX" id="bpH-Zt-VxG"/>
+                                        <constraint firstItem="k7x-iF-JuZ" firstAttribute="centerY" secondItem="fOX-09-2g6" secondAttribute="centerY" id="wtf-9V-1W0"/>
+                                    </constraints>
                                 </view>
-                                <constraints>
-                                    <constraint firstItem="k7x-iF-JuZ" firstAttribute="centerX" secondItem="DtY-LL-sKx" secondAttribute="centerX" id="20b-4V-cDe"/>
-                                    <constraint firstItem="k7x-iF-JuZ" firstAttribute="height" secondItem="DtY-LL-sKx" secondAttribute="height" id="CNA-S9-O8a"/>
-                                    <constraint firstItem="k7x-iF-JuZ" firstAttribute="centerY" secondItem="DtY-LL-sKx" secondAttribute="centerY" id="FZ3-cR-Jgz"/>
-                                    <constraint firstItem="k7x-iF-JuZ" firstAttribute="width" secondItem="DtY-LL-sKx" secondAttribute="width" id="Qmb-aL-2In"/>
-                                </constraints>
                                 <blurEffect style="light"/>
                             </visualEffectView>
                             <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="73L-9y-k0E" userLabel="SplashView" customClass="LayerView" customModule="XRViewer" customModuleProvider="target">
