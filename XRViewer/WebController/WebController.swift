@@ -510,7 +510,9 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     // MARK: WKUIDelegate, WKNavigationDelegate
 
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        DDLogDebug("didStartProvisionalNavigation - \(navigation.debugDescription)\n on thread \(Thread.current.description)")
+        if let navigation = navigation {
+            DDLogDebug("didStartProvisionalNavigation - \(navigation.debugDescription)\n on thread \(Thread.current.description)")
+        }
 
         self.webView?.addObserver(self as NSObject, forKeyPath: "estimatedProgress", options: .new, context: nil)
         documentReadyState = ""

@@ -295,7 +295,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                         print("\n\n*********\n\nTimer expired, pausing session\n\n*********")
                         UserDefaults.standard.set(Date(), forKey: "backgroundOrPausedDateKey")
                         blockSelf?.arkController?.pauseSession()
-                        timer.invalidate()
+                        blockSelf?.timerSessionRunningInBackground?.invalidate()
+                        blockSelf?.timerSessionRunningInBackground = nil
                     })
                 }
             }
@@ -371,8 +372,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         stateController.onRequestUpdate = { dict in
-            print("\n\n*********\n\nInvalidate timer\n\n*********")
-            blockSelf?.timerSessionRunningInBackground?.invalidate()
+            if blockSelf?.timerSessionRunningInBackground != nil {
+                print("\n\n*********\n\nInvalidate timer\n\n*********")
+                blockSelf?.timerSessionRunningInBackground?.invalidate()
+            }
 
             if blockSelf?.arkController == nil {
                 print("\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********")
