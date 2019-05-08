@@ -19,7 +19,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send Tech and Interaction Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="9A2-nf-OV5" userLabel="Label Title">
-                        <rect key="frame" x="8" y="11.5" width="247" height="21"/>
+                        <rect key="frame" x="8" y="11.5" width="240" height="21"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -39,7 +39,7 @@
                     <constraint firstItem="h4x-ZI-tja" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="JLf-zl-rcD"/>
                     <constraint firstAttribute="trailing" secondItem="LEc-Qq-gFS" secondAttribute="trailing" constant="8" id="jeb-D4-ZKb"/>
                     <constraint firstItem="LEc-Qq-gFS" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="kAh-Pu-pTp"/>
-                    <constraint firstItem="LEc-Qq-gFS" firstAttribute="leading" secondItem="9A2-nf-OV5" secondAttribute="trailing" constant="8" id="lHi-dF-wbC"/>
+                    <constraint firstItem="LEc-Qq-gFS" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9A2-nf-OV5" secondAttribute="trailing" priority="999" constant="8" id="lHi-dF-wbC"/>
                     <constraint firstItem="h4x-ZI-tja" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="mdM-41-Ho7"/>
                 </constraints>
             </tableViewCellContentView>
