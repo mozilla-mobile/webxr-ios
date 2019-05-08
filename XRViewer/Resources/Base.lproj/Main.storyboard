@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -12,24 +12,70 @@
         <!--View Controller-->
         <scene sceneID="tXr-a1-R10">
             <objects>
-                <viewController id="BV1-FR-VrT" customClass="ViewController" sceneMemberID="viewController">
+                <viewController id="BV1-FR-VrT" customClass="ViewController" customModule="XRViewer" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" opaque="NO" contentMode="scaleToFill" id="3se-qz-xqx">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pr5-sC-23l" userLabel="ARKView" customClass="LayerView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pr5-sC-23l" userLabel="ARKView" customClass="ARSCNView">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RAF-Ke-Lef" userLabel=" WebView" customClass="LayerView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RAF-Ke-Lef" userLabel=" WebView" customClass="LayerView" customModule="XRViewer" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NaB-9b-LZq" userLabel="HotView" customClass="LayerView">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NaB-9b-LZq" userLabel="HotView" customClass="LayerView" customModule="XRViewer" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
-                            <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="73L-9y-k0E" userLabel="SplashView" customClass="LayerView">
+                            <visualEffectView opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="scaleToFill" verticalHuggingPriority="1000" verticalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="DtY-LL-sKx" userLabel="Message Panel">
+                                <rect key="frame" x="15" y="70" width="113" height="35.333333333333343"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="fOX-09-2g6">
+                                    <rect key="frame" x="0.0" y="0.0" width="113" height="35"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="k7x-iF-JuZ">
+                                            <rect key="frame" x="0.0" y="0.0" width="113" height="35.333333333333336"/>
+                                            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="PIW-lX-eKU">
+                                                <rect key="frame" x="0.0" y="0.0" width="113" height="35"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="2rD-k6-CbN">
+                                                        <rect key="frame" x="10" y="10" width="93" height="15.666666666666664"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Tracking status" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MAd-gS-NsB" userLabel="Messages label">
+                                                                <rect key="frame" x="0.0" y="0.0" width="93" height="15.666666666666666"/>
+                                                                <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                                                <nil key="textColor"/>
+                                                                <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                                <size key="shadowOffset" width="1" height="1"/>
+                                                            </label>
+                                                        </subviews>
+                                                    </stackView>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="bottom" secondItem="2rD-k6-CbN" secondAttribute="bottom" constant="10" id="9ps-cj-PEw"/>
+                                                    <constraint firstItem="2rD-k6-CbN" firstAttribute="top" secondItem="PIW-lX-eKU" secondAttribute="top" constant="10" id="GDA-iJ-1yB"/>
+                                                    <constraint firstItem="2rD-k6-CbN" firstAttribute="leading" secondItem="PIW-lX-eKU" secondAttribute="leading" constant="10" id="IsC-gL-4ow"/>
+                                                    <constraint firstAttribute="trailing" secondItem="2rD-k6-CbN" secondAttribute="trailing" constant="10" id="izS-Xt-Gxz"/>
+                                                </constraints>
+                                            </view>
+                                            <vibrancyEffect>
+                                                <blurEffect style="extraLight"/>
+                                            </vibrancyEffect>
+                                        </visualEffectView>
+                                    </subviews>
+                                </view>
+                                <constraints>
+                                    <constraint firstItem="k7x-iF-JuZ" firstAttribute="centerX" secondItem="DtY-LL-sKx" secondAttribute="centerX" id="20b-4V-cDe"/>
+                                    <constraint firstItem="k7x-iF-JuZ" firstAttribute="height" secondItem="DtY-LL-sKx" secondAttribute="height" id="CNA-S9-O8a"/>
+                                    <constraint firstItem="k7x-iF-JuZ" firstAttribute="centerY" secondItem="DtY-LL-sKx" secondAttribute="centerY" id="FZ3-cR-Jgz"/>
+                                    <constraint firstItem="k7x-iF-JuZ" firstAttribute="width" secondItem="DtY-LL-sKx" secondAttribute="width" id="Qmb-aL-2In"/>
+                                </constraints>
+                                <blurEffect style="light"/>
+                            </visualEffectView>
+                            <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="73L-9y-k0E" userLabel="SplashView" customClass="LayerView" customModule="XRViewer" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bgH" translatesAutoresizingMaskIntoConstraints="NO" id="0Zx-bn-O3A">
@@ -61,6 +107,7 @@
                         <constraints>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="2c2-sH-loz"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="2qV-Bb-iAI"/>
+                            <constraint firstItem="DtY-LL-sKx" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" constant="15" id="4Vc-JG-eLE"/>
                             <constraint firstItem="NaB-9b-LZq" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="D3d-fu-aKE"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="GFe-uq-zen"/>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="Gvp-8I-EIt"/>
@@ -76,6 +123,7 @@
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="ltL-KU-uG7"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="m7O-0J-noB"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="rdY-e9-qs9"/>
+                            <constraint firstItem="DtY-LL-sKx" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" constant="50" id="xW2-ml-qID"/>
                             <constraint firstAttribute="trailing" secondItem="Pr5-sC-23l" secondAttribute="trailing" id="zAq-Ca-Y1L"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="zhZ-5g-8Va"/>
                             <constraint firstItem="NaB-9b-LZq" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="zqr-RF-nCV"/>
@@ -85,6 +133,9 @@
                     <connections>
                         <outlet property="arkLayerView" destination="Pr5-sC-23l" id="Cgf-zM-pDx"/>
                         <outlet property="hotLayerView" destination="NaB-9b-LZq" id="tA1-p4-0P7"/>
+                        <outlet property="messageLabel" destination="MAd-gS-NsB" id="G3g-aC-5Pj"/>
+                        <outlet property="messagePanel" destination="DtY-LL-sKx" id="cv6-1y-uzK"/>
+                        <outlet property="sceneView" destination="Pr5-sC-23l" id="0rE-Jq-9Mn"/>
                         <outlet property="splashLayerView" destination="73L-9y-k0E" id="f0u-08-WWW"/>
                         <outlet property="webLayerView" destination="RAF-Ke-Lef" id="cPN-4w-nXv"/>
                     </connections>

@@ -8,38 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		0401E04B1F612C240075D823 /* BarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0401E04A1F612C240075D823 /* BarView.xib */; };
-		0401E04E1F612D910075D823 /* BarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0401E04D1F612D910075D823 /* BarView.m */; };
-		0401E0521F62E6150075D823 /* Animator.m in Sources */ = {isa = PBXBuildFile; fileRef = 0401E0511F62E6150075D823 /* Animator.m */; };
-		041503C61F28944F00887400 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 041503C51F28944F00887400 /* AppDelegate.m */; };
 		041503D21F28944F00887400 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D01F28944F00887400 /* Main.storyboard */; };
 		041503D71F28944F00887400 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 041503D51F28944F00887400 /* LaunchScreen.storyboard */; };
-		041503DA1F28944F00887400 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 041503D91F28944F00887400 /* main.m */; };
-		0449DE071F4D7F000057F639 /* MessageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0449DE061F4D7F000057F639 /* MessageController.m */; };
-		045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */; };
-		045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */; };
-		045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 045B2EA21F28EE6C0005FF96 /* TouchView.m */; };
-		04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */; };
-		04A806771F3D9ED900B8732C /* PlaneNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806761F3D9ED900B8732C /* PlaneNode.m */; };
-		04A8067A1F3DCAA200B8732C /* AnchorNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A806791F3DCAA200B8732C /* AnchorNode.m */; };
 		04A815681F419EB60082D31D /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A815671F419EB60082D31D /* Models.scnassets */; };
 		04A8156A1F419F840082D31D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 041503D31F28944F00887400 /* Assets.xcassets */; };
-		04A8156D1F41BA660082D31D /* HitAnchor.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A8156C1F41BA660082D31D /* HitAnchor.m */; };
-		04A815791F42DA990082D31D /* FocusNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A815781F42DA990082D31D /* FocusNode.m */; };
-		04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A82BEE1F58566100F64A5D /* HitTestResult.m */; };
-		04A93D3A1F63CC8D002928CA /* SCNNode+Show.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A93D391F63CC8D002928CA /* SCNNode+Show.m */; };
-		04A983781F32291100120CF8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983751F32277E00120CF8 /* ViewController.m */; };
-		04A983791F32291900120CF8 /* RecordController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983711F32271B00120CF8 /* RecordController.m */; };
 		04A9837A1F32291D00120CF8 /* ARKController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983651F32268900120CF8 /* ARKController.m */; };
-		04A9837B1F32292200120CF8 /* Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983671F3226A500120CF8 /* Renderer.m */; };
 		04A9837C1F32292900120CF8 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836A1F3226A500120CF8 /* Shaders.metal */; };
-		04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836B1F3226BC00120CF8 /* LocationManager.m */; };
-		04A9837E1F32293100120CF8 /* WebController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A9836D1F3226E000120CF8 /* WebController.m */; };
-		04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1241F3C64A100F96C5A /* ARKMetalController.m */; };
-		04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04B1E1281F3C64DF00F96C5A /* ARKSceneKitController.m */; };
-		04C64BC81F71011700ACFB8B /* LayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BC71F71011700ACFB8B /* LayerView.m */; };
-		04C64BCE1F71094500ACFB8B /* AppState.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCC1F71016A00ACFB8B /* AppState.m */; };
-		04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C64BCA1F71016A00ACFB8B /* AppStateController.m */; };
-		5184F8FC0384A338F76D2653 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 5184FF937519BAF48DCEB808 /* Utils.m */; };
 		591A8C502FA83D70E8F5B5B4 /* Pods_XRViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */; };
 		6207254E206A90BF00887B1F /* RequestPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6207254C206A90BF00887B1F /* RequestPermissionsViewController.swift */; };
 		6207254F206A90BF00887B1F /* RequestPermissionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6207254D206A90BF00887B1F /* RequestPermissionsViewController.xib */; };
@@ -53,83 +27,68 @@
 		62242ACC201F2D3600506412 /* TextTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 62242ACA201F2D3600506412 /* TextTableViewCell.xib */; };
 		6241012D1FEABABF006FDBE3 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6241012C1FEABABF006FDBE3 /* AnalyticsManager.swift */; };
 		625051091FCDBDBE00EEAC0A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */; };
-		6251B441202085BA00BD989D /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 6251B440202085BA00BD989D /* Constants.m */; };
 		625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625FA2E4202046BF00F62698 /* TermsAndConditionsTableViewCell.swift */; };
 		625FA2E7202046BF00F62698 /* TermsAndConditionsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 625FA2E5202046BF00F62698 /* TermsAndConditionsTableViewCell.xib */; };
 		8E5089D8211B6DA90059015B /* webxr.js in Resources */ = {isa = PBXBuildFile; fileRef = 8E5089D7211B6DA90059015B /* webxr.js */; };
 		8ED9EBB3211C6FB000DA58F1 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 8ED9EBB2211C6FB000DA58F1 /* Web */; };
-		A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A6160A091F651B14009F4402 /* Reachability.m */; };
+		B61E2B2722249D500031955F /* ActivityIndicatorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61E2B2622249D500031955F /* ActivityIndicatorButton.swift */; };
+		B620ED0E21F7B2E90066B4A8 /* ARKController+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */; };
+		B620ED1021FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */; };
+		B620ED1222024D5A0066B4A8 /* ARKController+WorldMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED1122024D5A0066B4A8 /* ARKController+WorldMap.swift */; };
+		B620ED142204B5480066B4A8 /* ARKController+Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED132204B5480066B4A8 /* ARKController+Camera.swift */; };
+		B62CE86321CAD3B00053F9B3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86221CAD3B00053F9B3 /* ViewController.swift */; };
+		B62CE86521CC0FDF0053F9B3 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86421CC0FDF0053F9B3 /* Reachability.swift */; };
+		B62CE86821CC46A90053F9B3 /* TextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86721CC46A90053F9B3 /* TextManager.swift */; };
+		B62CE86A21CC4AFF0053F9B3 /* ViewController+ARSCNViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86921CC4AFF0053F9B3 /* ViewController+ARSCNViewDelegate.swift */; };
+		B632850721C2D98A00FD5510 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632850621C2D98900FD5510 /* LocationManager.swift */; };
+		B632850921C2F24200FD5510 /* MessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632850821C2F24200FD5510 /* MessageController.swift */; };
+		B632850B21C330A500FD5510 /* MyriadPro-Regular.OTF in Resources */ = {isa = PBXBuildFile; fileRef = B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */; };
+		B632851321C4159B00FD5510 /* LayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632851221C4159B00FD5510 /* LayerView.swift */; };
+		B632851521C4191200FD5510 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632851421C4191200FD5510 /* AppDelegate.swift */; };
+		B632851721C4330500FD5510 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632851621C4330500FD5510 /* Constants.swift */; };
+		B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */; };
+		B654FED221EF99150004F001 /* ARKController+AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B654FED121EF99150004F001 /* ARKController+AppState.swift */; };
+		B654FED421F1179B0004F001 /* ARKController+Anchors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B654FED321F1179B0004F001 /* ARKController+Anchors.swift */; };
+		B658C0F221BF43D500538D57 /* WebController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B658C0F121BF43D500538D57 /* WebController.swift */; };
+		B6679353222894C600939804 /* SegmentedControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6679351222894C600939804 /* SegmentedControlTableViewCell.swift */; };
+		B6679354222894C600939804 /* SegmentedControlTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B6679352222894C600939804 /* SegmentedControlTableViewCell.xib */; };
+		B679967921B06A7000612AF4 /* BarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B679967821B06A7000612AF4 /* BarView.swift */; };
+		B67D979721C4404E0075FE0A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D979621C4404E0075FE0A /* Utils.swift */; };
+		B67D97A321C8453F0075FE0A /* UIOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A221C8453F0075FE0A /* UIOverlayController.swift */; };
+		B67D97A521C854C20075FE0A /* OverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A421C854C20075FE0A /* OverlayViewController.swift */; };
+		B67D97A721C9843B0075FE0A /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A621C9843B0075FE0A /* Animator.swift */; };
+		B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */; };
+		B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */; };
+		B698074021DA7A8900322782 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B698073F21DA7A8900322782 /* AppState.swift */; };
+		B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047521B7333500C9A4EC /* AnchorNode.swift */; };
+		B69C047B21B73E9800C9A4EC /* FocusNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047921B73E9800C9A4EC /* FocusNode.swift */; };
+		B69C047E21B8325F00C9A4EC /* PlaneNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047D21B8325F00C9A4EC /* PlaneNode.swift */; };
+		B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047F21B836E300C9A4EC /* SCNNode+Show.swift */; };
+		B69C048221B838A300C9A4EC /* ARSCNView+HitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C048121B838A300C9A4EC /* ARSCNView+HitTest.swift */; };
+		B6B7A6982266594B008E8978 /* RequestXRPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B7A6962266594B008E8978 /* RequestXRPermissionsViewController.swift */; };
+		B6B7A6992266594B008E8978 /* RequestXRPermissionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B6B7A6972266594B008E8978 /* RequestXRPermissionsViewController.xib */; };
+		B6EAD6DD21DAB48800DF5127 /* Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6EAD6DC21DAB48800DF5127 /* Prefix.swift */; };
+		B6F4C0BD221B5AEC009ECC06 /* ARKController+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4C0BC221B5AEC009ECC06 /* ARKController+Frame.swift */; };
+		B6FAD7C0221F2F9100310114 /* ARKMetalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FAD7BF221F2F9100310114 /* ARKMetalController.swift */; };
+		B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FE960221B61BDC0087A21F /* AppStateController.swift */; };
+		B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FE960421B61FEE0087A21F /* TouchView.swift */; };
+		B6FEAC0D224AC20200EE0343 /* ShaderTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FEAC0C224AC20200EE0343 /* ShaderTypes.swift */; };
+		B6FEAC0F224AD4D500EE0343 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FEAC0E224AD4D500EE0343 /* Renderer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0401E04A1F612C240075D823 /* BarView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BarView.xib; sourceTree = "<group>"; };
-		0401E04C1F612D910075D823 /* BarView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarView.h; sourceTree = "<group>"; };
-		0401E04D1F612D910075D823 /* BarView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BarView.m; sourceTree = "<group>"; };
-		0401E0501F62E6150075D823 /* Animator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Animator.h; sourceTree = "<group>"; };
-		0401E0511F62E6150075D823 /* Animator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Animator.m; sourceTree = "<group>"; };
 		041503C11F28944F00887400 /* XRViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XRViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		041503C41F28944F00887400 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		041503C51F28944F00887400 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		041503D11F28944F00887400 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		041503D31F28944F00887400 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		041503D61F28944F00887400 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		041503D81F28944F00887400 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		041503D91F28944F00887400 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		0449DE051F4D7F000057F639 /* MessageController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageController.h; sourceTree = "<group>"; };
-		0449DE061F4D7F000057F639 /* MessageController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MessageController.m; sourceTree = "<group>"; };
-		045B2E9B1F28E8A30005FF96 /* UIOverlayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIOverlayController.h; sourceTree = "<group>"; };
-		045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UIOverlayController.m; sourceTree = "<group>"; };
-		045B2E9E1F28EE4B0005FF96 /* OverlayViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayViewController.h; sourceTree = "<group>"; };
-		045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OverlayViewController.m; sourceTree = "<group>"; };
-		045B2EA11F28EE6C0005FF96 /* TouchView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TouchView.h; sourceTree = "<group>"; };
-		045B2EA21F28EE6C0005FF96 /* TouchView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TouchView.m; sourceTree = "<group>"; };
-		045B2EA81F2A02710005FF96 /* OverlayHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OverlayHeader.h; sourceTree = "<group>"; };
-		04A712C21F46EF48005D91E2 /* ARSCNView+HitTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ARSCNView+HitTest.h"; sourceTree = "<group>"; };
-		04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "ARSCNView+HitTest.m"; sourceTree = "<group>"; };
-		04A806751F3D9ED900B8732C /* PlaneNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaneNode.h; sourceTree = "<group>"; };
-		04A806761F3D9ED900B8732C /* PlaneNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaneNode.m; sourceTree = "<group>"; };
-		04A806781F3DCAA200B8732C /* AnchorNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnchorNode.h; sourceTree = "<group>"; };
-		04A806791F3DCAA200B8732C /* AnchorNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnchorNode.m; sourceTree = "<group>"; };
 		04A815671F419EB60082D31D /* Models.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Models.scnassets; sourceTree = "<group>"; };
-		04A8156B1F41BA660082D31D /* HitAnchor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HitAnchor.h; sourceTree = "<group>"; };
-		04A8156C1F41BA660082D31D /* HitAnchor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HitAnchor.m; sourceTree = "<group>"; };
-		04A815771F42DA990082D31D /* FocusNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FocusNode.h; sourceTree = "<group>"; };
-		04A815781F42DA990082D31D /* FocusNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FocusNode.m; sourceTree = "<group>"; };
-		04A82BED1F58566000F64A5D /* HitTestResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HitTestResult.h; path = XRViewer/ARKController/HitTestResult.h; sourceTree = SOURCE_ROOT; };
-		04A82BEE1F58566100F64A5D /* HitTestResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HitTestResult.m; path = XRViewer/ARKController/HitTestResult.m; sourceTree = SOURCE_ROOT; };
-		04A93D381F63CC8D002928CA /* SCNNode+Show.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SCNNode+Show.h"; sourceTree = "<group>"; };
-		04A93D391F63CC8D002928CA /* SCNNode+Show.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "SCNNode+Show.m"; sourceTree = "<group>"; };
 		04A983651F32268900120CF8 /* ARKController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKController.m; sourceTree = "<group>"; };
 		04A983661F32268900120CF8 /* ARKController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKController.h; sourceTree = "<group>"; };
-		04A983671F3226A500120CF8 /* Renderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Renderer.m; sourceTree = "<group>"; };
-		04A983681F3226A500120CF8 /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
-		04A983691F3226A500120CF8 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		04A9836A1F3226A500120CF8 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
-		04A9836B1F3226BC00120CF8 /* LocationManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
-		04A9836C1F3226BC00120CF8 /* LocationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
-		04A9836D1F3226E000120CF8 /* WebController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebController.m; sourceTree = "<group>"; };
-		04A9836E1F3226E000120CF8 /* WebController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebController.h; sourceTree = "<group>"; };
-		04A9836F1F3226E000120CF8 /* WebARKHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebARKHeader.h; sourceTree = "<group>"; };
-		04A983711F32271B00120CF8 /* RecordController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordController.m; sourceTree = "<group>"; };
-		04A983721F32271B00120CF8 /* RecordController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordController.h; sourceTree = "<group>"; };
-		04A983741F32277E00120CF8 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		04A983751F32277E00120CF8 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		04B1E1231F3C64A100F96C5A /* ARKMetalController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKMetalController.h; sourceTree = "<group>"; };
-		04B1E1241F3C64A100F96C5A /* ARKMetalController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKMetalController.m; sourceTree = "<group>"; };
-		04B1E1271F3C64DF00F96C5A /* ARKSceneKitController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKSceneKitController.h; sourceTree = "<group>"; };
-		04B1E1281F3C64DF00F96C5A /* ARKSceneKitController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKSceneKitController.m; sourceTree = "<group>"; };
-		04B1E12A1F3C660300F96C5A /* ARKControllerProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKControllerProtocol.h; sourceTree = "<group>"; };
 		04BB9D641F39BE40004328A2 /* ARKHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKHelper.h; sourceTree = "<group>"; };
-		04C296D31F331FC700D6909D /* Prefix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.h; sourceTree = "<group>"; };
-		04C64BC61F71011700ACFB8B /* LayerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayerView.h; sourceTree = "<group>"; };
-		04C64BC71F71011700ACFB8B /* LayerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LayerView.m; sourceTree = "<group>"; };
-		04C64BCA1F71016A00ACFB8B /* AppStateController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppStateController.m; sourceTree = "<group>"; };
-		04C64BCB1F71016A00ACFB8B /* AppStateController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppStateController.h; sourceTree = "<group>"; };
-		04C64BCC1F71016A00ACFB8B /* AppState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppState.m; sourceTree = "<group>"; };
-		04C64BCD1F71016B00ACFB8B /* AppState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppState.h; sourceTree = "<group>"; };
 		23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.release.xcconfig"; sourceTree = "<group>"; };
-		5184F32A43380670077FB602 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
-		5184FF937519BAF48DCEB808 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
 		6207254C206A90BF00887B1F /* RequestPermissionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestPermissionsViewController.swift; sourceTree = "<group>"; };
 		6207254D206A90BF00887B1F /* RequestPermissionsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RequestPermissionsViewController.xib; sourceTree = "<group>"; };
 		620D24A01FC48994002127FD /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -143,15 +102,54 @@
 		6241012B1FEABABF006FDBE3 /* XRViewer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "XRViewer-Bridging-Header.h"; sourceTree = "<group>"; };
 		6241012C1FEABABF006FDBE3 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
 		625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		6251B440202085BA00BD989D /* Constants.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		625FA2E4202046BF00F62698 /* TermsAndConditionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsTableViewCell.swift; sourceTree = "<group>"; };
 		625FA2E5202046BF00F62698 /* TermsAndConditionsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TermsAndConditionsTableViewCell.xib; sourceTree = "<group>"; };
-		62676C121FEACCF100474547 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_XRViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E5089D7211B6DA90059015B /* webxr.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webxr.js; sourceTree = "<group>"; };
 		8ED9EBB2211C6FB000DA58F1 /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
-		A6160A091F651B14009F4402 /* Reachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		A6160A0A1F651B14009F4402 /* Reachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		B61E2B2622249D500031955F /* ActivityIndicatorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorButton.swift; sourceTree = "<group>"; };
+		B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Images.swift"; sourceTree = "<group>"; };
+		B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+ARSessionDelegate.swift"; sourceTree = "<group>"; };
+		B620ED1122024D5A0066B4A8 /* ARKController+WorldMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+WorldMap.swift"; sourceTree = "<group>"; };
+		B620ED132204B5480066B4A8 /* ARKController+Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Camera.swift"; sourceTree = "<group>"; };
+		B62CE86221CAD3B00053F9B3 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		B62CE86421CC0FDF0053F9B3 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		B62CE86721CC46A90053F9B3 /* TextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextManager.swift; sourceTree = "<group>"; };
+		B62CE86921CC4AFF0053F9B3 /* ViewController+ARSCNViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+ARSCNViewDelegate.swift"; sourceTree = "<group>"; };
+		B632850621C2D98900FD5510 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		B632850821C2F24200FD5510 /* MessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MessageController.swift; path = MessageController/MessageController.swift; sourceTree = "<group>"; };
+		B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Regular.OTF"; sourceTree = "<group>"; };
+		B632851221C4159B00FD5510 /* LayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerView.swift; sourceTree = "<group>"; };
+		B632851421C4191200FD5510 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B632851621C4330500FD5510 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKSceneKitController.swift; sourceTree = "<group>"; };
+		B654FED121EF99150004F001 /* ARKController+AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+AppState.swift"; sourceTree = "<group>"; };
+		B654FED321F1179B0004F001 /* ARKController+Anchors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Anchors.swift"; sourceTree = "<group>"; };
+		B658C0F121BF43D500538D57 /* WebController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebController.swift; sourceTree = "<group>"; };
+		B6679351222894C600939804 /* SegmentedControlTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlTableViewCell.swift; sourceTree = "<group>"; };
+		B6679352222894C600939804 /* SegmentedControlTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SegmentedControlTableViewCell.xib; sourceTree = "<group>"; };
+		B679967821B06A7000612AF4 /* BarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarView.swift; sourceTree = "<group>"; };
+		B67D979621C4404E0075FE0A /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		B67D97A221C8453F0075FE0A /* UIOverlayController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIOverlayController.swift; sourceTree = "<group>"; };
+		B67D97A421C854C20075FE0A /* OverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayViewController.swift; sourceTree = "<group>"; };
+		B67D97A621C9843B0075FE0A /* Animator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
+		B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HitTestResult.swift; sourceTree = "<group>"; };
+		B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKControllerProtocol.swift; sourceTree = "<group>"; };
+		B698073F21DA7A8900322782 /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		B69C047521B7333500C9A4EC /* AnchorNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnchorNode.swift; sourceTree = "<group>"; };
+		B69C047921B73E9800C9A4EC /* FocusNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusNode.swift; sourceTree = "<group>"; };
+		B69C047D21B8325F00C9A4EC /* PlaneNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaneNode.swift; sourceTree = "<group>"; };
+		B69C047F21B836E300C9A4EC /* SCNNode+Show.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNNode+Show.swift"; sourceTree = "<group>"; };
+		B69C048121B838A300C9A4EC /* ARSCNView+HitTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ARSCNView+HitTest.swift"; sourceTree = "<group>"; };
+		B6B7A6962266594B008E8978 /* RequestXRPermissionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestXRPermissionsViewController.swift; sourceTree = "<group>"; };
+		B6B7A6972266594B008E8978 /* RequestXRPermissionsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RequestXRPermissionsViewController.xib; sourceTree = "<group>"; };
+		B6EAD6DC21DAB48800DF5127 /* Prefix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Prefix.swift; sourceTree = "<group>"; };
+		B6F4C0BC221B5AEC009ECC06 /* ARKController+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Frame.swift"; sourceTree = "<group>"; };
+		B6FAD7BF221F2F9100310114 /* ARKMetalController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARKMetalController.swift; sourceTree = "<group>"; };
+		B6FE960221B61BDC0087A21F /* AppStateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateController.swift; sourceTree = "<group>"; };
+		B6FE960421B61FEE0087A21F /* TouchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchView.swift; sourceTree = "<group>"; };
+		B6FEAC0C224AC20200EE0343 /* ShaderTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderTypes.swift; sourceTree = "<group>"; };
+		B6FEAC0E224AD4D500EE0343 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		C99925CDAC21EAF144F18C57 /* Pods-XRViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -167,15 +165,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0401E04F1F62E5E70075D823 /* Animator */ = {
-			isa = PBXGroup;
-			children = (
-				0401E0501F62E6150075D823 /* Animator.h */,
-				0401E0511F62E6150075D823 /* Animator.m */,
-			);
-			path = Animator;
-			sourceTree = "<group>";
-		};
 		041503B81F28944F00887400 = {
 			isa = PBXGroup;
 			children = (
@@ -200,44 +189,27 @@
 			children = (
 				6207254B206A909100887B1F /* RequestPermissionsController */,
 				62242ABC201F028800506412 /* SettingsController */,
-				62676C111FEACCE200474547 /* Constants */,
-				621437971FE968090055252A /* Utils */,
-				62414B151FCEFACC00D1CDC8 /* Analytics */,
-				04A983771F32280000120CF8 /* AppDelegate */,
+				6241012C1FEABABF006FDBE3 /* AnalyticsManager.swift */,
+				B632851421C4191200FD5510 /* AppDelegate.swift */,
 				04A983731F32276600120CF8 /* ViewController */,
 				04C64BC91F71014800ACFB8B /* AppStateController */,
 				04A983631F32216800120CF8 /* ARKController */,
 				04A983611F32213800120CF8 /* WebController */,
-				0449DE041F4D7EEA0057F639 /* MessageController */,
-				04A983701F3226FD00120CF8 /* RecordController */,
-				04A983621F32215300120CF8 /* LocationManager */,
+				B632850821C2F24200FD5510 /* MessageController.swift */,
+				B632850621C2D98900FD5510 /* LocationManager.swift */,
 				045B2EA41F28EE790005FF96 /* Overlay */,
-				A6160A081F651AF2009F4402 /* Reachability */,
-				0401E04F1F62E5E70075D823 /* Animator */,
+				B62CE86621CC46930053F9B3 /* Utilities */,
 				04A983761F32279900120CF8 /* Resources */,
 			);
 			path = XRViewer;
 			sourceTree = "<group>";
 		};
-		0449DE041F4D7EEA0057F639 /* MessageController */ = {
-			isa = PBXGroup;
-			children = (
-				0449DE051F4D7F000057F639 /* MessageController.h */,
-				0449DE061F4D7F000057F639 /* MessageController.m */,
-			);
-			path = MessageController;
-			sourceTree = "<group>";
-		};
 		045B2EA41F28EE790005FF96 /* Overlay */ = {
 			isa = PBXGroup;
 			children = (
-				045B2EA81F2A02710005FF96 /* OverlayHeader.h */,
-				045B2E9B1F28E8A30005FF96 /* UIOverlayController.h */,
-				045B2E9C1F28E8A30005FF96 /* UIOverlayController.m */,
-				045B2E9E1F28EE4B0005FF96 /* OverlayViewController.h */,
-				045B2E9F1F28EE4B0005FF96 /* OverlayViewController.m */,
-				045B2EA11F28EE6C0005FF96 /* TouchView.h */,
-				045B2EA21F28EE6C0005FF96 /* TouchView.m */,
+				B67D97A221C8453F0075FE0A /* UIOverlayController.swift */,
+				B67D97A421C854C20075FE0A /* OverlayViewController.swift */,
+				B6FE960421B61FEE0087A21F /* TouchView.swift */,
 			);
 			path = Overlay;
 			sourceTree = "<group>";
@@ -245,23 +217,12 @@
 		04A983611F32213800120CF8 /* WebController */ = {
 			isa = PBXGroup;
 			children = (
-				04A9836F1F3226E000120CF8 /* WebARKHeader.h */,
-				04A9836E1F3226E000120CF8 /* WebController.h */,
-				04A9836D1F3226E000120CF8 /* WebController.m */,
-				0401E04C1F612D910075D823 /* BarView.h */,
-				0401E04D1F612D910075D823 /* BarView.m */,
+				B658C0F121BF43D500538D57 /* WebController.swift */,
+				B679967821B06A7000612AF4 /* BarView.swift */,
+				B61E2B2622249D500031955F /* ActivityIndicatorButton.swift */,
 				0401E04A1F612C240075D823 /* BarView.xib */,
 			);
 			path = WebController;
-			sourceTree = "<group>";
-		};
-		04A983621F32215300120CF8 /* LocationManager */ = {
-			isa = PBXGroup;
-			children = (
-				04A9836C1F3226BC00120CF8 /* LocationManager.h */,
-				04A9836B1F3226BC00120CF8 /* LocationManager.m */,
-			);
-			path = LocationManager;
 			sourceTree = "<group>";
 		};
 		04A983631F32216800120CF8 /* ARKController */ = {
@@ -270,11 +231,15 @@
 				04BB9D641F39BE40004328A2 /* ARKHelper.h */,
 				04A983661F32268900120CF8 /* ARKController.h */,
 				04A983651F32268900120CF8 /* ARKController.m */,
-				04B1E12A1F3C660300F96C5A /* ARKControllerProtocol.h */,
-				04A8156B1F41BA660082D31D /* HitAnchor.h */,
-				04A8156C1F41BA660082D31D /* HitAnchor.m */,
-				04A82BED1F58566000F64A5D /* HitTestResult.h */,
-				04A82BEE1F58566100F64A5D /* HitTestResult.m */,
+				B654FED321F1179B0004F001 /* ARKController+Anchors.swift */,
+				B654FED121EF99150004F001 /* ARKController+AppState.swift */,
+				B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */,
+				B620ED132204B5480066B4A8 /* ARKController+Camera.swift */,
+				B6F4C0BC221B5AEC009ECC06 /* ARKController+Frame.swift */,
+				B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */,
+				B620ED1122024D5A0066B4A8 /* ARKController+WorldMap.swift */,
+				B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */,
+				B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */,
 				04B1E1261F3C64C100F96C5A /* SceneKit */,
 				04B1E1221F3C648200F96C5A /* Metal */,
 			);
@@ -284,30 +249,19 @@
 		04A983641F32262200120CF8 /* Render */ = {
 			isa = PBXGroup;
 			children = (
-				04A983691F3226A500120CF8 /* Renderer.h */,
-				04A983671F3226A500120CF8 /* Renderer.m */,
+				B6FEAC0E224AD4D500EE0343 /* Renderer.swift */,
 				04A9836A1F3226A500120CF8 /* Shaders.metal */,
-				04A983681F3226A500120CF8 /* ShaderTypes.h */,
+				B6FEAC0C224AC20200EE0343 /* ShaderTypes.swift */,
 			);
 			path = Render;
-			sourceTree = "<group>";
-		};
-		04A983701F3226FD00120CF8 /* RecordController */ = {
-			isa = PBXGroup;
-			children = (
-				04A983721F32271B00120CF8 /* RecordController.h */,
-				04A983711F32271B00120CF8 /* RecordController.m */,
-			);
-			path = RecordController;
 			sourceTree = "<group>";
 		};
 		04A983731F32276600120CF8 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
-				04A983741F32277E00120CF8 /* ViewController.h */,
-				04A983751F32277E00120CF8 /* ViewController.m */,
-				04C64BC61F71011700ACFB8B /* LayerView.h */,
-				04C64BC71F71011700ACFB8B /* LayerView.m */,
+				B62CE86221CAD3B00053F9B3 /* ViewController.swift */,
+				B62CE86921CC4AFF0053F9B3 /* ViewController+ARSCNViewDelegate.swift */,
+				B632851221C4159B00FD5510 /* LayerView.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -318,31 +272,21 @@
 				6241012B1FEABABF006FDBE3 /* XRViewer-Bridging-Header.h */,
 				041503D81F28944F00887400 /* Info.plist */,
 				625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */,
-				041503D91F28944F00887400 /* main.m */,
 				041503D31F28944F00887400 /* Assets.xcassets */,
 				041503D01F28944F00887400 /* Main.storyboard */,
 				041503D51F28944F00887400 /* LaunchScreen.storyboard */,
-				04C296D31F331FC700D6909D /* Prefix.h */,
+				B6EAD6DC21DAB48800DF5127 /* Prefix.swift */,
 				8E5089D7211B6DA90059015B /* webxr.js */,
+				B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */,
 				620D24A01FC48994002127FD /* Settings.bundle */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		04A983771F32280000120CF8 /* AppDelegate */ = {
-			isa = PBXGroup;
-			children = (
-				041503C41F28944F00887400 /* AppDelegate.h */,
-				041503C51F28944F00887400 /* AppDelegate.m */,
-			);
-			path = AppDelegate;
-			sourceTree = "<group>";
-		};
 		04B1E1221F3C648200F96C5A /* Metal */ = {
 			isa = PBXGroup;
 			children = (
-				04B1E1231F3C64A100F96C5A /* ARKMetalController.h */,
-				04B1E1241F3C64A100F96C5A /* ARKMetalController.m */,
+				B6FAD7BF221F2F9100310114 /* ARKMetalController.swift */,
 				04A983641F32262200120CF8 /* Render */,
 			);
 			path = Metal;
@@ -351,18 +295,12 @@
 		04B1E1261F3C64C100F96C5A /* SceneKit */ = {
 			isa = PBXGroup;
 			children = (
-				04B1E1271F3C64DF00F96C5A /* ARKSceneKitController.h */,
-				04B1E1281F3C64DF00F96C5A /* ARKSceneKitController.m */,
-				04A712C21F46EF48005D91E2 /* ARSCNView+HitTest.h */,
-				04A712C31F46EF48005D91E2 /* ARSCNView+HitTest.m */,
-				04A93D381F63CC8D002928CA /* SCNNode+Show.h */,
-				04A93D391F63CC8D002928CA /* SCNNode+Show.m */,
-				04A815771F42DA990082D31D /* FocusNode.h */,
-				04A815781F42DA990082D31D /* FocusNode.m */,
-				04A806751F3D9ED900B8732C /* PlaneNode.h */,
-				04A806761F3D9ED900B8732C /* PlaneNode.m */,
-				04A806781F3DCAA200B8732C /* AnchorNode.h */,
-				04A806791F3DCAA200B8732C /* AnchorNode.m */,
+				B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */,
+				B69C048121B838A300C9A4EC /* ARSCNView+HitTest.swift */,
+				B69C047F21B836E300C9A4EC /* SCNNode+Show.swift */,
+				B69C047921B73E9800C9A4EC /* FocusNode.swift */,
+				B69C047D21B8325F00C9A4EC /* PlaneNode.swift */,
+				B69C047521B7333500C9A4EC /* AnchorNode.swift */,
 				04A815671F419EB60082D31D /* Models.scnassets */,
 			);
 			path = SceneKit;
@@ -371,10 +309,8 @@
 		04C64BC91F71014800ACFB8B /* AppStateController */ = {
 			isa = PBXGroup;
 			children = (
-				04C64BCD1F71016B00ACFB8B /* AppState.h */,
-				04C64BCC1F71016A00ACFB8B /* AppState.m */,
-				04C64BCB1F71016A00ACFB8B /* AppStateController.h */,
-				04C64BCA1F71016A00ACFB8B /* AppStateController.m */,
+				B698073F21DA7A8900322782 /* AppState.swift */,
+				B6FE960221B61BDC0087A21F /* AppStateController.swift */,
 			);
 			path = AppStateController;
 			sourceTree = "<group>";
@@ -393,17 +329,10 @@
 			children = (
 				6207254C206A90BF00887B1F /* RequestPermissionsViewController.swift */,
 				6207254D206A90BF00887B1F /* RequestPermissionsViewController.xib */,
+				B6B7A6962266594B008E8978 /* RequestXRPermissionsViewController.swift */,
+				B6B7A6972266594B008E8978 /* RequestXRPermissionsViewController.xib */,
 			);
 			path = RequestPermissionsController;
-			sourceTree = "<group>";
-		};
-		621437971FE968090055252A /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				5184FF937519BAF48DCEB808 /* Utils.m */,
-				5184F32A43380670077FB602 /* Utils.h */,
-			);
-			path = Utils;
 			sourceTree = "<group>";
 		};
 		62242ABC201F028800506412 /* SettingsController */ = {
@@ -412,6 +341,8 @@
 				62242ABF201F037F00506412 /* SettingsViewController.swift */,
 				62242AC1201F2A0700506412 /* TextInputTableViewCell.swift */,
 				62242AC2201F2A0700506412 /* TextInputTableViewCell.xib */,
+				B6679351222894C600939804 /* SegmentedControlTableViewCell.swift */,
+				B6679352222894C600939804 /* SegmentedControlTableViewCell.xib */,
 				62242AC5201F2AE100506412 /* SwitchInputTableViewCell.swift */,
 				62242AC6201F2AE100506412 /* SwitchInputTableViewCell.xib */,
 				62242AC9201F2D3600506412 /* TextTableViewCell.swift */,
@@ -422,23 +353,6 @@
 			path = SettingsController;
 			sourceTree = "<group>";
 		};
-		62414B151FCEFACC00D1CDC8 /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				6241012C1FEABABF006FDBE3 /* AnalyticsManager.swift */,
-			);
-			path = Analytics;
-			sourceTree = "<group>";
-		};
-		62676C111FEACCE200474547 /* Constants */ = {
-			isa = PBXGroup;
-			children = (
-				62676C121FEACCF100474547 /* Constants.h */,
-				6251B440202085BA00BD989D /* Constants.m */,
-			);
-			path = Constants;
-			sourceTree = "<group>";
-		};
 		8C9E99F056CB67F28E2A9647 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -447,13 +361,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		A6160A081F651AF2009F4402 /* Reachability */ = {
+		B62CE86621CC46930053F9B3 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				A6160A0A1F651B14009F4402 /* Reachability.h */,
-				A6160A091F651B14009F4402 /* Reachability.m */,
+				B67D97A621C9843B0075FE0A /* Animator.swift */,
+				B632851621C4330500FD5510 /* Constants.swift */,
+				B62CE86421CC0FDF0053F9B3 /* Reachability.swift */,
+				B62CE86721CC46A90053F9B3 /* TextManager.swift */,
+				B67D979621C4404E0075FE0A /* Utils.swift */,
 			);
-			path = Reachability;
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -484,7 +401,7 @@
 		041503B91F28944F00887400 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = Mozilla;
 				TargetAttributes = {
 					041503C01F28944F00887400 = {
@@ -521,10 +438,13 @@
 				8E5089D8211B6DA90059015B /* webxr.js in Resources */,
 				0401E04B1F612C240075D823 /* BarView.xib in Resources */,
 				041503D21F28944F00887400 /* Main.storyboard in Resources */,
+				B6B7A6992266594B008E8978 /* RequestXRPermissionsViewController.xib in Resources */,
 				625FA2E7202046BF00F62698 /* TermsAndConditionsTableViewCell.xib in Resources */,
+				B6679354222894C600939804 /* SegmentedControlTableViewCell.xib in Resources */,
 				62242AC4201F2A0700506412 /* TextInputTableViewCell.xib in Resources */,
 				04A8156A1F419F840082D31D /* Assets.xcassets in Resources */,
 				620D24A11FC48994002127FD /* Settings.bundle in Resources */,
+				B632850B21C330A500FD5510 /* MyriadPro-Regular.OTF in Resources */,
 				62242ACC201F2D3600506412 /* TextTableViewCell.xib in Resources */,
 				04A815681F419EB60082D31D /* Models.scnassets in Resources */,
 				625051091FCDBDBE00EEAC0A /* GoogleService-Info.plist in Resources */,
@@ -564,6 +484,7 @@
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
 				"${BUILT_PRODUCTS_DIR}/DynamicBlurView/DynamicBlurView.framework",
 				"${BUILT_PRODUCTS_DIR}/FontAwesomeKit/FontAwesomeKit.framework",
+				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
 				"${BUILT_PRODUCTS_DIR}/MozillaTelemetry/MozillaTelemetry.framework",
 				"${BUILT_PRODUCTS_DIR}/PopupDialog/PopupDialog.framework",
 				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
@@ -573,6 +494,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DynamicBlurView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FontAwesomeKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MozillaTelemetry.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PopupDialog.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
@@ -589,43 +511,55 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6160A0B1F651B4D009F4402 /* Reachability.m in Sources */,
-				04A9837E1F32293100120CF8 /* WebController.m in Sources */,
-				04A983781F32291100120CF8 /* ViewController.m in Sources */,
+				B632851521C4191200FD5510 /* AppDelegate.swift in Sources */,
+				B654FED421F1179B0004F001 /* ARKController+Anchors.swift in Sources */,
+				B6FEAC0F224AD4D500EE0343 /* Renderer.swift in Sources */,
 				625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */,
-				045B2EA31F28EE6C0005FF96 /* TouchView.m in Sources */,
-				04A9837B1F32292200120CF8 /* Renderer.m in Sources */,
-				0401E04E1F612D910075D823 /* BarView.m in Sources */,
-				04C64BC81F71011700ACFB8B /* LayerView.m in Sources */,
-				04A9837D1F32292D00120CF8 /* LocationManager.m in Sources */,
-				041503DA1F28944F00887400 /* main.m in Sources */,
+				B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */,
+				B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */,
 				04A9837C1F32292900120CF8 /* Shaders.metal in Sources */,
-				0401E0521F62E6150075D823 /* Animator.m in Sources */,
-				041503C61F28944F00887400 /* AppDelegate.m in Sources */,
-				04A712C41F46EF48005D91E2 /* ARSCNView+HitTest.m in Sources */,
-				04A93D3A1F63CC8D002928CA /* SCNNode+Show.m in Sources */,
-				04B1E1291F3C64DF00F96C5A /* ARKSceneKitController.m in Sources */,
+				B620ED1021FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift in Sources */,
+				B61E2B2722249D500031955F /* ActivityIndicatorButton.swift in Sources */,
+				B6B7A6982266594B008E8978 /* RequestXRPermissionsViewController.swift in Sources */,
+				B632850921C2F24200FD5510 /* MessageController.swift in Sources */,
+				B620ED1222024D5A0066B4A8 /* ARKController+WorldMap.swift in Sources */,
+				B632851321C4159B00FD5510 /* LayerView.swift in Sources */,
+				B6F4C0BD221B5AEC009ECC06 /* ARKController+Frame.swift in Sources */,
+				B62CE86821CC46A90053F9B3 /* TextManager.swift in Sources */,
+				B6EAD6DD21DAB48800DF5127 /* Prefix.swift in Sources */,
+				B654FED221EF99150004F001 /* ARKController+AppState.swift in Sources */,
+				B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */,
 				62242AC3201F2A0700506412 /* TextInputTableViewCell.swift in Sources */,
+				B6679353222894C600939804 /* SegmentedControlTableViewCell.swift in Sources */,
+				B62CE86A21CC4AFF0053F9B3 /* ViewController+ARSCNViewDelegate.swift in Sources */,
+				B67D979721C4404E0075FE0A /* Utils.swift in Sources */,
+				B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */,
 				04A9837A1F32291D00120CF8 /* ARKController.m in Sources */,
-				04A815791F42DA990082D31D /* FocusNode.m in Sources */,
-				04C64BCF1F71094700ACFB8B /* AppStateController.m in Sources */,
-				04B1E1251F3C64A100F96C5A /* ARKMetalController.m in Sources */,
-				045B2EA01F28EE4B0005FF96 /* OverlayViewController.m in Sources */,
+				B620ED0E21F7B2E90066B4A8 /* ARKController+Images.swift in Sources */,
+				B6FEAC0D224AC20200EE0343 /* ShaderTypes.swift in Sources */,
+				B62CE86521CC0FDF0053F9B3 /* Reachability.swift in Sources */,
+				B679967921B06A7000612AF4 /* BarView.swift in Sources */,
+				B69C048221B838A300C9A4EC /* ARSCNView+HitTest.swift in Sources */,
+				B69C047B21B73E9800C9A4EC /* FocusNode.swift in Sources */,
 				62242AC0201F037F00506412 /* SettingsViewController.swift in Sources */,
-				04A806771F3D9ED900B8732C /* PlaneNode.m in Sources */,
-				045B2E9D1F28E8A30005FF96 /* UIOverlayController.m in Sources */,
-				04A8067A1F3DCAA200B8732C /* AnchorNode.m in Sources */,
-				04A983791F32291900120CF8 /* RecordController.m in Sources */,
+				B698074021DA7A8900322782 /* AppState.swift in Sources */,
+				B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */,
+				B69C047E21B8325F00C9A4EC /* PlaneNode.swift in Sources */,
 				62242AC7201F2AE100506412 /* SwitchInputTableViewCell.swift in Sources */,
-				04A8156D1F41BA660082D31D /* HitAnchor.m in Sources */,
-				04A82BEF1F58566100F64A5D /* HitTestResult.m in Sources */,
-				04C64BCE1F71094500ACFB8B /* AppState.m in Sources */,
+				B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */,
+				B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */,
+				B67D97A321C8453F0075FE0A /* UIOverlayController.swift in Sources */,
+				B67D97A521C854C20075FE0A /* OverlayViewController.swift in Sources */,
 				62242ACB201F2D3600506412 /* TextTableViewCell.swift in Sources */,
-				0449DE071F4D7F000057F639 /* MessageController.m in Sources */,
+				B67D97A721C9843B0075FE0A /* Animator.swift in Sources */,
+				B62CE86321CAD3B00053F9B3 /* ViewController.swift in Sources */,
+				B658C0F221BF43D500538D57 /* WebController.swift in Sources */,
+				B6FAD7C0221F2F9100310114 /* ARKMetalController.swift in Sources */,
+				B620ED142204B5480066B4A8 /* ARKController+Camera.swift in Sources */,
 				6241012D1FEABABF006FDBE3 /* AnalyticsManager.swift in Sources */,
 				6207254E206A90BF00887B1F /* RequestPermissionsViewController.swift in Sources */,
-				5184F8FC0384A338F76D2653 /* Utils.m in Sources */,
-				6251B441202085BA00BD989D /* Constants.m in Sources */,
+				B632850721C2D98A00FD5510 /* LocationManager.swift in Sources */,
+				B632851721C4330500FD5510 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -665,6 +599,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -672,6 +607,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -703,6 +639,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "ALLOW_GET_WORLDMAP WEBSERVER";
 			};
 			name = Debug;
 		};
@@ -720,6 +657,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -727,6 +665,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -751,6 +690,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = ALLOW_GET_WORLDMAP;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -762,7 +703,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = "";
-				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
@@ -788,7 +728,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = "";
-				GCC_PREFIX_HEADER = XRViewer/Resources/Prefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",

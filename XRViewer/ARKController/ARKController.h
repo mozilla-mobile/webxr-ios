@@ -1,6 +1,9 @@
 #import <Foundation/Foundation.h>
 #import "ARKHelper.h"
-#import "AppState.h"
+#import <Accelerate/Accelerate.h>
+#import <os/lock.h>
+
+@class AppState;
 
 // The ARSessionConfiguration object passed to the run(_:options:) method is not supported by the current device.
 #define UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_CODE 100
@@ -16,20 +19,6 @@
 
 // World tracking has encountered a fatal error.
 #define WORLD_TRACKING_FAILED_ARKIT_ERROR_CODE 200
-
-/**
- Enum representing the world sensing authorization status
- 
- - SendWorldSensingDataAuthorizationStateNotDetermined: The user didn't say anything about the world sensing
- - SendWorldSensingDataAuthorizationStateAuthorized: The user allowed sending wold sensing data
- - SendWorldSensingDataAuthorizationStateDenied: The user denied sending world sensing data
- */
-typedef NS_ENUM(NSUInteger, SendWorldSensingDataAuthorizationState)
-{
-    SendWorldSensingDataAuthorizationStateNotDetermined,
-    SendWorldSensingDataAuthorizationStateAuthorized,
-    SendWorldSensingDataAuthorizationStateDenied
-};
 
 /**
  An enum representing the ARKit session state
@@ -54,24 +43,19 @@ typedef NS_ENUM(NSUInteger, ARKType)
 @class ARKController;
 typedef void (^DidUpdate)(ARKController *);
 typedef void (^DidFailSession)(NSError *);
-typedef void (^DidInterrupt)(BOOL);
-typedef void (^DidChangeTrackingState)(NSString *state);
-typedef void (^DidAddPlaneAnchors)(void);
-typedef void (^DidRemovePlaneAnchors)(void);
 typedef void (^DidUpdateWindowSize)(void);
 typedef void (^DetectionImageCreatedCompletionType)(BOOL success, NSString* errorString);
 typedef void (^ActivateDetectionImageCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* detectedImageAnchor);
 typedef void (^GetWorldMapCompletionBlock)(BOOL success, NSString* errorString, NSDictionary* worldMap);
 typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
+typedef void (^ResultBlock)(NSDictionary *);
+typedef void (^ResultArrayBlock)(NSArray *);
+@protocol ARKControllerProtocol;
 
 @interface ARKController : NSObject
 
 @property(copy) DidUpdate didUpdate;
-@property(copy) DidInterrupt didInterrupt;
 @property(copy) DidFailSession didFailSession;
-@property(copy) DidChangeTrackingState didChangeTrackingState;
-@property(copy) DidAddPlaneAnchors didAddPlaneAnchors;
-@property(copy) DidRemovePlaneAnchors didRemovePlaneAnchors;
 @property(copy) DidUpdateWindowSize didUpdateWindowSize;
 @property UIInterfaceOrientation interfaceOrientation;
 
@@ -94,10 +78,92 @@ typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
 @property(nonatomic) bool computerVisionDataEnabled;
 
 /**
+ A flag representing whether geometry is being sent in arrays (true) or dictionaries (false)
+ */
+@property(nonatomic) bool geometryArrays;
+
+/**
+ Request a CV frame
+ */
+@property(nonatomic) BOOL computerVisionFrameRequested;
+
+
+/**
  Enum representing the world sensing data sending authorization status
  @see SendWorldSensingDataAuthorizationState
  */
-@property(nonatomic) SendWorldSensingDataAuthorizationState sendingWorldSensingDataAuthorizationStatus;
+@property(nonatomic) WebXRAuthorizationState webXRAuthorizationStatus;
+
+@property (nonatomic, strong) ARSession *session;
+@property (nonatomic, copy) NSDictionary *request;
+@property (nonatomic, strong) ARConfiguration *configuration;
+@property (nonatomic, strong) ARWorldMap *backgroundWorldMap;
+@property (nonatomic, strong) NSMutableDictionary *objects; // key - JS anchor name : value - ARAnchor NSUUID string
+/// Dictionary holding ARReferenceImages by name
+@property(nonatomic, strong) NSMutableDictionary* referenceImageMap;
+/// Dictionary holding completion blocks by image name
+@property(nonatomic, strong) NSMutableDictionary* detectionImageActivationPromises;
+- (void)updateFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary;
+/// Array of anchor dictionaries that were added since the last frame.
+/// Contains the initial data of the anchor when it was added.
+@property (nonatomic, strong) NSMutableArray *addedAnchorsSinceLastFrame;
+/// Dictionary holding completion blocks by image name: when an image anchor is removed,
+/// if the name exsist in this dictionary, call activate again using the callback stored here.
+@property(nonatomic, strong) NSMutableDictionary* detectionImageActivationAfterRemovalPromises;
+/// Array of anchor IDs that were removed since the last frame
+@property(nonatomic, strong) NSMutableArray *removedAnchorsSinceLastFrame;
+/// Dictionary holding completion blocks by image name
+@property(nonatomic, strong) NSMutableDictionary* detectionImageCreationPromises;
+/// Array holding dictionaries representing detection image data
+@property(nonatomic, strong) NSMutableArray *detectionImageCreationRequests;
+/**
+ We don't send the face geometry on every frame, for performance reasons. This number indicates the
+ current number of frames without sending the face geometry
+ */
+@property int numberOfFramesWithoutSendingFaceGeometry;
+// For saving WorldMap
+@property(nonatomic, strong) NSURL *worldSaveURL;
+@property(nonatomic, strong) SetWorldMapCompletionBlock setWorldMapPromise;
+/// completion block for getWorldMap request
+@property(nonatomic, strong) GetWorldMapCompletionBlock getWorldMapPromise;
+@property (nonatomic, strong) AVCaptureDevice *device;
+@property (nonatomic, strong) id<ARKControllerProtocol> controller;
+/// The CV image being sent to JS is downscaled using the metho
+/// downscaleByFactorOf2UntilLargestSideIsLessThan512AvoidingFractionalSides
+/// This call has a side effect on computerVisionImageScaleFactor, that's later used
+/// in order to scale the intrinsics of the camera
+@property (nonatomic) float computerVisionImageScaleFactor;
+/*
+ Computer vision properties
+ We hold different data structures, like accelerate, NSData, and NSString buffers,
+ to avoid allocating/deallocating a huge amount of memory on each frame
+ */
+/// Luma buffer
+@property vImage_Buffer lumaBuffer;
+/// A temporary luma buffer used by the Accelerate framework in the buffer scale opration
+@property void* lumaScaleTemporaryBuffer;
+/// The luma buffer size that's being sent to JS
+@property CGSize lumaBufferSize;
+/// A data buffer holding the luma information. It's created only onced reused on every frame
+/// by means of the replaceBytesInRange method
+@property(nonatomic, strong) NSMutableData* lumaDataBuffer;
+/// The luma string buffer being sent to JS
+@property(nonatomic, strong) NSMutableString* lumaBase64StringBuffer;
+/*
+ The same properties for luma are used for chroma
+ */
+@property vImage_Buffer chromaBuffer;
+@property void* chromaScaleTemporaryBuffer;
+@property CGSize chromaBufferSize;
+@property(nonatomic, strong) NSMutableData* chromaDataBuffer;
+@property(nonatomic, strong) NSMutableString* chromaBase64StringBuffer;
+@property os_unfair_lock lock;
+@property NSDictionary *arkData;
+@property NSDictionary *computerVisionData;
+@property(nonatomic) ShowOptions showOptions;
+
+/// Dictionary that maps a user-generated anchor ID with the one generated by ARKit
+@property (nonatomic, strong) NSMutableDictionary *arkitGeneratedAnchorIDUserAnchorIDMap;
 
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView;
 
@@ -108,229 +174,7 @@ typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
  */
 - (void)viewWillTransitionToSize:(CGSize)size;
 
-/**
- Save the current ARKit ARWorldMap if tracking.
- */
-- (void)saveWorldMapInBackground;
-
-/**
- is there a saved world map?
- */
-- (BOOL) hasBackgroundWorldMap;
-
-/**
- Updates the internal AR Request dictionary
- Creates an ARKit configuration object
- Runs the ARKit session
- Updates the session state to running
- Updates the show mode and the show options
-
- @param state The current app state
- */
-- (void)startSessionWithAppState:(AppState *)state;
-
-/**
- Updates the internal AR Request dictionary and the configuration
- Runs the session
- Updates the session state to running
- Updates the show mode and the show options
- 
- @param state The current app state
- */
-- (void)resumeSessionWithAppState: (AppState*)state;
-
-/**
- Updates the internal AR Request dictionary and the configuration
- Runs the session
- Updates the session state to running
- Updates the show mode and the show options
- 
- @param state The current app state
- */
-- (void)resumeSessionFromBackground: (AppState*)state;
-
-/**
- Pauses the AR session and sets the arSessionState to paused
- */
-- (void)pauseSession;
-
-/**
- ARKit data creates a copy of the current AR data and returns it
-
- @return the dictionary that's going to be sent to JS
- */
-- (NSDictionary *)arkData;
-
-/**
- computer vision data creates a copy of the current CV data and returns it
-
- @return the dictionary of CV data that's going to be sent to JS
- */
-- (NSDictionary*)computerVisionData;
-
-- (NSTimeInterval)currentFrameTimeInMilliseconds;
-
-- (void)setShowMode:(ShowMode)mode;
-
-- (void)setShowOptions:(ShowOptions)options;
-
-/**
- Performs a hit test over the scene
-
- @param point source point for the ray casting in normalized coordinates
- @param type A bit mask representing the hit test types to be considered
- @return an array of hit tests
- */
-- (NSArray *)hitTestNormPoint:(CGPoint)point types:(NSUInteger)type;
-
-/**
- Adds a "regular" anchor to the session
-
- @param userGeneratedAnchorID the ID the user wants this new anchor to have
- @param transform the transform of the anchor
- @return YES if the anchorID didn't exist already
- */
-- (BOOL)addAnchor:(NSString *)userGeneratedAnchorID transform:(NSArray *)transform;
-
-/// Removes the anchors with the ids passed as parameter from the scene.
-/// @param anchorIDsToDelete An array of anchor IDs. These can be both ARKit-generated anchorIDs or user-generated anchorIDs
-- (void)removeAnchors:(NSArray *)anchorIDsToDelete;
-
-/**
- Get an array of dictionaries representing planes
-
- @return an array of dictionaries representing planes
- */
-- (NSArray *)currentPlanesArray;
-
-- (BOOL)hasPlanes;
-
-- (BOOL)trackingStateNormal;
-
-- (NSString *)trackingState;
-
-- (void)removeAllAnchors;
-
-- (void)removeAllAnchorsExceptPlanes;
-
-/**
- Updates the internal AR request dictionary.
- Creates a AR configuration object based on the request.
- Runs the session.
- Sets the session status to running.
-
- @param state the app state
- */
-- (void)runSessionWithAppState:(AppState *)state;
-
-- (void)runSessionRemovingAnchorsWithAppState:(AppState *)state;
-
-- (void)runSessionResettingTrackingAndRemovingAnchorsWithAppState:(AppState *)state;
-
-/**
- Remove all the plane anchors further than the value hosted in NSUserdDefaults with the
- key "distantAnchorsDistanceKey"
- */
-- (void)removeDistantAnchors;
-
-/**
- If SendWorldSensingDataAuthorizationStateAuthorized, creates an ARImages using the
- information in the dictionary as input. Otherwise, enqueue the request for when the user
- accepts and SendWorldSensingDataAuthorizationStateAuthorized is set
-
- @param referenceImageDictionary the dictionary representing the ARReferenceImage
- @param completion the promise to be resolved when the image is created
- */
-- (void)createDetectionImage:(NSDictionary *)referenceImageDictionary completion:(DetectionImageCreatedCompletionType)completion;
-
-/**
- Adds the image to the set of references images in the configuration object and re-runs the session.
- 
- - If the image hasn't been created, it calls the promise with an error string.
- 
- - It also fails when the current session is not of type ARWorldTrackingConfiguration
- 
- - If the image trying to be activated was already activated but not yet detected, respond with an error string in the callback
- 
- - If the image trying to be activated was already activated and yet detected, we remove it from the session, so
- it can be detected again by ARKit
- 
- @param imageName the name of the image to be added to the session. It must have been previously created with createImage
- @param completion a completion block acting a promise
- */
-- (void)activateDetectionImage:(NSString *)imageName completion:(ActivateDetectionImageCompletionBlock)completion;
-
-/**
- Removes the reference image from the current set of reference images and re-runs the session
- 
- - It fails when the current session is not of type ARWorldTrackingConfiguration
- 
- - It fails when the image trying to be deactivated is not in the current set of detection images
- 
- - It fails when the image trying to be deactivated was already detected
- 
- - It fails when the image trying to be deactivated is still active
-
- @param imageName The name of the image to be deactivated
- @param completion The promise that will be called with the outcome of the deactivation
- */
-- (void)deactivateDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
-
-/**
- Destroys the detection image
- 
- - Fails if the image to be destroy doesn't exist
-
- @param imageName The name of the image to be destroyed
- @param completion The completion block that will be called with the outcome of the destroy
- */
-- (void)destroyDetectionImage:(NSString *)imageName completion:(DetectionImageCreatedCompletionType)completion;
-
-/**
-  Get the current tracker World Map and return it in an base64 encoded string in a dictionary, for sending to Javascript
- 
-  - Fails if tracking isn't initialized, or if the acquisition of a World Map fails for some other reason
- 
-  @param completion The completion block that will be called with the outcome of the acquisition of the world map
-  */
-- (void)getWorldMap:(GetWorldMapCompletionBlock)completion;
-
-/**
- Set the current tracker World Map from a base64 encoded text string, passed in from Javascript.
- 
- - Fails if the map will not load for some other reason
- 
- @param worldMapDictionary The dictionary representing the worldMap
- @param completion The completion block that will be called with the outcome of the loading of the world map
- */
-- (void)setWorldMap:(NSDictionary *)worldMapDictionary completion:(SetWorldMapCompletionBlock)completion;
-
-- (void)setSendingWorldSensingDataAuthorizationStatus:(SendWorldSensingDataAuthorizationState)sendingWorldSensingDataAuthorizationStatus;
-
-/**
-  Save the current tracker World Map in local storage
-
- - Fails if tracking isn't initialized, or if the acquisition of a World Map fails for some other reason
- */
-- (void)saveWorldMap;
-
-/**
-   Load a previously saved World Map from local storage.
- */
-- (void)loadSavedMap;
-
- /**
- Removes all the anchors in the curren session.
- 
- If the current session is not of class ARFaceTrackingConfiguration, create a
- ARFaceTrackingConfiguration and run the session with it
- 
- Otherwise, create a ARWorldTrackingConfiguration, add the images that were not detected
- in the previous ARWorldTrackingConfiguration session, and run the session
- */
-- (void)switchCameraButtonTapped;
-
-+ (BOOL)supportsARFaceTrackingConfiguration;
+- (void)setWebXRAuthorizationStatus:(WebXRAuthorizationState)webXRAuthorizationStatus;
 
 @end
 
