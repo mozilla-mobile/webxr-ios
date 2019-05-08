@@ -1188,9 +1188,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         var axis: NSLayoutConstraint.Axis
         if view.traitCollection.verticalSizeClass == .compact {
-            messageController?.requestXRPermissionsVC?.view.widthAnchor.constraint(equalToConstant: 584).isActive = true
+            messageController?.requestXRPermissionsVC?.stackViewWidthConstraint.constant = 584
             axis = NSLayoutConstraint.Axis.horizontal
         } else {
+            messageController?.requestXRPermissionsVC?.stackViewWidthConstraint.constant = 284
             axis = NSLayoutConstraint.Axis.vertical
         }
         messageController?.requestXRPermissionsVC?.stackView?.axis = axis

@@ -13,6 +13,7 @@
             <connections>
                 <outlet property="messageLabel" destination="eKB-fU-TLq" id="Rp3-0A-hBh"/>
                 <outlet property="stackView" destination="Jyd-Ce-OT1" id="BHW-DS-cfA"/>
+                <outlet property="stackViewWidthConstraint" destination="mhl-eu-Qg7" id="nMJ-UT-urv"/>
                 <outlet property="tableView" destination="a1S-Ka-aGi" id="M0r-yF-agK"/>
                 <outlet property="titleLabel" destination="5A6-t2-WFB" id="FZk-cd-BX6"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -42,20 +43,15 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
-                            <constraints>
-                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="284" id="gI8-hp-DgA"/>
-                            </constraints>
                         </stackView>
                         <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="a1S-Ka-aGi">
                             <rect key="frame" x="0.0" y="77.5" width="284" height="202.5"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <constraints>
-                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="284" id="LLh-oo-mxI"/>
-                            </constraints>
                         </tableView>
                     </subviews>
                     <constraints>
                         <constraint firstItem="a1S-Ka-aGi" firstAttribute="leading" relation="lessThanOrEqual" secondItem="Jyd-Ce-OT1" secondAttribute="leading" constant="292" id="9Y4-7j-hZD"/>
+                        <constraint firstAttribute="width" priority="999" constant="284" id="mhl-eu-Qg7"/>
                     </constraints>
                 </stackView>
             </subviews>
