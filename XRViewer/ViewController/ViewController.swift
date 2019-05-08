@@ -645,6 +645,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.arkController?.detectionImageCreationRequests.removeAllObjects()
                 }
             }
+            blockSelf?.arkController?.webXRAuthorizationStatus = .notDetermined
             blockSelf?.stateController.setWebXR(false)
         }
 
@@ -691,7 +692,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.loadURL = { url in
-            blockSelf?.arkController?.webXRAuthorizationStatus = .notDetermined
             blockSelf?.webController?.loadURL(url)
         }
 
