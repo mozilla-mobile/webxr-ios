@@ -5740,40 +5740,51 @@ MapzenTerrariumTerrainProvider.prototype.getTileDataAvailable = function(x, y, l
     return level < 16 ? true : undefined;
 };
 
-if (window.hasOwnProperty("Cesium")) {
-    var __XRDevice_requestSession = XRDevice$1.prototype.requestSession;
-    XRDevice$1.prototype.requestSession = async function (options) {
-        let bindrequest = __XRDevice_requestSession.bind(this);
-        let session = await bindrequest(options);
-        if (options.alignEUS && options.geolocation) {
-            const onSessionEnd = () => {
-                _XRsession = null;
-                if (_watchID) {
-                    navigator.geolocation.clearWatch(_watchID);
-                    _watchID = 0;
-                }
-                resetState();
-                session.removeEventListener('end', onSessionEnd);
-            };
-            session.addEventListener('end', onSessionEnd);
-            await useSession(session);
-        }
-        return session
-    };
-    async function useSession(session) {
-        _XRsession = session;
-        try {
-            let _headLevelFrameOfReference = await session.requestFrameOfReference('head-model');
-            _eyeLevelFrameOfReference = await session.requestFrameOfReference('eye-level');
-            if (!("geolocation" in navigator)) {
-                return false
+var __XRDevice_requestSession = XRDevice$1.prototype.requestSession;
+XRDevice$1.prototype.requestSession = async function (options) {
+    let bindrequest = __XRDevice_requestSession.bind(this);
+    let session = await bindrequest(options);
+    if (window.hasOwnProperty("Cesium") && options.alignEUS && options.geolocation) {
+        const onSessionEnd = () => {
+            _XRsession = null;
+            if (_watchID) {
+                navigator.geolocation.clearWatch(_watchID);
+                _watchID = 0;
             }
-            _watchID = navigator.geolocation.watchPosition(updatePositionCallback, geoErrorCallback, _geo_options);
-            return true;
-        } catch (err) {
-            console.error("Can't start geolocation to XR mapping", err);
-            return false;
+            resetState();
+            session.removeEventListener('end', onSessionEnd);
+        };
+        session.addEventListener('end', onSessionEnd);
+        await useSession(session);
+    }
+    return session
+};
+async function useSession(session) {
+    _XRsession = session;
+    if (!_eastUpSouthToFixedFrame) {
+        _eastUpSouthToFixedFrame = Cesium.Transforms.localFrameToFixedFrameGenerator('east','up');
+    }
+    if (!defaultTerrainProvider) {
+        defaultTerrainProvider = new MapzenTerrariumTerrainProvider({
+            url : 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/',
+            requestWaterMask : true,
+            requestVertexNormals : true
+        });
+    }
+    if (!_scratchCartesian) {
+        _scratchCartesian = new Cesium.Cartesian3();
+    }
+    try {
+        let _headLevelFrameOfReference = await session.requestFrameOfReference('head-model');
+        _eyeLevelFrameOfReference = await session.requestFrameOfReference('eye-level');
+        if (!("geolocation" in navigator)) {
+            return false
         }
+        _watchID = navigator.geolocation.watchPosition(updatePositionCallback, geoErrorCallback, _geo_options);
+        return true;
+    } catch (err) {
+        console.error("Can't start geolocation to XR mapping", err);
+        return false;
     }
 }
 const _geo_options = {
@@ -5786,18 +5797,12 @@ var _scratch2Vec3 = create$1();
 var _scratchMat4 = create();
 var _scratchMat3 = create$3();
 var _scratchCartesian = null;
-if (window.hasOwnProperty("Cesium")) {
-    _scratchCartesian = new Cesium.Cartesian3();
-}
 var _XRsession = null;
 var _geoOrigin = null;
 var _geoOriginAnchor = null;
 var _geoCartesian = null;
 var _geoAnchorsWaiting = [];
 var _eastUpSouthToFixedFrame = null;
-if (window.hasOwnProperty("Cesium")) {
-    _eastUpSouthToFixedFrame = Cesium.Transforms.localFrameToFixedFrameGenerator('east','up');
-}
 var _fixedToLocal = create();
 var _localToFixed = create();
 var _eyeLevelFrameOfReference = null;
@@ -5825,13 +5830,6 @@ async function getAltitude(cart) {
     return cart.height
 }
 var defaultTerrainProvider = null;
-if (window.hasOwnProperty("Cesium")) {
-    defaultTerrainProvider = new MapzenTerrariumTerrainProvider({
-        url : 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/',
-        requestWaterMask : true,
-        requestVertexNormals : true
-    });
-}
 function updateHeightFromTerrain(cartographic) {
     return Promise.resolve(Cesium.sampleTerrain(defaultTerrainProvider, 15, [cartographic]).then(results => {
         return results[0]
@@ -6710,13 +6708,13 @@ class ARKitWrapper extends EventTarget {
 			this._rAF_callback = null;
 			this._rAF_callbackParams = [];
 			return window.requestAnimationFrame((...params) => {
-				this.startingRender();
-				try {
-					_callback(..._params);
-				} catch(e) {
-					console.error('application callback error: ', e);
-				}
-				this.finishedRender();
+					this.startingRender();
+					try {
+						_callback(..._params);
+					} catch(e) {
+						console.error('application callback error: ', e);
+					}
+					this.finishedRender();
 			})
 		}
 	}
@@ -6736,10 +6734,6 @@ class ARKitWrapper extends EventTarget {
 	}
 	_onData(data){
 		this._rawARData = data;
-		if (this._rAF_callback) {
-			this._do_rAF();
-		}
-		this._dataBeforeNext++;
 		this._worldInformation = null;
 		this._timestamp = this._adjustARKitTime(data.timestamp);
 		this._lightIntensity.ambientIntensity = data.light_intensity;
@@ -6788,6 +6782,10 @@ class ARKitWrapper extends EventTarget {
 		} catch(e) {
 				console.error('WATCH_EVENT event error', e);
 		}
+		if (this._rAF_callback) {
+			this._do_rAF();
+		}
+		this._dataBeforeNext++;
 	}
 	_onStop(){
 		this._isWatching = false;
@@ -6954,12 +6952,20 @@ class ARKitWatcher {
 	handleComputerVisionData(){}
 }
 
-var styleEl = document.createElement('style');
-document.head.appendChild(styleEl);
-var styleSheet = styleEl.sheet;
-styleSheet.insertRule('.arkit-device-wrapper { z-index: -1; }', 0);
-styleSheet.insertRule('.arkit-device-wrapper, .xr-canvas { position: absolute; top: 0; left: 0; bottom: 0; right: 0; }', 0);
-styleSheet.insertRule('.arkit-device-wrapper, .arkit-device-wrapper canvas { width: 100%; height: 100%; padding: 0; margin: 0; -webkit-user-select: none; user-select: none; }', 0);
+window.addEventListener('DOMContentLoaded', () => {
+	setTimeout(() => {
+		try {
+			var styleEl = document.createElement('style');
+			document.head.appendChild(styleEl);
+			var styleSheet = styleEl.sheet;
+			styleSheet.insertRule('.arkit-device-wrapper { z-index: -1; }', 0);
+			styleSheet.insertRule('.arkit-device-wrapper, .xr-canvas { position: absolute; top: 0; left: 0; bottom: 0; right: 0; }', 0);
+			styleSheet.insertRule('.arkit-device-wrapper, .arkit-device-wrapper canvas { width: 100%; height: 100%; padding: 0; margin: 0; -webkit-user-select: none; user-select: none; }', 0);
+		} catch(e) {
+			console.error('page error', e);
+		}
+	}, 1);
+});
 class ARKitDevice extends PolyfilledXRDevice {
 	constructor(global){
 		super(global);
@@ -6994,7 +7000,9 @@ class ARKitDevice extends PolyfilledXRDevice {
 	get depthFar(){ return this._depthFar }
 	set depthFar(val){ this._depthFar = val; }
 	supportsSession(options={}){
-		return  !(!options.alignEUS && options.geolocation) && !options.immersive
+		return  !(!options.hasOwnProperty("alignEUS") &&
+				   options.hasOwnProperty("geolocation") &&
+				  !options.hasOwnProperty("immersive"))
 	}
 	async requestSession(options={}){
 		if(!this.supportsSession(options)){
@@ -7010,17 +7018,17 @@ class ARKitDevice extends PolyfilledXRDevice {
 			return Promise.reject()
 		}
 		var ARKitOptions = {};
-		if (options.worldSensing) {
+		if (options.hasOwnProperty("worldSensing")) {
 			ARKitOptions.worldSensing = options.worldSensing;
 		}
-		if (options.computerVision) {
+		if (options.hasOwnProperty("computerVision")) {
 			ARKitOptions.videoFrames = options.useComputerVision;
 		}
-		if (options.alignEUS) {
+		if (options.hasOwnProperty("alignEUS")) {
 			ARKitOptions.alignEUS = options.alignEUS;
 		}
 		var geolocation = false;
-		if (options.geolocation && options.alignEUS) {
+		if (options.hasOwnProperty("geolocation") && options.hasOwnProperty("alignEUS")) {
 			geolocation = true;
 		}
 		let initResult = await this._arKitWrapper.waitForInit().then(() => {
@@ -7045,8 +7053,6 @@ class ARKitDevice extends PolyfilledXRDevice {
 		this._wrapperDiv.appendChild(layer.context.canvas);
 		layer.context.canvas.style.width = "100%";
 		layer.context.canvas.style.height = "100%";
-		layer.width = layer.context.canvas.width = this._wrapperDiv.clientWidth * window.devicePixelRatio;
-		layer.height = layer.context.canvas.height = this._wrapperDiv.clientHeight * window.devicePixelRatio;
 	}
 	requestAnimationFrame(callback, ...params){
 	    this._arKitWrapper.requestAnimationFrame(callback, params);
@@ -7108,11 +7114,11 @@ class ARKitDevice extends PolyfilledXRDevice {
 		}
 	}
 	getViewport(sessionId, eye, layer, target){
-		const { width, height } = layer.context.canvas;
+		const { offsetWidth, offsetHeight } = layer.context.canvas;
 		target.x = 0;
 		target.y = 0;
-		target.width = width;
-		target.height = height;
+		target.width = offsetWidth;
+		target.height = offsetHeight;
 		return true
 	}
 	getProjectionMatrix(eye){
@@ -7153,9 +7159,6 @@ class ARKitDevice extends PolyfilledXRDevice {
 	}
 	onWindowResize(){
 		this._sessions.forEach((value, key) => {
-			var layer = value.baseLayer;
-			layer.width = layer.context.canvas.width = this._wrapperDiv.clientWidth;
-			layer.height = layer.context.canvas.height = this._wrapperDiv.clientHeight;
 		});
 	}
 }
