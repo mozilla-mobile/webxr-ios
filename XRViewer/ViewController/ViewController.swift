@@ -1052,20 +1052,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             stateController.state.sendComputerVisionData = false
             stateController.state.askedComputerVisionData = false
             stateController.state.askedWorldStateData = false
-            arkController?.webXRAuthorizationStatus = .notDetermined
         }
         
         guard let url = webController?.webView?.url else {
             grantedPermissionsBlock?([ "error" : "no web page loaded, should not happen"])
             return
         }
-        arkController?.geometryArrays = stateController.state.geometryArrays
         arkController?.controller.previewingSinglePlane = false
         arkController?.controller.focusedPlane = nil
         chooseSinglePlaneButton.removeFromSuperview()
 
         stateController.state.numberOfTimesSendNativeTimeWasCalled = 0
         stateController.setARRequest(request) { () -> () in
+            blockSelf?.arkController?.geometryArrays = blockSelf?.stateController.state.geometryArrays ?? false
             if request[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
                 blockSelf?.messageController?.showMessageAboutEnteringXR(.videoCameraAccess, authorizationGranted: { access in
                     
