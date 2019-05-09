@@ -647,6 +647,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.arkController?.detectionImageCreationPromises.removeAllObjects()
                     blockSelf?.arkController?.detectionImageCreationRequests.removeAllObjects()
                 }
+                
+                if let worldTrackingConfiguration = blockSelf?.arkController?.configuration as? ARWorldTrackingConfiguration,
+                    worldTrackingConfiguration.detectionImages.count > 0,
+                    let state = blockSelf?.stateController.state
+                {
+                    worldTrackingConfiguration.detectionImages = Set<ARReferenceImage>()
+                    blockSelf?.arkController?.runSession(with: state)
+                }
             }
             blockSelf?.arkController?.webXRAuthorizationStatus = .notDetermined
             blockSelf?.stateController.setWebXR(false)
