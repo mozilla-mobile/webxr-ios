@@ -1064,10 +1064,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         stateController.state.numberOfTimesSendNativeTimeWasCalled = 0
         stateController.setARRequest(request) { () -> () in
-            blockSelf?.arkController?.geometryArrays = blockSelf?.stateController.state.geometryArrays ?? false
             if request[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
                 blockSelf?.messageController?.showMessageAboutEnteringXR(.videoCameraAccess, authorizationGranted: { access in
                     
+                    blockSelf?.arkController?.geometryArrays = blockSelf?.stateController.state.geometryArrays ?? false
                     blockSelf?.stateController.state.askedComputerVisionData = true
                     blockSelf?.stateController.state.askedWorldStateData = true
                     let grantedCameraAccess = access == .videoCameraAccess ? true : false
@@ -1098,6 +1098,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             } else if request[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
                 blockSelf?.messageController?.showMessageAboutEnteringXR(.worldSensing, authorizationGranted: { access in
                     
+                    blockSelf?.arkController?.geometryArrays = blockSelf?.stateController.state.geometryArrays ?? false
                     blockSelf?.stateController.state.askedWorldStateData = true
                     blockSelf?.arkController?.webXRAuthorizationStatus = access
                     blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
@@ -1130,6 +1131,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             } else {
                 // if neither is requested, we'll request .minimal WebXR authorization!
                 blockSelf?.messageController?.showMessageAboutEnteringXR(.minimal, authorizationGranted: { access in
+                    
+                    blockSelf?.arkController?.geometryArrays = blockSelf?.stateController.state.geometryArrays ?? false
                     blockSelf?.arkController?.webXRAuthorizationStatus = access
                     
                     switch access {
