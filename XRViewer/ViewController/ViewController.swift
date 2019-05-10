@@ -29,6 +29,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     private var reachability: Reachability?
     private var timerSessionRunningInBackground: Timer?
     private var chooseSinglePlaneButton = UIButton()
+    private var deferredHitTest: (Int, CGFloat, CGFloat, ResultArrayBlock)? = nil
     
     let session = ARSession()
     @IBOutlet weak var sceneView: ARSCNView!
@@ -711,6 +712,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onHitTest = { mask, x, y, result in
+            if blockSelf?.arkController?.controller.previewingSinglePlane ?? false {
+                print("Wait until after Lite Mode plane selected to perform hit tests")
+                blockSelf?.deferredHitTest = (mask, x, y, result)
+                return
+            }
             let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask)
             result(array)
         }
@@ -1180,6 +1186,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     @objc private func chooseSinglePlaneAction() {
         chooseSinglePlaneButton.removeFromSuperview()
         arkController?.controller.previewingSinglePlane = false
+        
+        if let deferredHitTest = deferredHitTest {
+            let array = arkController?.hitTestNormPoint(CGPoint(x: deferredHitTest.1, y: deferredHitTest.2), types: deferredHitTest.0)
+            deferredHitTest.3(array)
+            self.deferredHitTest = nil
+        }
         
         let videoCamAccess = stateController.state.aRRequest[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false
         let worldSensing = stateController.state.aRRequest[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false
