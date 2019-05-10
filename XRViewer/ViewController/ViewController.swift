@@ -29,6 +29,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     private var reachability: Reachability?
     private var timerSessionRunningInBackground: Timer?
     private var chooseSinglePlaneButton = UIButton()
+    private var deferredHitTest: (Int, CGFloat, CGFloat, ResultArrayBlock)? = nil
     
     let session = ARSession()
     @IBOutlet weak var sceneView: ARSCNView!
@@ -295,7 +296,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                         print("\n\n*********\n\nTimer expired, pausing session\n\n*********")
                         UserDefaults.standard.set(Date(), forKey: "backgroundOrPausedDateKey")
                         blockSelf?.arkController?.pauseSession()
-                        timer.invalidate()
+                        blockSelf?.timerSessionRunningInBackground?.invalidate()
+                        blockSelf?.timerSessionRunningInBackground = nil
                     })
                 }
             }
@@ -371,8 +373,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         stateController.onRequestUpdate = { dict in
-            print("\n\n*********\n\nInvalidate timer\n\n*********")
-            blockSelf?.timerSessionRunningInBackground?.invalidate()
+            if blockSelf?.timerSessionRunningInBackground != nil {
+                print("\n\n*********\n\nInvalidate timer\n\n*********")
+                blockSelf?.timerSessionRunningInBackground?.invalidate()
+            }
 
             if blockSelf?.arkController == nil {
                 print("\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********")
@@ -644,7 +648,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.arkController?.detectionImageCreationPromises.removeAllObjects()
                     blockSelf?.arkController?.detectionImageCreationRequests.removeAllObjects()
                 }
+                
+                if let worldTrackingConfiguration = blockSelf?.arkController?.configuration as? ARWorldTrackingConfiguration,
+                    worldTrackingConfiguration.detectionImages.count > 0,
+                    let state = blockSelf?.stateController.state
+                {
+                    worldTrackingConfiguration.detectionImages = Set<ARReferenceImage>()
+                    blockSelf?.arkController?.runSession(with: state)
+                }
             }
+            blockSelf?.arkController?.webXRAuthorizationStatus = .notDetermined
             blockSelf?.stateController.setWebXR(false)
         }
 
@@ -691,7 +704,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.loadURL = { url in
-            blockSelf?.arkController?.webXRAuthorizationStatus = .notDetermined
             blockSelf?.webController?.loadURL(url)
         }
 
@@ -700,6 +712,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onHitTest = { mask, x, y, result in
+            if blockSelf?.arkController?.controller.previewingSinglePlane ?? false {
+                print("Wait until after Lite Mode plane selected to perform hit tests")
+                blockSelf?.deferredHitTest = (mask, x, y, result)
+                return
+            }
             let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask)
             result(array)
         }
@@ -805,8 +822,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         webController?.onSwitchCameraButtonTapped = {
-           let numberOfImages = blockSelf?.stateController.state.numberOfTrackedImages ?? 0
-            blockSelf?.arkController?.switchCameraButtonTapped(numberOfImages)
+//            let numberOfImages = blockSelf?.stateController.state.numberOfTrackedImages ?? 0
+//            blockSelf?.arkController?.switchCameraButtonTapped(numberOfImages)
+            guard let state = blockSelf?.stateController.state else { return }
+            blockSelf?.arkController?.switchCameraButtonTapped(state)
         }
 
         if stateController.wasMemoryWarning() {
@@ -1047,14 +1066,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             stateController.state.sendComputerVisionData = false
             stateController.state.askedComputerVisionData = false
             stateController.state.askedWorldStateData = false
-            arkController?.webXRAuthorizationStatus = .notDetermined
         }
         
         guard let url = webController?.webView?.url else {
             grantedPermissionsBlock?([ "error" : "no web page loaded, should not happen"])
             return
         }
-        arkController?.geometryArrays = stateController.state.geometryArrays
         arkController?.controller.previewingSinglePlane = false
         arkController?.controller.focusedPlane = nil
         chooseSinglePlaneButton.removeFromSuperview()
@@ -1064,6 +1081,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             if request[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
                 blockSelf?.messageController?.showMessageAboutEnteringXR(.videoCameraAccess, authorizationGranted: { access in
                     
+                    blockSelf?.arkController?.geometryArrays = blockSelf?.stateController.state.geometryArrays ?? false
                     blockSelf?.stateController.state.askedComputerVisionData = true
                     blockSelf?.stateController.state.askedWorldStateData = true
                     let grantedCameraAccess = access == .videoCameraAccess ? true : false
@@ -1094,6 +1112,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             } else if request[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false {
                 blockSelf?.messageController?.showMessageAboutEnteringXR(.worldSensing, authorizationGranted: { access in
                     
+                    blockSelf?.arkController?.geometryArrays = blockSelf?.stateController.state.geometryArrays ?? false
                     blockSelf?.stateController.state.askedWorldStateData = true
                     blockSelf?.arkController?.webXRAuthorizationStatus = access
                     blockSelf?.stateController.state.userGrantedSendingWorldStateData = access
@@ -1126,6 +1145,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             } else {
                 // if neither is requested, we'll request .minimal WebXR authorization!
                 blockSelf?.messageController?.showMessageAboutEnteringXR(.minimal, authorizationGranted: { access in
+                    
+                    blockSelf?.arkController?.geometryArrays = blockSelf?.stateController.state.geometryArrays ?? false
                     blockSelf?.arkController?.webXRAuthorizationStatus = access
                     
                     switch access {
@@ -1166,6 +1187,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         chooseSinglePlaneButton.removeFromSuperview()
         arkController?.controller.previewingSinglePlane = false
         
+        if let deferredHitTest = deferredHitTest {
+            let array = arkController?.hitTestNormPoint(CGPoint(x: deferredHitTest.1, y: deferredHitTest.2), types: deferredHitTest.0)
+            deferredHitTest.3(array)
+            self.deferredHitTest = nil
+        }
+        
         let videoCamAccess = stateController.state.aRRequest[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false
         let worldSensing = stateController.state.aRRequest[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false
         if videoCamAccess || worldSensing {
@@ -1186,9 +1213,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         var axis: NSLayoutConstraint.Axis
         if view.traitCollection.verticalSizeClass == .compact {
-            messageController?.requestXRPermissionsVC?.view.widthAnchor.constraint(equalToConstant: 584).isActive = true
+            messageController?.requestXRPermissionsVC?.stackViewWidthConstraint.constant = 584
             axis = NSLayoutConstraint.Axis.horizontal
         } else {
+            messageController?.requestXRPermissionsVC?.stackViewWidthConstraint.constant = 284
             axis = NSLayoutConstraint.Axis.vertical
         }
         messageController?.requestXRPermissionsVC?.stackView?.axis = axis

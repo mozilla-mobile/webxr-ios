@@ -296,7 +296,13 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         weak var blockSelf: WebController? = self
         guard let messageBody = message.body as? [String: Any] else { return }
         if message.name == WEB_AR_INIT_MESSAGE {
-            let params = [WEB_IOS_DEVICE_UUID_OPTION: UIDevice.current.identifierForVendor?.uuidString ?? 0, WEB_IOS_IS_IPAD_OPTION: UIDevice.current.userInterfaceIdiom == .pad, WEB_IOS_SYSTEM_VERSION_OPTION: UIDevice.current.systemVersion, WEB_IOS_SCREEN_SCALE_OPTION: UIScreen.main.nativeScale, WEB_IOS_SCREEN_SIZE_OPTION: NSCoder.string(for: UIScreen.main.nativeBounds.size)] as [String : Any]
+            let params = [
+                WEB_IOS_DEVICE_UUID_OPTION: UIDevice.current.identifierForVendor?.uuidString ?? 0,
+                WEB_IOS_IS_IPAD_OPTION: UIDevice.current.userInterfaceIdiom == .pad,
+                WEB_IOS_SYSTEM_VERSION_OPTION: UIDevice.current.systemVersion,
+                WEB_IOS_SCREEN_SCALE_OPTION: UIScreen.main.nativeScale,
+                WEB_IOS_SCREEN_SIZE_OPTION: NSCoder.string(for: UIScreen.main.nativeBounds.size)
+            ] as [String : Any]
 
             DDLogDebug("Init AR send - \(params.debugDescription)")
             guard let name = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
@@ -504,7 +510,9 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     // MARK: WKUIDelegate, WKNavigationDelegate
 
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        DDLogDebug("didStartProvisionalNavigation - \(navigation.debugDescription)\n on thread \(Thread.current.description)")
+        if let navigation = navigation {
+            DDLogDebug("didStartProvisionalNavigation - \(navigation.debugDescription)\n on thread \(Thread.current.description)")
+        }
 
         self.webView?.addObserver(self as NSObject, forKeyPath: "estimatedProgress", options: .new, context: nil)
         documentReadyState = ""

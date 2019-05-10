@@ -18,17 +18,17 @@ extension ARKController: ARSessionDelegate {
     @objc(session:didAddAnchors:)
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
         DDLogDebug("Add Anchors - \(anchors.debugDescription)")
+        
+        if webXRAuthorizationStatus == .notDetermined {
+            for anchor in anchors {
+                session.remove(anchor: anchor)
+            }
+            return
+        }
+        
         for addedAnchor: ARAnchor in anchors {
             if addedAnchor is ARFaceAnchor && !(configuration is ARFaceTrackingConfiguration) {
                 print("Trying to add a face anchor to a session configuration that's not ARFaceTrackingConfiguration")
-                continue
-            }
-            
-            if addedAnchor is ARFaceAnchor
-                && configuration is ARFaceTrackingConfiguration
-                && webXRAuthorizationStatus == .notDetermined
-            {
-                session.remove(anchor: addedAnchor)
                 continue
             }
             

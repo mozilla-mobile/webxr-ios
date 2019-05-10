@@ -20,6 +20,10 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         manager = CLLocationManager()
         
         super.init()
+        manager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        manager.distanceFilter = kCLDistanceFilterNone
+        manager.headingFilter = kCLHeadingFilterNone
+        manager.pausesLocationUpdatesAutomatically = false
         
         manager.delegate = self
     }
@@ -34,10 +38,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
             return
         }
 
-        #warning("LOCATION TEMP SOLUTION ( waiting for geofencing )")
-        manager.requestLocation()
-
-        //[_manager startUpdatingLocation];
+        manager.startUpdatingLocation()
     }
 
     func stopUpdateLocation() {
@@ -45,9 +46,24 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
             DDLogError("Location isn't allowed !")
             return
         }
+        manager.stopUpdatingLocation()
+    }
 
-        #warning("LOCATION TEMP SOLUTION ( waiting for geofencing )")
-        //[_manager stopUpdatingLocation];
+    func startUpdateHeading() {
+        if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
+            DDLogError("Location isn't allowed !")
+            return
+        }
+        
+        manager.startUpdatingHeading()
+    }
+    
+    func stopUpdateHeading() {
+        if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
+            DDLogError("Location isn't allowed !")
+            return
+        }
+        manager.stopUpdatingHeading()
     }
 
     func currentCoordinate() -> CLLocationCoordinate2D {
@@ -81,6 +97,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
             startUpdateLocation()
         } else {
             stopUpdateLocation()
+        }
+        
+        guard let orientationOptions = request[WEB_AR_WORLD_ALIGNMENT] as? Bool else {return}
+        if (orientationOptions) {
+            startUpdateHeading()
+        } else {
+            stopUpdateHeading()
         }
     }
 
@@ -131,12 +154,15 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         os_unfair_lock_lock(&(lock))
         currentLocation = locations.last
         os_unfair_lock_unlock(&(lock))
-
-        //if updateLocation
-
-        updateLocation?(locations.last)
     }
 
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+    }
+    
+    public func locationManagerShouldDisplayHeadingCalibration(_ manager: CLLocationManager) -> Bool {
+        return true
+    }
+    
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         DDLogError("Location error - \(error)")
     }

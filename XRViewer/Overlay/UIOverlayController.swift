@@ -90,12 +90,6 @@ class UIOverlayController: NSObject {
         if let aView = touchView {
             rootView.addSubview(aView)
         }
-
-        touchView?.topAnchor.constraint(equalTo: rootView.topAnchor).isActive = true
-        touchView?.bottomAnchor.constraint(equalTo: rootView.bottomAnchor).isActive = true
-        touchView?.leftAnchor.constraint(equalTo: rootView.leftAnchor).isActive = true
-        touchView?.rightAnchor.constraint(equalTo: rootView.rightAnchor).isActive = true
-
         touchView?.backgroundColor = UIColor.clear
     }
 

@@ -136,13 +136,42 @@ extension ARKController {
     func updateARConfiguration(with state: AppState) {
         request = state.aRRequest
         
+        // lets make sure we pick a low res video format
+        // NOTE:  might want to make this a preference option in the future
         // Make sure there is no initial worldmap set
         if configuration is ARWorldTrackingConfiguration {
+            let supportedFormats = ARWorldTrackingConfiguration.supportedVideoFormats
             let worldTrackingConfiguration = configuration as? ARWorldTrackingConfiguration
+            if var videoFormat = worldTrackingConfiguration?.videoFormat {
+                for format: ARConfiguration.VideoFormat in supportedFormats {
+                    if (format.imageResolution.width < videoFormat.imageResolution.width ||
+                        format.imageResolution.height < videoFormat.imageResolution.height ) {
+                        videoFormat = format
+                    }
+                }
+                worldTrackingConfiguration?.videoFormat = videoFormat
+            }
             worldTrackingConfiguration?.initialWorldMap = nil
             if hasBackgroundWorldMap() {
                 backgroundWorldMap = nil
                 DDLogError("clearing Saved Background WorldMap from resume session")
+            }
+            
+            worldTrackingConfiguration?.maximumNumberOfTrackedImages = state.numberOfTrackedImages
+
+        } else if configuration is ARFaceTrackingConfiguration {
+            let supportedFormats = ARFaceTrackingConfiguration.supportedVideoFormats
+            let faceTrackingConfiguration = configuration as? ARFaceTrackingConfiguration
+            if var videoFormat = faceTrackingConfiguration?.videoFormat {
+                for format: ARConfiguration.VideoFormat in supportedFormats {
+                    if (format.imageResolution.width < videoFormat.imageResolution.width ||
+                        format.imageResolution.height < videoFormat.imageResolution.height
+                        //|| (format.framesPerSecond >= 30 && format.framesPerSecond < videoFormat.framesPerSecond)
+                        ) {
+                        videoFormat = format
+                    }
+                }
+                faceTrackingConfiguration?.videoFormat = videoFormat
             }
         }
         

@@ -118,8 +118,10 @@
                 session?.run(configuration, options: [])
             } else {
                 if detectionImageActivationPromises?[referenceImage.name ?? ""] != nil {
-                    // Trying to activate an image that hasn't been activated yet, return an error on the second promise, but keep the first
-                    completion(false, "Trying to activate an image that's already activated but not found yet", nil)
+                    // Trying to reactivate an active image that hasn't been found yet, return an error on the first promise, keep the second
+                    let activationBlock = detectionImageActivationPromises?[referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
+                    activationBlock?(false, "Image reactived, only can have one active at a time", nil)
+                    detectionImageActivationAfterRemovalPromises[referenceImage.name ?? ""] = completion
                     return
                 } else {
                     // Activating an already activated and found image, remove the anchor from the scene
@@ -175,20 +177,17 @@
         if let referenceImage = referenceImage {
             if currentDetectionImages?.contains(referenceImage) ?? false {
                 if detectionImageActivationPromises?[referenceImage.name ?? ""] != nil {
-                    print("Error: The image attempting to be deactivated is activated and hasn't been found yet")
                     // The image trying to be deactivated hasn't been found yet, return an error on the activation block and remove it
                     let activationBlock = detectionImageActivationPromises?[referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
                     activationBlock?(false, "The image has been deactivated", nil)
                     detectionImageActivationPromises?[referenceImage.name ?? ""] = nil
-                    return
                 }
                 
+                // remove the image from the set being searched for
                 currentDetectionImages?.remove(referenceImage)
                 if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
                     worldTrackingConfiguration?.detectionImages = currentDetectionImages
                 }
-                
-                detectionImageActivationPromises?[referenceImage.name ?? ""] = nil
                 session.run(configuration, options: [])
                 completion(true, nil)
             } else {
@@ -207,9 +206,33 @@
      */
     func destroyDetectionImage(_ imageName: String, completion: DetectionImageCreatedCompletionType) {
         let referenceImage = referenceImageMap[imageName] as? ARReferenceImage
-        if referenceImage != nil {
+        if let referenceImage = referenceImage {
+
+            // images can only be active in WorldTrackingConfiguration
+            if configuration is ARWorldTrackingConfiguration {
+                
+                // let's see if it's active, and if so deactivate
+                let worldTrackingConfiguration = configuration as? ARWorldTrackingConfiguration
+                var currentDetectionImages = worldTrackingConfiguration?.detectionImages != nil ? worldTrackingConfiguration?.detectionImages : Set<AnyHashable>()
+                
+                if currentDetectionImages?.contains(referenceImage) ?? false {
+                    // The image trying to be deactivated hasn't been found yet, return an error on the activation block and remove it
+                    if (detectionImageActivationPromises?[referenceImage.name ?? ""] != nil) {
+                        let activationBlock = detectionImageActivationPromises?[referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
+                        activationBlock?(false, "The image has been deactivated and destroyed", nil)
+                        detectionImageActivationPromises?[referenceImage.name ?? ""] = nil
+                    }
+
+                    // remove the image from the set being searched for
+                    currentDetectionImages?.remove(referenceImage)
+                    if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
+                        worldTrackingConfiguration?.detectionImages = currentDetectionImages
+                    }
+                    session.run(configuration, options: [])
+                }
+            }
             referenceImageMap[imageName] = nil
-            detectionImageActivationPromises[imageName] = nil
+
             completion(true, nil)
         } else {
             completion(false, "The image doesn't exist")
