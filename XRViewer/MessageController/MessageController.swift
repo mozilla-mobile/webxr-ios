@@ -299,16 +299,6 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         site = currentSite
         
         if !forceShowPermissionsPopup {
-            // Check whether Lite Mode is enabled
-            if standardUserDefaults.bool(forKey: Constant.liteModeWebXREnabled())
-                && (authorizationRequested == .minimal
-                    || authorizationRequested == .lite
-                    || authorizationRequested == .worldSensing
-                    || authorizationRequested == .videoCameraAccess)
-            {
-                authorizationGranted(.lite)
-                return
-            }
             
             switch authorizationRequested {
             case .minimal:
