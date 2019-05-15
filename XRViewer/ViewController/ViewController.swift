@@ -718,8 +718,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.deferredHitTest = (mask, x, y, result)
                 return
             }
-            let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask)
-            result(array)
+            if blockSelf?.arkController?.webXRAuthorizationStatus == .lite {
+                // Default hit testing is done against plane geometry,
+                // (HIT_TEST_TYPE_EXISTING_PLANE_GEOMETRY = 32 = 2^5), but to preserve privacy in
+                // .lite Mode only hit test against the plane itself
+                // (HIT_TEST_TYPE_EXISTING_PLANE = 8 = 2^3)
+                let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: 8)
+                result(array)
+            } else {
+                let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask)
+                result(array)
+            }
         }
 
         webController?.onAddAnchor = { name, transformArray, result in
@@ -1212,7 +1221,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     let addedAnchorDictionary = arkController?.createDictionary(for: anchor)
                     arkController?.addedAnchorsSinceLastFrame.add(addedAnchorDictionary ?? [:])
                     arkController?.objects[anchor.identifier.uuidString] = addedAnchorDictionary
-                    arkController?.controller.focusedPlane = nil
                 }
             }
         }
