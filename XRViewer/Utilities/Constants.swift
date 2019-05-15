@@ -101,7 +101,7 @@ let INTERNET_OFFLINE_CODE = -1009
 let USER_CANCELLED_LOADING_CODE = -999
 
 // URL
-let WEB_URL = "https://ios-viewer.webxrexperiments.com/viewer.html"
+let WEB_URL = "https://webxr-ios.webxrexperiments.com/splash.html"
 let LAST_URL_KEY = "lastURL"
 
 // MESSAGES

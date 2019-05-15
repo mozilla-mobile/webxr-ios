@@ -29,6 +29,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     private var reachability: Reachability?
     private var timerSessionRunningInBackground: Timer?
     private var chooseSinglePlaneButton = UIButton()
+    private var chooseSinglePlaneButtonVerticalConstraint = NSLayoutConstraint()
     private var deferredHitTest: (Int, CGFloat, CGFloat, ResultArrayBlock)? = nil
     
     let session = ARSession()
@@ -364,7 +365,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         stateController.onMemoryWarning = { url in
             blockSelf?.arkController?.controller.previewingSinglePlane = false
-            blockSelf?.chooseSinglePlaneButton.removeFromSuperview()
+            blockSelf?.chooseSinglePlaneButton.isHidden = true
             blockSelf?.messageController?.showMessageAboutMemoryWarning(withCompletion: {
                 blockSelf?.webController?.loadBlankHTMLString()
             })
@@ -459,7 +460,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main, using: { note in
             self.arkController?.controller.previewingSinglePlane = false
-            self.chooseSinglePlaneButton.removeFromSuperview()
+            self.chooseSinglePlaneButton.isHidden = true
             var arSessionState: ARKitSessionState
             if blockSelf?.arkController?.arSessionState != nil {
                 arSessionState = (blockSelf?.arkController?.arSessionState)!
@@ -637,7 +638,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         webController?.onStartLoad = {
             if blockSelf?.arkController != nil {
                 blockSelf?.arkController?.controller.previewingSinglePlane = false
-                blockSelf?.chooseSinglePlaneButton.removeFromSuperview()
+                blockSelf?.chooseSinglePlaneButton.isHidden = true
                 let lastURL = blockSelf?.webController?.lastURL
                 let currentURL = blockSelf?.webController?.webView?.url?.absoluteString
 
@@ -921,14 +922,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         let buttonWidth: CGFloat = 200
         let buttonHeight: CGFloat = 50
         chooseSinglePlaneButton = UIButton(type: .roundedRect)
-        chooseSinglePlaneButton.frame = CGRect(x: 0, y: 0, width: buttonWidth, height: buttonHeight)
-        chooseSinglePlaneButton.center = CGPoint(x: view.center.x, y: (view.center.y) + buttonWidth)
         chooseSinglePlaneButton.backgroundColor = .white
         chooseSinglePlaneButton.layer.cornerRadius = 0.5 * buttonHeight
         chooseSinglePlaneButton.clipsToBounds = true
         chooseSinglePlaneButton.tintColor = .black
         chooseSinglePlaneButton.setTitle("Share green plane", for: .normal)
         chooseSinglePlaneButton.addTarget(self, action: #selector(chooseSinglePlaneAction), for: .touchUpInside)
+        chooseSinglePlaneButton.isHidden = true
+        view.addSubview(chooseSinglePlaneButton)
+        
+        chooseSinglePlaneButton.translatesAutoresizingMaskIntoConstraints = false
+        let horizontalConstraint = chooseSinglePlaneButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        chooseSinglePlaneButtonVerticalConstraint = chooseSinglePlaneButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: view.frame.height / 4)
+        let widthConstraint = chooseSinglePlaneButton.widthAnchor.constraint(equalToConstant: buttonWidth)
+        let heightConstraint = chooseSinglePlaneButton.heightAnchor.constraint(equalToConstant: buttonHeight)
+        view.addConstraints([horizontalConstraint, chooseSinglePlaneButtonVerticalConstraint, widthConstraint, heightConstraint])
     }
 
     // MARK: - Cleanups
@@ -1074,7 +1082,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
         arkController?.controller.previewingSinglePlane = false
         arkController?.controller.focusedPlane = nil
-        chooseSinglePlaneButton.removeFromSuperview()
+        chooseSinglePlaneButton.isHidden = true
 
         stateController.state.numberOfTimesSendNativeTimeWasCalled = 0
         stateController.setARRequest(request) { () -> () in
@@ -1135,7 +1143,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     
                     if access == .lite {
                         blockSelf?.arkController?.controller.previewingSinglePlane = true
-                        blockSelf?.view.addSubview(blockSelf?.chooseSinglePlaneButton ?? UIButton())
+                        blockSelf?.chooseSinglePlaneButton.isHidden = false
                         if blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {
                             blockSelf?.stateController.state.shouldShowLiteModePopup = false
                             blockSelf?.messageController?.showMessage(withTitle: "Lite Mode Started", message: "Choose one plane to share with this website.", hideAfter: 2)
@@ -1166,7 +1174,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     
                     if access == .lite {
                         blockSelf?.arkController?.controller.previewingSinglePlane = true
-                        blockSelf?.view.addSubview(blockSelf?.chooseSinglePlaneButton ?? UIButton())
+                        blockSelf?.chooseSinglePlaneButton.isHidden = false
                         if blockSelf?.stateController.state.shouldShowLiteModePopup ?? false {
                             blockSelf?.stateController.state.shouldShowLiteModePopup = false
                             blockSelf?.messageController?.showMessage(withTitle: "Lite Mode Started", message: "Choose one plane to share with this website.", hideAfter: 2)
@@ -1184,7 +1192,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     }
     
     @objc private func chooseSinglePlaneAction() {
-        chooseSinglePlaneButton.removeFromSuperview()
+        chooseSinglePlaneButton.isHidden = true
         arkController?.controller.previewingSinglePlane = false
         
         if let deferredHitTest = deferredHitTest {
@@ -1212,6 +1220,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         var axis: NSLayoutConstraint.Axis
+        chooseSinglePlaneButtonVerticalConstraint.constant = view.frame.height / 4
         if view.traitCollection.verticalSizeClass == .compact {
             messageController?.requestXRPermissionsVC?.stackViewWidthConstraint.constant = 584
             axis = NSLayoutConstraint.Axis.horizontal
