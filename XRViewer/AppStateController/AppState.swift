@@ -5,7 +5,6 @@ import Foundation
  */
 @objc class AppState: NSObject, NSCopying {
     @objc var aRRequest: [AnyHashable : Any] = [:]
-    var trackingState = ""
     var showMode: ShowMode = .nothing
     var showOptions: ShowOptions = .init(rawValue: 0)
     var webXR = false
@@ -36,8 +35,6 @@ import Foundation
         state.userGrantedSendingWorldStateData = .notDetermined
         state.askedComputerVisionData = false
         state.askedWorldStateData = false
-
-        // trackingstate default is nil ?
 
         return state
     }

@@ -75,8 +75,12 @@ class TextManager {
             // set text
             self.viewController.messageLabel.text = text
             
-            // make sure status is showing
-            self.showHideMessage(hide: false, animated: true)
+            // make sure status is showing if not ""
+            if text == "" {
+                self.showHideMessage(hide: true, animated: true)
+            } else {
+                self.showHideMessage(hide: false, animated: true)
+            }
             
             if autoHide {
                 // Compute an appropriate amount of time to display the on screen message.
