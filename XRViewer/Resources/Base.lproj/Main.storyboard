@@ -135,7 +135,6 @@
                         <outlet property="hotLayerView" destination="NaB-9b-LZq" id="tA1-p4-0P7"/>
                         <outlet property="messageLabel" destination="MAd-gS-NsB" id="G3g-aC-5Pj"/>
                         <outlet property="messagePanel" destination="DtY-LL-sKx" id="cv6-1y-uzK"/>
-                        <outlet property="sceneView" destination="Pr5-sC-23l" id="0rE-Jq-9Mn"/>
                         <outlet property="splashLayerView" destination="73L-9y-k0E" id="f0u-08-WWW"/>
                         <outlet property="webLayerView" destination="RAF-Ke-Lef" id="cPN-4w-nXv"/>
                     </connections>

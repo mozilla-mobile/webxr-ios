@@ -42,6 +42,9 @@ typedef NS_ENUM(NSUInteger, ARKType)
 
 @class ARKController;
 typedef void (^DidUpdate)(ARKController *);
+typedef void (^DidChangeTrackingState)(ARCamera *);
+typedef void (^SessionWasInterrupted)(void);
+typedef void (^SessionInterruptionEnded)(void);
 typedef void (^DidFailSession)(NSError *);
 typedef void (^DidUpdateWindowSize)(void);
 typedef void (^DetectionImageCreatedCompletionType)(BOOL success, NSString* errorString);
@@ -55,6 +58,9 @@ typedef void (^ResultArrayBlock)(NSArray *);
 @interface ARKController : NSObject
 
 @property(copy) DidUpdate didUpdate;
+@property(copy) DidChangeTrackingState didChangeTrackingState;
+@property(copy) SessionWasInterrupted sessionWasInterrupted;
+@property(copy) SessionInterruptionEnded sessionInterruptionEnded;
 @property(copy) DidFailSession didFailSession;
 @property(copy) DidUpdateWindowSize didUpdateWindowSize;
 @property UIInterfaceOrientation interfaceOrientation;
