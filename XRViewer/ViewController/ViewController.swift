@@ -30,8 +30,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     private var timerSessionRunningInBackground: Timer?
     private var chooseSinglePlaneButton = UIButton()
     
-    let session = ARSession()
-    @IBOutlet weak var sceneView: ARSCNView!
     @IBOutlet weak var messagePanel: UIVisualEffectView!
     @IBOutlet weak var messageLabel: UILabel!
     var textManager: TextManager!
@@ -50,7 +48,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         setupCommonControllers()
         setupUI()
-        setupScene()
         setupSinglePlaneButton()
 
         /// Apparently, this is called async in the main queue because we need viewDidLoad to finish
@@ -221,13 +218,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
     // MARK: - Setup
     
-    func setupScene() {
-        // Set up the scene view
-        sceneView.delegate = self
-        guard let session = arkController?.session else { return }
-        sceneView.session = session
-    }
-    
     func setupUI() {
         textManager = TextManager(viewController: self)
         
@@ -380,8 +370,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             if blockSelf?.arkController == nil {
                 print("\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********")
                 blockSelf?.startNewARKitSession(withRequest: dict)
-                guard let session = blockSelf?.arkController?.session else { return }
-                blockSelf?.sceneView.session = session
             } else {
                 guard let arSessionState = blockSelf?.arkController?.arSessionState else { return }
                 guard let state = blockSelf?.stateController.state else { return }
@@ -569,8 +557,34 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 }
             }
         }
+        arkController?.didChangeTrackingState = { camera in
+            if let camera = camera {
+                blockSelf?.textManager.showTrackingQualityInfo(for: camera.trackingState, autoHide: true)
+                switch camera.trackingState {
+                case .notAvailable:
+                    return
+                case .limited:
+                    blockSelf?.textManager.escalateFeedback(for: camera.trackingState, inSeconds: 3.0)
+                case .normal:
+                    blockSelf?.textManager.cancelScheduledMessage(forType: .trackingStateEscalation)
+                }
+            }
+        }
+        arkController?.sessionWasInterrupted = {
+            blockSelf?.textManager.showMessage("Session interrupted!")
+            blockSelf?.overlayController?.setARKitInterruption(true)
+            blockSelf?.messageController?.showMessageAboutARInterruption(true)
+            blockSelf?.webController?.wasARInterruption(true)
+        }
+        arkController?.sessionInterruptionEnded = {
+            blockSelf?.textManager.showMessage("Interruption ended\nResetting...")
+            blockSelf?.overlayController?.setARKitInterruption(false)
+            blockSelf?.messageController?.showMessageAboutARInterruption(false)
+            blockSelf?.webController?.wasARInterruption(false)
+        }
         arkController?.didFailSession = { error in
             guard let error = error as NSError? else { return }
+            blockSelf?.arkController?.arSessionState = .ARKSessionUnknown
             blockSelf?.webController?.didReceiveError(error: error)
 
             if error.code == SENSOR_FAILED_ARKIT_ERROR_CODE {
