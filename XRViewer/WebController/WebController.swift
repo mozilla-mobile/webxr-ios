@@ -729,9 +729,32 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         contentController?.removeScriptMessageHandler(forName: WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE)
     }
 
+    func appVersion() -> String? {
+        return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+    }
+    
+    func build() -> String? {
+        return Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as? String
+    }
+    
+    func versionBuild() -> String? {
+        let version = appVersion()
+        let build = self.build()
+        
+        var versionBuild = "v\(version ?? "")"
+        
+        if version != build {
+            versionBuild = "\(versionBuild)(\(build ?? ""))"
+        }
+        
+        return versionBuild
+    }
+
     func setupWebView(withRootView rootView: UIView?) {
         let conf = WKWebViewConfiguration()
         let contentController = WKUserContentController()
+        let version = versionBuild() ?? "unknonw"
+        conf.applicationNameForUserAgent = " Mobile WebXRViewer/" + version
 
         let standardUserDefaults = UserDefaults.standard
         // Check if we are supposed to be exposing WebXR.
