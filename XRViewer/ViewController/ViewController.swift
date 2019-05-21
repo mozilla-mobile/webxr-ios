@@ -32,9 +32,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     private var chooseSinglePlaneButtonVerticalConstraint = NSLayoutConstraint()
     private var deferredHitTest: (Int, CGFloat, CGFloat, ResultArrayBlock)? = nil
     
+    // Properties for status messages via messageLabel & messagePanel
     @IBOutlet weak var messagePanel: UIVisualEffectView!
     @IBOutlet weak var messageLabel: UILabel!
-    var textManager: TextManager!
+    var schedulingMessagesBlocked = false
+    // Timer for hiding messages
+    var messageHideTimer: Timer?
+    // Timers for showing scheduled messages
+    var focusSquareMessageTimer: Timer?
+    var planeEstimationMessageTimer: Timer?
+    var contentPlacementMessageTimer: Timer?
+    // Timer for tracking state escalation
+    var trackingStateFeedbackEscalationTimer: Timer?
+    
     
     // MARK: - View Lifecycle
     deinit {
@@ -221,8 +231,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     // MARK: - Setup
     
     func setupUI() {
-        textManager = TextManager(viewController: self)
-        
         // Set appearance of the message output panel
         messagePanel.layer.cornerRadius = 3.0
         messagePanel.clipsToBounds = true
@@ -294,8 +302,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             }
 
             blockSelf?.updateConstraints()
-            blockSelf?.textManager?.cancelAllScheduledMessages()
-            blockSelf?.textManager?.showHideMessage(hide: true, animated: true)
+            blockSelf?.cancelAllScheduledMessages()
+            blockSelf?.showHideMessage(hide: true)
             blockSelf?.webController?.setup(forWebXR: xr)
         }
 
@@ -559,26 +567,28 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             }
         }
         arkController?.didChangeTrackingState = { camera in
-            if let camera = camera {
-                blockSelf?.textManager.showTrackingQualityInfo(for: camera.trackingState, autoHide: true)
+            
+            if let camera = camera,
+                let webXR = blockSelf?.stateController.state.webXR,
+                webXR
+            {
+                blockSelf?.showTrackingQualityInfo(for: camera.trackingState, autoHide: true)
                 switch camera.trackingState {
                 case .notAvailable:
                     return
                 case .limited:
-                    blockSelf?.textManager.escalateFeedback(for: camera.trackingState, inSeconds: 3.0)
+                    blockSelf?.escalateFeedback(for: camera.trackingState, inSeconds: 3.0)
                 case .normal:
-                    blockSelf?.textManager.cancelScheduledMessage(forType: .trackingStateEscalation)
+                    blockSelf?.cancelScheduledMessage(forType: .trackingStateEscalation)
                 }
             }
         }
         arkController?.sessionWasInterrupted = {
-            blockSelf?.textManager.showMessage("Session interrupted!")
             blockSelf?.overlayController?.setARKitInterruption(true)
             blockSelf?.messageController?.showMessageAboutARInterruption(true)
             blockSelf?.webController?.wasARInterruption(true)
         }
         arkController?.sessionInterruptionEnded = {
-            blockSelf?.textManager.showMessage("Interruption ended\nResetting...")
             blockSelf?.overlayController?.setARKitInterruption(false)
             blockSelf?.messageController?.showMessageAboutARInterruption(false)
             blockSelf?.webController?.wasARInterruption(false)

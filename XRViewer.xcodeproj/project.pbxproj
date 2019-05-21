@@ -38,7 +38,6 @@
 		B620ED142204B5480066B4A8 /* ARKController+Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED132204B5480066B4A8 /* ARKController+Camera.swift */; };
 		B62CE86321CAD3B00053F9B3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86221CAD3B00053F9B3 /* ViewController.swift */; };
 		B62CE86521CC0FDF0053F9B3 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86421CC0FDF0053F9B3 /* Reachability.swift */; };
-		B62CE86821CC46A90053F9B3 /* TextManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62CE86721CC46A90053F9B3 /* TextManager.swift */; };
 		B632850721C2D98A00FD5510 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632850621C2D98900FD5510 /* LocationManager.swift */; };
 		B632850921C2F24200FD5510 /* MessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632850821C2F24200FD5510 /* MessageController.swift */; };
 		B632850B21C330A500FD5510 /* MyriadPro-Regular.OTF in Resources */ = {isa = PBXBuildFile; fileRef = B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */; };
@@ -46,6 +45,7 @@
 		B632851521C4191200FD5510 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632851421C4191200FD5510 /* AppDelegate.swift */; };
 		B632851721C4330500FD5510 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B632851621C4330500FD5510 /* Constants.swift */; };
 		B6468D8E228CC20C002F22A3 /* ARKController+ARSessionObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6468D8D228CC20C002F22A3 /* ARKController+ARSessionObserver.swift */; };
+		B6468D90228F5074002F22A3 /* ViewController+MessagePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6468D8F228F5074002F22A3 /* ViewController+MessagePanel.swift */; };
 		B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */; };
 		B654FED221EF99150004F001 /* ARKController+AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B654FED121EF99150004F001 /* ARKController+AppState.swift */; };
 		B654FED421F1179B0004F001 /* ARKController+Anchors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B654FED321F1179B0004F001 /* ARKController+Anchors.swift */; };
@@ -114,7 +114,6 @@
 		B620ED132204B5480066B4A8 /* ARKController+Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Camera.swift"; sourceTree = "<group>"; };
 		B62CE86221CAD3B00053F9B3 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		B62CE86421CC0FDF0053F9B3 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
-		B62CE86721CC46A90053F9B3 /* TextManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextManager.swift; sourceTree = "<group>"; };
 		B632850621C2D98900FD5510 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		B632850821C2F24200FD5510 /* MessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MessageController.swift; path = MessageController/MessageController.swift; sourceTree = "<group>"; };
 		B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MyriadPro-Regular.OTF"; sourceTree = "<group>"; };
@@ -122,6 +121,7 @@
 		B632851421C4191200FD5510 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B632851621C4330500FD5510 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B6468D8D228CC20C002F22A3 /* ARKController+ARSessionObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+ARSessionObserver.swift"; sourceTree = "<group>"; };
+		B6468D8F228F5074002F22A3 /* ViewController+MessagePanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+MessagePanel.swift"; sourceTree = "<group>"; };
 		B64B19FD21B9832A00787AA5 /* ARKSceneKitController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKSceneKitController.swift; sourceTree = "<group>"; };
 		B654FED121EF99150004F001 /* ARKController+AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+AppState.swift"; sourceTree = "<group>"; };
 		B654FED321F1179B0004F001 /* ARKController+Anchors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Anchors.swift"; sourceTree = "<group>"; };
@@ -261,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				B62CE86221CAD3B00053F9B3 /* ViewController.swift */,
+				B6468D8F228F5074002F22A3 /* ViewController+MessagePanel.swift */,
 				B632851221C4159B00FD5510 /* LayerView.swift */,
 			);
 			path = ViewController;
@@ -367,7 +368,6 @@
 				B67D97A621C9843B0075FE0A /* Animator.swift */,
 				B632851621C4330500FD5510 /* Constants.swift */,
 				B62CE86421CC0FDF0053F9B3 /* Reachability.swift */,
-				B62CE86721CC46A90053F9B3 /* TextManager.swift */,
 				B67D979621C4404E0075FE0A /* Utils.swift */,
 			);
 			path = Utilities;
@@ -526,7 +526,6 @@
 				B620ED1222024D5A0066B4A8 /* ARKController+WorldMap.swift in Sources */,
 				B632851321C4159B00FD5510 /* LayerView.swift in Sources */,
 				B6F4C0BD221B5AEC009ECC06 /* ARKController+Frame.swift in Sources */,
-				B62CE86821CC46A90053F9B3 /* TextManager.swift in Sources */,
 				B6EAD6DD21DAB48800DF5127 /* Prefix.swift in Sources */,
 				B654FED221EF99150004F001 /* ARKController+AppState.swift in Sources */,
 				B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */,
@@ -549,6 +548,7 @@
 				B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */,
 				B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */,
 				B67D97A321C8453F0075FE0A /* UIOverlayController.swift in Sources */,
+				B6468D90228F5074002F22A3 /* ViewController+MessagePanel.swift in Sources */,
 				B67D97A521C854C20075FE0A /* OverlayViewController.swift in Sources */,
 				62242ACB201F2D3600506412 /* TextTableViewCell.swift in Sources */,
 				B67D97A721C9843B0075FE0A /* Animator.swift in Sources */,
