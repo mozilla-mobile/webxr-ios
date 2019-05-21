@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.15</string>
+	<string>1.16</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -41,9 +41,9 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>This application will use the camera for Augmented Reality.</string>
+	<string>When a web page uses WebXR, video from the camera will be displayed in the background and used to track device motion in 3D. You will be asked for further permission before a web page may access the video or use the Truedepth camera for face tracking.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This application will use location for Augmented Reality.</string>
+	<string>Location is used to enable the Web Geolocation API. You will be asked for permission before a web page can access your location.</string>
 	<key>NSSupportsSuddenTermination</key>
 	<false/>
 	<key>UIAppFonts</key>
