@@ -1,5 +1,6 @@
 import UIKit
 import CocoaLumberjack
+import CoreMotion
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let sendUsageData: Bool = UserDefaults.standard.bool(forKey: Constant.useAnalyticsKey())
         AnalyticsManager.sharedInstance.initialize(sendUsageData: sendUsageData)
+        
+        // There is a Main Thread Checker bug when debugging 2018 devices (e.g. XS/XR/XSM)
+        // running iOS 12.x which causes a delay when calling handleOnWatchAR & before the
+        // permisisons popup appears, see info here: https://openradar.appspot.com/46210367
+        // Attempted fix info here: https://github.com/jdg/MBProgressHUD/issues/552
+        _ = CMMotionManager()
 
         return true
     }
