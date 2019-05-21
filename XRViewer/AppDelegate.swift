@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // There is a Main Thread Checker bug when debugging 2018 devices (e.g. XS/XR/XSM)
         // running iOS 12.x which causes a delay when calling handleOnWatchAR & before the
         // permisisons popup appears, see info here: https://openradar.appspot.com/46210367
-        // Attempted fix info here: https://github.com/jdg/MBProgressHUD/issues/552
+        // Attempted fix info in 5/6/19 post: https://github.com/jdg/MBProgressHUD/issues/552
         _ = CMMotionManager()
 
         return true
