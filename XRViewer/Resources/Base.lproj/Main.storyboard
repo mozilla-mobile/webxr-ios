@@ -32,13 +32,13 @@
                             <visualEffectView opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="scaleToFill" verticalHuggingPriority="1000" verticalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="DtY-LL-sKx" userLabel="Message Panel">
                                 <rect key="frame" x="15" y="70" width="113" height="35.666666666666657"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="fOX-09-2g6">
-                                    <rect key="frame" x="0.0" y="0.0" width="113" height="35.666666666666657"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="113" height="36"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="k7x-iF-JuZ">
                                             <rect key="frame" x="0.0" y="0.0" width="113" height="35.666666666666664"/>
                                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="PIW-lX-eKU">
-                                                <rect key="frame" x="0.0" y="0.0" width="113" height="35.666666666666664"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="113" height="36"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="2rD-k6-CbN">
@@ -75,6 +75,13 @@
                                 </view>
                                 <blurEffect style="light"/>
                             </visualEffectView>
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="RIK-JD-GI7">
+                                <rect key="frame" x="365" y="25" width="39" height="39"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="39" id="Ezt-Ke-zqX"/>
+                                    <constraint firstAttribute="width" constant="39" id="z3t-to-41l"/>
+                                </constraints>
+                            </imageView>
                             <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="73L-9y-k0E" userLabel="SplashView" customClass="LayerView" customModule="XRViewer" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <subviews>
@@ -108,6 +115,7 @@
                             <constraint firstItem="73L-9y-k0E" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="2c2-sH-loz"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="2qV-Bb-iAI"/>
                             <constraint firstItem="DtY-LL-sKx" firstAttribute="leading" secondItem="L8Y-Me-cba" secondAttribute="leading" constant="15" id="4Vc-JG-eLE"/>
+                            <constraint firstItem="L8Y-Me-cba" firstAttribute="trailing" secondItem="RIK-JD-GI7" secondAttribute="trailing" constant="10" id="BRD-Nr-lxP"/>
                             <constraint firstItem="NaB-9b-LZq" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="D3d-fu-aKE"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="GFe-uq-zen"/>
                             <constraint firstItem="73L-9y-k0E" firstAttribute="leading" secondItem="3se-qz-xqx" secondAttribute="leading" id="Gvp-8I-EIt"/>
@@ -122,6 +130,7 @@
                             <constraint firstItem="NaB-9b-LZq" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" id="ivb-Sb-gYU"/>
                             <constraint firstItem="RAF-Ke-Lef" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="ltL-KU-uG7"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="top" secondItem="3se-qz-xqx" secondAttribute="top" id="m7O-0J-noB"/>
+                            <constraint firstItem="RIK-JD-GI7" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" constant="5" id="oKF-WA-m6M"/>
                             <constraint firstItem="Pr5-sC-23l" firstAttribute="trailing" secondItem="3se-qz-xqx" secondAttribute="trailing" id="rdY-e9-qs9"/>
                             <constraint firstItem="DtY-LL-sKx" firstAttribute="top" secondItem="L8Y-Me-cba" secondAttribute="top" constant="50" id="xW2-ml-qID"/>
                             <constraint firstAttribute="trailing" secondItem="Pr5-sC-23l" secondAttribute="trailing" id="zAq-Ca-Y1L"/>
@@ -136,6 +145,7 @@
                         <outlet property="messageLabel" destination="MAd-gS-NsB" id="G3g-aC-5Pj"/>
                         <outlet property="messagePanel" destination="DtY-LL-sKx" id="cv6-1y-uzK"/>
                         <outlet property="splashLayerView" destination="73L-9y-k0E" id="f0u-08-WWW"/>
+                        <outlet property="trackingStatusIcon" destination="RIK-JD-GI7" id="g94-QK-OpH"/>
                         <outlet property="webLayerView" destination="RAF-Ke-Lef" id="cPN-4w-nXv"/>
                     </connections>
                 </viewController>

@@ -41,36 +41,33 @@ extension ViewController {
     // MARK: - Message Handling
     
     func showMessage(_ text: String, autoHide: Bool = true) {
-        weak var blockSelf: ViewController? = self
-        DispatchQueue.main.async {
-            // cancel any previous hide timer
-            blockSelf?.messageHideTimer?.invalidate()
-            
-            // set text
-            blockSelf?.messageLabel.text = text
-            
-            // make sure status is showing if not ""
-            if text == "" {
-                blockSelf?.showHideMessage(hide: true)
-            } else {
-                blockSelf?.showHideMessage(hide: false)
-            }
-            
-            if autoHide {
-                // Compute an appropriate amount of time to display the on screen message.
-                // According to https://en.wikipedia.org/wiki/Words_per_minute, adults read
-                // about 200 words per minute and the average English word is 5 characters
-                // long. So 1000 characters per minute / 60 = 15 characters per second.
-                // We limit the duration to a range of 1-10 seconds.
-                let charCount = text.count
-                let displayDuration: TimeInterval = min(10, Double(charCount) / 15.0 + 1.0)
-                blockSelf?.messageHideTimer = Timer.scheduledTimer(
-                    withTimeInterval: displayDuration,
-                    repeats: false,
-                    block: { [weak self] ( _ ) in
-                        self?.showHideMessage(hide: true)
-                })
-            }
+        // cancel any previous hide timer
+        messageHideTimer?.invalidate()
+        
+        // set text
+        messageLabel.text = text
+        
+        // make sure status is showing if not ""
+        if text == "" || !stateController.shouldShowURLBar() {
+            showHideMessage(hide: true)
+        } else {
+            showHideMessage(hide: false)
+        }
+        
+        if autoHide {
+            // Compute an appropriate amount of time to display the on screen message.
+            // According to https://en.wikipedia.org/wiki/Words_per_minute, adults read
+            // about 200 words per minute and the average English word is 5 characters
+            // long. So 1000 characters per minute / 60 = 15 characters per second.
+            // We limit the duration to a range of 1-10 seconds.
+            let charCount = text.count
+            let displayDuration: TimeInterval = min(10, Double(charCount) / 15.0 + 1.0)
+            messageHideTimer = Timer.scheduledTimer(
+                withTimeInterval: displayDuration,
+                repeats: false,
+                block: { [weak self] ( _ ) in
+                    self?.showHideMessage(hide: true)
+            })
         }
     }
     
@@ -98,6 +95,20 @@ extension ViewController {
     
     func showTrackingQualityInfo(for trackingState: ARCamera.TrackingState, autoHide: Bool) {
         showMessage(trackingState.presentationString, autoHide: autoHide)
+    }
+    
+    func updateTrackingStatusIcon(for trackingState: ARCamera.TrackingState) {
+        trackingStatusIcon.isHidden = stateController.shouldShowURLBar() ? true : false
+        switch trackingState {
+        case .notAvailable:
+            trackingStatusIcon.image = UIImage(named: "warning-old")
+            trackingStatusIcon.tintColor = .red
+        case .limited:
+            trackingStatusIcon.image = UIImage(named: "warning-old")
+            trackingStatusIcon.tintColor = .orange
+        case .normal:
+            trackingStatusIcon.image = nil
+        }
     }
     
     func escalateFeedback(for trackingState: ARCamera.TrackingState, inSeconds seconds: TimeInterval) {

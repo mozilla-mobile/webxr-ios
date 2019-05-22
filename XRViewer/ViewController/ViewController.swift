@@ -19,7 +19,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     @IBOutlet private weak var arkLayerView: LayerView!
     @IBOutlet private weak var hotLayerView: LayerView!
     @IBOutlet private weak var webLayerView: LayerView!
-    private lazy var stateController: AppStateController = AppStateController(state: AppState.defaultState())
+    lazy var stateController: AppStateController = AppStateController(state: AppState.defaultState())
     var arkController: ARKController?
     var webController: WebController?
     var overlayController: UIOverlayController?
@@ -35,6 +35,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     // Properties for status messages via messageLabel & messagePanel
     @IBOutlet weak var messagePanel: UIVisualEffectView!
     @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var trackingStatusIcon: UIImageView!
     var schedulingMessagesBlocked = false
     // Timer for hiding messages
     var messageHideTimer: Timer?
@@ -258,6 +259,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.overlayController?.setMode(mode)
             guard let showURL = blockSelf?.stateController.shouldShowURLBar() else { return }
             blockSelf?.webController?.showBar(showURL)
+            if blockSelf?.messageLabel.text != "" {
+                blockSelf?.showHideMessage(hide: !showURL)
+            }
+            blockSelf?.trackingStatusIcon.isHidden = showURL
         }
 
         stateController.onOptionsUpdate = { options in
@@ -265,9 +270,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.overlayController?.setOptions(options)
             guard let showURL = blockSelf?.stateController.shouldShowURLBar() else { return }
             blockSelf?.webController?.showBar(showURL)
+            if blockSelf?.messageLabel.text != "" {
+                blockSelf?.showHideMessage(hide: !showURL)
+            }
+            blockSelf?.trackingStatusIcon.isHidden = showURL
         }
 
         stateController.onXRUpdate = { xr in
+            blockSelf?.messageLabel.text = ""
             if xr {
                 guard let debugSelected = blockSelf?.webController?.isDebugButtonSelected() else { return }
                 guard let shouldShowSessionStartedPopup = blockSelf?.stateController.state.shouldShowSessionStartedPopup else { return }
@@ -300,10 +310,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     })
                 }
             }
-
             blockSelf?.updateConstraints()
             blockSelf?.cancelAllScheduledMessages()
             blockSelf?.showHideMessage(hide: true)
+            blockSelf?.trackingStatusIcon.image = nil
             blockSelf?.webController?.setup(forWebXR: xr)
         }
 
@@ -573,6 +583,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 webXR
             {
                 blockSelf?.showTrackingQualityInfo(for: camera.trackingState, autoHide: true)
+                blockSelf?.updateTrackingStatusIcon(for: camera.trackingState)
                 switch camera.trackingState {
                 case .notAvailable:
                     return
