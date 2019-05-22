@@ -665,7 +665,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 let lastURL = blockSelf?.webController?.lastURL
                 let currentURL = blockSelf?.webController?.webView?.url?.absoluteString
 
-                if (lastURL == currentURL) {
+                if lastURL == currentURL {
                     // Page reload
                     blockSelf?.arkController?.removeAllAnchorsExceptPlanes()
                 } else {
@@ -865,7 +865,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             stateController.applyOnDidReceiveMemoryAction()
         } else {
             let requestedURL = UserDefaults.standard.string(forKey: REQUESTED_URL_KEY)
-            if requestedURL != nil && !(requestedURL == "") {
+            if requestedURL != nil && requestedURL != "" {
                 UserDefaults.standard.set(nil, forKey: REQUESTED_URL_KEY)
                 webController?.loadURL(requestedURL)
             } else {
@@ -874,7 +874,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     webController?.loadURL(lastURL)
                 } else {
                     let homeURL = UserDefaults.standard.string(forKey: Constant.homeURLKey())
-                    if homeURL != nil && !(homeURL == "") {
+                    if homeURL != nil && homeURL != "" {
                         webController?.loadURL(homeURL)
                     } else {
                         webController?.loadURL(WEB_URL)
