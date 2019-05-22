@@ -751,7 +751,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     func setupWebView(withRootView rootView: UIView?) {
         let conf = WKWebViewConfiguration()
         let contentController = WKUserContentController()
-        let version = versionBuild() ?? "unknonw"
+        let version = versionBuild() ?? "unknown"
         conf.applicationNameForUserAgent = " Mobile WebXRViewer/" + version
 
         let standardUserDefaults = UserDefaults.standard
