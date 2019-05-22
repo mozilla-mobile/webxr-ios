@@ -29,16 +29,16 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
-                            <visualEffectView opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="scaleToFill" verticalHuggingPriority="1000" verticalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="DtY-LL-sKx" userLabel="Message Panel">
+                            <visualEffectView opaque="NO" userInteractionEnabled="NO" alpha="0.90000000000000002" contentMode="scaleToFill" verticalHuggingPriority="1000" verticalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="DtY-LL-sKx" userLabel="Message Panel">
                                 <rect key="frame" x="15" y="70" width="113" height="35.666666666666657"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="fOX-09-2g6">
-                                    <rect key="frame" x="0.0" y="0.0" width="113" height="36"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="113" height="35.666666666666657"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="k7x-iF-JuZ">
                                             <rect key="frame" x="0.0" y="0.0" width="113" height="35.666666666666664"/>
                                             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="PIW-lX-eKU">
-                                                <rect key="frame" x="0.0" y="0.0" width="113" height="36"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="113" height="35.666666666666664"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="2rD-k6-CbN">
@@ -73,7 +73,7 @@
                                         <constraint firstItem="k7x-iF-JuZ" firstAttribute="centerY" secondItem="fOX-09-2g6" secondAttribute="centerY" id="wtf-9V-1W0"/>
                                     </constraints>
                                 </view>
-                                <blurEffect style="light"/>
+                                <blurEffect style="extraLight"/>
                             </visualEffectView>
                             <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="RIK-JD-GI7">
                                 <rect key="frame" x="365" y="25" width="39" height="39"/>
