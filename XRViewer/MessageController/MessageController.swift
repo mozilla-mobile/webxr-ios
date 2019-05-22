@@ -168,9 +168,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
 
         let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
                 popup.dismiss(animated: true)
-
                 completion()
-            
                 blockSelf?.didHideMessageByUser?()
             })
 

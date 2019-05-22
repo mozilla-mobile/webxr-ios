@@ -454,8 +454,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         weak var blockSelf: ViewController? = self
 
         NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main, using: { note in
-            self.arkController?.controller.previewingSinglePlane = false
-            self.chooseSinglePlaneButton.isHidden = true
+            blockSelf?.arkController?.controller.previewingSinglePlane = false
+            blockSelf?.chooseSinglePlaneButton.isHidden = true
             var arSessionState: ARKitSessionState
             if blockSelf?.arkController?.arSessionState != nil {
                 arSessionState = (blockSelf?.arkController?.arSessionState)!
@@ -468,12 +468,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 case .ARKSessionPaused:
                     print("\n\n*********\n\nMoving to background while the session is paused, nothing to do\n\n*********")
                     // need to try and save WorldMap here.  May fail?
-                    self.arkController?.saveWorldMapInBackground()
+                    blockSelf?.arkController?.saveWorldMapInBackground()
                 case .ARKSessionRunning:
                     print("\n\n*********\n\nMoving to background while the session is running, store the timestamp\n\n*********")
                     UserDefaults.standard.set(Date(), forKey: Constant.backgroundOrPausedDateKey())
                     // need to save WorldMap here
-                    self.arkController?.saveWorldMapInBackground()
+                    blockSelf?.arkController?.saveWorldMapInBackground()
                 default:
                     break
             }
@@ -1020,16 +1020,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     func processMemoryWarning() {
         stateController.saveDidReceiveMemoryWarning(onURL: webController?.lastURL)
         cleanupCommonControllers()
-        //    [self showSplashWithCompletion:^
-        //     {
         cleanupTargetControllers()
-        //     }];
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(WAITING_TIME_ON_MEMORY_WARNING * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WAITING_TIME_ON_MEMORY_WARNING, execute: {
             self.setupTargetControllers()
-
-            //                       [self hideSplashWithCompletion:^
-            //                        {}];
         })
     }
 

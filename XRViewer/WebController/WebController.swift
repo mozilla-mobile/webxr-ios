@@ -194,9 +194,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     @objc func sendARData(_ data: [AnyHashable : Any]) {
         if transferCallback != ""  {
             callWebMethod(transferCallback, paramJSON: data, webCompletion: nil)
-//            print("sendARData success")
         }
-//        print("sendARData did not send data")
     }
 
     @objc func hideKeyboard() {

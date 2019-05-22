@@ -186,7 +186,6 @@ class AppStateController: NSObject {
         state.type = type
 
         weak var blockSelf: AppStateController? = self
-        //__weak typeof (ExclusiveState *) blockState = state;
 
         switch type {
             case .exclusiveStateMessage:
