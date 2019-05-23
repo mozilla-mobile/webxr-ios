@@ -20,7 +20,7 @@ class BarView: UIView, UITextFieldDelegate {
     @objc var restartTrackingActionBlock: (() -> Void)?
     @objc var switchCameraActionBlock: (() -> Void)?
 
-    @IBOutlet private weak var urlField: URLTextField!
+    @IBOutlet weak var urlField: URLTextField!
     @IBOutlet private weak var backBtn: UIButton!
     @IBOutlet private weak var forwardBtn: UIButton!
     @IBOutlet private weak var homeBtn: UIButton!

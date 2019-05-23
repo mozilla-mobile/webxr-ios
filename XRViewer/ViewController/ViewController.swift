@@ -374,7 +374,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.arkController?.controller.previewingSinglePlane = false
             blockSelf?.chooseSinglePlaneButton.isHidden = true
             blockSelf?.messageController?.showMessageAboutMemoryWarning(withCompletion: {
-                blockSelf?.webController?.loadBlankHTMLString()
+                blockSelf?.webController?.prefillLastURL()
             })
 
             blockSelf?.webController?.didReceiveError(error: NSError(domain: MEMORY_ERROR_DOMAIN, code: MEMORY_ERROR_CODE, userInfo: [NSLocalizedDescriptionKey: MEMORY_ERROR_MESSAGE]))
@@ -464,8 +464,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         weak var blockSelf: ViewController? = self
 
         NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main, using: { note in
-            self.arkController?.controller.previewingSinglePlane = false
-            self.chooseSinglePlaneButton.isHidden = true
+            blockSelf?.arkController?.controller.previewingSinglePlane = false
+            blockSelf?.chooseSinglePlaneButton.isHidden = true
             var arSessionState: ARKitSessionState
             if blockSelf?.arkController?.arSessionState != nil {
                 arSessionState = (blockSelf?.arkController?.arSessionState)!
@@ -478,12 +478,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 case .ARKSessionPaused:
                     print("\n\n*********\n\nMoving to background while the session is paused, nothing to do\n\n*********")
                     // need to try and save WorldMap here.  May fail?
-                    self.arkController?.saveWorldMapInBackground()
+                    blockSelf?.arkController?.saveWorldMapInBackground()
                 case .ARKSessionRunning:
                     print("\n\n*********\n\nMoving to background while the session is running, store the timestamp\n\n*********")
                     UserDefaults.standard.set(Date(), forKey: Constant.backgroundOrPausedDateKey())
                     // need to save WorldMap here
-                    self.arkController?.saveWorldMapInBackground()
+                    blockSelf?.arkController?.saveWorldMapInBackground()
                 default:
                     break
             }
@@ -641,7 +641,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.messageController?.hideMessages()
                 blockSelf?.messageController?.showMessageAboutFailSession(withMessage: errorMessage) {
                     DispatchQueue.main.async(execute: {
-                        self.webController?.loadBlankHTMLString()
+                        self.webController?.prefillLastURL()
                     })
                 }
             })
@@ -676,7 +676,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 let lastURL = blockSelf?.webController?.lastURL
                 let currentURL = blockSelf?.webController?.webView?.url?.absoluteString
 
-                if (lastURL == currentURL) {
+                if lastURL == currentURL {
                     // Page reload
                     blockSelf?.arkController?.removeAllAnchorsExceptPlanes()
                 } else {
@@ -876,7 +876,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             stateController.applyOnDidReceiveMemoryAction()
         } else {
             let requestedURL = UserDefaults.standard.string(forKey: REQUESTED_URL_KEY)
-            if requestedURL != nil && !(requestedURL == "") {
+            if requestedURL != nil && requestedURL != "" {
                 UserDefaults.standard.set(nil, forKey: REQUESTED_URL_KEY)
                 webController?.loadURL(requestedURL)
             } else {
@@ -885,7 +885,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     webController?.loadURL(lastURL)
                 } else {
                     let homeURL = UserDefaults.standard.string(forKey: Constant.homeURLKey())
-                    if homeURL != nil && !(homeURL == "") {
+                    if homeURL != nil && homeURL != "" {
                         webController?.loadURL(homeURL)
                     } else {
                         webController?.loadURL(WEB_URL)
@@ -1031,16 +1031,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     func processMemoryWarning() {
         stateController.saveDidReceiveMemoryWarning(onURL: webController?.lastURL)
         cleanupCommonControllers()
-        //    [self showSplashWithCompletion:^
-        //     {
         cleanupTargetControllers()
-        //     }];
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(WAITING_TIME_ON_MEMORY_WARNING * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WAITING_TIME_ON_MEMORY_WARNING, execute: {
             self.setupTargetControllers()
-
-            //                       [self hideSplashWithCompletion:^
-            //                        {}];
         })
     }
 

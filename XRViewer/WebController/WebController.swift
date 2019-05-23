@@ -114,8 +114,8 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         onError?(nil)
     }
 
-    @objc func loadBlankHTMLString() {
-        webView?.loadHTMLString("<html></html>", baseURL: webView?.url)
+    @objc func prefillLastURL() {
+        barView?.urlField.text = UserDefaults.standard.string(forKey: LAST_URL_KEY)
     }
 
     @objc func reload() {
@@ -194,9 +194,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     @objc func sendARData(_ data: [AnyHashable : Any]) {
         if transferCallback != ""  {
             callWebMethod(transferCallback, paramJSON: data, webCompletion: nil)
-//            print("sendARData success")
         }
-//        print("sendARData did not send data")
     }
 
     @objc func hideKeyboard() {
@@ -753,7 +751,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     func setupWebView(withRootView rootView: UIView?) {
         let conf = WKWebViewConfiguration()
         let contentController = WKUserContentController()
-        let version = versionBuild() ?? "unknonw"
+        let version = versionBuild() ?? "unknown"
         conf.applicationNameForUserAgent = " Mobile WebXRViewer/" + version
 
         let standardUserDefaults = UserDefaults.standard
@@ -808,14 +806,14 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
         wv.navigationDelegate = self
         wv.uiDelegate = self
-        self.webView = wv
+        webView = wv
     }
 
     func documentDidBecomeInteractive() {
         print("documentDidBecomeInteractive")
         let loadedURL = webView?.url?.absoluteString
-        self.lastURL = loadedURL ?? ""
 
+        lastURL = loadedURL ?? ""
         UserDefaults.standard.set(loadedURL, forKey: LAST_URL_KEY)
 
         onFinishLoad?()
