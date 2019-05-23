@@ -297,6 +297,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             } else {
                 blockSelf?.stateController.setShowMode(.nothing)
                 blockSelf?.webController?.barView?.permissionLevelButton?.buttonImage = nil
+                blockSelf?.webController?.barView?.permissionLevelButton?.isEnabled = false
                 if blockSelf?.arkController?.arSessionState == .ARKSessionRunning {
                     blockSelf?.timerSessionRunningInBackground?.invalidate()
                     let timerSeconds: Int = UserDefaults.standard.integer(forKey: Constant.secondsInBackgroundKey())

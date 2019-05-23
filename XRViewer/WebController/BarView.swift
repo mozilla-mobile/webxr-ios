@@ -53,6 +53,7 @@ class BarView: UIView, UITextFieldDelegate {
         permissionButton.addTarget(self, action: #selector(BarView.showPermissionsAction(_:)), for: .touchUpInside)
         permissionButton.frame = CGRect(x: 0, y: 0, width: CGFloat(URL_FIELD_HEIGHT), height: CGFloat(URL_FIELD_HEIGHT))
         permissionButton.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        permissionButton.isEnabled = false
         urlField.leftView = permissionButton
         urlField.leftViewMode = .unlessEditing
         permissionLevelButton = permissionButton

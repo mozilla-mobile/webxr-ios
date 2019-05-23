@@ -229,6 +229,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
 
     @objc func userGrantedWebXRAuthorizationState(_ access: WebXRAuthorizationState) {
+        barView?.permissionLevelButton?.isEnabled = true
         switch access {
         case .videoCameraAccess:
             let image = UIImage(named: "camera")
@@ -257,6 +258,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             barView?.permissionLevelButton?.tintColor = .green
         case .notDetermined:
             barView?.permissionLevelButton?.setImage(nil, for: .normal)
+            barView?.permissionLevelButton?.isEnabled = false
         }
         
         // This may change, in one of two ways:
