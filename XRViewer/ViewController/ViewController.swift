@@ -364,7 +364,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.arkController?.controller.previewingSinglePlane = false
             blockSelf?.chooseSinglePlaneButton.isHidden = true
             blockSelf?.messageController?.showMessageAboutMemoryWarning(withCompletion: {
-                blockSelf?.webController?.loadBlankHTMLString()
+                blockSelf?.webController?.prefillLastURL()
             })
 
             blockSelf?.webController?.didReceiveError(error: NSError(domain: MEMORY_ERROR_DOMAIN, code: MEMORY_ERROR_CODE, userInfo: [NSLocalizedDescriptionKey: MEMORY_ERROR_MESSAGE]))
@@ -630,7 +630,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.messageController?.hideMessages()
                 blockSelf?.messageController?.showMessageAboutFailSession(withMessage: errorMessage) {
                     DispatchQueue.main.async(execute: {
-                        self.webController?.loadBlankHTMLString()
+                        self.webController?.prefillLastURL()
                     })
                 }
             })

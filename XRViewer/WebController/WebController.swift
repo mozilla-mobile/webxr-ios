@@ -114,8 +114,8 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         onError?(nil)
     }
 
-    @objc func loadBlankHTMLString() {
-        webView?.loadHTMLString("<html></html>", baseURL: webView?.url)
+    @objc func prefillLastURL() {
+        barView?.urlField.text = UserDefaults.standard.string(forKey: LAST_URL_KEY)
     }
 
     @objc func reload() {
@@ -806,14 +806,14 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
         wv.navigationDelegate = self
         wv.uiDelegate = self
-        self.webView = wv
+        webView = wv
     }
 
     func documentDidBecomeInteractive() {
         print("documentDidBecomeInteractive")
         let loadedURL = webView?.url?.absoluteString
-        self.lastURL = loadedURL ?? ""
 
+        lastURL = loadedURL ?? ""
         UserDefaults.standard.set(loadedURL, forKey: LAST_URL_KEY)
 
         onFinishLoad?()
