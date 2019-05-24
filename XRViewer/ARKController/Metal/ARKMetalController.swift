@@ -2,6 +2,10 @@ import ARKit
 import Metal
 import MetalKit
 
+extension MTKView: RenderDestinationProvider {
+    
+}
+
 class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     
     var previewingSinglePlane: Bool = false
@@ -64,19 +68,17 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         renderView?.backgroundColor = UIColor.clear
         renderView?.delegate = self
         
-        guard let size = renderView?.bounds.size else {
-            DDLogError("Error accessing the renderView size")
+        guard let renderView = renderView else {
+            DDLogError("Error accessing the renderView")
+            return false
+        }
+        guard let device = renderView.device else {
+            DDLogError("Metal is not supported on this device")
             return false
         }
 
-        // Tony 2/21/19: Commenting out below 5 lines until Metal is utilized (need to cast
-        // MTKView as RenderDestinationProvider).
-//        guard let device = renderView?.device else {
-//            DDLogError("Metal is not supported on this device")
-//            return false
-//        }
-//        renderer = Renderer(session: session, metalDevice: device, renderDestinationProvider: renderView)
-        renderer?.drawRectResized(size, orientation: UIApplication.shared.statusBarOrientation)
+        renderer = Renderer(session: session, metalDevice: device, renderDestination: renderView)
+        renderer?.drawRectResized(size: renderView.bounds.size)
         
         return true
     }
@@ -85,7 +87,7 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         DispatchQueue.main.async(execute: {
-            self.renderer?.drawRectResized(size, orientation: UIApplication.shared.statusBarOrientation)
+            self.renderer?.drawRectResized(size: size)
         })
     }
     

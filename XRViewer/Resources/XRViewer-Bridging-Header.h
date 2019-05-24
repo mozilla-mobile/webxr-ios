@@ -5,6 +5,7 @@
 #import "ARKHelper.h"
 #import "ARKController.h"
 #import <CocoaLumberjack/CocoaLumberjack.h>
+#import "ShaderTypes.h"
 
 #if DEBUG
 static const DDLogLevel ddLogLevel = DDLogLevelVerbose;
