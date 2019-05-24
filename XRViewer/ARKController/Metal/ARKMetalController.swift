@@ -3,7 +3,6 @@ import Metal
 import MetalKit
 
 extension MTKView: RenderDestinationProvider {
-    
 }
 
 class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
@@ -11,20 +10,19 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     var previewingSinglePlane: Bool = false
     var focusedPlane: PlaneNode?
     var planes: [UUID : PlaneNode] = [:]
-    private var renderer: Renderer?
+    private var renderer: Renderer!
     private var renderView: MTKView?
     private var hitTestFocusPoint = CGPoint.zero
     
-    init?(sesion session: ARSession) {
-        super.init()
-        
-        if setupAR(with: session) == false {
-            return nil
-        }
+    deinit {
+        DDLogDebug("ARKMetalController dealloc")
     }
     
-    required init(sesion session: ARSession?, size: CGSize) {
-        
+    required init(sesion session: ARSession, size: CGSize) {
+        super.init()
+        if setupAR(with: session) == false {
+            print("Error setting up AR Session with Metal")
+        }
     }
     
     func getRenderView() -> UIView! {
@@ -59,7 +57,7 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     func clean() {
     }
     
-    func update(_ session: ARSession?) {
+    func update(_ session: ARSession) {
     }
     
     func setupAR(with session: ARSession) -> Bool {
@@ -78,7 +76,7 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         }
 
         renderer = Renderer(session: session, metalDevice: device, renderDestination: renderView)
-        renderer?.drawRectResized(size: renderView.bounds.size)
+        renderer.drawRectResized(size: renderView.bounds.size)
         
         return true
     }
@@ -86,12 +84,10 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     // MARK: - MTKViewDelegate
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        DispatchQueue.main.async(execute: {
-            self.renderer?.drawRectResized(size: size)
-        })
+        renderer.drawRectResized(size: size)
     }
     
     func draw(in view: MTKView) {
-        renderer?.update()
+        renderer.update()
     }
 }

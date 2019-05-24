@@ -1,6 +1,6 @@
 @objc protocol ARKControllerProtocol: NSObjectProtocol {
-    init(sesion session: ARSession?, size: CGSize)
-    func update(_ session: ARSession?)
+    init(sesion session: ARSession, size: CGSize)
+    func update(_ session: ARSession)
     func clean()
     func getRenderView() -> UIView!
     func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [Any]?

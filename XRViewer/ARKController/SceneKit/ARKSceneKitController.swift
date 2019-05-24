@@ -4,7 +4,7 @@ import CocoaLumberjack
 
 class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate {
     
-    private var session: ARSession?
+    private var session: ARSession
     private var renderView: ARSCNView?
     private weak var camera: SCNCamera?
     private var anchorsNodes: [AnchorNode] = []
@@ -37,7 +37,8 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         DDLogDebug("ARKSceneKitController dealloc")
     }
 
-    required init(sesion session: ARSession?, size: CGSize) {
+    required init(sesion session: ARSession, size: CGSize) {
+        self.session = session
         super.init()
         
         setupAR(with: session, size: size)
@@ -47,9 +48,8 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         setupFocus()
     }
 
-    func update(_ session: ARSession?) {
+    func update(_ session: ARSession) {
         self.session = session
-        guard let session = session else { return }
         renderView?.session = session
     }
 
@@ -115,13 +115,11 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
 // MARK: - Private
 
-    func setupAR(with session: ARSession?, size: CGSize) {
+    func setupAR(with session: ARSession, size: CGSize) {
         self.session = session
 
         renderView = ARSCNView(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height), options: [:])
-        if let aSession = session {
-            renderView?.session = aSession
-        }
+        renderView?.session = session
         renderView?.scene = SCNScene()
         renderView?.showsStatistics = false
         renderView?.allowsCameraControl = true
@@ -185,7 +183,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         }
         guard let currentHitTest = currentHitTest else { return }
         guard let position = currentHitTest.position else { return }
-        focus?.update(forPosition: position, planeAnchor: currentHitTest.anchor, camera: session?.currentFrame?.camera)
+        focus?.update(forPosition: position, planeAnchor: currentHitTest.anchor, camera: session.currentFrame?.camera)
     }
 
     func updateCameraFocus() {
@@ -226,7 +224,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         DispatchQueue.main.async(execute: {
-            let lightEstimate: CGFloat? = self.session?.currentFrame?.lightEstimate?.ambientIntensity
+            let lightEstimate: CGFloat? = self.session.currentFrame?.lightEstimate?.ambientIntensity
 
             self.renderView?.scene.lightingEnvironment.intensity = (lightEstimate ?? 0.0) / 40
 
