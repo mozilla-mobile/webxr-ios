@@ -9,7 +9,6 @@
     func setHitTestFocus(_ point: CGPoint)
     func setShowMode(_ mode: ShowMode)
     func setShowOptions(_ options: ShowOptions)
-    func cameraProjectionTransform() -> matrix_float4x4
     var previewingSinglePlane: Bool { get set }
     var focusedPlane: PlaneNode? { get set }
     var planes: [UUID : PlaneNode] { get set }

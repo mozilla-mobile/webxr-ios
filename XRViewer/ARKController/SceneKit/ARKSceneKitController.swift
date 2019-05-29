@@ -96,12 +96,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
             renderView?.debugOptions = []
         }
     }
-
-    func cameraProjectionTransform() -> matrix_float4x4 {
-        guard let camera = camera else { return matrix_identity_float4x4}
-        return float4x4(camera.projectionTransform)
-    }
-
+    
     func didChangeTrackingState(_ camera: ARCamera?) {
         guard let camera = camera else { return }
         guard let showOptions = showOptions else { return }
@@ -118,7 +113,11 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     func setupAR(with session: ARSession, size: CGSize) {
         self.session = session
 
-        renderView = ARSCNView(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height), options: [:])
+        // Tony (5/29/19): From looking into the "thread blocked waiting for next drawable" issue,
+        // I think if we were able to use OpenGL for the ARSCNView that the issue would be resolved.
+        // However, it looks like this is a bogus option and ARSCNView defaults to Metal as the
+        // preferredRenderingAPI regardless of what you feed into 'options'.
+        renderView = ARSCNView(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height), options: [SCNView.Option.preferredRenderingAPI.rawValue: NSNumber(value: SCNRenderingAPI.openGLES2.rawValue)])
         renderView?.session = session
         renderView?.scene = SCNScene()
         renderView?.showsStatistics = false
@@ -298,9 +297,4 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     func setShowOptions(_ options: ShowOptions) {
         showOptions = options
     }
-    
-    // Stub commented out from ARKControllerProtocol in conversion to Swift
-    //    func currentHitTest() -> Any! {
-    //        <#code#>
-    //    }
 }

@@ -7,12 +7,34 @@ extension MTKView: RenderDestinationProvider {
 
 class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     
-    var previewingSinglePlane: Bool = false
-    var focusedPlane: PlaneNode?
-    var planes: [UUID : PlaneNode] = [:]
     private var renderer: Renderer!
     private var renderView: MTKView?
+    var planes: [UUID : PlaneNode] = [:]
+    private var anchorsNodes: [AnchorNode] = []
+    
+    private var showMode: ShowMode? {
+        didSet {
+            updateModes()
+        }
+    }
+    private var showOptions: ShowOptions? {
+        didSet {
+            updateModes()
+        }
+    }
+    
+    private var planeHitTestResults: [ARHitTestResult] = []
     private var hitTestFocusPoint = CGPoint.zero
+    private var currentHitTest: HitTestResult?
+    
+    var previewingSinglePlane: Bool = false
+    var focusedPlane: PlaneNode? {
+        didSet {
+            if focusedPlane == nil {
+                oldValue?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "Models.scnassets/plane_grid1.png")
+            }
+        }
+    }
     
     deinit {
         DDLogDebug("ARKMetalController dealloc")
@@ -25,6 +47,53 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         }
     }
     
+    func update(_ session: ARSession) {
+        
+    }
+    
+    func clean() {
+        for (_, plane) in planes {
+            plane.removeFromParentNode()
+        }
+        planes.removeAll()
+        
+        for anchor in anchorsNodes {
+            anchor.removeFromParentNode()
+        }
+        anchorsNodes.removeAll()
+        
+        planeHitTestResults = []
+    }
+    
+    func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [Any]? {
+        return nil
+//        if focusedPlane != nil {
+//            guard let results = renderView?.hitTest(point, types: type) else { return [] }
+//            guard let chosenPlane = focusedPlane else { return [] }
+//            if let anchorIdentifier = planes.someKey(forValue: chosenPlane) {
+//                let anchor = results.filter { $0.anchor?.identifier == anchorIdentifier }.first
+//                if let anchor = anchor {
+//                    return [anchor]
+//                }
+//            }
+//            return []
+//        } else {
+//            return renderView?.hitTest(point, types: type)
+//        }
+    }
+
+    func updateModes() {
+        guard let showMode = showMode else { return }
+//        guard let showOptions = showOptions else { return }
+        if showMode == ShowMode.urlDebug || showMode == ShowMode.debug {
+//            renderView?.showsStatistics = (showOptions.rawValue & ShowOptions.ARStatistics.rawValue) != 0
+//            renderView?.debugOptions = (showOptions.rawValue & ShowOptions.ARPoints.rawValue) != 0 ? .showFeaturePoints : []
+        } else {
+//            renderView?.showsStatistics = false
+//            renderView?.debugOptions = []
+        }
+    }
+    
     func getRenderView() -> UIView! {
         return renderView
     }
@@ -33,31 +102,17 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         return
     }
     
-    func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [Any]? {
-        return nil
-    }
-    
-    func cameraProjectionTransform() -> matrix_float4x4 {
-        return matrix_identity_float4x4
-    }
-    
     func didChangeTrackingState(_ camera: ARCamera?) {
     }
     
-    func currentHitTest() -> Any? {
-        return nil
-    }
+//    func currentHitTest() -> Any? {
+//        return nil
+//    }
     
     func setShowMode(_ mode: ShowMode) {
     }
     
     func setShowOptions(_ options: ShowOptions) {
-    }
-    
-    func clean() {
-    }
-    
-    func update(_ session: ARSession) {
     }
     
     func setupAR(with session: ARSession) -> Bool {

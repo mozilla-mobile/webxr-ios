@@ -552,7 +552,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         weak var blockSelf: ViewController? = self
 
-        arkController = ARKController(type: .sceneKit, rootView: arkLayerView)
+        arkController = ARKController(type: .metal, rootView: arkLayerView)
+//        }
 
         arkController?.didUpdate = { c in
             guard let shouldSendNativeTime = blockSelf?.stateController.shouldSendNativeTime() else { return }
