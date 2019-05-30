@@ -382,17 +382,31 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
 
         stateController.onRequestUpdate = { dict in
+            defer {
+                if dict?[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
+                    blockSelf?.stateController.state.computerVisionFrameRequested = true
+                    blockSelf?.arkController?.computerVisionFrameRequested = true
+                    blockSelf?.stateController.state.sendComputerVisionData = true
+                }
+            }
+            
             if blockSelf?.timerSessionRunningInBackground != nil {
                 print("\n\n*********\n\nInvalidate timer\n\n*********")
                 blockSelf?.timerSessionRunningInBackground?.invalidate()
             }
-
+            
             if blockSelf?.arkController == nil {
                 print("\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********")
                 blockSelf?.startNewARKitSession(withRequest: dict)
             } else {
                 guard let arSessionState = blockSelf?.arkController?.arSessionState else { return }
                 guard let state = blockSelf?.stateController.state else { return }
+                
+                if blockSelf?.arkController?.trackingStateRelocalizing() ?? false {
+                    blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
+                    return
+                }
+                
                 switch arSessionState {
                     case .ARKSessionUnknown:
                         print("\n\n*********\n\nARKit is in unknown state, instantiate and start a session\n\n*********")
@@ -425,11 +439,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                             blockSelf?.arkController?.resumeSession(with: state)
                         }
                 }
-            }
-            if dict?[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
-                blockSelf?.stateController.state.computerVisionFrameRequested = true
-                blockSelf?.arkController?.computerVisionFrameRequested = true
-                blockSelf?.stateController.state.sendComputerVisionData = true
             }
         }
     }

@@ -191,8 +191,19 @@ extension ARKController {
     }
     
     func trackingStateNormal() -> Bool {
-        guard let ts = session.currentFrame?.camera.trackingState.presentationString else { return false }
+        guard let ts = session.currentFrame?.camera.trackingState.presentationString else {
+            print("Unable to check if camera trackingState presentationString is normal")
+            return false
+        }
         return ts == ARCamera.TrackingState.normal.presentationString
+    }
+    
+    func trackingStateRelocalizing() -> Bool {
+        guard let ts = session.currentFrame?.camera.trackingState.presentationString else {
+            print("Unable to check if camera trackingState presentationString is relocalizing")
+            return false
+        }
+        return ts == ARCamera.TrackingState.limited(.relocalizing).presentationString
     }
     
     func setShowMode(_ showMode: ShowMode) {
