@@ -31,7 +31,6 @@ class ActivityIndicatorButton: UIButton {
     }
     
     func stopAnimating() {
-        self.isEnabled = true
         
         if let image = buttonImage {
             self.setImage(image, for: .normal)

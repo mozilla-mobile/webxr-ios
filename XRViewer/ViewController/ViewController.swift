@@ -19,7 +19,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     @IBOutlet private weak var arkLayerView: LayerView!
     @IBOutlet private weak var hotLayerView: LayerView!
     @IBOutlet private weak var webLayerView: LayerView!
-    private lazy var stateController: AppStateController = AppStateController(state: AppState.defaultState())
+    lazy var stateController: AppStateController = AppStateController(state: AppState.defaultState())
     var arkController: ARKController?
     var webController: WebController?
     var overlayController: UIOverlayController?
@@ -32,9 +32,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     private var chooseSinglePlaneButtonVerticalConstraint = NSLayoutConstraint()
     private var deferredHitTest: (Int, CGFloat, CGFloat, ResultArrayBlock)? = nil
     
+    // Properties for status messages via messageLabel & messagePanel
     @IBOutlet weak var messagePanel: UIVisualEffectView!
     @IBOutlet weak var messageLabel: UILabel!
-    var textManager: TextManager!
+    @IBOutlet weak var trackingStatusIcon: UIImageView!
+    var schedulingMessagesBlocked = false
+    // Timer for hiding messages
+    var messageHideTimer: Timer?
+    // Timers for showing scheduled messages
+    var focusSquareMessageTimer: Timer?
+    var planeEstimationMessageTimer: Timer?
+    var contentPlacementMessageTimer: Timer?
+    // Timer for tracking state escalation
+    var trackingStateFeedbackEscalationTimer: Timer?
+    
     
     // MARK: - View Lifecycle
     deinit {
@@ -221,8 +232,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     // MARK: - Setup
     
     func setupUI() {
-        textManager = TextManager(viewController: self)
-        
         // Set appearance of the message output panel
         messagePanel.layer.cornerRadius = 3.0
         messagePanel.clipsToBounds = true
@@ -250,6 +259,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.overlayController?.setMode(mode)
             guard let showURL = blockSelf?.stateController.shouldShowURLBar() else { return }
             blockSelf?.webController?.showBar(showURL)
+            if blockSelf?.messageLabel.text != "" {
+                blockSelf?.showHideMessage(hide: !showURL)
+            }
+            blockSelf?.trackingStatusIcon.isHidden = showURL
         }
 
         stateController.onOptionsUpdate = { options in
@@ -257,9 +270,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.overlayController?.setOptions(options)
             guard let showURL = blockSelf?.stateController.shouldShowURLBar() else { return }
             blockSelf?.webController?.showBar(showURL)
+            if blockSelf?.messageLabel.text != "" {
+                blockSelf?.showHideMessage(hide: !showURL)
+            }
+            blockSelf?.trackingStatusIcon.isHidden = showURL
         }
 
         stateController.onXRUpdate = { xr in
+            blockSelf?.messageLabel.text = ""
             if xr {
                 guard let debugSelected = blockSelf?.webController?.isDebugButtonSelected() else { return }
                 guard let shouldShowSessionStartedPopup = blockSelf?.stateController.state.shouldShowSessionStartedPopup else { return }
@@ -279,6 +297,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             } else {
                 blockSelf?.stateController.setShowMode(.nothing)
                 blockSelf?.webController?.barView?.permissionLevelButton?.buttonImage = nil
+                blockSelf?.webController?.barView?.permissionLevelButton?.isEnabled = false
                 if blockSelf?.arkController?.arSessionState == .ARKSessionRunning {
                     blockSelf?.timerSessionRunningInBackground?.invalidate()
                     let timerSeconds: Int = UserDefaults.standard.integer(forKey: Constant.secondsInBackgroundKey())
@@ -292,11 +311,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     })
                 }
             }
-
             blockSelf?.updateConstraints()
-            blockSelf?.textManager?.cancelAllScheduledMessages()
-            blockSelf?.textManager?.showMessage("")
-            blockSelf?.textManager?.showHideMessage(hide: true, animated: true)
+            blockSelf?.cancelAllScheduledMessages()
+            blockSelf?.showHideMessage(hide: true)
+            blockSelf?.trackingStatusIcon.image = nil
             blockSelf?.webController?.setup(forWebXR: xr)
         }
 
@@ -357,7 +375,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.arkController?.controller.previewingSinglePlane = false
             blockSelf?.chooseSinglePlaneButton.isHidden = true
             blockSelf?.messageController?.showMessageAboutMemoryWarning(withCompletion: {
-                blockSelf?.webController?.loadBlankHTMLString()
+                blockSelf?.webController?.prefillLastURL()
             })
 
             blockSelf?.webController?.didReceiveError(error: NSError(domain: MEMORY_ERROR_DOMAIN, code: MEMORY_ERROR_CODE, userInfo: [NSLocalizedDescriptionKey: MEMORY_ERROR_MESSAGE]))
@@ -447,8 +465,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         weak var blockSelf: ViewController? = self
 
         NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: OperationQueue.main, using: { note in
-            self.arkController?.controller.previewingSinglePlane = false
-            self.chooseSinglePlaneButton.isHidden = true
+            blockSelf?.arkController?.controller.previewingSinglePlane = false
+            blockSelf?.chooseSinglePlaneButton.isHidden = true
             var arSessionState: ARKitSessionState
             if blockSelf?.arkController?.arSessionState != nil {
                 arSessionState = (blockSelf?.arkController?.arSessionState)!
@@ -461,12 +479,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 case .ARKSessionPaused:
                     print("\n\n*********\n\nMoving to background while the session is paused, nothing to do\n\n*********")
                     // need to try and save WorldMap here.  May fail?
-                    self.arkController?.saveWorldMapInBackground()
+                    blockSelf?.arkController?.saveWorldMapInBackground()
                 case .ARKSessionRunning:
                     print("\n\n*********\n\nMoving to background while the session is running, store the timestamp\n\n*********")
                     UserDefaults.standard.set(Date(), forKey: Constant.backgroundOrPausedDateKey())
                     // need to save WorldMap here
-                    self.arkController?.saveWorldMapInBackground()
+                    blockSelf?.arkController?.saveWorldMapInBackground()
                 default:
                     break
             }
@@ -560,26 +578,29 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             }
         }
         arkController?.didChangeTrackingState = { camera in
-            if let camera = camera {
-                blockSelf?.textManager.showTrackingQualityInfo(for: camera.trackingState, autoHide: true)
+            
+            if let camera = camera,
+                let webXR = blockSelf?.stateController.state.webXR,
+                webXR
+            {
+                blockSelf?.showTrackingQualityInfo(for: camera.trackingState, autoHide: true)
+                blockSelf?.updateTrackingStatusIcon(for: camera.trackingState)
                 switch camera.trackingState {
                 case .notAvailable:
                     return
                 case .limited:
-                    blockSelf?.textManager.escalateFeedback(for: camera.trackingState, inSeconds: 3.0)
+                    blockSelf?.escalateFeedback(for: camera.trackingState, inSeconds: 3.0)
                 case .normal:
-                    blockSelf?.textManager.cancelScheduledMessage(forType: .trackingStateEscalation)
+                    blockSelf?.cancelScheduledMessage(forType: .trackingStateEscalation)
                 }
             }
         }
         arkController?.sessionWasInterrupted = {
-            blockSelf?.textManager.showMessage("Session interrupted!")
             blockSelf?.overlayController?.setARKitInterruption(true)
             blockSelf?.messageController?.showMessageAboutARInterruption(true)
             blockSelf?.webController?.wasARInterruption(true)
         }
         arkController?.sessionInterruptionEnded = {
-            blockSelf?.textManager.showMessage("Interruption ended\nResetting...")
             blockSelf?.overlayController?.setARKitInterruption(false)
             blockSelf?.messageController?.showMessageAboutARInterruption(false)
             blockSelf?.webController?.wasARInterruption(false)
@@ -621,7 +642,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.messageController?.hideMessages()
                 blockSelf?.messageController?.showMessageAboutFailSession(withMessage: errorMessage) {
                     DispatchQueue.main.async(execute: {
-                        self.webController?.loadBlankHTMLString()
+                        self.webController?.prefillLastURL()
                     })
                 }
             })
@@ -656,7 +677,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 let lastURL = blockSelf?.webController?.lastURL
                 let currentURL = blockSelf?.webController?.webView?.url?.absoluteString
 
-                if (lastURL == currentURL) {
+                if lastURL == currentURL {
                     // Page reload
                     blockSelf?.arkController?.removeAllAnchorsExceptPlanes()
                 } else {
@@ -856,7 +877,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             stateController.applyOnDidReceiveMemoryAction()
         } else {
             let requestedURL = UserDefaults.standard.string(forKey: REQUESTED_URL_KEY)
-            if requestedURL != nil && !(requestedURL == "") {
+            if requestedURL != nil && requestedURL != "" {
                 UserDefaults.standard.set(nil, forKey: REQUESTED_URL_KEY)
                 webController?.loadURL(requestedURL)
             } else {
@@ -865,7 +886,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     webController?.loadURL(lastURL)
                 } else {
                     let homeURL = UserDefaults.standard.string(forKey: Constant.homeURLKey())
-                    if homeURL != nil && !(homeURL == "") {
+                    if homeURL != nil && homeURL != "" {
                         webController?.loadURL(homeURL)
                     } else {
                         webController?.loadURL(WEB_URL)
@@ -1011,16 +1032,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     func processMemoryWarning() {
         stateController.saveDidReceiveMemoryWarning(onURL: webController?.lastURL)
         cleanupCommonControllers()
-        //    [self showSplashWithCompletion:^
-        //     {
         cleanupTargetControllers()
-        //     }];
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(WAITING_TIME_ON_MEMORY_WARNING * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WAITING_TIME_ON_MEMORY_WARNING, execute: {
             self.setupTargetControllers()
-
-            //                       [self hideSplashWithCompletion:^
-            //                        {}];
         })
     }
 

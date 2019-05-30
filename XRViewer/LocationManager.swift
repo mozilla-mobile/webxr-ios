@@ -100,7 +100,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         }
         
         guard let orientationOptions = request[WEB_AR_WORLD_ALIGNMENT] as? Bool else {return}
-        if (orientationOptions) {
+        if orientationOptions {
             startUpdateHeading()
         } else {
             stopUpdateHeading()
