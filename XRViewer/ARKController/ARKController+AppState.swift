@@ -30,6 +30,7 @@ extension ARKController {
         setupDeviceCamera()
         setShowMode(state.showMode)
         setShowOptions(state.showOptions)
+        UserDefaults.standard.set(Date(), forKey: Constant.lastResetSessionTrackingDateKey())
     }
     
     /**
@@ -60,6 +61,7 @@ extension ARKController {
         // If we are removing anchors, clear the user map
         arkitGeneratedAnchorIDUserAnchorIDMap = NSMutableDictionary()
         arSessionState = .ARKSessionRunning
+        UserDefaults.standard.set(Date(), forKey: Constant.lastResetSessionTrackingDateKey())
     }
     
     /**

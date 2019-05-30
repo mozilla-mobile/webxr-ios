@@ -304,7 +304,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     print(String(format: "\n\n*********\n\nMoving away from an XR site, keep ARKit running, and launch the timer for %ld seconds\n\n*********", timerSeconds))
                     blockSelf?.timerSessionRunningInBackground = Timer.scheduledTimer(withTimeInterval: TimeInterval(timerSeconds), repeats: false, block: { timer in
                         print("\n\n*********\n\nTimer expired, pausing session\n\n*********")
-                        UserDefaults.standard.set(Date(), forKey: "backgroundOrPausedDateKey")
+                        UserDefaults.standard.set(Date(), forKey: Constant.backgroundOrPausedDateKey())
                         blockSelf?.arkController?.pauseSession()
                         blockSelf?.timerSessionRunningInBackground?.invalidate()
                         blockSelf?.timerSessionRunningInBackground = nil
@@ -396,9 +396,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 switch arSessionState {
                     case .ARKSessionUnknown:
                         print("\n\n*********\n\nARKit is in unknown state, instantiate and start a session\n\n*********")
-                        blockSelf?.arkController?.runSession(with: state)
+                        blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
                     case .ARKSessionRunning:
-                        if blockSelf?.urlIsNotTheLastXRVisitedURL() ?? false {
+                        if let lastTrackingResetDate = UserDefaults.standard.object(forKey: Constant.lastResetSessionTrackingDateKey()) as? Date,
+                            Date().timeIntervalSince(lastTrackingResetDate) >= Constant.thresholdTimeInSecondsSinceLastTrackingReset() {
+                            print("\n\n*********\n\nSession is running but it's been a while since last resetting tracking, resetting tracking and removing anchors now to prevent coordinate system drift\n\n*********")
+                            blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
+                        } else if blockSelf?.urlIsNotTheLastXRVisitedURL() ?? false {
                             print("\n\n*********\n\nThis site is not the last XR site visited, and the timer hasn't expired yet. Remove distant anchors and continue with the session\n\n*********")
                             blockSelf?.arkController?.removeDistantAnchors()
                             blockSelf?.arkController?.runSession(with: state)
@@ -408,7 +412,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     case .ARKSessionPaused:
                         print("\n\n*********\n\nRequest of a new AR session when it's paused\n\n*********")
                         guard let shouldRemoveAnchors = blockSelf?.stateController.state.shouldRemoveAnchorsOnNextARSession else { return }
-                        if shouldRemoveAnchors {
+                        if let lastTrackingResetDate = UserDefaults.standard.object(forKey: Constant.lastResetSessionTrackingDateKey()) as? Date,
+                            Date().timeIntervalSince(lastTrackingResetDate) >= Constant.thresholdTimeInSecondsSinceLastTrackingReset() {
+                            print("\n\n*********\n\nSession is paused and it's been a while since last resetting tracking, resetting tracking and removing anchors on this paused session to prevent coordinate system drift\n\n*********")
+                            blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
+                        } else if shouldRemoveAnchors {
                             print("\n\n*********\n\nRun session removing anchors\n\n*********")
                             blockSelf?.stateController.state.shouldRemoveAnchorsOnNextARSession = false
                             blockSelf?.arkController?.runSessionRemovingAnchors(with: state)
@@ -416,8 +424,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                             print("\n\n*********\n\nResume session\n\n*********")
                             blockSelf?.arkController?.resumeSession(with: state)
                         }
-                    default:
-                        break
                 }
             }
             if dict?[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false {
@@ -690,7 +696,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     let state = blockSelf?.stateController.state
                 {
                     worldTrackingConfiguration.detectionImages = Set<ARReferenceImage>()
-                    blockSelf?.arkController?.runSession(with: state)
+                    blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
                 }
             }
             blockSelf?.arkController?.webXRAuthorizationStatus = .notDetermined
