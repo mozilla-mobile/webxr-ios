@@ -55,7 +55,6 @@
         if !(configuration is ARFaceTrackingConfiguration) {
             let faceTrackingConfiguration = ARFaceTrackingConfiguration()
             configuration = faceTrackingConfiguration
-            //session.run(configuration, options: [])
             runSession(with: state)
         } else {
             let worldTrackingConfiguration = ARWorldTrackingConfiguration()
@@ -70,10 +69,7 @@
                 }
             }
             worldTrackingConfiguration.detectionImages = newDetectionImages
-            
             configuration = worldTrackingConfiguration
-            
-            //session.run(configuration, options: [])
             runSession(with: state)
         }
     }
