@@ -1053,8 +1053,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     }
 
     func sendARKData() {
-        // BLAIR:  Why are we doing this copy above?  Seems like
-        //    [[self webController] sendARData:[self commonData]];
         webController?.sendARData(arkController?.getARKData() ?? [:])
     }
 
