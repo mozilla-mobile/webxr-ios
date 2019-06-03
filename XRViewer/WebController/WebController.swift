@@ -27,6 +27,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     @objc var onSettingsButtonTapped: (() -> Void)?
     @objc var onWatchAR: (([AnyHashable : Any]) -> Void)?
     @objc var onRequestSession: (([AnyHashable: Any], @escaping ResultBlock) -> Void)?
+    var onJSFinishedRendering: (() -> Void)?
     @objc var onComputerVisionDataRequested: (() -> Void)?
     @objc var onStopAR: (() -> Void)?
     @objc var onResetTrackingButtonTapped: (() -> Void)?
@@ -339,7 +340,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                 blockSelf?.callWebMethod(requestSessionCallback, paramJSON: permissions, webCompletion: debugCompletion(name: "onRequestSession"))
             })
         } else if message.name == WEB_AR_ON_JS_UPDATE_MESSAGE {
-            sendARData(blockSelf?.onJSUpdateData?() ?? [:])
+            onJSFinishedRendering?()
         } else if message.name == WEB_AR_STOP_WATCH_MESSAGE {
             self.transferCallback = ""
 

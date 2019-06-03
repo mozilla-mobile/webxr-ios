@@ -724,6 +724,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         webController?.onRequestSession = { request, grantedPermissions in
             blockSelf?.handleOnWatchAR(withRequest: request, initialLoad: true, grantedPermissionsBlock: grantedPermissions)
         }
+        
+        webController?.onJSFinishedRendering = {
+            if let renderView = blockSelf?.arkController?.controller.getRenderView() as? ARSCNView {
+                renderView.isPlaying = true
+            }
+        }
 
         webController?.onStopAR = {
             blockSelf?.stateController.setWebXR(false)
