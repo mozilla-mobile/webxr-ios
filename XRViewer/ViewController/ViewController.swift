@@ -63,14 +63,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         setupUI()
         setupSinglePlaneButton()
 
-        /// Apparently, this is called async in the main queue because we need viewDidLoad to finish
-        /// its execution before doing anything on the subviews. This also could have been called from
-        /// viewDidAppear
-        DispatchQueue.main.async(execute: {
-            self.setupTargetControllers()
-        })
-
-
         /// Swipe from edge gesture recognizer setup
         let gestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(ViewController.swipe(fromEdge:)))
         gestureRecognizer.edges = .top
@@ -89,6 +81,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 self.messageController?.showPermissionsPopup()
             })
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        /// This was previously called async in the main queue in viewDidLoad because we need viewDidLoad to finish
+        /// its execution before doing anything on the subviews. 
+        setupTargetControllers()
     }
 
 #if WEBSERVER
