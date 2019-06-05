@@ -32,6 +32,12 @@ let BackgroundOrPausedDateKey = "backgroundOrPausedDate"
 /// The default time the session must be paused in order to remove the
 /// anchors on the next session run
 let PauseTimeInSecondsToRemoveAnchors: Double = 10.0
+/// The NSUserDefaults key for the Date telling us when the app last
+/// started a new ARSession or .resetTracking/.removeExistingAnchors of a session
+let LastResetSessionTrackingDateKey = "lastResetSessionTrackingDate"
+/// The default time in seconds the app waits since the last ARSession
+/// .resetTracking/.removeExistingAnchors to reset tracking on next requestSession
+let ThresholdTimeInSecondsSinceLastTrackingReset: Double = 600.0
 /// The NSUserDefaults key for the boolean that tells us whether
 /// the user allowed minimal WebXR access (globally)
 let MinimalWebXREnabledKey = "minimalWebXREnabled"
@@ -70,6 +76,8 @@ let BOX_SIZE: CGFloat = 0.05
     @objc static func secondsInBackgroundKey() -> String { return SecondsInBackgroundKey }
     @objc static func distantAnchorsDistanceKey() -> String { return DistantAnchorsDistanceKey }
     @objc static func backgroundOrPausedDateKey() -> String { return BackgroundOrPausedDateKey }
+    static func lastResetSessionTrackingDateKey() -> String { return LastResetSessionTrackingDateKey }
+    static func thresholdTimeInSecondsSinceLastTrackingReset() -> Double { return ThresholdTimeInSecondsSinceLastTrackingReset }
     static func sessionInBackgroundDefaultTimeInSeconds() -> Int { return SessionInBackgroundDefaultTimeInSeconds }
     static func distantAnchorsDefaultDistanceInMeters() -> Float { return DistantAnchorsDefaultDistanceInMeters }
     @objc static func pauseTimeInSecondsToRemoveAnchors() -> Double { return PauseTimeInSecondsToRemoveAnchors }

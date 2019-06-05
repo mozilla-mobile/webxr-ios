@@ -55,15 +55,10 @@
         if !(configuration is ARFaceTrackingConfiguration) {
             let faceTrackingConfiguration = ARFaceTrackingConfiguration()
             configuration = faceTrackingConfiguration
-            //session.run(configuration, options: [])
             runSession(with: state)
         } else {
             let worldTrackingConfiguration = ARWorldTrackingConfiguration()
             worldTrackingConfiguration.planeDetection = [.horizontal, .vertical]
-            
-            // these are set in runSession()
-            //worldTrackingConfiguration.worldAlignment = .gravityAndHeading
-            //worldTrackingConfiguration.maximumNumberOfTrackedImages = state.numberOfTrackedImages
             
             // Configure all the active images that weren't detected in the previous back camera session
             let undetectedImageNames = detectionImageActivationPromises.allKeys
@@ -74,10 +69,7 @@
                 }
             }
             worldTrackingConfiguration.detectionImages = newDetectionImages
-            
             configuration = worldTrackingConfiguration
-            
-            //session.run(configuration, options: [])
             runSession(with: state)
         }
     }
