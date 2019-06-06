@@ -68,6 +68,7 @@
 		B69C048221B838A300C9A4EC /* ARSCNView+HitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C048121B838A300C9A4EC /* ARSCNView+HitTest.swift */; };
 		B6B7A6982266594B008E8978 /* RequestXRPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B7A6962266594B008E8978 /* RequestXRPermissionsViewController.swift */; };
 		B6B7A6992266594B008E8978 /* RequestXRPermissionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B6B7A6972266594B008E8978 /* RequestXRPermissionsViewController.xib */; };
+		B6BC1005229EF220004EA05C /* ARKController+ARSCNViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6BC1004229EF220004EA05C /* ARKController+ARSCNViewDelegate.swift */; };
 		B6EAD6DD21DAB48800DF5127 /* Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6EAD6DC21DAB48800DF5127 /* Prefix.swift */; };
 		B6F4C0BD221B5AEC009ECC06 /* ARKController+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4C0BC221B5AEC009ECC06 /* ARKController+Frame.swift */; };
 		B6FAD7C0221F2F9100310114 /* ARKMetalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FAD7BF221F2F9100310114 /* ARKMetalController.swift */; };
@@ -144,6 +145,7 @@
 		B69C048121B838A300C9A4EC /* ARSCNView+HitTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ARSCNView+HitTest.swift"; sourceTree = "<group>"; };
 		B6B7A6962266594B008E8978 /* RequestXRPermissionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestXRPermissionsViewController.swift; sourceTree = "<group>"; };
 		B6B7A6972266594B008E8978 /* RequestXRPermissionsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RequestXRPermissionsViewController.xib; sourceTree = "<group>"; };
+		B6BC1004229EF220004EA05C /* ARKController+ARSCNViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+ARSCNViewDelegate.swift"; sourceTree = "<group>"; };
 		B6EAD6DC21DAB48800DF5127 /* Prefix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Prefix.swift; sourceTree = "<group>"; };
 		B6F4C0BC221B5AEC009ECC06 /* ARKController+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Frame.swift"; sourceTree = "<group>"; };
 		B6FAD7BF221F2F9100310114 /* ARKMetalController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARKMetalController.swift; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 				B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */,
 				B620ED1122024D5A0066B4A8 /* ARKController+WorldMap.swift */,
 				B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */,
+				B6BC1004229EF220004EA05C /* ARKController+ARSCNViewDelegate.swift */,
 				B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */,
 				04B1E1261F3C64C100F96C5A /* SceneKit */,
 				04B1E1221F3C648200F96C5A /* Metal */,
@@ -524,6 +527,7 @@
 				B632851321C4159B00FD5510 /* LayerView.swift in Sources */,
 				B6F4C0BD221B5AEC009ECC06 /* ARKController+Frame.swift in Sources */,
 				B6EAD6DD21DAB48800DF5127 /* Prefix.swift in Sources */,
+				B6BC1005229EF220004EA05C /* ARKController+ARSCNViewDelegate.swift in Sources */,
 				B6143C1522985B4600CF5E95 /* Shaders.metal in Sources */,
 				B654FED221EF99150004F001 /* ARKController+AppState.swift in Sources */,
 				B6143C182298626400CF5E95 /* Renderer.swift in Sources */,

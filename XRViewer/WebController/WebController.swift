@@ -55,6 +55,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
     private weak var rootView: UIView?
     @objc weak var webView: WKWebView?
+    private var webViewSize: CGSize?
     private weak var contentController: WKUserContentController?
     private var transferCallback = ""
     @objc var lastURL = ""
@@ -134,19 +135,21 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
 
     @objc func setup(forWebXR webXR: Bool) {
+        weak var blockSelf: WebController? = self
         DispatchQueue.main.async(execute: {
-            self.barView?.hideKeyboard()
-            self.barView?.setDebugVisible(webXR)
-            self.barView?.setRestartTrackingVisible(webXR)
+            blockSelf?.barView?.hideKeyboard()
+            blockSelf?.barView?.setDebugVisible(webXR)
+            blockSelf?.barView?.setRestartTrackingVisible(webXR)
             let webViewTopAnchorConstraintConstant: Float = webXR ? 0.0 : Float(Constant.urlBarHeight())
-            self.webViewTopAnchorConstraint?.constant = CGFloat(webViewTopAnchorConstraintConstant)
-            self.webView?.superview?.setNeedsLayout()
-            self.webView?.superview?.layoutIfNeeded()
+            blockSelf?.webViewTopAnchorConstraint?.constant = CGFloat(webViewTopAnchorConstraintConstant)
+            blockSelf?.webView?.superview?.setNeedsLayout()
+            blockSelf?.webView?.superview?.layoutIfNeeded()
 
             let backColor = webXR ? UIColor.clear : UIColor.white
-            self.webView?.superview?.backgroundColor = backColor
+            blockSelf?.webView?.superview?.backgroundColor = backColor
 
-            self.animator?.animate(self.webView?.superview, to: backColor)
+            blockSelf?.animator?.animate(blockSelf?.webView?.superview, to: backColor)
+            blockSelf?.webViewSize = blockSelf?.webView?.frame.size
         })
     }
 
@@ -183,7 +186,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
 
     @objc func updateWindowSize() {
-        let size: CGSize? = webView?.frame.size
+        let size: CGSize? = webViewSize
         let sizeDictionary = [WEB_AR_IOS_SIZE_WIDTH_PARAMETER: size?.width ?? 0, WEB_AR_IOS_SIZE_HEIGHT_PARAMETER: size?.height ?? 0]
         callWebMethod(WEB_AR_IOS_WINDOW_RESIZE_MESSAGE, paramJSON: sizeDictionary, webCompletion: debugCompletion(name: WEB_AR_IOS_WINDOW_RESIZE_MESSAGE))
     }
@@ -505,7 +508,10 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         }
         let jsScript = "\(name ?? "")(\(jsString ?? ""))"
 
-        webView?.evaluateJavaScript(jsScript, completionHandler: completion)
+        weak var blockSelf: WKWebView? = webView
+        DispatchQueue.main.async {
+            blockSelf?.evaluateJavaScript(jsScript, completionHandler: completion)
+        }
     }
 
     // MARK: WKUIDelegate, WKNavigationDelegate
@@ -590,8 +596,8 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
 
     func layout() {
+        webViewSize = webView?.frame.size
         webView?.layoutIfNeeded()
-
         barView?.layoutIfNeeded()
     }
 

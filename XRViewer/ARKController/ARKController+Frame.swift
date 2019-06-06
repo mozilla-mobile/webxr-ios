@@ -43,7 +43,7 @@ extension ARKController {
                 }
             }
             if (request[WEB_AR_CAMERA_OPTION] as? NSNumber)?.boolValue ?? false {
-                let size: CGSize = controller.getRenderView().frame.size
+                let size: CGSize = controller.getRenderViewSize()
                 var projectionMatrix = matrix_float4x4()
                 projectionMatrix = frame.camera.projectionMatrix(for: interfaceOrientation,
                                                                  viewportSize: size,

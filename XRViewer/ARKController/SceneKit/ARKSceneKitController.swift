@@ -6,6 +6,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     
     private var session: ARSession
     private var renderView: ARSCNView?
+    private var renderViewSize: CGSize = CGSize.zero
     private weak var camera: SCNCamera?
     private var anchorsNodes: [AnchorNode] = []
 
@@ -131,6 +132,8 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
         renderView?.scene.lightingEnvironment.contents = UIColor.white
         renderView?.scene.lightingEnvironment.intensity = 50
+        
+        renderViewSize = renderView?.frame.size ?? CGSize.zero
     }
 
 // MARK: Focus
@@ -147,21 +150,21 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     }
 
     func hitTest() {
-        guard let showOptions = showOptions else { return }
-        // hit testing only for Focus node!
-        if (showOptions.rawValue & ShowOptions.ARFocus.rawValue) != 0 {
-            if let aFocus = renderView?.hitTest(point: hitTestFocusPoint, withResult: { result in
-                self.currentHitTest = result
-
-                self.updateFocus()
-            }) {
-                if let focus = aFocus as? [ARHitTestResult] {
-                    self.planeHitTestResults = focus
-                }
-            }
-        } else {
-            focus?.show(false)
-        }
+//        guard let showOptions = showOptions else { return }
+//        // hit testing only for Focus node!
+//        if (showOptions.rawValue & ShowOptions.ARFocus.rawValue) != 0 {
+//            if let aFocus = renderView?.hitTest(point: hitTestFocusPoint, withResult: { result in
+//                self.currentHitTest = result
+//
+//                self.updateFocus()
+//            }) {
+//                if let focus = aFocus as? [ARHitTestResult] {
+//                    self.planeHitTestResults = focus
+//                }
+//            }
+//        } else {
+//            focus?.show(false)
+//        }
         
         guard previewingSinglePlane else { return }
         guard let firstHitTestResult = renderView?.hitTest(hitTestFocusPoint, types: .existingPlaneUsingGeometry).first else { return }
@@ -222,68 +225,67 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 // MARK: - ARSCNViewDelegate
 
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        DispatchQueue.main.async(execute: {
-            let lightEstimate: CGFloat? = self.session.currentFrame?.lightEstimate?.ambientIntensity
+        let lightEstimate: CGFloat? = session.currentFrame?.lightEstimate?.ambientIntensity
+        renderView?.scene.lightingEnvironment.intensity = (lightEstimate ?? 0.0) / 40
 
-            self.renderView?.scene.lightingEnvironment.intensity = (lightEstimate ?? 0.0) / 40
-
-            self.hitTest()
-            self.updateCameraFocus()
-            self.updatePlanes()
-            self.updateAnchors()
-        })
+        hitTest()
+//        updateCameraFocus()
+        updatePlanes()
+        updateAnchors()
     }
 
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        DispatchQueue.main.async(execute: {
-            if anchor is ARPlaneAnchor {
-                var plane: PlaneNode? = nil
-                if let anAnchor = anchor as? ARPlaneAnchor {
-                    plane = PlaneNode(anchor: anAnchor)
-                }
-                self.planes[anchor.identifier] = plane
-                if let aPlane = plane {
-                    node.addChildNode(aPlane)
-                }
-            } else {
-                let anchorNode = AnchorNode(anchor: anchor)
-                node.addChildNode(anchorNode)
-                self.anchorsNodes.append(anchorNode)
-
-                // move anchor to be over the plane
-                var transform: SCNMatrix4 = node.worldTransform
-                transform = SCNMatrix4Translate(transform, 0, Float((anchorNode.size()) / 2), 0)
-                node.transform = transform
+        if anchor is ARPlaneAnchor {
+            var plane: PlaneNode? = nil
+            if let anAnchor = anchor as? ARPlaneAnchor {
+                plane = PlaneNode(anchor: anAnchor)
             }
-        })
+            planes[anchor.identifier] = plane
+            if let aPlane = plane {
+                node.addChildNode(aPlane)
+            }
+        } else {
+            let anchorNode = AnchorNode(anchor: anchor)
+            node.addChildNode(anchorNode)
+            anchorsNodes.append(anchorNode)
+            
+            // move anchor to be over the plane
+            var transform: SCNMatrix4 = node.worldTransform
+            transform = SCNMatrix4Translate(transform, 0, Float((anchorNode.size()) / 2), 0)
+            node.transform = transform
+        }
     }
 
     func renderer(_ renderer: SCNSceneRenderer, willUpdate node: SCNNode, for anchor: ARAnchor) {
     }
 
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        DispatchQueue.main.async(execute: {
-            if (anchor is ARPlaneAnchor) {
-                let plane = self.planes[anchor.identifier]
-                plane?.update(anchor as? ARPlaneAnchor)
-            }
-        })
+        if anchor is ARPlaneAnchor {
+            let plane = planes[anchor.identifier]
+            plane?.update(anchor as? ARPlaneAnchor)
+        }
     }
 
     func renderer(_ renderer: SCNSceneRenderer, didRemove node: SCNNode, for anchor: ARAnchor) {
-        DispatchQueue.main.async(execute: {
-            if (node is AnchorNode) {
-                self.anchorsNodes.removeAll(where: { element in element == node })
-            } else {
-                self.planes.removeValue(forKey: anchor.identifier)
-            }
-        })
+        if node is AnchorNode {
+            anchorsNodes.removeAll(where: { element in element == node })
+        } else {
+            planes.removeValue(forKey: anchor.identifier)
+        }
     }
     
     // MARK: - ARKControllerProtocol
     
     func getRenderView() -> UIView! {
         return renderView
+    }
+    
+    func getRenderViewSize() -> CGSize {
+        return renderViewSize
+    }
+    
+    func setRenderViewSize(_ size: CGSize) {
+        renderViewSize = size
     }
     
     func setHitTestFocus(_ point: CGPoint) {
