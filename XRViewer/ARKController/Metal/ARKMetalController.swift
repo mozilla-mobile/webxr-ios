@@ -98,14 +98,6 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         return renderView
     }
     
-    func getRenderViewSize() -> CGSize {
-        return CGSize.zero
-    }
-    
-    func setRenderViewSize(_ size: CGSize) {
-        return
-    }
-    
     func setHitTestFocus(_ point: CGPoint) {
         return
     }

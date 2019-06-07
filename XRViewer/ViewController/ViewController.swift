@@ -87,7 +87,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         super.viewDidAppear(animated)
         
         /// This was previously called async in the main queue in viewDidLoad because we need viewDidLoad to finish
-        /// its execution before doing anything on the subviews.
+        /// its execution before doing anything on the subviews. 
         setupTargetControllers()
     }
 
@@ -315,7 +315,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.cancelAllScheduledMessages()
             blockSelf?.showHideMessage(hide: true)
             blockSelf?.trackingStatusIcon.image = nil
-            blockSelf?.arkController?.initializingRender = true
             blockSelf?.webController?.setup(forWebXR: xr)
         }
 
@@ -553,23 +552,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         weak var blockSelf: ViewController? = self
 
-        // Tony (6/6/19): The original intent of the 'develop-metal' branch was to transition the ARKController
-        // to Metal to reduce the effect of WebXR content being rendered 1+ frames behind, which
-        // causes a "swimming" effect where objects track poorly and float around where they should be. Our
-        // initial hunch was that using Metal instead of SceneKit would resolve the "Thread blocked waiting
-        // for next drawable" issue visible in the Metal System Trace Instruments tool. However, even the
-        // simplest implementation of Metal, i.e. before utilizing updateARKData(with: frame) on each frame,
-        // still presents the "waiting for next drawable" issue on an iPhone X with 6 cores. That led me to
-        // explore other SceneKit options that might reduce object "swimming" – two of those attempts are
-        // visible in ARKController+ARSCNViewDelegate's updateAtTime & ViewController's onJSFinishedRendering.
-        
-//        arkController = ARKController(type: .metal, rootView: arkLayerView)
-        arkController = ARKController(type: .sceneKit, rootView: arkLayerView)
-        if let view = arkController?.controller.getRenderView() as? ARSCNView {
-            view.delegate = arkController
-        }
+        arkController = ARKController(type: .metal, rootView: arkLayerView)
+//        }
 
-        arkController?.didUpdate = {
+        arkController?.didUpdate = { c in
             guard let shouldSendNativeTime = blockSelf?.stateController.shouldSendNativeTime() else { return }
             guard let shouldSendARKData = blockSelf?.stateController.shouldSendARKData() else { return }
             guard let shouldSendCVData = blockSelf?.stateController.shouldSendCVData() else { return }
@@ -740,33 +726,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
         
         webController?.onJSFinishedRendering = {
-            
-            // Tony (6/6/19): Both of the below options require an update to webxr-ios-js that sends back
-            // an 'onUpdate' message that fires at the end of 'finishedRender'.
-            
-            // SceneKit swimming-reduction attempt 1 (in conjunction with changes in ARKController+ARSCNViewDelegate)
-            // tries to wait to until after JS sends back 'onUpdate' to render a frame. This attempt is more
-            // successful at reducing the "Thread blocked waiting for next drawable" issue, but is less successful
-            // at reducing the swimming issue.
-            
-//            if let renderView = blockSelf?.arkController?.controller.getRenderView() as? ARSCNView {
-//                renderView.isPlaying = true
-//            }
-            
-            // SceneKit swimming-reduction attempt 2 (in conjunction with changes in ARKController+ARSCNViewDelegate)
-            // doesn't updateARKData until JS sends back that the last frame was processed. On an iPhone X this
-            // attempt is more successful at reducing the swimming issue, but it does not completely resolve it.
-            
-            blockSelf?.arkController?.initializingRender = false
-            if let arkController = blockSelf?.arkController,
-                let frame = arkController.session.currentFrame
-            {
-                arkController.updateARKData(with: frame)
-                arkController.didUpdate()
-                if arkController.shouldUpdateWindowSize {
-                    arkController.shouldUpdateWindowSize = false
-                    arkController.didUpdateWindowSize()
-                }
+            if let renderView = blockSelf?.arkController?.controller.getRenderView() as? ARSCNView {
+                renderView.isPlaying = true
             }
         }
 

@@ -29,7 +29,6 @@
         self.objects = [NSMutableDictionary new];
         self.computerVisionData = NULL;
         self.arkData = NULL;
-        self.initializingRender = YES;
 
         self.addedAnchorsSinceLastFrame = [NSMutableArray new];
         self.removedAnchorsSinceLastFrame = [NSMutableArray new];
@@ -114,7 +113,6 @@
 
 - (void)viewWillTransitionToSize:(CGSize)size
 {
-    [[self controller] setRenderViewSize: size];
     [[self controller] setHitTestFocus:CGPointMake(size.width / 2, size.height / 2)];
     self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
 }
