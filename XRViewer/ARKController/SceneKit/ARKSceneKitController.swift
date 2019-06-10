@@ -69,7 +69,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         planeHitTestResults = []
     }
 
-    func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [Any]? {
+    func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [ARHitTestResult] {
         if focusedPlane != nil {
             guard let results = renderView?.hitTest(point, types: type) else { return [] }
             guard let chosenPlane = focusedPlane else { return [] }
@@ -81,7 +81,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
             }
             return []
         } else {
-            return renderView?.hitTest(point, types: type)
+            return renderView?.hitTest(point, types: type) ?? []
         }
     }
 

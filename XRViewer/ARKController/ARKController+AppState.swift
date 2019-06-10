@@ -244,17 +244,17 @@ extension ARKController {
      @param type A bit mask representing the hit test types to be considered
      @return an array of hit tests
      */
-    func hitTestNormPoint(_ normPoint: CGPoint, types type: Int) -> [Any]? {
+    func hitTestNormPoint(_ normPoint: CGPoint, types type: Int) -> [[AnyHashable: Any]] {
         let renderSize: CGSize? = controller.getRenderView().bounds.size
         let point = CGPoint(x: normPoint.x * (renderSize?.width ?? 0.0), y: normPoint.y * (renderSize?.height ?? 0.0))
         let result = controller.hitTest(point, with: ARHitTestResult.ResultType(rawValue: UInt(type)))
         return hitTestResultArrayFromResult(resultArray: result)
     }
     
-    private func hitTestResultArrayFromResult(resultArray: [Any]?) -> [Any]? {
-        var results = [Any]()
+    private func hitTestResultArrayFromResult(resultArray: [ARHitTestResult]) -> [[AnyHashable: Any]] {
+        var results = [[AnyHashable: Any]]()
         
-        for result: ARHitTestResult in resultArray as? [ARHitTestResult] ?? [] {
+        for result: ARHitTestResult in resultArray {
             var dict = [AnyHashable : Any]()
             
             dict[WEB_AR_TYPE_OPTION] = NSNumber(value: result.type.rawValue)

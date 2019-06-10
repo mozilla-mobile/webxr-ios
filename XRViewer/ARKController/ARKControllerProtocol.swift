@@ -3,7 +3,7 @@
     func update(_ session: ARSession)
     func clean()
     func getRenderView() -> UIView!
-    func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [Any]?
+    func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [ARHitTestResult]
     // Commented during conversion of ARKSceneKitController to Swift, appears unused
     //- (id)currentHitTest;
     func setHitTestFocus(_ point: CGPoint)
