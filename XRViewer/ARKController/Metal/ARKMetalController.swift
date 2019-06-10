@@ -9,7 +9,6 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     
     private var renderer: Renderer!
     private var renderView: MTKView?
-    var planes: [UUID : PlaneNode] = [:]
     private var anchorsNodes: [AnchorNode] = []
     
     private var showMode: ShowMode? {
@@ -22,11 +21,10 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
             updateModes()
         }
     }
-    
+    var planes: [UUID : PlaneNode] = [:]
     private var planeHitTestResults: [ARHitTestResult] = []
-    private var hitTestFocusPoint = CGPoint.zero
     private var currentHitTest: HitTestResult?
-    
+    private var hitTestFocusPoint = CGPoint.zero
     var previewingSinglePlane: Bool = false
     var focusedPlane: PlaneNode? {
         didSet {
@@ -94,26 +92,12 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         }
     }
     
-    func getRenderView() -> UIView! {
-        return renderView
-    }
-    
-    func setHitTestFocus(_ point: CGPoint) {
-        return
-    }
-    
     func didChangeTrackingState(_ camera: ARCamera?) {
     }
     
 //    func currentHitTest() -> Any? {
 //        return nil
 //    }
-    
-    func setShowMode(_ mode: ShowMode) {
-    }
-    
-    func setShowOptions(_ options: ShowOptions) {
-    }
     
     func setupAR(with session: ARSession) -> Bool {
         renderView = MTKView()
@@ -134,6 +118,26 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         renderer.drawRectResized(size: renderView.bounds.size)
         
         return true
+    }
+    
+    
+    
+    // MARK: - ARKControllerProtocol
+    
+    func getRenderView() -> UIView! {
+        return renderView
+    }
+    
+    func setHitTestFocus(_ point: CGPoint) {
+        return
+    }
+    
+    func setShowMode(_ mode: ShowMode) {
+        showMode = mode
+    }
+    
+    func setShowOptions(_ options: ShowOptions) {
+        showOptions = options
     }
     
     // MARK: - MTKViewDelegate
