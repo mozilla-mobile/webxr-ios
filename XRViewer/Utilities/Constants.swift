@@ -59,6 +59,9 @@ let AllowedVideoCameraSitesKey = "allowedVideoCameraSites"
 /// The NSUserDefaults key for the boolean that tells us whether
 /// we should preload the webxr.js file to expose a WebXR API
 let ExposeWebXRAPIKey = "exposeWebXRAPI"
+/// The NSUserDefaults key for the boolean that tells us whether
+/// we should use Metal (or SceneKit) for the ARKController
+let UseMetalForARKey = "useMetalForAR"
 let BOX_SIZE: CGFloat = 0.05
 
 @objc class Constant: NSObject {
@@ -82,6 +85,7 @@ let BOX_SIZE: CGFloat = 0.05
     static func videoCameraAccessWebXREnabled() -> String { return VideoCameraAccessWebXREnabledKey }
     static func allowedVideoCameraSitesKey() -> String { return AllowedVideoCameraSitesKey }
     static func exposeWebXRAPIKey() -> String { return ExposeWebXRAPIKey }
+    static func useMetalForARKey() -> String { return UseMetalForARKey }
     
     @objc static func swipeGestureAreaHeight() -> CGFloat { return 200 }
     @objc static func recordSize() -> CGFloat { return 60.5 }

@@ -7,6 +7,7 @@ extension MTKView: RenderDestinationProvider {
 
 class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     
+    private var session: ARSession
     private var renderer: Renderer!
     private var renderView: MTKView?
     private var anchorsNodes: [AnchorNode] = []
@@ -39,6 +40,7 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     }
     
     required init(sesion session: ARSession, size: CGSize) {
+        self.session = session
         super.init()
         if setupAR(with: session) == false {
             print("Error setting up AR Session with Metal")
@@ -46,7 +48,10 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     }
     
     func update(_ session: ARSession) {
-        
+        self.session = session
+        if setupAR(with: session) == false {
+            print("Error updating AR Session with Metal")
+        }
     }
     
     func clean() {
@@ -63,21 +68,20 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         planeHitTestResults = []
     }
     
-    func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [Any]? {
-        return nil
-//        if focusedPlane != nil {
-//            guard let results = renderView?.hitTest(point, types: type) else { return [] }
-//            guard let chosenPlane = focusedPlane else { return [] }
-//            if let anchorIdentifier = planes.someKey(forValue: chosenPlane) {
-//                let anchor = results.filter { $0.anchor?.identifier == anchorIdentifier }.first
-//                if let anchor = anchor {
-//                    return [anchor]
-//                }
-//            }
-//            return []
-//        } else {
-//            return renderView?.hitTest(point, types: type)
-//        }
+    func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [ARHitTestResult] {
+        if focusedPlane != nil {
+            guard let results = session.currentFrame?.hitTest(point, types: type) else { return [] }
+            guard let chosenPlane = focusedPlane else { return [] }
+            if let anchorIdentifier = planes.someKey(forValue: chosenPlane) {
+                let anchor = results.filter { $0.anchor?.identifier == anchorIdentifier }.first
+                if let anchor = anchor {
+                    return [anchor]
+                }
+            }
+            return []
+        } else {
+            return session.currentFrame?.hitTest(point, types: type) ?? []
+        }
     }
 
     func updateModes() {

@@ -89,6 +89,11 @@ typedef void (^ResultArrayBlock)(NSArray *);
 @property(nonatomic) bool geometryArrays;
 
 /**
+ A flag representing whether Metal is being used for the ARKController (true) or SceneKit (false)
+ */
+@property(nonatomic) bool usingMetal;
+
+/**
  Request a CV frame
  */
 @property(nonatomic) BOOL computerVisionFrameRequested;

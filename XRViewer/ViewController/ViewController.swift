@@ -386,6 +386,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 print("\n\n*********\n\nInvalidate timer\n\n*********")
                 blockSelf?.timerSessionRunningInBackground?.invalidate()
             }
+            
+            if blockSelf?.arkController?.usingMetal != UserDefaults.standard.bool(forKey: Constant.useMetalForARKey()) {
+                blockSelf?.arkController = nil
+            }
 
             if blockSelf?.arkController == nil {
                 print("\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********")
@@ -552,8 +556,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         weak var blockSelf: ViewController? = self
 
-        arkController = ARKController(type: .metal, rootView: arkLayerView)
-//        }
+        arkController = ARKController(type: UserDefaults.standard.bool(forKey: Constant.useMetalForARKey()) ? .metal : .sceneKit, rootView: arkLayerView)
 
         arkController?.didUpdate = { c in
             guard let shouldSendNativeTime = blockSelf?.stateController.shouldSendNativeTime() else { return }
@@ -765,11 +768,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 // (HIT_TEST_TYPE_EXISTING_PLANE_GEOMETRY = 32 = 2^5), but to preserve privacy in
                 // .lite Mode only hit test against the plane itself
                 // (HIT_TEST_TYPE_EXISTING_PLANE = 8 = 2^3)
-                let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: 8)
-                result(array)
+                if blockSelf?.arkController?.usingMetal ?? false {
+                    let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: y, y: 1-x), types: 8)
+                    result(array)
+                } else {
+                    let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: 8)
+                    result(array)
+                }
             } else {
-                let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask)
-                result(array)
+                if blockSelf?.arkController?.usingMetal ?? false {
+                    let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: y, y: 1-x), types: 8)
+                    result(array)
+                } else {
+                    let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask)
+                    result(array)
+                }
             }
         }
 
