@@ -63,14 +63,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         setupUI()
         setupSinglePlaneButton()
 
-        /// Apparently, this is called async in the main queue because we need viewDidLoad to finish
-        /// its execution before doing anything on the subviews. This also could have been called from
-        /// viewDidAppear
-        DispatchQueue.main.async(execute: {
-            self.setupTargetControllers()
-        })
-
-
         /// Swipe from edge gesture recognizer setup
         let gestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(ViewController.swipe(fromEdge:)))
         gestureRecognizer.edges = .top
@@ -89,6 +81,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 self.messageController?.showPermissionsPopup()
             })
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        /// This was previously called async in the main queue in viewDidLoad because we need viewDidLoad to finish
+        /// its execution before doing anything on the subviews. 
+        setupTargetControllers()
     }
 
 #if WEBSERVER
@@ -393,6 +393,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.timerSessionRunningInBackground?.invalidate()
             }
             
+            if blockSelf?.arkController?.usingMetal != UserDefaults.standard.bool(forKey: Constant.useMetalForARKey()) {
+                blockSelf?.arkController = nil
+            }
+
             if blockSelf?.arkController == nil {
                 print("\n\n*********\n\nARKit is nil, instantiate and start a session\n\n*********")
                 blockSelf?.startNewARKitSession(withRequest: dict)
@@ -565,7 +569,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         weak var blockSelf: ViewController? = self
 
-        arkController = ARKController(type: .sceneKit, rootView: arkLayerView)
+        arkController = ARKController(type: UserDefaults.standard.bool(forKey: Constant.useMetalForARKey()) ? .metal : .sceneKit, rootView: arkLayerView)
 
         arkController?.didUpdate = { c in
             guard let shouldSendNativeTime = blockSelf?.stateController.shouldSendNativeTime() else { return }
@@ -736,6 +740,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         webController?.onRequestSession = { request, grantedPermissions in
             blockSelf?.handleOnWatchAR(withRequest: request, initialLoad: true, grantedPermissionsBlock: grantedPermissions)
         }
+        
+        webController?.onJSFinishedRendering = {
+            if let renderView = blockSelf?.arkController?.controller.getRenderView() as? ARSCNView {
+                renderView.isPlaying = true
+            }
+        }
 
         webController?.onStopAR = {
             blockSelf?.stateController.setWebXR(false)
@@ -771,11 +781,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 // (HIT_TEST_TYPE_EXISTING_PLANE_GEOMETRY = 32 = 2^5), but to preserve privacy in
                 // .lite Mode only hit test against the plane itself
                 // (HIT_TEST_TYPE_EXISTING_PLANE = 8 = 2^3)
-                let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: 8)
-                result(array)
+                if blockSelf?.arkController?.usingMetal ?? false {
+                    let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: y, y: 1-x), types: 8)
+                    result(array)
+                } else {
+                    let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: 8)
+                    result(array)
+                }
             } else {
-                let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask)
-                result(array)
+                if blockSelf?.arkController?.usingMetal ?? false {
+                    let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: y, y: 1-x), types: 8)
+                    result(array)
+                } else {
+                    let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask)
+                    result(array)
+                }
             }
         }
 
@@ -1065,8 +1085,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     }
 
     func sendARKData() {
-        // BLAIR:  Why are we doing this copy above?  Seems like
-        //    [[self webController] sendARData:[self commonData]];
         webController?.sendARData(arkController?.getARKData() ?? [:])
     }
 

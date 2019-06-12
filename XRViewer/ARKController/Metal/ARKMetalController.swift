@@ -2,26 +2,131 @@ import ARKit
 import Metal
 import MetalKit
 
+extension MTKView: RenderDestinationProvider {
+}
+
 class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     
-    var previewingSinglePlane: Bool = false
-    var focusedPlane: PlaneNode?
-    var planes: [UUID : PlaneNode] = [:]
-    private var renderer: Renderer?
+    private var session: ARSession
+    private var renderer: Renderer!
     private var renderView: MTKView?
-    private var hitTestFocusPoint = CGPoint.zero
+    private var anchorsNodes: [AnchorNode] = []
     
-    init?(sesion session: ARSession) {
-        super.init()
-        
-        if setupAR(with: session) == false {
-            return nil
+    private var showMode: ShowMode? {
+        didSet {
+            updateModes()
+        }
+    }
+    private var showOptions: ShowOptions? {
+        didSet {
+            updateModes()
+        }
+    }
+    var planes: [UUID : PlaneNode] = [:]
+    private var planeHitTestResults: [ARHitTestResult] = []
+    private var currentHitTest: HitTestResult?
+    private var hitTestFocusPoint = CGPoint.zero
+    var previewingSinglePlane: Bool = false
+    var focusedPlane: PlaneNode? {
+        didSet {
+            if focusedPlane == nil {
+                oldValue?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "Models.scnassets/plane_grid1.png")
+            }
         }
     }
     
-    required init(sesion session: ARSession?, size: CGSize) {
-        
+    deinit {
+        DDLogDebug("ARKMetalController dealloc")
     }
+    
+    required init(sesion session: ARSession, size: CGSize) {
+        self.session = session
+        super.init()
+        if setupAR(with: session) == false {
+            print("Error setting up AR Session with Metal")
+        }
+    }
+    
+    func update(_ session: ARSession) {
+        self.session = session
+        if setupAR(with: session) == false {
+            print("Error updating AR Session with Metal")
+        }
+    }
+    
+    func clean() {
+        for (_, plane) in planes {
+            plane.removeFromParentNode()
+        }
+        planes.removeAll()
+        
+        for anchor in anchorsNodes {
+            anchor.removeFromParentNode()
+        }
+        anchorsNodes.removeAll()
+        
+        planeHitTestResults = []
+    }
+    
+    func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [ARHitTestResult] {
+        if focusedPlane != nil {
+            guard let results = session.currentFrame?.hitTest(point, types: type) else { return [] }
+            guard let chosenPlane = focusedPlane else { return [] }
+            if let anchorIdentifier = planes.someKey(forValue: chosenPlane) {
+                let anchor = results.filter { $0.anchor?.identifier == anchorIdentifier }.first
+                if let anchor = anchor {
+                    return [anchor]
+                }
+            }
+            return []
+        } else {
+            return session.currentFrame?.hitTest(point, types: type) ?? []
+        }
+    }
+
+    func updateModes() {
+        guard let showMode = showMode else { return }
+//        guard let showOptions = showOptions else { return }
+        if showMode == ShowMode.urlDebug || showMode == ShowMode.debug {
+//            renderView?.showsStatistics = (showOptions.rawValue & ShowOptions.ARStatistics.rawValue) != 0
+//            renderView?.debugOptions = (showOptions.rawValue & ShowOptions.ARPoints.rawValue) != 0 ? .showFeaturePoints : []
+        } else {
+//            renderView?.showsStatistics = false
+//            renderView?.debugOptions = []
+        }
+    }
+    
+    func didChangeTrackingState(_ camera: ARCamera?) {
+    }
+    
+//    func currentHitTest() -> Any? {
+//        return nil
+//    }
+    
+    func setupAR(with session: ARSession) -> Bool {
+        renderView = MTKView()
+        renderView = MTKView(frame: UIScreen.main.bounds, device: MTLCreateSystemDefaultDevice())
+        renderView?.backgroundColor = UIColor.clear
+        renderView?.delegate = self
+        
+        guard let renderView = renderView else {
+            DDLogError("Error accessing the renderView")
+            return false
+        }
+        guard let device = renderView.device else {
+            DDLogError("Metal is not supported on this device")
+            return false
+        }
+
+        renderer = Renderer(session: session, metalDevice: device, renderDestination: renderView)
+        renderer.drawRectResized(size: renderView.bounds.size)
+        
+        return true
+    }
+    
+    
+    
+    // MARK: - ARKControllerProtocol
     
     func getRenderView() -> UIView! {
         return renderView
@@ -31,65 +136,21 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         return
     }
     
-    func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [Any]? {
-        return nil
-    }
-    
-    func cameraProjectionTransform() -> matrix_float4x4 {
-        return matrix_identity_float4x4
-    }
-    
-    func didChangeTrackingState(_ camera: ARCamera?) {
-    }
-    
-    func currentHitTest() -> Any? {
-        return nil
-    }
-    
     func setShowMode(_ mode: ShowMode) {
+        showMode = mode
     }
     
     func setShowOptions(_ options: ShowOptions) {
-    }
-    
-    func clean() {
-    }
-    
-    func update(_ session: ARSession?) {
-    }
-    
-    func setupAR(with session: ARSession) -> Bool {
-        renderView = MTKView()
-        renderView = MTKView(frame: UIScreen.main.bounds, device: MTLCreateSystemDefaultDevice())
-        renderView?.backgroundColor = UIColor.clear
-        renderView?.delegate = self
-        
-        guard let size = renderView?.bounds.size else {
-            DDLogError("Error accessing the renderView size")
-            return false
-        }
-
-        // Tony 2/21/19: Commenting out below 5 lines until Metal is utilized (need to cast
-        // MTKView as RenderDestinationProvider).
-//        guard let device = renderView?.device else {
-//            DDLogError("Metal is not supported on this device")
-//            return false
-//        }
-//        renderer = Renderer(session: session, metalDevice: device, renderDestinationProvider: renderView)
-        renderer?.drawRectResized(size, orientation: UIApplication.shared.statusBarOrientation)
-        
-        return true
+        showOptions = options
     }
     
     // MARK: - MTKViewDelegate
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        DispatchQueue.main.async(execute: {
-            self.renderer?.drawRectResized(size, orientation: UIApplication.shared.statusBarOrientation)
-        })
+        renderer.drawRectResized(size: size)
     }
     
     func draw(in view: MTKView) {
-        renderer?.update()
+        renderer.update()
     }
 }

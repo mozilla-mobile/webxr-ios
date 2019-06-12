@@ -60,7 +60,7 @@ extension SettingsViewController: UITableViewDataSource {
         if section == 0 {
             return 1
         } else if section == 1 {
-            return 7
+            return 8
         } else {
             return 1
         }
@@ -125,9 +125,16 @@ extension SettingsViewController: UITableViewDataSource {
             case 6:
                 let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
                 switchInputCell.labelTitle?.text = "Expose WebXR API (restart required)"
-                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.exposeWebXRAPIKey());
+                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.exposeWebXRAPIKey())
                 switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
                 switchInputCell.switchControl.tag = 6
+                cell = switchInputCell
+            case 7:
+                let switchInputCell = tableView.dequeueReusableCell(withIdentifier: "SwitchInputTableViewCell", for: indexPath) as! SwitchInputTableViewCell
+                switchInputCell.labelTitle.text = "Use Metal (experimental, refresh required)"
+                switchInputCell.switchControl.isOn = UserDefaults.standard.bool(forKey: Constant.useMetalForARKey())
+                switchInputCell.switchControl.addTarget(self, action: #selector(switchValueChanged(switchControl:)), for: .valueChanged)
+                switchInputCell.switchControl.tag = 7
                 cell = switchInputCell
             default:
                 fatalError("Cell not registered for indexPath: \(indexPath)")
@@ -164,6 +171,8 @@ extension SettingsViewController: UITableViewDataSource {
             alwaysAllowSwitch?.switchControl.setOn(false, animated: true)
         } else if switchControl.tag == 6 {
             UserDefaults.standard.set(switchControl.isOn, forKey: Constant.exposeWebXRAPIKey())
+        } else if switchControl.tag == 7 {
+            UserDefaults.standard.set(switchControl.isOn, forKey: Constant.useMetalForARKey())
         }
     }
 }

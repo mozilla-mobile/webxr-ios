@@ -70,7 +70,7 @@
         [[self controller] setHitTestFocus:[[[self controller] getRenderView] center]];
 
         self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];
-        
+        self.usingMetal = (type == ARKMetal) ? YES : NO;
         self.lumaDataBuffer = nil;
         self.lumaBase64StringBuffer = nil;
         self.chromaDataBuffer = nil;
