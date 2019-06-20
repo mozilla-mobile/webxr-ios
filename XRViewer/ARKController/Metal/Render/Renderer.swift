@@ -125,7 +125,10 @@ class Renderer {
             updateBufferStates()
             updateGameState()
             
-            if let renderPassDescriptor = renderDestination.currentRenderPassDescriptor, let currentDrawable = renderDestination.currentDrawable, let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
+            if let renderPassDescriptor = renderDestination.currentRenderPassDescriptor,
+                let currentDrawable = renderDestination.currentDrawable,
+                let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
+            {
                 
                 renderEncoder.label = "MyRenderEncoder"
                 
