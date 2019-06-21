@@ -53,7 +53,6 @@ typedef void (^GetWorldMapCompletionBlock)(BOOL success, NSString* errorString, 
 typedef void (^SetWorldMapCompletionBlock)(BOOL success, NSString* errorString);
 typedef void (^ResultBlock)(NSDictionary *);
 typedef void (^ResultArrayBlock)(NSArray *);
-typedef void (^CoordinateFrame)(void);
 @protocol ARKControllerProtocol;
 
 @interface ARKController : NSObject
@@ -64,7 +63,6 @@ typedef void (^CoordinateFrame)(void);
 @property(copy) SessionInterruptionEnded sessionInterruptionEnded;
 @property(copy) DidFailSession didFailSession;
 @property(copy) DidUpdateWindowSize didUpdateWindowSize;
-@property(copy) CoordinateFrame coordinateFrame;
 @property UIInterfaceOrientation interfaceOrientation;
 
 /**

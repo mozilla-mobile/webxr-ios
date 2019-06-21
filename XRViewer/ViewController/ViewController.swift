@@ -31,6 +31,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     private var chooseSinglePlaneButton = UIButton()
     private var chooseSinglePlaneButtonVerticalConstraint = NSLayoutConstraint()
     private var deferredHitTest: (Int, CGFloat, CGFloat, ResultArrayBlock)? = nil
+    private var savedRender: Block? = nil
     
     // Properties for status messages via messageLabel & messagePanel
     @IBOutlet weak var messagePanel: UIVisualEffectView!
@@ -674,9 +675,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         arkController?.startSession(with: stateController.state)
         
-        arkController?.coordinateFrame = {
+        arkController?.controller.renderer.rendererShouldUpdateFrame = { block in
             if let frame = blockSelf?.arkController?.session.currentFrame {
                 blockSelf?.arkController?.controller.readyToRenderFrame = false
+                blockSelf?.savedRender = block
                 blockSelf?.arkController?.updateARKData(with: frame)
                 blockSelf?.arkController?.didUpdate(blockSelf?.arkController)
             } else {
@@ -755,6 +757,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         webController?.onJSFinishedRendering = {
             blockSelf?.arkController?.controller.initializingRender = false
             blockSelf?.arkController?.controller.readyToRenderFrame = true
+            blockSelf?.savedRender?()
         }
 
         webController?.onStopAR = {

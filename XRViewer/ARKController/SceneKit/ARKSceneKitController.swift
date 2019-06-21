@@ -298,7 +298,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         showOptions = options
     }
     
-    var updateFrame: (() -> Void)? = nil
     var readyToRenderFrame: Bool = true
     var initializingRender: Bool = true
+    var renderer: Renderer! = nil
 }

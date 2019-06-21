@@ -29,8 +29,9 @@ let kImagePlaneVertexData: [Float] = [
     1.0,  1.0,  1.0, 0.0,
 ]
 
+typealias Block = () -> Void
 
-class Renderer {
+@objc class Renderer: NSObject {
     let session: ARSession
     let device: MTLDevice
     let inFlightSemaphore = DispatchSemaphore(value: kMaxBuffersInFlight)
@@ -82,13 +83,13 @@ class Renderer {
     
     // Flag for viewport size changes
     var viewportSizeDidChange: Bool = false
-    
-    var rendererShouldUpdateFrame: (() -> Void)?
+    var rendererShouldUpdateFrame: ((@escaping Block) -> Void)?
     
     init(session: ARSession, metalDevice device: MTLDevice, renderDestination: RenderDestinationProvider) {
         self.session = session
         self.device = device
         self.renderDestination = renderDestination
+        super.init()
         loadMetal()
         loadAssets()
     }
@@ -123,29 +124,31 @@ class Renderer {
                 textures.removeAll()
             }
             
-            rendererShouldUpdateFrame?()
             updateBufferStates()
             updateGameState()
             
-            if let renderPassDescriptor = renderDestination.currentRenderPassDescriptor,
-                let currentDrawable = renderDestination.currentDrawable,
-                let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
-            {
+            weak var blockSelf: Renderer? = self
+            rendererShouldUpdateFrame?({ 
+                if let renderPassDescriptor = blockSelf?.renderDestination.currentRenderPassDescriptor,
+                    let currentDrawable = blockSelf?.renderDestination.currentDrawable,
+                    let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
+                {
+                    
+                    renderEncoder.label = "MyRenderEncoder"
+                    
+                    blockSelf?.drawCapturedImage(renderEncoder: renderEncoder)
+                    blockSelf?.drawAnchorGeometry(renderEncoder: renderEncoder)
+                    
+                    // We're done encoding commands
+                    renderEncoder.endEncoding()
+                    
+                    // Schedule a present once the framebuffer is complete using the current drawable
+                    commandBuffer.present(currentDrawable)
+                }
                 
-                renderEncoder.label = "MyRenderEncoder"
-                
-                drawCapturedImage(renderEncoder: renderEncoder)
-                drawAnchorGeometry(renderEncoder: renderEncoder)
-                
-                // We're done encoding commands
-                renderEncoder.endEncoding()
-                
-                // Schedule a present once the framebuffer is complete using the current drawable
-                commandBuffer.present(currentDrawable)
-            }
-            
-            // Finalize rendering here & push the command buffer to the GPU
-            commandBuffer.commit()
+                // Finalize rendering here & push the command buffer to the GPU
+                commandBuffer.commit()
+            })
         }
     }
     

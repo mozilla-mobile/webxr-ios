@@ -67,19 +67,6 @@
         [[[[controller getRenderView] rightAnchor] constraintEqualToAnchor:[rootView rightAnchor]] setActive:YES];
         [[[[controller getRenderView] bottomAnchor] constraintEqualToAnchor:[rootView bottomAnchor]] setActive:YES];
         
-        __weak typeof (self) blockSelf = self;
-        [[self controller] setUpdateFrame:^{
-            [blockSelf coordinateFrame]();
-//            ARFrame *frame = [[blockSelf session] currentFrame];
-//            if (frame != nil) {
-//                [[blockSelf controller] setReadyToRenderFrame:NO];
-//                [blockSelf updateARKDataWith: frame];
-//                [blockSelf didUpdate](self);
-//            } else {
-//                NSLog(@"Unable to updateARKData since ARFrame isn't ready");
-//            }
-        }];
-        
         [[self controller] setHitTestFocus:[[[self controller] getRenderView] center]];
 
         self.interfaceOrientation = [Utils getInterfaceOrientationFromDeviceOrientation];

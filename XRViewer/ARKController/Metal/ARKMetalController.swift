@@ -8,7 +8,7 @@ extension MTKView: RenderDestinationProvider {
 class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     
     private var session: ARSession
-    private var renderer: Renderer!
+    var renderer: Renderer!
     private var renderView: MTKView?
     private var anchorsNodes: [AnchorNode] = []
     
@@ -34,7 +34,6 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
             }
         }
     }
-    var updateFrame: (() -> Void)?
     var readyToRenderFrame: Bool = true
     var initializingRender: Bool = true
     
@@ -123,11 +122,6 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
 
         renderer = Renderer(session: session, metalDevice: device, renderDestination: renderView)
         renderer.drawRectResized(size: renderView.bounds.size)
-        
-        weak var blockSelf: ARKMetalController? = self
-        renderer.rendererShouldUpdateFrame = {
-            blockSelf?.updateFrame?()
-        }
         
         return true
     }
