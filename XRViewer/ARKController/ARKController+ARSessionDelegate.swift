@@ -5,10 +5,6 @@ extension ARKController: ARSessionDelegate {
     // but it works for now.
     @objc(session:didUpdateFrame:)
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        updateARKData(with: frame)
-        
-        didUpdate(self)
-        
         if shouldUpdateWindowSize {
             self.shouldUpdateWindowSize = false
             didUpdateWindowSize()

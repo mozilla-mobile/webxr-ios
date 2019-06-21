@@ -314,6 +314,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.updateConstraints()
             blockSelf?.cancelAllScheduledMessages()
             blockSelf?.showHideMessage(hide: true)
+            blockSelf?.arkController?.controller.initializingRender = true
             blockSelf?.trackingStatusIcon.image = nil
             blockSelf?.webController?.setup(forWebXR: xr)
         }
@@ -672,6 +673,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         animator?.animate(arkLayerView, toFade: false)
 
         arkController?.startSession(with: stateController.state)
+        
+        arkController?.coordinateFrame = {
+            if let frame = blockSelf?.arkController?.session.currentFrame {
+                blockSelf?.arkController?.controller.readyToRenderFrame = false
+                blockSelf?.arkController?.updateARKData(with: frame)
+                blockSelf?.arkController?.didUpdate(blockSelf?.arkController)
+            } else {
+                print("Unable to updateARKData since ARFrame isn't ready")
+            }
+        }
 
         // Log event when we start an AR session
         AnalyticsManager.sharedInstance.sendEvent(category: .action, method: .webXR, object: .initialize)
@@ -742,9 +753,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
         
         webController?.onJSFinishedRendering = {
-            if let renderView = blockSelf?.arkController?.controller.getRenderView() as? ARSCNView {
-                renderView.isPlaying = true
-            }
+            blockSelf?.arkController?.controller.initializingRender = false
+            blockSelf?.arkController?.controller.readyToRenderFrame = true
         }
 
         webController?.onStopAR = {

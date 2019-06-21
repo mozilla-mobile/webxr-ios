@@ -1,6 +1,6 @@
 extension ARKController {
     
-    func updateARKData(with frame: ARFrame) {
+    @objc func updateARKData(with frame: ARFrame) {
         
         synced(self) {
             if request == nil {

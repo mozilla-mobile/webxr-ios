@@ -34,6 +34,9 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
             }
         }
     }
+    var updateFrame: (() -> Void)?
+    var readyToRenderFrame: Bool = true
+    var initializingRender: Bool = true
     
     deinit {
         DDLogDebug("ARKMetalController dealloc")
@@ -121,6 +124,11 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         renderer = Renderer(session: session, metalDevice: device, renderDestination: renderView)
         renderer.drawRectResized(size: renderView.bounds.size)
         
+        weak var blockSelf: ARKMetalController? = self
+        renderer.rendererShouldUpdateFrame = {
+            blockSelf?.updateFrame?()
+        }
+        
         return true
     }
     
@@ -151,6 +159,10 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     }
     
     func draw(in view: MTKView) {
+        guard readyToRenderFrame || initializingRender else {
+            print("Not ready to render next frame")
+            return
+        }
         renderer.update()
     }
 }

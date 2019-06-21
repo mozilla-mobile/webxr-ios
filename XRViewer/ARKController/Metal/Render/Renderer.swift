@@ -83,6 +83,7 @@ class Renderer {
     // Flag for viewport size changes
     var viewportSizeDidChange: Bool = false
     
+    var rendererShouldUpdateFrame: (() -> Void)?
     
     init(session: ARSession, metalDevice device: MTLDevice, renderDestination: RenderDestinationProvider) {
         self.session = session
@@ -122,6 +123,7 @@ class Renderer {
                 textures.removeAll()
             }
             
+            rendererShouldUpdateFrame?()
             updateBufferStates()
             updateGameState()
             

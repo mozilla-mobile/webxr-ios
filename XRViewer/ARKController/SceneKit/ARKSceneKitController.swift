@@ -297,4 +297,8 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     func setShowOptions(_ options: ShowOptions) {
         showOptions = options
     }
+    
+    var updateFrame: (() -> Void)? = nil
+    var readyToRenderFrame: Bool = true
+    var initializingRender: Bool = true
 }
