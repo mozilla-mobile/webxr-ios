@@ -789,7 +789,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 // .lite Mode only hit test against the plane itself
                 // (HIT_TEST_TYPE_EXISTING_PLANE = 8 = 2^3)
                 if blockSelf?.arkController?.usingMetal ?? false {
-                    let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: y, y: 1-x), types: 8)
+                    var array = [[AnyHashable: Any]]()
+                    switch blockSelf?.arkController?.interfaceOrientation {
+                    case .landscapeLeft?:
+                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: 1-x, y: 1-y), types: 8) ?? []
+                    case .landscapeRight?:
+                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: 8) ?? []
+                    default:
+                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: y, y: 1-x), types: 8) ?? []
+                    }
                     result(array)
                 } else {
                     let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: 8)
@@ -797,7 +805,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 }
             } else {
                 if blockSelf?.arkController?.usingMetal ?? false {
-                    let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: y, y: 1-x), types: 8)
+                    var array = [[AnyHashable: Any]]()
+                    switch blockSelf?.arkController?.interfaceOrientation {
+                    case .landscapeLeft?:
+                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: 1-x, y: 1-y), types: 8) ?? []
+                    case .landscapeRight?:
+                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: 8) ?? []
+                    default:
+                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: y, y: 1-x), types: 8) ?? []
+                    }
                     result(array)
                 } else {
                     let array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask)
