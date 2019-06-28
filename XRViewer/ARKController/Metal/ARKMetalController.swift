@@ -38,6 +38,8 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     var initializingRender: Bool = true
     
     deinit {
+        renderView?.delegate = nil
+        renderView = nil
         DDLogDebug("ARKMetalController dealloc")
     }
     
