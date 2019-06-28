@@ -672,14 +672,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         arkController?.startSession(with: stateController.state)
         
-        arkController?.controller.renderer.rendererShouldUpdateFrame = { block in
-            if let frame = blockSelf?.arkController?.session.currentFrame {
-                blockSelf?.arkController?.controller.readyToRenderFrame = false
-                blockSelf?.savedRender = block
-                blockSelf?.arkController?.updateARKData(with: frame)
-                blockSelf?.arkController?.didUpdate(blockSelf?.arkController)
-            } else {
-                print("Unable to updateARKData since ARFrame isn't ready")
+        if arkController?.usingMetal ?? false {
+            arkController?.controller.renderer.rendererShouldUpdateFrame = { block in
+                if let frame = blockSelf?.arkController?.session.currentFrame {
+                    blockSelf?.arkController?.controller.readyToRenderFrame = false
+                    blockSelf?.savedRender = block
+                    blockSelf?.arkController?.updateARKData(with: frame)
+                    blockSelf?.arkController?.didUpdate(blockSelf?.arkController)
+                } else {
+                    print("Unable to updateARKData since ARFrame isn't ready")
+                    block()
+                }
             }
         }
 
