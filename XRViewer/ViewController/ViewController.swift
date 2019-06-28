@@ -310,6 +310,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.cancelAllScheduledMessages()
             blockSelf?.showHideMessage(hide: true)
             blockSelf?.arkController?.controller.initializingRender = true
+            blockSelf?.savedRender = nil
             blockSelf?.trackingStatusIcon.image = nil
             blockSelf?.webController?.setup(forWebXR: xr)
         }
@@ -388,8 +389,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 print("\n\n*********\n\nInvalidate timer\n\n*********")
                 blockSelf?.timerSessionRunningInBackground?.invalidate()
             }
-            
-            if blockSelf?.arkController?.usingMetal != UserDefaults.standard.bool(forKey: Constant.useMetalForARKey()) {
+            if let metal = blockSelf?.arkController?.usingMetal,
+                metal != UserDefaults.standard.bool(forKey: Constant.useMetalForARKey())
+            {
+                blockSelf?.savedRender = nil
                 blockSelf?.arkController = nil
             }
 
