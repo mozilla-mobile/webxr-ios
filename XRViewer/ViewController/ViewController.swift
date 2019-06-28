@@ -63,7 +63,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         setupCommonControllers()
         setupUI()
         setupSinglePlaneButton()
-
+        
         /// Swipe from edge gesture recognizer setup
         let gestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(ViewController.swipe(fromEdge:)))
         gestureRecognizer.edges = .top
@@ -82,13 +82,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 self.messageController?.showPermissionsPopup()
             })
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
         
-        /// This was previously called async in the main queue in viewDidLoad because we need viewDidLoad to finish
-        /// its execution before doing anything on the subviews. 
         setupTargetControllers()
     }
 
