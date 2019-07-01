@@ -156,7 +156,6 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     
     func draw(in view: MTKView) {
         guard readyToRenderFrame || initializingRender else {
-            print("Not ready to render next frame")
             return
         }
         renderer.update()
