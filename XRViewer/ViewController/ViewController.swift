@@ -738,6 +738,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.stateController.applyOnDidReceiveMemoryAction()
             blockSelf?.stateController.state.numberOfTrackedImages = 0
             blockSelf?.arkController?.setNumberOfTrackedImages(0)
+            blockSelf?.savedRender = nil
         }
 
         webController?.onError = { error in
@@ -758,6 +759,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.arkController?.controller.initializingRender = false
             blockSelf?.arkController?.controller.readyToRenderFrame = true
             blockSelf?.savedRender?()
+            blockSelf?.savedRender = nil
         }
 
         webController?.onStopAR = {
