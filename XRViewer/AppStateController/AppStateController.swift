@@ -116,7 +116,7 @@ class AppStateController: NSObject {
     }
 
     @objc func shouldSendNativeTime() -> Bool {
-        return state.numberOfTimesSendNativeTimeWasCalled < 10
+        return state.numberOfTimesSendNativeTimeWasCalled < 2
     }
 
     @objc func wasMemoryWarning() -> Bool {
