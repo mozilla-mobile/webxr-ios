@@ -8,27 +8,6 @@ PODS:
   - CocoaLumberjack/Swift (3.4.2):
     - CocoaLumberjack/Default
   - DynamicBlurView (3.0.1)
-  - FontAwesomeKit (2.2.1):
-    - FontAwesomeKit/Core (= 2.2.1)
-    - FontAwesomeKit/FontAwesome (= 2.2.1)
-    - FontAwesomeKit/FoundationIcons (= 2.2.1)
-    - FontAwesomeKit/IonIcons (= 2.2.1)
-    - FontAwesomeKit/Material (= 2.2.1)
-    - FontAwesomeKit/Octicons (= 2.2.1)
-    - FontAwesomeKit/Zocial (= 2.2.1)
-  - FontAwesomeKit/Core (2.2.1)
-  - FontAwesomeKit/FontAwesome (2.2.1):
-    - FontAwesomeKit/Core
-  - FontAwesomeKit/FoundationIcons (2.2.1):
-    - FontAwesomeKit/Core
-  - FontAwesomeKit/IonIcons (2.2.1):
-    - FontAwesomeKit/Core
-  - FontAwesomeKit/Material (2.2.1):
-    - FontAwesomeKit/Core
-  - FontAwesomeKit/Octicons (2.2.1):
-    - FontAwesomeKit/Core
-  - FontAwesomeKit/Zocial (2.2.1):
-    - FontAwesomeKit/Core
   - GCDWebServer (3.4.2):
     - GCDWebServer/Core (= 3.4.2)
   - GCDWebServer/Core (3.4.2)
@@ -40,7 +19,6 @@ PODS:
 DEPENDENCIES:
   - CocoaLumberjack
   - CocoaLumberjack/Swift
-  - FontAwesomeKit
   - GCDWebServer (~> 3.0)
   - MozillaTelemetry (from `https://github.com/robomex/telemetry-ios.git`, branch `swift4`)
   - pop
@@ -50,7 +28,6 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - CocoaLumberjack
     - DynamicBlurView
-    - FontAwesomeKit
     - GCDWebServer
     - pop
 
@@ -73,12 +50,11 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   CocoaLumberjack: db7cc9e464771f12054c22ff6947c5a58d43a0fd
   DynamicBlurView: b1df5415f9bd31897549e5d7077e5ec120a4d636
-  FontAwesomeKit: 3614979b3dbb0ec3f7fac1bd760b91f66c31db67
   GCDWebServer: 8d67ee9f634b4bb91eb4b8aee440318a5fc6debd
   MozillaTelemetry: 09a819bd9cc9685c33a1e5fbe846423e770fd5c0
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
   PopupDialog: 42fb7a0bc4fafdf89fef8b5b2b127a6023f3e1cc
 
-PODFILE CHECKSUM: f33583a62cf7dd682e49aedf1d05a7db43ad61fa
+PODFILE CHECKSUM: 8dc10311e2b25db8a82a619501f5130b69f49314
 
 COCOAPODS: 1.5.3

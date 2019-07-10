@@ -58,6 +58,7 @@
 		B67D97A321C8453F0075FE0A /* UIOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A221C8453F0075FE0A /* UIOverlayController.swift */; };
 		B67D97A521C854C20075FE0A /* OverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A421C854C20075FE0A /* OverlayViewController.swift */; };
 		B67D97A721C9843B0075FE0A /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A621C9843B0075FE0A /* Animator.swift */; };
+		B67FA56F22D687B30042D45F /* FontAwesomeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B67FA56E22D687B30042D45F /* FontAwesomeKit.framework */; };
 		B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */; };
 		B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */; };
 		B698074021DA7A8900322782 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B698073F21DA7A8900322782 /* AppState.swift */; };
@@ -134,6 +135,7 @@
 		B67D97A221C8453F0075FE0A /* UIOverlayController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIOverlayController.swift; sourceTree = "<group>"; };
 		B67D97A421C854C20075FE0A /* OverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayViewController.swift; sourceTree = "<group>"; };
 		B67D97A621C9843B0075FE0A /* Animator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
+		B67FA56E22D687B30042D45F /* FontAwesomeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FontAwesomeKit.framework; path = Carthage/Build/iOS/FontAwesomeKit.framework; sourceTree = "<group>"; };
 		B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HitTestResult.swift; sourceTree = "<group>"; };
 		B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKControllerProtocol.swift; sourceTree = "<group>"; };
 		B698073F21DA7A8900322782 /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B67FA56F22D687B30042D45F /* FontAwesomeKit.framework in Frameworks */,
 				591A8C502FA83D70E8F5B5B4 /* Pods_XRViewer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -356,6 +359,7 @@
 		8C9E99F056CB67F28E2A9647 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B67FA56E22D687B30042D45F /* FontAwesomeKit.framework */,
 				62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */,
 			);
 			name = Frameworks;
@@ -384,6 +388,8 @@
 				041503BE1F28944F00887400 /* Frameworks */,
 				041503BF1F28944F00887400 /* Resources */,
 				221606BE81C9D422A4D5F9C6 /* [CP] Embed Pods Frameworks */,
+				B67FA57022D687CA0042D45F /* Carthage */,
+				B67FA57122D6885B0042D45F /* Carthage Outdated? */,
 			);
 			buildRules = (
 			);
@@ -482,7 +488,6 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
 				"${BUILT_PRODUCTS_DIR}/DynamicBlurView/DynamicBlurView.framework",
-				"${BUILT_PRODUCTS_DIR}/FontAwesomeKit/FontAwesomeKit.framework",
 				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
 				"${BUILT_PRODUCTS_DIR}/MozillaTelemetry/MozillaTelemetry.framework",
 				"${BUILT_PRODUCTS_DIR}/PopupDialog/PopupDialog.framework",
@@ -492,7 +497,6 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DynamicBlurView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FontAwesomeKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MozillaTelemetry.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PopupDialog.framework",
@@ -502,6 +506,44 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		B67FA57022D687CA0042D45F /* Carthage */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/FontAwesomeKit.framework",
+			);
+			name = Carthage;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/FontAwesomeKit.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
+		};
+		B67FA57122D6885B0042D45F /* Carthage Outdated? */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Carthage Outdated?";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage outdated --xcode-warnings\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -701,6 +743,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
@@ -726,6 +772,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
