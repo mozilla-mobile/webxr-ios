@@ -34,6 +34,8 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     }
 
     deinit {
+        renderView?.delegate = nil
+        renderView = nil
         DDLogDebug("ARKSceneKitController dealloc")
     }
 
@@ -263,7 +265,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
         DispatchQueue.main.async(execute: {
-            if (anchor is ARPlaneAnchor) {
+            if anchor is ARPlaneAnchor {
                 let plane = self.planes[anchor.identifier]
                 plane?.update(anchor as? ARPlaneAnchor)
             }
@@ -272,7 +274,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
     func renderer(_ renderer: SCNSceneRenderer, didRemove node: SCNNode, for anchor: ARAnchor) {
         DispatchQueue.main.async(execute: {
-            if (node is AnchorNode) {
+            if node is AnchorNode {
                 self.anchorsNodes.removeAll(where: { element in element == node })
             } else {
                 self.planes.removeValue(forKey: anchor.identifier)
