@@ -13,7 +13,6 @@ target 'XRViewer' do
     pod 'PopupDialog', :git => 'https://github.com/robomex/PopupDialog.git', :branch => 'wide-alerts'
     # Temporarily pointing to Swift 4 & Xcode 10.2 compatible fork of https://github.com/mozilla-mobile/telemetry-ios
     pod 'MozillaTelemetry', :git => 'https://github.com/robomex/telemetry-ios.git', :branch => 'swift4'
-    pod "GCDWebServer", "~> 3.0"
 end
 
 

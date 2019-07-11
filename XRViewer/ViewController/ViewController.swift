@@ -1,7 +1,7 @@
 import UIKit
 import CoreLocation
 import CocoaLumberjack
-import GCDWebServer
+import GCDWebServers
 
 /**
  The main view controller of the app. It's the holder of the other controllers.
@@ -90,7 +90,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        var options: [AnyHashable : Any] = [:]
+        var options: [String : Any] = [:]
         options[GCDWebServerOption_Port] = 8080
         //[options setObject:@NO forKey:GCDWebServerOption_AutomaticallySuspendInBackground];
 
