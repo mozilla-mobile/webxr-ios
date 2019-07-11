@@ -1,4 +1,3 @@
-import FontAwesomeKit
 import UIKit
 import CocoaLumberjack
 
@@ -90,15 +89,8 @@ class BarView: UIView, UITextFieldDelegate {
         debugBtn.setImage(UIImage(named: "debugOff"), for: .normal)
         debugBtn.setImage(UIImage(named: "debugOn"), for: .selected)
 
-        var error: Error?
-        let streetViewIcon = try? FAKFontAwesome.init(identifier: "fa-street-view", size: 24)
-        if error != nil {
-            print("\(error?.localizedDescription ?? "")")
-        } else {
-            let streetViewImage: UIImage? = streetViewIcon?.image(with: CGSize(width: 24, height: 24))
-            restartTrackingBtn.setImage(streetViewImage, for: .normal)
-            restartTrackingBtn.tintColor = UIColor.gray
-        }
+        restartTrackingBtn.setImage(UIImage(named: "streetview"), for: .normal)
+        restartTrackingBtn.tintColor = UIColor.gray
     }
 
     // MARK: - Helpers
