@@ -8,7 +8,7 @@
 
 import Foundation
 #if USE_ANALYTICS
-import MozillaTelemetry
+import Telemetry
 #endif
 
 /**

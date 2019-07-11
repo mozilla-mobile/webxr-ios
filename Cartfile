@@ -1,1 +1,2 @@
 github "swisspol/GCDWebServer" ~> 3.3
+github "mozilla-mobile/telemetry-ios" ~> 1.1
