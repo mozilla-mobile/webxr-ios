@@ -1,4 +1,3 @@
-import pop
 import UIKit
 import CocoaLumberjack
 
@@ -37,52 +36,7 @@ class Animator: NSObject, CAAnimationDelegate {
     
     @objc func clean() {
         animationCompletions.removeAll()
-        UIApplication.shared.keyWindow?.pop_removeAllAnimations()
-        UIApplication.shared.keyWindow?.layer.pop_removeAllAnimations()
         UIApplication.shared.keyWindow?.layer.removeAllAnimations()
-    }
-    
-    func startPulseAnimation(_ view: UIView?) {
-        let anim = POPSpringAnimation(propertyNamed: kPOPViewScaleXY)
-        anim?.toValue = CGPoint(x: 1.1, y: 1.1)
-        anim?.fromValue = CGPoint(x: 0.9, y: 0.9)
-        anim?.repeatForever = true
-        anim?.autoreverses = true
-
-        view?.pop_add(anim, forKey: ANIMATION_PULSE_KEY)
-    }
-
-    func stopPulseAnimation(_ view: UIView?) {
-        view?.pop_removeAnimation(forKey: ANIMATION_PULSE_KEY)
-    }
-
-    func animate(_ view: UIView?, toFrame frame: CGRect) {
-        animate(view, toFrame: frame) { (bool) in
-        }
-    }
-
-    func animate(_ view: UIView?, toFrame frame: CGRect, completion: @escaping Completion) {
-        guard var viewFrame = view?.frame else { return }
-        if frame.equalTo(viewFrame) {
-            //if completion
-
-            DispatchQueue.main.async(execute: {
-                completion(false)
-            })
-            return
-        }
-
-        let anim = POPSpringAnimation(propertyNamed: kPOPViewFrame)
-        anim?.toValue = frame
-        anim?.fromValue = viewFrame
-        anim?.completionBlock = { anim, finished in
-            viewFrame = frame
-            //if completion
-
-            completion(finished)
-        }
-
-        view?.pop_add(anim, forKey: ANIMATION_FRAME_KEY)
     }
 
     @objc func animate(_ view: UIView?, toFade fade: Bool) {
@@ -129,20 +83,5 @@ class Animator: NSObject, CAAnimationDelegate {
         animationCompletions.append(ad)
 
         view?.layer.add(transition, forKey: key)
-    }
-
-    func animate(_ view: UIView?, to color: UIColor?) {
-        if view?.backgroundColor == color {
-            return
-        }
-
-        let anim = POPSpringAnimation(propertyNamed: kPOPViewBackgroundColor)
-        anim?.toValue = color
-        anim?.fromValue = view?.backgroundColor
-        anim?.completionBlock = { anim, finished in
-            view?.backgroundColor = color
-        }
-
-        view?.pop_add(anim, forKey: ANIMATION_COLOR_KEY)
     }
 }

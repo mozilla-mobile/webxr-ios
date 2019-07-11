@@ -145,8 +145,6 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
             let backColor = webXR ? UIColor.clear : UIColor.white
             self.webView?.superview?.backgroundColor = backColor
-
-            self.animator?.animate(self.webView?.superview, to: backColor)
         })
     }
 
