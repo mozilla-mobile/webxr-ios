@@ -43,7 +43,7 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         }
         renderView?.delegate = nil
         renderView = nil
-        DDLogDebug("ARKMetalController dealloc")
+        appDelegate().logger.debug("ARKMetalController dealloc")
     }
     
     required init(sesion session: ARSession, size: CGSize) {
@@ -117,11 +117,11 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         renderView?.delegate = self
         
         guard let renderView = renderView else {
-            DDLogError("Error accessing the renderView")
+            appDelegate().logger.error("Error accessing the renderView")
             return false
         }
         guard let device = renderView.device else {
-            DDLogError("Metal is not supported on this device")
+            appDelegate().logger.error("Metal is not supported on this device")
             return false
         }
 

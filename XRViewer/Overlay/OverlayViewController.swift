@@ -1,5 +1,5 @@
 import UIKit
-import CocoaLumberjack
+import XCGLogger
 
 class OverlayViewController: UIViewController {
     
@@ -15,7 +15,7 @@ class OverlayViewController: UIViewController {
     let BUILD_LABEL_BOTTOM_SPACE: CGFloat = 34
     
     deinit {
-        DDLogDebug("OverlayViewController dealloc")
+        appDelegate().logger.debug("OverlayViewController dealloc")
     }
     
     override func viewDidLoad() {

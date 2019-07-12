@@ -1,6 +1,6 @@
 import ARKit
 import SceneKit
-import CocoaLumberjack
+import XCGLogger
 
 enum AnchorFigure : Int {
     case anchorBox
@@ -22,7 +22,7 @@ class AnchorNode: SCNNode {
     @objc init(anchor: ARAnchor) {
         super.init()
 
-        DDLogDebug("+ anchor")
+        appDelegate().logger.debug("+ anchor")
         
         figure = .anchorBox //arc4random() % AnchorPyramid;
 
@@ -55,7 +55,7 @@ class AnchorNode: SCNNode {
     }
     
     deinit {
-        DDLogDebug("- anchor")
+        appDelegate().logger.debug("- anchor")
     }
 
     @objc func size() -> CGFloat {

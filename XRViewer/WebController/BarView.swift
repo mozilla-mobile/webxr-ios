@@ -1,5 +1,5 @@
 import UIKit
-import CocoaLumberjack
+import XCGLogger
 
 let URL_FIELD_HEIGHT = 29
 
@@ -149,36 +149,36 @@ class BarView: UIView, UITextFieldDelegate {
     // MARK: - Button Actions
     
     @IBAction func backAction(_ sender: Any) {
-        DDLogDebug("backAction")
+        appDelegate().logger.debug("backAction")
         urlField.resignFirstResponder()
         backActionBlock?(sender)
     }
 
     @IBAction func forwardAction(_ sender: Any) {
-        DDLogDebug("forwardAction")
+        appDelegate().logger.debug("forwardAction")
         urlField.resignFirstResponder()
         forwardActionBlock?(sender)
     }
 
     @IBAction func homeAction(_ sender: Any) {
-        DDLogDebug("homeAction")
+        appDelegate().logger.debug("homeAction")
         homeActionBlock?(sender)
     }
 
     @IBAction func reloadAction(_ sender: Any) {
-        DDLogDebug("reloadAction")
+        appDelegate().logger.debug("reloadAction")
         urlField.resignFirstResponder()
         reloadActionBlock?(sender)
     }
 
     @IBAction func cancelAction(_ sender: Any) {
-        DDLogDebug("cancelAction")
+        appDelegate().logger.debug("cancelAction")
         urlField.resignFirstResponder()
         cancelActionBlock?(sender)
     }
     
     @IBAction func showPermissionsAction(_ sender: Any) {
-        DDLogDebug("showPermissionsAction")
+        appDelegate().logger.debug("showPermissionsAction")
         urlField.resignFirstResponder()
         showPermissionsActionBlock?(sender)
     }

@@ -11,25 +11,25 @@ import Compression
      */
     func saveWorldMap() {
         if !trackingStateNormal() {
-            DDLogError("Can't save WorldMap to local storage until tracking is initialized")
+            appDelegate().logger.error("Can't save WorldMap to local storage until tracking is initialized")
             return
         }
         
         if !worldMappingAvailable() {
-            DDLogError("Can't save WorldMap to local storage until World Mapping has started")
+            appDelegate().logger.error("Can't save WorldMap to local storage until World Mapping has started")
             return
         }
         
         session?.getCurrentWorldMap(completionHandler: { worldMap, error in
             if let worldMap = worldMap {
-                DDLogError("saving WorldMap to local storage")
+                appDelegate().logger.error("saving WorldMap to local storage")
                 self._save(worldMap)
             } else {
                 // try to get rid of an old one if it exists.  Don't care if this fails.
                 if let worldSaveURL = self.worldSaveURL {
                     try? FileManager.default.trashItem(at: worldSaveURL, resultingItemURL: nil)
                 }
-                DDLogError("moving saved WorldMap to trash")
+                appDelegate().logger.error("moving saved WorldMap to trash")
             }
         })
     }
@@ -40,9 +40,9 @@ import Compression
             data = try? NSKeyedArchiver.archivedData(withRootObject: worldMap, requiringSecureCoding: true)
             do {
                 try data?.write(to: worldSaveURL, options: .atomic)
-                DDLogError("saved WorldMap to load storage at \(worldSaveURL)")
+                appDelegate().logger.error("saved WorldMap to load storage at \(worldSaveURL)")
             } catch {
-                DDLogError("Failed saving WorldMap to persistent storage")
+                appDelegate().logger.error("Failed saving WorldMap to persistent storage")
             }
         }
     }
@@ -52,13 +52,13 @@ import Compression
      */
     func saveWorldMapInBackground() {
         if !trackingStateNormal() {
-            DDLogError("can't save WorldMap as we transition to background, tracking isn't initialized")
+            appDelegate().logger.error("can't save WorldMap as we transition to background, tracking isn't initialized")
             return
         }
         
         session.getCurrentWorldMap(completionHandler: { worldMap, error in
             if worldMap != nil {
-                DDLogError("saving WorldMap as we transition to background")
+                appDelegate().logger.error("saving WorldMap as we transition to background")
                 self.backgroundWorldMap = worldMap
             }
         })
@@ -75,21 +75,21 @@ import Compression
             do {
                 data = try Data(contentsOf: worldSaveURL)
             } catch {
-                DDLogError("Error loading WorldMap")
+                appDelegate().logger.error("Error loading WorldMap")
                 return
             }
             if let data = data {
                 do {
                     guard let obj = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: data) else {
-                        DDLogError("Failed to unarchive the WorldMap")
+                        appDelegate().logger.error("Failed to unarchive the WorldMap")
                         return
                     }
                     _setWorldMap(obj)
                 } catch {
-                    DDLogError("Failed to create ARWorldMap from saved WorldMap loaded from persistent storage")
+                    appDelegate().logger.error("Failed to create ARWorldMap from saved WorldMap loaded from persistent storage")
                 }
             } else {
-                DDLogError("Failed to load saved WorldMap from persistent storage")
+                appDelegate().logger.error("Failed to load saved WorldMap from persistent storage")
                 return
             }
         }
@@ -197,7 +197,7 @@ import Compression
                     self.printWorldMapInfo(worldMap)
                     
                     completion(true, nil, mapData)
-                    DDLogError("saving WorldMap due to web request")
+                    appDelegate().logger.error("saving WorldMap due to web request")
                 }
             } else {
                 if let error = error {
@@ -283,9 +283,9 @@ import Compression
             // [self setupDeviceCamera];
             
             completion?(true, nil)
-            DDLogError("using Saved WorldMap to restart session")
+            appDelegate().logger.error("using Saved WorldMap to restart session")
         } else {
-            DDLogError("Cannot load World Map when using user-facing camera")
+            appDelegate().logger.error("Cannot load World Map when using user-facing camera")
             completion?(false, "Cannot load World Map when using user-facing camera")
             return
         }
@@ -350,16 +350,16 @@ import Compression
             if anchor is ARPlaneAnchor {
                 // ARKit system plane anchor; probably shouldn't happen!
                 anchorID = anchor.identifier.uuidString
-                DDLogWarn("saved WorldMap: contained PlaneAnchor")
+                appDelegate().logger.warning("saved WorldMap: contained PlaneAnchor")
             } else if anchor is ARImageAnchor {
                 // User generated ARImageAnchor; probably shouldn't happen!
                 let imageAnchor = anchor as? ARImageAnchor
                 anchorID = imageAnchor?.referenceImage.name ?? "No name stored for this imageAnchor's referenceImage"
-                DDLogWarn("saved WorldMap: contained trackable ImageAnchor")
+                appDelegate().logger.warning("saved WorldMap: contained trackable ImageAnchor")
             } else if anchor is ARFaceAnchor {
                 // System generated ARFaceAnchor; probably shouldn't happen!
                 anchorID = anchor.identifier.uuidString
-                DDLogWarn("saved WorldMap: contained trackable FaceAnchor")
+                appDelegate().logger.warning("saved WorldMap: contained trackable FaceAnchor")
             } else {
                 anchorID = anchor.name ?? "No name stored for this anchor"
             }

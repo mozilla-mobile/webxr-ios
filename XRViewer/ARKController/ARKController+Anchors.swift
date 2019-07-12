@@ -35,7 +35,7 @@
             addPlaneAnchorData(addedPlaneAnchor, toDictionary: anchorDictionary)
             anchorDictionary[WEB_AR_UUID_OPTION] = addedAnchor.identifier.uuidString
             anchorDictionary[WEB_AR_ANCHOR_TYPE] = "plane"
-            DDLogDebug("Add Plane Anchor - \(addedAnchor.identifier.uuidString)")
+            appDelegate().logger.debug("Add Plane Anchor - \(addedAnchor.identifier.uuidString)")
         } else if addedAnchor is ARImageAnchor {
             // User generated ARImageAnchor
             let addedImageAnchor = addedAnchor as? ARImageAnchor
@@ -54,7 +54,7 @@
             let name = userAnchorID != nil ? userAnchorID : addedAnchor.identifier.uuidString
             anchorDictionary[WEB_AR_UUID_OPTION] = name ?? ""
             anchorDictionary[WEB_AR_ANCHOR_TYPE] = "anchor"
-            DDLogDebug("Add User Anchor - \(String(describing: name))")
+            appDelegate().logger.debug("Add User Anchor - \(String(describing: name))")
         }
         
         return anchorDictionary
@@ -447,7 +447,7 @@
      */
     func addAnchor(_ userGeneratedAnchorID: String?, transformHash: [AnyHashable: Any]?) -> Bool {
         if userGeneratedAnchorID == nil || (arkitGeneratedAnchorIDUserAnchorIDMap.allValues as NSArray).contains(userGeneratedAnchorID ?? "") {
-            DDLogError("Duplicate or nil anchor name: \(userGeneratedAnchorID ?? "nil")")
+            appDelegate().logger.error("Duplicate or nil anchor name: \(userGeneratedAnchorID ?? "nil")")
             return false
         }
         

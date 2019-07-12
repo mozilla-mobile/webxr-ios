@@ -1,7 +1,7 @@
 import CoreLocation
 import Foundation
 import os
-import CocoaLumberjack
+import XCGLogger
 
 typealias DidUpdateLocation = (CLLocation?) -> Void
 typealias DidRequestAuth = (Bool) -> Void
@@ -29,12 +29,12 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     }
     
     deinit {
-        DDLogDebug("LocationManager dealloc")
+        appDelegate().logger.debug("LocationManager dealloc")
     }
 
     func startUpdateLocation() {
         if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
-            DDLogError("Location isn't allowed !")
+            appDelegate().logger.error("Location isn't allowed !")
             return
         }
 
@@ -43,7 +43,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 
     func stopUpdateLocation() {
         if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
-            DDLogError("Location isn't allowed !")
+            appDelegate().logger.error("Location isn't allowed !")
             return
         }
         manager.stopUpdatingLocation()
@@ -51,7 +51,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 
     func startUpdateHeading() {
         if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
-            DDLogError("Location isn't allowed !")
+            appDelegate().logger.error("Location isn't allowed !")
             return
         }
         
@@ -60,7 +60,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     
     func stopUpdateHeading() {
         if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
-            DDLogError("Location isn't allowed !")
+            appDelegate().logger.error("Location isn't allowed !")
             return
         }
         manager.stopUpdatingHeading()
@@ -164,11 +164,11 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        DDLogError("Location error - \(error)")
+        appDelegate().logger.error("Location error - \(error)")
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        DDLogDebug("locationManager didChangeAuthorizationStatus - \(status)")
+        appDelegate().logger.debug("locationManager didChangeAuthorizationStatus - \(status)")
 
         //if authBlock
 

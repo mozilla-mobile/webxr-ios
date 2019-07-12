@@ -1,6 +1,6 @@
 import Foundation
 import WebKit
-import CocoaLumberjack
+import XCGLogger
 
 typealias ResultBlock = ([AnyHashable : Any]?) -> Void
 typealias ResultArrayBlock = ([Any]?) -> Void
@@ -72,7 +72,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
     
     deinit {
-        DDLogDebug("WebController dealloc")
+        appDelegate().logger.debug("WebController dealloc")
     }
 
     @objc func viewWillTransition(to size: CGSize) {
@@ -290,7 +290,6 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     // MARK: WKScriptMessageHandler
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        //DDLogDebug(@"Received message: %@ , body: %@", [message name], [message body]);
 
         weak var blockSelf: WebController? = self
         guard let messageBody = message.body as? [String: Any] else { return }
@@ -303,19 +302,19 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                 WEB_IOS_SCREEN_SIZE_OPTION: NSCoder.string(for: UIScreen.main.nativeBounds.size)
             ] as [String : Any]
 
-            DDLogDebug("Init AR send - \(params.debugDescription)")
+            appDelegate().logger.debug("Init AR send - \(params.debugDescription)")
             guard let name = messageBody[WEB_AR_CALLBACK_OPTION] as? String else { return }
             callWebMethod(name, paramJSON: params, webCompletion: { param, error in
 
                 if error == nil {
-                    DDLogDebug("Init AR Success")
+                    appDelegate().logger.debug("Init AR Success")
                     guard let arRequestOption = messageBody[WEB_AR_REQUEST_OPTION] as? [String: Any] else { return }
                     guard let arUIOption = arRequestOption[WEB_AR_UI_OPTION] as? [String: Any] else { return }
                     let geometryArrays = arRequestOption[WEB_AR_GEOMETRY_ARRAYS] as? Bool ?? false
                     blockSelf?.onGeometryArraysSet?(geometryArrays)
                     blockSelf?.onInitAR?(arUIOption)
                 } else {
-                    DDLogDebug("Init AR Error")
+                    appDelegate().logger.debug("Init AR Error")
                     blockSelf?.onError?(error)
                 }
             })
@@ -354,7 +353,6 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             let y = CGFloat(messageBody[WEB_AR_Y_POSITION_OPTION] as? CGFloat ?? 0.0)
 
             onHitTest?(type, x, y, { results in
-                //DDLogDebug(@"Hit test - %@", [results debugDescription]);
                 blockSelf?.callWebMethod(hitCallback, paramJSON: results, webCompletion: debugCompletion(name: "onHitTest"))
             })
         } else if message.name == WEB_AR_ADD_ANCHOR_MESSAGE {
@@ -476,7 +474,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                 blockSelf?.callWebMethod(setWorldMapCallback, paramJSON: responseDictionary, webCompletion: nil)
             })
         } else {
-            DDLogError("Unknown message: \(message.body) ,for name: \(message.name)")
+            appDelegate().logger.error("Unknown message: \(message.body) ,for name: \(message.name)")
         }
 
     }
@@ -510,7 +508,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         if let navigation = navigation {
-            DDLogDebug("didStartProvisionalNavigation - \(navigation.debugDescription)\n on thread \(Thread.current.description)")
+            appDelegate().logger.debug("didStartProvisionalNavigation - \(navigation.debugDescription)\n on thread \(Thread.current.description)")
         }
 
         self.webView?.addObserver(self as NSObject, forKeyPath: "estimatedProgress", options: .new, context: nil)
@@ -524,7 +522,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        DDLogDebug("didFinishNavigation - \(navigation.debugDescription)")
+        appDelegate().logger.debug("didFinishNavigation - \(navigation.debugDescription)")
         //    NSString* loadedURL = [[[self webView] URL] absoluteString];
         //    [self setLastURL:loadedURL];
         //
@@ -538,7 +536,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        DDLogError("Web Error - \(error)")
+        appDelegate().logger.error("Web Error - \(error)")
 
         if self.webView?.observationInfo != nil {
             self.webView?.removeObserver(self, forKeyPath: "estimatedProgress")
@@ -556,7 +554,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        DDLogError("Web Error - \(error)")
+        appDelegate().logger.error("Web Error - \(error)")
 
         if self.webView?.observationInfo != nil {
             self.webView?.removeObserver(self as NSObject, forKeyPath: "estimatedProgress")
@@ -856,9 +854,9 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 @inline(__always) private func debugCompletion(name: String) -> WebCompletion {
     return { param, error in
         if error == nil {
-            DDLogDebug("\(name) : success")
+            appDelegate().logger.debug("\(name) : success")
         } else {
-            DDLogDebug("\(name) : error")
+            appDelegate().logger.debug("\(name) : error")
         }
     }
 }

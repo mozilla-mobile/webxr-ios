@@ -6,9 +6,6 @@ target 'XRViewer' do
     use_frameworks!
 
   # Pods for XRViewer
-  # https://github.com/CocoaLumberjack/CocoaLumberjack/issues/882
-    pod 'CocoaLumberjack'
-    pod 'CocoaLumberjack/Swift'
     # Point to fork of https://github.com/Orderella/PopupDialog that allows for wide alerts
     pod 'PopupDialog', :git => 'https://github.com/robomex/PopupDialog.git', :branch => 'wide-alerts'
 end

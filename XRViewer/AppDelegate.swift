@@ -1,15 +1,25 @@
 import UIKit
-import CocoaLumberjack
+import XCGLogger
 import CoreMotion
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    let logger = XCGLogger.default
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         registerDefaultsFromSettingsBundle()
 
-        DDLog.add(DDTTYLogger.sharedInstance) // TTY = Xcode console
+        logger.setup(level: .debug,
+                  showLogIdentifier: false,
+                  showFunctionName: true,
+                  showThreadName: false,
+                  showLevel: true,
+                  showFileNames: true,
+                  showLineNumbers: true,
+                  showDate: true,
+                  writeToFile: nil,
+                  fileLevel: nil)
 
         UIApplication.shared.isIdleTimerDisabled = true
 
@@ -67,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             var urlString = String(absoluteString.suffix(from: index))
             urlString = "https://\(urlString)"
 
-            DDLogDebug("WebXR-iOS viewer opened with URL: \(urlString)")
+            logger.debug("WebXR-iOS viewer opened with URL: \(urlString)")
             UserDefaults.standard.set(urlString, forKey: REQUESTED_URL_KEY)
 
             return true

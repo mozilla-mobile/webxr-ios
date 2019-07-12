@@ -16,7 +16,7 @@
 
 - (void)dealloc
 {
-    DDLogDebug(@"ARKController dealloc");
+    NSLog(@"ARKController dealloc");
 }
 
 - (instancetype)initWithType:(ARKType)type rootView:(UIView *)rootView
@@ -100,7 +100,7 @@
         {
             // Failed to create directory
             self.worldSaveURL = nil;
-            DDLogError(@"Couldn't create map save directory error - %@", theError);
+            NSLog(@"Couldn't create map save directory error - %@", theError);
         } else {
             self.worldSaveURL = [newDir URLByAppendingPathComponent:@"webxrviewer"];
         }

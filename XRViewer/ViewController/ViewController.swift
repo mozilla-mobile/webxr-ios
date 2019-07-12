@@ -1,6 +1,6 @@
 import UIKit
 import CoreLocation
-import CocoaLumberjack
+import XCGLogger
 import GCDWebServers
 
 /**
@@ -158,9 +158,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-
-        DDLogError("didReceiveMemoryWarning")
-
+        appDelegate().logger.error("didReceiveMemoryWarning")
         processMemoryWarning()
     }
 
@@ -535,7 +533,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         let ReachBlock: (() -> Void)? = {
             let netStatus = blockSelf?.reachability?.connection
                 let isReachable: Bool = netStatus != .none
-                DDLogDebug("Connection isReachable - \(isReachable)")
+                appDelegate().logger.debug("Connection isReachable - \(isReachable)")
 
                 if isReachable {
                     blockSelf?.stateController.applyOnReachableAction()

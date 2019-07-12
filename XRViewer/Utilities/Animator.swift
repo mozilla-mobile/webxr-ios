@@ -1,5 +1,5 @@
 import UIKit
-import CocoaLumberjack
+import XCGLogger
 
 typealias Completion = (Bool) -> Void
 
@@ -31,7 +31,7 @@ class Animator: NSObject, CAAnimationDelegate {
     }
     
     deinit {
-        DDLogDebug("Animator dealloc")
+        appDelegate().logger.debug("Animator dealloc")
     }
     
     @objc func clean() {

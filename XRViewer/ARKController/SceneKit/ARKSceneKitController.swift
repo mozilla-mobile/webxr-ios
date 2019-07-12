@@ -1,6 +1,6 @@
 import ARKit
 import SceneKit
-import CocoaLumberjack
+import XCGLogger
 
 class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate {
     
@@ -36,7 +36,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     deinit {
         renderView?.delegate = nil
         renderView = nil
-        DDLogDebug("ARKSceneKitController dealloc")
+        appDelegate().logger.debug("ARKSceneKitController dealloc")
     }
 
     required init(sesion session: ARSession, size: CGSize) {
@@ -200,7 +200,6 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         }
 
         if focusDistance > 0 {
-            //DDLogDebug(@"Camera focus - %.1f", focusDistance);
             camera?.focusDistance = focusDistance
         }
     }

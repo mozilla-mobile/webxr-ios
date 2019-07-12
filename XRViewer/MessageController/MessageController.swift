@@ -1,6 +1,6 @@
 import UIKit
 import PopupDialog
-import CocoaLumberjack
+import XCGLogger
 
 enum ResetTrackingOption {
     case resetTracking
@@ -30,7 +30,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     deinit {
-        DDLogDebug("MessageController dealloc")
+        appDelegate().logger.debug("MessageController dealloc")
     }
     
     @objc func clean() {

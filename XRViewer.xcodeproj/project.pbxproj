@@ -60,6 +60,8 @@
 		B67D97A721C9843B0075FE0A /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67D97A621C9843B0075FE0A /* Animator.swift */; };
 		B67FA57522D7D9CC0042D45F /* GCDWebServers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B67FA57422D7D9CC0042D45F /* GCDWebServers.framework */; };
 		B67FA57722D7F25F0042D45F /* Telemetry.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B67FA57622D7F25F0042D45F /* Telemetry.framework */; };
+		B67FA57922D920EF0042D45F /* ObjcExceptionBridging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B67FA57822D920EF0042D45F /* ObjcExceptionBridging.framework */; };
+		B67FA57B22D939A50042D45F /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B67FA57A22D939A40042D45F /* XCGLogger.framework */; };
 		B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */; };
 		B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */; };
 		B698074021DA7A8900322782 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B698073F21DA7A8900322782 /* AppState.swift */; };
@@ -138,6 +140,8 @@
 		B67D97A621C9843B0075FE0A /* Animator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
 		B67FA57422D7D9CC0042D45F /* GCDWebServers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GCDWebServers.framework; path = Carthage/Build/iOS/GCDWebServers.framework; sourceTree = "<group>"; };
 		B67FA57622D7F25F0042D45F /* Telemetry.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Telemetry.framework; path = Carthage/Build/iOS/Telemetry.framework; sourceTree = "<group>"; };
+		B67FA57822D920EF0042D45F /* ObjcExceptionBridging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjcExceptionBridging.framework; path = Carthage/Build/iOS/ObjcExceptionBridging.framework; sourceTree = "<group>"; };
+		B67FA57A22D939A40042D45F /* XCGLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCGLogger.framework; path = Carthage/Build/iOS/XCGLogger.framework; sourceTree = "<group>"; };
 		B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HitTestResult.swift; sourceTree = "<group>"; };
 		B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKControllerProtocol.swift; sourceTree = "<group>"; };
 		B698073F21DA7A8900322782 /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -161,8 +165,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B67FA57B22D939A50042D45F /* XCGLogger.framework in Frameworks */,
 				591A8C502FA83D70E8F5B5B4 /* Pods_XRViewer.framework in Frameworks */,
 				B67FA57522D7D9CC0042D45F /* GCDWebServers.framework in Frameworks */,
+				B67FA57922D920EF0042D45F /* ObjcExceptionBridging.framework in Frameworks */,
 				B67FA57722D7F25F0042D45F /* Telemetry.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -363,8 +369,10 @@
 			isa = PBXGroup;
 			children = (
 				B67FA57422D7D9CC0042D45F /* GCDWebServers.framework */,
+				B67FA57822D920EF0042D45F /* ObjcExceptionBridging.framework */,
 				62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */,
 				B67FA57622D7F25F0042D45F /* Telemetry.framework */,
+				B67FA57A22D939A40042D45F /* XCGLogger.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -490,13 +498,11 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
 				"${BUILT_PRODUCTS_DIR}/DynamicBlurView/DynamicBlurView.framework",
 				"${BUILT_PRODUCTS_DIR}/PopupDialog/PopupDialog.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DynamicBlurView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PopupDialog.framework",
 			);
@@ -515,6 +521,8 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/GCDWebServers.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/Telemetry.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/ObjcExceptionBridging.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/XCGLogger.framework",
 			);
 			name = Carthage;
 			outputFileListPaths = (
@@ -522,6 +530,8 @@
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/GCDWebServers.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Telemetry.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/ObjcExceptionBridging.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/XCGLogger.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
