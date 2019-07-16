@@ -1,5 +1,4 @@
 import UIKit
-import PopupDialog
 import XCGLogger
 
 enum ResetTrackingOption {
@@ -15,7 +14,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     @objc var didHideMessage: (() -> Void)?
     @objc var didHideMessageByUser: (() -> Void)?
     private weak var viewController: UIViewController?
-    private weak var arPopup: PopupDialog?
+    private weak var arPopup: UIAlertController?
     var requestXRPermissionsVC: RequestXRPermissionsViewController?
     private var webXRAuthorizationRequested: WebXRAuthorizationState = .notDetermined
     private var site: String?
@@ -26,7 +25,6 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         super.init()
         
         viewController = vc
-        setupAppearance()
     }
     
     deinit {
@@ -54,48 +52,30 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
 
     @objc func showMessageAboutWebError(_ error: Error?, withCompletion reloadCompletion: @escaping (_ reload: Bool) -> Void) {
         weak var blockSelf: MessageController? = self
-        let popup = PopupDialog(
-            title: "Cannot Open the Page",
-            message: "Please check the URL and try again",
-            image: nil,
-            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
-            transitionStyle: .bounceUp,
-            preferredWidth: 340.0,
-            tapGestureDismissal: false,
-            panGestureDismissal: false,
-            hideStatusBar: true
-        )
+        let popup = UIAlertController(title: "Cannot Open the Page",
+                                      message: "Please check the URL and try again",
+                                      preferredStyle: .alert)
 
-        let cancel = CancelButton(title: "Ok", height: 40, dismissOnTap: true, action: {
-                reloadCompletion(false)
-
-                blockSelf?.didHideMessageByUser?()
-            })
-
-        let ok = DefaultButton(title: "Reload", height: 40, dismissOnTap: true, action: {
-                reloadCompletion(true)
-
-                blockSelf?.didHideMessageByUser?()
-            })
-
-        popup.addButtons([cancel, ok])
+        let cancel = UIAlertAction(title: "Ok", style: .cancel) { action in
+            reloadCompletion(false)
+            blockSelf?.didHideMessageByUser?()
+        }
+        popup.addAction(cancel)
+        
+        let ok = UIAlertAction(title: "Reload", style: .default) { action in
+            reloadCompletion(true)
+            blockSelf?.didHideMessageByUser?()
+        }
+        popup.addAction(ok)
         viewController?.present(popup, animated: true)
         didShowMessage?()
     }
 
     @objc func showMessageAboutARInterruption(_ interrupt: Bool) {
         if interrupt && arPopup == nil {
-            let popup = PopupDialog(
-                title: "AR Interruption Occurred",
-                message: "Please wait, it should be fixed automatically",
-                image: nil,
-                buttonAlignment: NSLayoutConstraint.Axis.horizontal,
-                transitionStyle: .bounceUp,
-                preferredWidth: 340.0,
-                tapGestureDismissal: false,
-                panGestureDismissal: false,
-                hideStatusBar: true
-            )
+            let popup = UIAlertController(title: "AR Interruption Occurred",
+                                          message: "Please wait, it should be fixed automatically",
+                                          preferredStyle: .alert)
 
             arPopup = popup
             viewController?.present(popup, animated: true)
@@ -109,158 +89,92 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
 
     @objc func showMessageAboutFailSession(withMessage message: String?, completion: @escaping () -> Void) {
         weak var blockSelf: MessageController? = self
-        let popup = PopupDialog(
-            title: "AR Session Failed",
-            message: message,
-            image: nil,
-            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
-            transitionStyle: .bounceUp,
-            preferredWidth: 340.0,
-            tapGestureDismissal: false,
-            panGestureDismissal: false,
-            hideStatusBar: true
-        )
+        let popup = UIAlertController(title: "AR Session Failed",
+                                      message: message,
+                                      preferredStyle: .alert)
 
-        let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
-                popup.dismiss(animated: true)
-                blockSelf?.didHideMessageByUser?()
-                completion()
-            })
-
-        popup.addButtons([ok])
+        let ok = UIAlertAction(title: "Ok", style: .default) { action in
+            popup.dismiss(animated: true, completion: nil)
+            blockSelf?.didHideMessageByUser?()
+            completion()
+        }
+        popup.addAction(ok)
         viewController?.present(popup, animated: true)
         didShowMessage?()
     }
 
     @objc func showMessage(withTitle title: String?, message: String?, hideAfter seconds: Int) {
-        let popup = PopupDialog(
-            title: title,
-            message: message,
-            image: nil,
-            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
-            transitionStyle: .zoomIn,
-            preferredWidth: 340.0,
-            tapGestureDismissal: false,
-            panGestureDismissal: false,
-            hideStatusBar: true
-        )
-
+        let popup = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
         viewController?.present(popup, animated: true)
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(seconds * Int(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(seconds), execute: {
             popup.dismiss(animated: true)
         })
     }
 
     @objc func showMessageAboutMemoryWarning(withCompletion completion: @escaping () -> Void) {
         weak var blockSelf: MessageController? = self
-        let popup = PopupDialog(
-            title: "Memory Issue Occurred",
-            message: "There was not enough memory for the application to keep working",
-            image: nil,
-            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
-            transitionStyle: .bounceUp,
-            preferredWidth: 340.0,
-            tapGestureDismissal: false,
-            panGestureDismissal: false,
-            hideStatusBar: true
-        )
+        let popup = UIAlertController(title: "Memory Issue Occurred",
+                                      message: "There was not enough memory for the application to keep working",
+                                      preferredStyle: .alert)
 
-        let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
-                popup.dismiss(animated: true)
-                completion()
-                blockSelf?.didHideMessageByUser?()
-            })
+        let ok = UIAlertAction(title: "Ok", style: .default) { action in
+            popup.dismiss(animated: true, completion: nil)
+            completion()
+            blockSelf?.didHideMessageByUser?()
+        }
 
-        popup.addButtons([ok])
+        popup.addAction(ok)
         viewController?.present(popup, animated: true)
         didShowMessage?()
     }
 
     @objc func showMessageAboutConnectionRequired() {
         weak var blockSelf: MessageController? = self
-        let popup = PopupDialog(
-            title: "Internet Connection is Unavailable",
-            message: "Application will restart automatically when a connection becomes available",
-            image: nil,
-            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
-            transitionStyle: .bounceUp,
-            preferredWidth: 340.0,
-            tapGestureDismissal: false,
-            panGestureDismissal: false,
-            hideStatusBar: true
-        )
+        let popup = UIAlertController(title: "Internet Connection is Unavailable",
+                                      message: "Application will restart automatically when a connection becomes available",
+                                      preferredStyle: .alert)
 
-        let ok = DefaultButton(title: "Ok", height: 40, dismissOnTap: true, action: {
-                popup.dismiss(animated: true)
+        let ok = UIAlertAction(title: "Ok", style: .default) { action in
+            popup.dismiss(animated: true, completion: nil)
+            blockSelf?.didHideMessageByUser?()
+        }
 
-                blockSelf?.didHideMessageByUser?()
-            })
-
-        popup.addButtons([ok])
+        popup.addAction(ok)
         viewController?.present(popup, animated: true)
         didShowMessage?()
     }
 
     func showMessageAboutResetTracking(_ responseBlock: @escaping (ResetTrackingOption) -> Void) {
-        let popup = PopupDialog(
-            title: "Reset Tracking",
-            message: "Please select one of the options below",
-            image: nil,
-            buttonAlignment: NSLayoutConstraint.Axis.vertical,
-            transitionStyle: .bounceUp,
-            preferredWidth: 340.0,
-            tapGestureDismissal: false,
-            panGestureDismissal: false,
-            hideStatusBar: true
-        )
+        let popup = UIAlertController(title: "Reset Tracking",
+                                      message: "Please select one of the options below",
+                                      preferredStyle: .actionSheet)
+        
+        let resetTracking = UIAlertAction(title: "Completely restart tracking", style: .default) { action in
+            responseBlock(.resetTracking)
+        }
+        popup.addAction(resetTracking)
+        
+        let removeExistingAnchors = UIAlertAction(title: "Remove known anchors", style: .default) { action in
+            responseBlock(.removeExistingAnchors)
+        }
+        popup.addAction(removeExistingAnchors)
+        
+        let saveWorldMap = UIAlertAction(title: "Save World Map", style: .default) { action in
+            responseBlock(.saveWorldMap)
+        }
+        popup.addAction(saveWorldMap)
+        
+        let loadWorldMap = UIAlertAction(title: "Load previously saved World Map", style: .default) { action in
+            responseBlock(.loadSavedWorldMap)
+        }
+        popup.addAction(loadWorldMap)
 
-        let resetTracking = DefaultButton(title: "Completely restart tracking", height: 40, dismissOnTap: true, action: {
-                responseBlock(.resetTracking)
-            })
+        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        popup.addAction(cancelButton)
 
-        let removeExistingAnchors = DefaultButton(title: "Remove known anchors", height: 40, dismissOnTap: true, action: {
-                responseBlock(.removeExistingAnchors)
-            })
-
-        let saveWorldMap = DefaultButton(title: "Save World Map", height: 40, dismissOnTap: true, action: {
-                responseBlock(.saveWorldMap)
-            })
-
-        let loadWorldMap = DefaultButton(title: "Load previously saved World Map", height: 40, dismissOnTap: true, action: {
-                responseBlock(.loadSavedWorldMap)
-            })
-
-        let cancelButton = CancelButton(title: "Cancel", height: 40, dismissOnTap: true, action: {
-            })
-
-        popup.addButtons([resetTracking, removeExistingAnchors, saveWorldMap, loadWorldMap, cancelButton])
-
-        viewController?.present(popup, animated: true)
-    }
-
-    @objc func showMessageAboutAccessingTheCapturedImage(_ granted: @escaping (Bool) -> Void) {
-        let popup = PopupDialog(
-            title: "Video Camera Image Access",
-            message: "WebXR Viewer displays video from your camera without giving the web page access to the video.\n\nThis page is requesting access to images from the video camera. Allow?",
-            image: nil,
-            buttonAlignment: NSLayoutConstraint.Axis.horizontal,
-            transitionStyle: .bounceUp,
-            preferredWidth: 340.0,
-            tapGestureDismissal: false,
-            panGestureDismissal: false,
-            hideStatusBar: true
-        )
-
-        let ok = DefaultButton(title: "YES", height: 40, dismissOnTap: true, action: {
-                granted(true)
-            })
-
-        let cancel = CancelButton(title: "NO", height: 40, dismissOnTap: true, action: {
-                granted(false)
-            })
-
-        popup.addButtons([cancel, ok])
         viewController?.present(popup, animated: true)
     }
 
@@ -278,6 +192,8 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             panGestureDismissal: false,
             hideStatusBar: true
         )
+//            hideStatusBar: true
+//        )
 
         viewController?.present(dialog, animated: true)
     }
@@ -394,17 +310,15 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
                                           hideStatusBar: false,
                                           completion: nil)
         let negativeAction: CancelButton
+        
         if forceShowPermissionsPopup {
-            negativeAction = CancelButton(title: "Dismiss", action: nil)
         } else {
-            negativeAction = CancelButton(title: "Deny") {
                 authorizationGranted(.denied)
-            }
         }
-        alertController.addButton(negativeAction)
+//        alertController.addAction(negativeAction)
         forceShowPermissionsPopup = false
         
-        let confirmAction = DefaultButton(title: "Confirm") {
+        let confirmAction = UIAlertAction(title: "Confirm", style: .default, handler: { action in
             if let minimalCell = blockSelf?.requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SwitchInputTableViewCell {
                 standardUserDefaults.set(minimalCell.switchControl.isOn, forKey: Constant.minimalWebXREnabled())
             }
@@ -495,6 +409,8 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         permissionsPopup = alertController
         viewController?.present(alertController, animated: true)
+        permissionsPopup = requestXRPermissionsVC
+        viewController?.present(requestXRPermissionsVC, animated: true)
     }
     
     @objc func switchValueDidChange(sender: UISwitch) {
@@ -685,36 +601,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
     }
 
-    // MARK: private
-
-    func setupAppearance() {
-        let largeFont = UIFont.boldSystemFont(ofSize: 17)
-        let smallFont = UIFont.systemFont(ofSize: 14)
-        PopupDialogDefaultView.appearance().backgroundColor = UIColor.clear
-        PopupDialogDefaultView.appearance().titleFont = largeFont
-        PopupDialogDefaultView.appearance().titleColor = UIColor.black
-        PopupDialogDefaultView.appearance().messageFont = smallFont
-        PopupDialogDefaultView.appearance().messageColor = UIColor.black
-
-        PopupDialogContainerView.appearance().cornerRadius = 13
-        
-        PopupDialogOverlayView.appearance().color = UIColor(white: 0, alpha: 0.5)
-        PopupDialogOverlayView.appearance().blurRadius = 10
-        PopupDialogOverlayView.appearance().blurEnabled = true
-        PopupDialogOverlayView.appearance().liveBlurEnabled = false
-        PopupDialogOverlayView.appearance().opacity = 0.5
-
-        DefaultButton.appearance().titleFont = largeFont
-        DefaultButton.appearance().titleColor = UIColor.blue
-        DefaultButton.appearance().buttonColor = UIColor.clear
-        DefaultButton.appearance().separatorColor = UIColor(white: 0.8, alpha: 1)
-
-        CancelButton.appearance().titleColor = UIColor.gray
-        CancelButton.appearance().titleFont = largeFont
-        
-        DestructiveButton.appearance().titleColor = UIColor.red
-        DestructiveButton.appearance().titleFont = largeFont
-    }
+    // MARK: Private
     
     @objc func learnMoreLiteModeTapped() {
         let alert = UIAlertController(title: "What's Lite Mode?", message: """
