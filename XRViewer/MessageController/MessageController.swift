@@ -18,7 +18,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     var requestXRPermissionsVC: RequestXRPermissionsViewController?
     private var webXRAuthorizationRequested: WebXRAuthorizationState = .notDetermined
     private var site: String?
-    var permissionsPopup: PopupDialog?
+    var permissionsPopup: UIViewController?
     var forceShowPermissionsPopup = false
 
     @objc init(viewController vc: UIViewController?) {
@@ -257,7 +257,8 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         default:
             height = rowHeight * 1
         }
-        requestXRPermissionsVC = RequestXRPermissionsViewController()
+        let storyboard = UIStoryboard(name: "RequestXRPermissionsViewController", bundle: nil)
+        requestXRPermissionsVC = storyboard.instantiateViewController(withIdentifier: "requestXRAlert") as? RequestXRPermissionsViewController
         guard let requestXRPermissionsVC = requestXRPermissionsVC else { return }
         requestXRPermissionsVC.view.translatesAutoresizingMaskIntoConstraints = true
         requestXRPermissionsVC.tableView.heightAnchor.constraint(equalToConstant: height).isActive = true
@@ -301,24 +302,26 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
         requestXRPermissionsVC.titleLabel.text = title
         requestXRPermissionsVC.messageLabel.text = message
-        let alertController = PopupDialog(viewController: requestXRPermissionsVC,
-                                          buttonAlignment: .horizontal,
-                                          transitionStyle: .bounceUp,
-                                          preferredWidth: 300,
-                                          tapGestureDismissal: false,
-                                          panGestureDismissal: false,
-                                          hideStatusBar: false,
-                                          completion: nil)
-        let negativeAction: CancelButton
+        requestXRPermissionsVC.modalPresentationStyle = .overCurrentContext
+        requestXRPermissionsVC.modalTransitionStyle = .crossDissolve
         
         if forceShowPermissionsPopup {
+            requestXRPermissionsVC.cancelButton.setTitle("Dismiss", for: .normal)
+            requestXRPermissionsVC.cancelButton.addAction(for: .touchUpInside) {
+                blockSelf?.viewController?.dismiss(animated: true, completion: nil)
+            }
         } else {
+            requestXRPermissionsVC.cancelButton.setTitle("Deny", for: .normal)
+            requestXRPermissionsVC.cancelButton.addAction(for: .touchUpInside) {
                 authorizationGranted(.denied)
+                blockSelf?.viewController?.dismiss(animated: true, completion: nil)
+            }
         }
-//        alertController.addAction(negativeAction)
+
         forceShowPermissionsPopup = false
         
-        let confirmAction = UIAlertAction(title: "Confirm", style: .default, handler: { action in
+        requestXRPermissionsVC.confirmButton.setTitle("Confirm", for: .normal)
+        requestXRPermissionsVC.confirmButton.addAction(for: .touchUpInside) {
             if let minimalCell = blockSelf?.requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? SwitchInputTableViewCell {
                 standardUserDefaults.set(minimalCell.switchControl.isOn, forKey: Constant.minimalWebXREnabled())
             }
@@ -404,14 +407,13 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
             default:
                 authorizationGranted(.denied)
             }
+            blockSelf?.viewController?.dismiss(animated: true, completion: nil)
         }
-        alertController.addButton(confirmAction)
-        
-        permissionsPopup = alertController
-        viewController?.present(alertController, animated: true)
         permissionsPopup = requestXRPermissionsVC
         viewController?.present(requestXRPermissionsVC, animated: true)
     }
+    
+    // MARK: - Switch Methods
     
     @objc func switchValueDidChange(sender: UISwitch) {
         let liteCell = requestXRPermissionsVC?.tableView.cellForRow(at: IndexPath(row: 1, section: 0)) as? SwitchInputTableViewCell
