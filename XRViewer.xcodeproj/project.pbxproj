@@ -64,6 +64,7 @@
 		B67FA57B22D939A50042D45F /* XCGLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B67FA57A22D939A40042D45F /* XCGLogger.framework */; };
 		B68A7C4F21BB2FAB0033170C /* HitTestResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */; };
 		B68A7C5121BB34C40033170C /* ARKControllerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */; };
+		B694726B22DE7EE8000DBDF0 /* RequestXRPermissionsViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B694726A22DE7EE8000DBDF0 /* RequestXRPermissionsViewController.storyboard */; };
 		B698074021DA7A8900322782 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B698073F21DA7A8900322782 /* AppState.swift */; };
 		B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047521B7333500C9A4EC /* AnchorNode.swift */; };
 		B69C047B21B73E9800C9A4EC /* FocusNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047921B73E9800C9A4EC /* FocusNode.swift */; };
@@ -71,7 +72,6 @@
 		B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C047F21B836E300C9A4EC /* SCNNode+Show.swift */; };
 		B69C048221B838A300C9A4EC /* ARSCNView+HitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69C048121B838A300C9A4EC /* ARSCNView+HitTest.swift */; };
 		B6B7A6982266594B008E8978 /* RequestXRPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B7A6962266594B008E8978 /* RequestXRPermissionsViewController.swift */; };
-		B6B7A6992266594B008E8978 /* RequestXRPermissionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B6B7A6972266594B008E8978 /* RequestXRPermissionsViewController.xib */; };
 		B6EAD6DD21DAB48800DF5127 /* Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6EAD6DC21DAB48800DF5127 /* Prefix.swift */; };
 		B6F4C0BD221B5AEC009ECC06 /* ARKController+Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4C0BC221B5AEC009ECC06 /* ARKController+Frame.swift */; };
 		B6FAD7C0221F2F9100310114 /* ARKMetalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FAD7BF221F2F9100310114 /* ARKMetalController.swift */; };
@@ -144,6 +144,7 @@
 		B67FA57A22D939A40042D45F /* XCGLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCGLogger.framework; path = Carthage/Build/iOS/XCGLogger.framework; sourceTree = "<group>"; };
 		B68A7C4E21BB2FAB0033170C /* HitTestResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HitTestResult.swift; sourceTree = "<group>"; };
 		B68A7C5021BB34C40033170C /* ARKControllerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARKControllerProtocol.swift; sourceTree = "<group>"; };
+		B694726A22DE7EE8000DBDF0 /* RequestXRPermissionsViewController.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = RequestXRPermissionsViewController.storyboard; sourceTree = "<group>"; };
 		B698073F21DA7A8900322782 /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		B69C047521B7333500C9A4EC /* AnchorNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnchorNode.swift; sourceTree = "<group>"; };
 		B69C047921B73E9800C9A4EC /* FocusNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusNode.swift; sourceTree = "<group>"; };
@@ -151,7 +152,6 @@
 		B69C047F21B836E300C9A4EC /* SCNNode+Show.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SCNNode+Show.swift"; sourceTree = "<group>"; };
 		B69C048121B838A300C9A4EC /* ARSCNView+HitTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ARSCNView+HitTest.swift"; sourceTree = "<group>"; };
 		B6B7A6962266594B008E8978 /* RequestXRPermissionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestXRPermissionsViewController.swift; sourceTree = "<group>"; };
-		B6B7A6972266594B008E8978 /* RequestXRPermissionsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RequestXRPermissionsViewController.xib; sourceTree = "<group>"; };
 		B6EAD6DC21DAB48800DF5127 /* Prefix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Prefix.swift; sourceTree = "<group>"; };
 		B6F4C0BC221B5AEC009ECC06 /* ARKController+Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Frame.swift"; sourceTree = "<group>"; };
 		B6FAD7BF221F2F9100310114 /* ARKMetalController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARKMetalController.swift; sourceTree = "<group>"; };
@@ -342,7 +342,7 @@
 				6207254C206A90BF00887B1F /* RequestPermissionsViewController.swift */,
 				6207254D206A90BF00887B1F /* RequestPermissionsViewController.xib */,
 				B6B7A6962266594B008E8978 /* RequestXRPermissionsViewController.swift */,
-				B6B7A6972266594B008E8978 /* RequestXRPermissionsViewController.xib */,
+				B694726A22DE7EE8000DBDF0 /* RequestXRPermissionsViewController.storyboard */,
 			);
 			path = RequestPermissionsController;
 			sourceTree = "<group>";
@@ -450,12 +450,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B694726B22DE7EE8000DBDF0 /* RequestXRPermissionsViewController.storyboard in Resources */,
 				041503D71F28944F00887400 /* LaunchScreen.storyboard in Resources */,
 				6207254F206A90BF00887B1F /* RequestPermissionsViewController.xib in Resources */,
 				8E5089D8211B6DA90059015B /* webxr.js in Resources */,
 				0401E04B1F612C240075D823 /* BarView.xib in Resources */,
 				041503D21F28944F00887400 /* Main.storyboard in Resources */,
-				B6B7A6992266594B008E8978 /* RequestXRPermissionsViewController.xib in Resources */,
 				625FA2E7202046BF00F62698 /* TermsAndConditionsTableViewCell.xib in Resources */,
 				B6679354222894C600939804 /* SegmentedControlTableViewCell.xib in Resources */,
 				62242AC4201F2A0700506412 /* TextInputTableViewCell.xib in Resources */,

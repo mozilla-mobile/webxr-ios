@@ -15,10 +15,15 @@ class RequestXRPermissionsViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var stackViewWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var cancelButton: UIButton!
+    @IBOutlet weak var confirmButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.rowHeight = 44
+        cancelButton.layer.borderWidth = 0.5
+        cancelButton.layer.borderColor = UIColor.lightGray.cgColor
+        confirmButton.layer.borderWidth = 0.5
+        confirmButton.layer.borderColor = UIColor.lightGray.cgColor
     }
 }
