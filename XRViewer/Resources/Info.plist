@@ -41,7 +41,7 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>When a web page uses WebXR, video from the camera will be displayed in the background and used to track device motion in 3D. You will be asked for further permission before a web page may access the video or use the Truedepth camera for face tracking.</string>
+	<string>When a web page uses WebXR, video from the camera will be displayed in the background and used to track device motion in 3D. You will be asked for further permission before a web page may access the video or use the TrueDepth camera for face tracking.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location is used to enable the Web Geolocation API. You will be asked for permission before a web page can access your location.</string>
 	<key>NSSupportsSuddenTermination</key>

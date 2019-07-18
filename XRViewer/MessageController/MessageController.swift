@@ -179,23 +179,13 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
 
     @objc func showPermissionsPopup() {
-        let permissionsViewController = RequestPermissionsViewController()
+        let storyboard = UIStoryboard(name: "RequestPermissionsViewController", bundle: nil)
+        let permissionsViewController = storyboard.instantiateViewController(withIdentifier: "requestAlert")
         permissionsViewController.view.translatesAutoresizingMaskIntoConstraints = true
-        permissionsViewController.view.heightAnchor.constraint(equalToConstant: 300.0).isActive = true
+        permissionsViewController.modalPresentationStyle = .overCurrentContext
+        permissionsViewController.modalTransitionStyle = .crossDissolve
 
-        let dialog = PopupDialog(
-            viewController: permissionsViewController,
-            buttonAlignment: NSLayoutConstraint.Axis.vertical,
-            transitionStyle: .bounceUp,
-            preferredWidth: 340,
-            tapGestureDismissal: false,
-            panGestureDismissal: false,
-            hideStatusBar: true
-        )
-//            hideStatusBar: true
-//        )
-
-        viewController?.present(dialog, animated: true)
+        viewController?.present(permissionsViewController, animated: true)
     }
     
     @objc func showMessageAboutEnteringXR(_ authorizationRequested: WebXRAuthorizationState, authorizationGranted: @escaping (WebXRAuthorizationState) -> Void, url: URL) {

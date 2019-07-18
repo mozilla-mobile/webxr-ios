@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Request Permissions View Controller-->
+        <scene sceneID="hMq-w0-w5i">
+            <objects>
+                <viewController storyboardIdentifier="requestAlert" id="aOQ-Ei-41w" customClass="RequestPermissionsViewController" customModule="XRViewer" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Pzy-YR-zfM">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Lz-Qh-wiJ" userLabel="Notification View">
+                                <rect key="frame" x="50" y="305" width="314" height="296"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="32" translatesAutoresizingMaskIntoConstraints="NO" id="XtM-BF-kXg" userLabel="Notification Stack View">
+                                        <rect key="frame" x="20" y="20" width="274" height="256"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="dWp-dt-VtB" userLabel="Location Stack View">
+                                                <rect key="frame" x="0.0" y="0.0" width="274" height="112"/>
+                                                <subviews>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ODU-iq-J4r" userLabel="Location View">
+                                                        <rect key="frame" x="0.0" y="0.0" width="274" height="60"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="XRViewer needs GPS access for AR. You can adjust this in the iOS Settings app." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1jG-ft-89C" userLabel="Location Label">
+                                                                <rect key="frame" x="0.0" y="0.0" width="274" height="60"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="60" id="A4A-ay-PKA"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                        </subviews>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="trailing" secondItem="1jG-ft-89C" secondAttribute="trailing" id="8fP-Sm-5RS"/>
+                                                            <constraint firstItem="1jG-ft-89C" firstAttribute="leading" secondItem="ODU-iq-J4r" secondAttribute="leading" id="PyR-yL-2TJ"/>
+                                                            <constraint firstItem="1jG-ft-89C" firstAttribute="top" secondItem="ODU-iq-J4r" secondAttribute="top" id="XHJ-rj-fyZ"/>
+                                                            <constraint firstAttribute="bottom" secondItem="1jG-ft-89C" secondAttribute="bottom" id="vZh-Om-4hd"/>
+                                                        </constraints>
+                                                    </view>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="t6C-S9-Hd8">
+                                                        <rect key="frame" x="0.0" y="68" width="274" height="44"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="44" id="JUf-gz-EjU"/>
+                                                        </constraints>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="16" maxY="0.0"/>
+                                                        <state key="normal" title="GPS access"/>
+                                                        <connections>
+                                                            <action selector="buttonGPSAccessTapped" destination="aOQ-Ei-41w" eventType="touchUpInside" id="qOd-ib-U87"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="bottom" secondItem="t6C-S9-Hd8" secondAttribute="bottom" id="eRZ-jJ-aJi"/>
+                                                    <constraint firstItem="t6C-S9-Hd8" firstAttribute="top" secondItem="ODU-iq-J4r" secondAttribute="bottom" constant="8" id="evH-wf-DZ8"/>
+                                                    <constraint firstItem="ODU-iq-J4r" firstAttribute="leading" secondItem="dWp-dt-VtB" secondAttribute="leading" id="fJA-BI-RGM"/>
+                                                    <constraint firstAttribute="trailing" secondItem="ODU-iq-J4r" secondAttribute="trailing" id="hcI-14-QNc"/>
+                                                </constraints>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Ftw-LV-Gpg" userLabel="Camera Stack View">
+                                                <rect key="frame" x="0.0" y="144" width="274" height="112"/>
+                                                <subviews>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DTZ-s6-Mj3" userLabel="Camera View">
+                                                        <rect key="frame" x="0.0" y="0.0" width="274" height="60"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="XRViewer needs camera access for AR. You can adjust this in the iOS Settings app." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TX1-Yt-B7B" userLabel="Camera Label">
+                                                                <rect key="frame" x="0.0" y="0.0" width="274" height="60"/>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="60" id="JRN-NL-WmD"/>
+                                                                </constraints>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                        </subviews>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        <constraints>
+                                                            <constraint firstItem="TX1-Yt-B7B" firstAttribute="leading" secondItem="DTZ-s6-Mj3" secondAttribute="leading" id="AbY-Ei-ajC"/>
+                                                            <constraint firstAttribute="bottom" secondItem="TX1-Yt-B7B" secondAttribute="bottom" id="TEn-z6-3pd"/>
+                                                            <constraint firstAttribute="trailing" secondItem="TX1-Yt-B7B" secondAttribute="trailing" id="b0W-mk-xGE"/>
+                                                            <constraint firstItem="TX1-Yt-B7B" firstAttribute="top" secondItem="DTZ-s6-Mj3" secondAttribute="top" id="jtr-Hs-leE"/>
+                                                        </constraints>
+                                                    </view>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5fV-Pq-Qk7">
+                                                        <rect key="frame" x="0.0" y="68" width="274" height="44"/>
+                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="16" maxY="0.0"/>
+                                                        <state key="normal" title="Camera access"/>
+                                                        <connections>
+                                                            <action selector="buttonCameraAccessTapped" destination="aOQ-Ei-41w" eventType="touchUpInside" id="cwQ-VD-f93"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="5fV-Pq-Qk7" firstAttribute="top" secondItem="DTZ-s6-Mj3" secondAttribute="bottom" constant="8" id="nBW-3N-vjH"/>
+                                                </constraints>
+                                            </stackView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="5fV-Pq-Qk7" firstAttribute="height" secondItem="t6C-S9-Hd8" secondAttribute="height" id="Axu-SB-ASd"/>
+                                            <constraint firstItem="dWp-dt-VtB" firstAttribute="height" secondItem="Ftw-LV-Gpg" secondAttribute="height" id="WJg-jC-yWg"/>
+                                            <constraint firstItem="dWp-dt-VtB" firstAttribute="width" secondItem="Ftw-LV-Gpg" secondAttribute="width" id="l3X-Hh-d7W"/>
+                                        </constraints>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="XtM-BF-kXg" firstAttribute="centerX" secondItem="5Lz-Qh-wiJ" secondAttribute="centerX" id="C05-ah-aOl"/>
+                                    <constraint firstAttribute="bottom" secondItem="XtM-BF-kXg" secondAttribute="bottom" constant="20" id="CdW-QC-Kdd"/>
+                                    <constraint firstItem="XtM-BF-kXg" firstAttribute="centerY" secondItem="5Lz-Qh-wiJ" secondAttribute="centerY" id="KUl-AD-jMm"/>
+                                    <constraint firstAttribute="trailing" secondItem="XtM-BF-kXg" secondAttribute="trailing" constant="20" id="Sw7-4S-bun"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="400" id="Ufn-TE-t5X"/>
+                                    <constraint firstItem="XtM-BF-kXg" firstAttribute="top" secondItem="5Lz-Qh-wiJ" secondAttribute="top" constant="20" id="Xvl-Da-KQv"/>
+                                    <constraint firstItem="XtM-BF-kXg" firstAttribute="leading" secondItem="5Lz-Qh-wiJ" secondAttribute="leading" constant="20" id="sxA-nD-4vj"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="12"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.25" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="TnG-ze-6Jy" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="5Lz-Qh-wiJ" secondAttribute="trailing" constant="50" id="2if-Ko-GXV"/>
+                            <constraint firstItem="5Lz-Qh-wiJ" firstAttribute="centerY" secondItem="TnG-ze-6Jy" secondAttribute="centerY" id="E3P-bg-hXX"/>
+                            <constraint firstItem="5Lz-Qh-wiJ" firstAttribute="centerX" secondItem="TnG-ze-6Jy" secondAttribute="centerX" id="JgY-nI-Lmq"/>
+                            <constraint firstItem="5Lz-Qh-wiJ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="TnG-ze-6Jy" secondAttribute="leading" constant="50" id="Mgy-DB-Wbh"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="TnG-ze-6Jy"/>
+                    </view>
+                    <connections>
+                        <outlet property="buttonCamera" destination="5fV-Pq-Qk7" id="jgp-HT-H9T"/>
+                        <outlet property="buttonGPS" destination="t6C-S9-Hd8" id="rxi-DD-fAS"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FUG-Yk-sHo" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="122.40000000000001" y="105.66502463054188"/>
+        </scene>
+    </scenes>
+</document>
