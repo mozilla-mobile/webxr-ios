@@ -251,7 +251,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         requestXRPermissionsVC = storyboard.instantiateViewController(withIdentifier: "requestXRAlert") as? RequestXRPermissionsViewController
         guard let requestXRPermissionsVC = requestXRPermissionsVC else { return }
         requestXRPermissionsVC.view.translatesAutoresizingMaskIntoConstraints = true
-        requestXRPermissionsVC.tableView.heightAnchor.constraint(equalToConstant: height).isActive = true
+        requestXRPermissionsVC.tableViewHeightConstraint.constant = height
         requestXRPermissionsVC.tableView.isScrollEnabled = false
         requestXRPermissionsVC.tableView.delegate = self
         requestXRPermissionsVC.tableView.dataSource = self
