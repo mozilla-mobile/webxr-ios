@@ -13,7 +13,6 @@
 		04A815681F419EB60082D31D /* Models.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04A815671F419EB60082D31D /* Models.scnassets */; };
 		04A8156A1F419F840082D31D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 041503D31F28944F00887400 /* Assets.xcassets */; };
 		04A9837A1F32291D00120CF8 /* ARKController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A983651F32268900120CF8 /* ARKController.m */; };
-		591A8C502FA83D70E8F5B5B4 /* Pods_XRViewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */; };
 		6207254E206A90BF00887B1F /* RequestPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6207254C206A90BF00887B1F /* RequestPermissionsViewController.swift */; };
 		620D24A11FC48994002127FD /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 620D24A01FC48994002127FD /* Settings.bundle */; };
 		62242AC0201F037F00506412 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62242ABF201F037F00506412 /* SettingsViewController.swift */; };
@@ -90,7 +89,6 @@
 		04A983651F32268900120CF8 /* ARKController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ARKController.m; sourceTree = "<group>"; };
 		04A983661F32268900120CF8 /* ARKController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKController.h; sourceTree = "<group>"; };
 		04BB9D641F39BE40004328A2 /* ARKHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARKHelper.h; sourceTree = "<group>"; };
-		23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.release.xcconfig"; sourceTree = "<group>"; };
 		6207254C206A90BF00887B1F /* RequestPermissionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestPermissionsViewController.swift; sourceTree = "<group>"; };
 		620D24A01FC48994002127FD /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		62242ABF201F037F00506412 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -105,7 +103,6 @@
 		625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		625FA2E4202046BF00F62698 /* TermsAndConditionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsTableViewCell.swift; sourceTree = "<group>"; };
 		625FA2E5202046BF00F62698 /* TermsAndConditionsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TermsAndConditionsTableViewCell.xib; sourceTree = "<group>"; };
-		62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_XRViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E5089D7211B6DA90059015B /* webxr.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webxr.js; sourceTree = "<group>"; };
 		8ED9EBB2211C6FB000DA58F1 /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
 		B6143C1422985B4500CF5E95 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
@@ -157,7 +154,6 @@
 		B6FAD7BF221F2F9100310114 /* ARKMetalController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARKMetalController.swift; sourceTree = "<group>"; };
 		B6FE960221B61BDC0087A21F /* AppStateController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateController.swift; sourceTree = "<group>"; };
 		B6FE960421B61FEE0087A21F /* TouchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchView.swift; sourceTree = "<group>"; };
-		C99925CDAC21EAF144F18C57 /* Pods-XRViewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XRViewer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-XRViewer/Pods-XRViewer.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,7 +162,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B67FA57B22D939A50042D45F /* XCGLogger.framework in Frameworks */,
-				591A8C502FA83D70E8F5B5B4 /* Pods_XRViewer.framework in Frameworks */,
 				B67FA57522D7D9CC0042D45F /* GCDWebServers.framework in Frameworks */,
 				B67FA57922D920EF0042D45F /* ObjcExceptionBridging.framework in Frameworks */,
 				B67FA57722D7F25F0042D45F /* Telemetry.framework in Frameworks */,
@@ -182,7 +177,6 @@
 				8ED9EBB2211C6FB000DA58F1 /* Web */,
 				041503C31F28944F00887400 /* XRViewer */,
 				041503C21F28944F00887400 /* Products */,
-				07E2D54B7DC6F30BCB750F7D /* Pods */,
 				8C9E99F056CB67F28E2A9647 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -327,15 +321,6 @@
 			path = AppStateController;
 			sourceTree = "<group>";
 		};
-		07E2D54B7DC6F30BCB750F7D /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				C99925CDAC21EAF144F18C57 /* Pods-XRViewer.debug.xcconfig */,
-				23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		6207254B206A909100887B1F /* RequestPermissionsController */ = {
 			isa = PBXGroup;
 			children = (
@@ -370,7 +355,6 @@
 			children = (
 				B67FA57422D7D9CC0042D45F /* GCDWebServers.framework */,
 				B67FA57822D920EF0042D45F /* ObjcExceptionBridging.framework */,
-				62CB6E6E1AD338266A9AB3DC /* Pods_XRViewer.framework */,
 				B67FA57622D7F25F0042D45F /* Telemetry.framework */,
 				B67FA57A22D939A40042D45F /* XCGLogger.framework */,
 			);
@@ -395,7 +379,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 041503DD1F28944F00887400 /* Build configuration list for PBXNativeTarget "XRViewer" */;
 			buildPhases = (
-				1BA705D2C5562BD74353D184 /* [CP] Check Pods Manifest.lock */,
 				041503BD1F28944F00887400 /* Sources */,
 				041503BE1F28944F00887400 /* Frameworks */,
 				041503BF1F28944F00887400 /* Resources */,
@@ -472,24 +455,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1BA705D2C5562BD74353D184 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-XRViewer-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		B67FA57022D687CA0042D45F /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -727,7 +692,6 @@
 		};
 		041503DE1F28944F00887400 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C99925CDAC21EAF144F18C57 /* Pods-XRViewer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -738,13 +702,12 @@
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"COCOAPODS=1",
 					"SEND_PLANES_BY_DEFAULT=0",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -D USE_ANALYTICS";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D USE_ANALYTICS";
 				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.XRViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "XRViewer/Resources/XRViewer-Bridging-Header.h";
@@ -756,7 +719,6 @@
 		};
 		041503DF1F28944F00887400 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 23C446431F25D48210AB29A1 /* Pods-XRViewer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -767,13 +729,12 @@
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"COCOAPODS=1",
 					"SEND_PLANES_BY_DEFAULT=0",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/XRViewer/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -D USE_ANALYTICS";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D USE_ANALYTICS";
 				PRODUCT_BUNDLE_IDENTIFIER = org.mozilla.ios.XRViewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "XRViewer/Resources/XRViewer-Bridging-Header.h";
