@@ -74,14 +74,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         swipeGestureRecognizer.direction = .up
         swipeGestureRecognizer.delegate = self
         view.addGestureRecognizer(swipeGestureRecognizer)
-
-        /// Show the permissions popup if we have never shown it
-        if UserDefaults.standard.bool(forKey: Constant.permissionsUIAlreadyShownKey()) == false && (CLLocationManager.authorizationStatus() == .notDetermined || AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined) {
-            DispatchQueue.main.async(execute: {
-                UserDefaults.standard.set(true, forKey: Constant.permissionsUIAlreadyShownKey())
-                self.messageController?.showPermissionsPopup()
-            })
-        }
         
         setupTargetControllers()
     }
@@ -112,6 +104,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
     }
 #endif
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // Show the permissions popup if either permissions are .notDetermined
+        if CLLocationManager.authorizationStatus() == .notDetermined || AVCaptureDevice.authorizationStatus(for: .video) == .notDetermined {
+            messageController?.showPermissionsPopup()
+        }
+    }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

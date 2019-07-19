@@ -6,9 +6,6 @@
 import Foundation
 
 /// The NSUserDefaults key for the boolean that tells us whether
-/// the permissions UI was already shown
-let PermissionsUIAlreadyShownKey = "permissionsUIAlreadyShown"
-/// The NSUserDefaults key for the boolean that tells us whether
 /// the AnalyticsManager should be used
 let UseAnalyticsKey = "useAnalytics"
 /// The NSUserDefaults key for the string of the default home url
@@ -73,7 +70,6 @@ let BOX_SIZE: CGFloat = 0.05
 @objc class Constant: NSObject {
     override private init() {}
     
-    @objc static func permissionsUIAlreadyShownKey() -> String { return PermissionsUIAlreadyShownKey}
     static func useAnalyticsKey() -> String { return UseAnalyticsKey }
     @objc static func homeURLKey() -> String { return HomeURLKey }
     @objc static func secondsInBackgroundKey() -> String { return SecondsInBackgroundKey }
