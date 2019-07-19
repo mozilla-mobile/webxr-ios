@@ -1,29 +1,3 @@
-PODS:
-  - DynamicBlurView (3.0.1)
-  - PopupDialog (1.1.0):
-    - DynamicBlurView (~> 3.0.1)
-
-DEPENDENCIES:
-  - PopupDialog (from `https://github.com/robomex/PopupDialog.git`, branch `wide-alerts`)
-
-SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - DynamicBlurView
-
-EXTERNAL SOURCES:
-  PopupDialog:
-    :branch: wide-alerts
-    :git: https://github.com/robomex/PopupDialog.git
-
-CHECKOUT OPTIONS:
-  PopupDialog:
-    :commit: a6213d7e5b24a61b43f9d004d778e77cfa03d978
-    :git: https://github.com/robomex/PopupDialog.git
-
-SPEC CHECKSUMS:
-  DynamicBlurView: b1df5415f9bd31897549e5d7077e5ec120a4d636
-  PopupDialog: 42fb7a0bc4fafdf89fef8b5b2b127a6023f3e1cc
-
-PODFILE CHECKSUM: a8cd35b0556fa3bfec71577de146eb6a6c79d94f
+PODFILE CHECKSUM: de8c4c5a865a2d29856a180628498f5f9b2ab56d
 
 COCOAPODS: 1.5.3
