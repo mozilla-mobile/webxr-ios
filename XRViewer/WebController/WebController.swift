@@ -320,7 +320,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
             })
         } else if message.name == WEB_AR_INJECT_POLYFILL {
             let scriptBundle = Bundle(for: WebController.self)
-            let scriptURL = scriptBundle.path(forResource: "webxrpolyfill", ofType: "js")
+            let scriptURL = scriptBundle.path(forResource: "webxrPolyfill", ofType: "js")
             let scriptContent = try? String(contentsOfFile: scriptURL ?? "", encoding: .utf8)
             let userScript = WKUserScript(source: scriptContent ?? "", injectionTime: .atDocumentStart, forMainFrameOnly: true)
             contentController?.addUserScript(userScript)
