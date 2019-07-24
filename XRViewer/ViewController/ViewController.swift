@@ -1096,10 +1096,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         stateController.saveDidReceiveMemoryWarning(onURL: webController?.lastURL)
         cleanupCommonControllers()
         cleanupTargetControllers()
-
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WAITING_TIME_ON_MEMORY_WARNING, execute: {
-            self.setupTargetControllers()
-        })
+        setupTargetControllers()
     }
 
     // MARK: Data

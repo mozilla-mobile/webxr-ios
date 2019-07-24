@@ -42,7 +42,9 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
             view.removeFromSuperview()
         }
         renderView?.delegate = nil
-        renderView = nil
+        if let _ = renderView {
+            renderView = nil
+        }
         appDelegate().logger.debug("ARKMetalController dealloc")
     }
     
