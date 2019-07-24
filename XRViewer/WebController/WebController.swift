@@ -318,6 +318,12 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
                     blockSelf?.onError?(error)
                 }
             })
+        } else if message.name == WEB_AR_INJECT_POLYFILL {
+            let scriptBundle = Bundle(for: WebController.self)
+            let scriptURL = scriptBundle.path(forResource: "webxrpolyfill", ofType: "js")
+            let scriptContent = try? String(contentsOfFile: scriptURL ?? "", encoding: .utf8)
+            let userScript = WKUserScript(source: scriptContent ?? "", injectionTime: .atDocumentStart, forMainFrameOnly: true)
+            contentController?.addUserScript(userScript)
         } else if message.name == WEB_AR_LOAD_URL_MESSAGE {
             loadURL?(messageBody[WEB_AR_URL_OPTION] as? String)
         } else if message.name == WEB_AR_START_WATCH_MESSAGE {
@@ -682,6 +688,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
     func setupWebContent() {
         contentController?.add(self, name: WEB_AR_INIT_MESSAGE)
+        contentController?.add(self, name: WEB_AR_INJECT_POLYFILL)
         contentController?.add(self, name: WEB_AR_START_WATCH_MESSAGE)
         contentController?.add(self, name: WEB_AR_REQUEST_MESSAGE)
         contentController?.add(self, name: WEB_AR_STOP_WATCH_MESSAGE)
@@ -706,6 +713,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
 
     func cleanWebContent() {
         contentController?.removeScriptMessageHandler(forName: WEB_AR_INIT_MESSAGE)
+        contentController?.removeScriptMessageHandler(forName: WEB_AR_INJECT_POLYFILL)
         contentController?.removeScriptMessageHandler(forName: WEB_AR_START_WATCH_MESSAGE)
         contentController?.removeScriptMessageHandler(forName: WEB_AR_REQUEST_MESSAGE)
         contentController?.removeScriptMessageHandler(forName: WEB_AR_STOP_WATCH_MESSAGE)
