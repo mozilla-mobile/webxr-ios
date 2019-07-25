@@ -26,7 +26,7 @@
 		625051091FCDBDBE00EEAC0A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */; };
 		625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625FA2E4202046BF00F62698 /* TermsAndConditionsTableViewCell.swift */; };
 		625FA2E7202046BF00F62698 /* TermsAndConditionsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 625FA2E5202046BF00F62698 /* TermsAndConditionsTableViewCell.xib */; };
-		8E5089D8211B6DA90059015B /* webxr.js in Resources */ = {isa = PBXBuildFile; fileRef = 8E5089D7211B6DA90059015B /* webxr.js */; };
+		8E5089D8211B6DA90059015B /* webxrShim.js in Resources */ = {isa = PBXBuildFile; fileRef = 8E5089D7211B6DA90059015B /* webxrShim.js */; };
 		8ED9EBB3211C6FB000DA58F1 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 8ED9EBB2211C6FB000DA58F1 /* Web */; };
 		B6143C1522985B4600CF5E95 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B6143C1422985B4500CF5E95 /* Shaders.metal */; };
 		B6143C182298626400CF5E95 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6143C172298626300CF5E95 /* Renderer.swift */; };
@@ -104,7 +104,7 @@
 		625051081FCDBDBE00EEAC0A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		625FA2E4202046BF00F62698 /* TermsAndConditionsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsTableViewCell.swift; sourceTree = "<group>"; };
 		625FA2E5202046BF00F62698 /* TermsAndConditionsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TermsAndConditionsTableViewCell.xib; sourceTree = "<group>"; };
-		8E5089D7211B6DA90059015B /* webxr.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webxr.js; sourceTree = "<group>"; };
+		8E5089D7211B6DA90059015B /* webxrShim.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = webxrShim.js; sourceTree = "<group>"; };
 		8ED9EBB2211C6FB000DA58F1 /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
 		B6143C1422985B4500CF5E95 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		B6143C1622985C7300CF5E95 /* ShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
@@ -284,7 +284,7 @@
 				041503D01F28944F00887400 /* Main.storyboard */,
 				041503D51F28944F00887400 /* LaunchScreen.storyboard */,
 				B6EAD6DC21DAB48800DF5127 /* Prefix.swift */,
-				8E5089D7211B6DA90059015B /* webxr.js */,
+				8E5089D7211B6DA90059015B /* webxrShim.js */,
 				B64E4D0922E779CD002B57D6 /* webxrPolyfill.js */,
 				B632850A21C330A500FD5510 /* MyriadPro-Regular.OTF */,
 				620D24A01FC48994002127FD /* Settings.bundle */,
@@ -438,7 +438,7 @@
 				B694726B22DE7EE8000DBDF0 /* RequestXRPermissionsViewController.storyboard in Resources */,
 				041503D71F28944F00887400 /* LaunchScreen.storyboard in Resources */,
 				B694726D22DFE139000DBDF0 /* RequestPermissionsViewController.storyboard in Resources */,
-				8E5089D8211B6DA90059015B /* webxr.js in Resources */,
+				8E5089D8211B6DA90059015B /* webxrShim.js in Resources */,
 				0401E04B1F612C240075D823 /* BarView.xib in Resources */,
 				041503D21F28944F00887400 /* Main.storyboard in Resources */,
 				625FA2E7202046BF00F62698 /* TermsAndConditionsTableViewCell.xib in Resources */,
