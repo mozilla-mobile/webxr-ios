@@ -30,6 +30,16 @@
 		8ED9EBB3211C6FB000DA58F1 /* Web in Resources */ = {isa = PBXBuildFile; fileRef = 8ED9EBB2211C6FB000DA58F1 /* Web */; };
 		B6143C1522985B4600CF5E95 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B6143C1422985B4500CF5E95 /* Shaders.metal */; };
 		B6143C182298626400CF5E95 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6143C172298626300CF5E95 /* Renderer.swift */; };
+		B61803E122F11C36002526F3 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803E022F11C36002526F3 /* Scene.swift */; };
+		B61803E322F11C95002526F3 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803E222F11C94002526F3 /* Node.swift */; };
+		B61803E522F11CA7002526F3 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803E422F11CA7002526F3 /* Camera.swift */; };
+		B61803E722F11CB1002526F3 /* Geometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803E622F11CB1002526F3 /* Geometry.swift */; };
+		B61803E922F11CBA002526F3 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803E822F11CB9002526F3 /* Transform.swift */; };
+		B61803EB22F11CC3002526F3 /* Light.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803EA22F11CC3002526F3 /* Light.swift */; };
+		B61803ED22F11CFB002526F3 /* MathUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803EC22F11CFB002526F3 /* MathUtilities.swift */; };
+		B61803EF22F11D1C002526F3 /* BufferAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803EE22F11D1C002526F3 /* BufferAllocator.swift */; };
+		B61803F122F11D23002526F3 /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803F022F11D23002526F3 /* Material.swift */; };
+		B61803F322F12184002526F3 /* ShaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803F222F12184002526F3 /* ShaderManager.swift */; };
 		B61E2B2722249D500031955F /* ActivityIndicatorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61E2B2622249D500031955F /* ActivityIndicatorButton.swift */; };
 		B620ED0E21F7B2E90066B4A8 /* ARKController+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */; };
 		B620ED1021FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */; };
@@ -109,6 +119,16 @@
 		B6143C1422985B4500CF5E95 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		B6143C1622985C7300CF5E95 /* ShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		B6143C172298626300CF5E95 /* Renderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		B61803E022F11C36002526F3 /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
+		B61803E222F11C94002526F3 /* Node.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
+		B61803E422F11CA7002526F3 /* Camera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		B61803E622F11CB1002526F3 /* Geometry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Geometry.swift; sourceTree = "<group>"; };
+		B61803E822F11CB9002526F3 /* Transform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
+		B61803EA22F11CC3002526F3 /* Light.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Light.swift; sourceTree = "<group>"; };
+		B61803EC22F11CFB002526F3 /* MathUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MathUtilities.swift; sourceTree = "<group>"; };
+		B61803EE22F11D1C002526F3 /* BufferAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BufferAllocator.swift; sourceTree = "<group>"; };
+		B61803F022F11D23002526F3 /* Material.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Material.swift; sourceTree = "<group>"; };
+		B61803F222F12184002526F3 /* ShaderManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShaderManager.swift; sourceTree = "<group>"; };
 		B61E2B2622249D500031955F /* ActivityIndicatorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorButton.swift; sourceTree = "<group>"; };
 		B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Images.swift"; sourceTree = "<group>"; };
 		B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+ARSessionDelegate.swift"; sourceTree = "<group>"; };
@@ -257,7 +277,17 @@
 		04A983641F32262200120CF8 /* Render */ = {
 			isa = PBXGroup;
 			children = (
+				B61803EE22F11D1C002526F3 /* BufferAllocator.swift */,
+				B61803E422F11CA7002526F3 /* Camera.swift */,
+				B61803E622F11CB1002526F3 /* Geometry.swift */,
+				B61803EA22F11CC3002526F3 /* Light.swift */,
+				B61803F022F11D23002526F3 /* Material.swift */,
+				B61803EC22F11CFB002526F3 /* MathUtilities.swift */,
+				B61803E222F11C94002526F3 /* Node.swift */,
 				B6143C172298626300CF5E95 /* Renderer.swift */,
+				B61803E022F11C36002526F3 /* Scene.swift */,
+				B61803F222F12184002526F3 /* ShaderManager.swift */,
+				B61803E822F11CB9002526F3 /* Transform.swift */,
 				B6143C1422985B4500CF5E95 /* Shaders.metal */,
 				B6143C1622985C7300CF5E95 /* ShaderTypes.h */,
 			);
@@ -511,6 +541,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B632851521C4191200FD5510 /* AppDelegate.swift in Sources */,
+				B61803F122F11D23002526F3 /* Material.swift in Sources */,
+				B61803E322F11C95002526F3 /* Node.swift in Sources */,
+				B61803E522F11CA7002526F3 /* Camera.swift in Sources */,
 				B6468D8E228CC20C002F22A3 /* ARKController+ARSessionObserver.swift in Sources */,
 				B654FED421F1179B0004F001 /* ARKController+Anchors.swift in Sources */,
 				625FA2E6202046BF00F62698 /* TermsAndConditionsTableViewCell.swift in Sources */,
@@ -525,6 +558,8 @@
 				B6F4C0BD221B5AEC009ECC06 /* ARKController+Frame.swift in Sources */,
 				B6EAD6DD21DAB48800DF5127 /* Prefix.swift in Sources */,
 				B6143C1522985B4600CF5E95 /* Shaders.metal in Sources */,
+				B61803E722F11CB1002526F3 /* Geometry.swift in Sources */,
+				B61803EB22F11CC3002526F3 /* Light.swift in Sources */,
 				B654FED221EF99150004F001 /* ARKController+AppState.swift in Sources */,
 				B6143C182298626400CF5E95 /* Renderer.swift in Sources */,
 				B69C048021B836E300C9A4EC /* SCNNode+Show.swift in Sources */,
@@ -533,18 +568,23 @@
 				B67D979721C4404E0075FE0A /* Utils.swift in Sources */,
 				B6FE960521B61FEE0087A21F /* TouchView.swift in Sources */,
 				04A9837A1F32291D00120CF8 /* ARKController.m in Sources */,
+				B61803EF22F11D1C002526F3 /* BufferAllocator.swift in Sources */,
+				B61803E922F11CBA002526F3 /* Transform.swift in Sources */,
 				B620ED0E21F7B2E90066B4A8 /* ARKController+Images.swift in Sources */,
 				B62CE86521CC0FDF0053F9B3 /* Reachability.swift in Sources */,
 				B679967921B06A7000612AF4 /* BarView.swift in Sources */,
 				B69C048221B838A300C9A4EC /* ARSCNView+HitTest.swift in Sources */,
 				B69C047B21B73E9800C9A4EC /* FocusNode.swift in Sources */,
 				62242AC0201F037F00506412 /* SettingsViewController.swift in Sources */,
+				B61803ED22F11CFB002526F3 /* MathUtilities.swift in Sources */,
 				B698074021DA7A8900322782 /* AppState.swift in Sources */,
 				B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */,
 				B69C047E21B8325F00C9A4EC /* PlaneNode.swift in Sources */,
+				B61803E122F11C36002526F3 /* Scene.swift in Sources */,
 				62242AC7201F2AE100506412 /* SwitchInputTableViewCell.swift in Sources */,
 				B69C047621B7333500C9A4EC /* AnchorNode.swift in Sources */,
 				B6FE960321B61BDC0087A21F /* AppStateController.swift in Sources */,
+				B61803F322F12184002526F3 /* ShaderManager.swift in Sources */,
 				B67D97A321C8453F0075FE0A /* UIOverlayController.swift in Sources */,
 				B6468D90228F5074002F22A3 /* ViewController+MessagePanel.swift in Sources */,
 				B67D97A521C854C20075FE0A /* OverlayViewController.swift in Sources */,
