@@ -53,7 +53,7 @@ class ShaderManager {
     
     var cachedGeometryPipelineState: MTLRenderPipelineState?
 
-    func pipelineState(for geometry: Geometry, pass: MTLRenderPassDescriptor) -> MTLRenderPipelineState {
+    func pipelineState(for geometry: Geometry, pass: MTLRenderPassDescriptor, renderDestination: RenderDestinationProvider) -> MTLRenderPipelineState {
         if let cachedPipeline = cachedGeometryPipelineState {
             return cachedPipeline
         }
@@ -63,7 +63,7 @@ class ShaderManager {
         descriptor.vertexFunction = library.makeFunction(name: "blinnPhongVertex")
         descriptor.fragmentFunction = library.makeFunction(name: "blinnPhongFragment")
 
-        descriptor.colorAttachments[0].pixelFormat = pass.colorAttachments[0].texture?.pixelFormat ?? .invalid
+        descriptor.colorAttachments[0].pixelFormat = renderDestination.colorPixelFormat
         descriptor.colorAttachments[0].isBlendingEnabled = true
         descriptor.colorAttachments[0].rgbBlendOperation = .add
         descriptor.colorAttachments[0].alphaBlendOperation = .add
@@ -72,7 +72,8 @@ class ShaderManager {
         descriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
         descriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
 
-        descriptor.depthAttachmentPixelFormat = pass.depthAttachment.texture?.pixelFormat ?? .invalid
+        descriptor.depthAttachmentPixelFormat = renderDestination.depthStencilPixelFormat
+        descriptor.stencilAttachmentPixelFormat = renderDestination.depthStencilPixelFormat
         
         descriptor.vertexDescriptor = geometry.vertexDescriptor
         
