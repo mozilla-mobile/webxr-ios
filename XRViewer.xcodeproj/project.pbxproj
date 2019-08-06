@@ -40,6 +40,8 @@
 		B61803EF22F11D1C002526F3 /* BufferAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803EE22F11D1C002526F3 /* BufferAllocator.swift */; };
 		B61803F122F11D23002526F3 /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803F022F11D23002526F3 /* Material.swift */; };
 		B61803F322F12184002526F3 /* ShaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803F222F12184002526F3 /* ShaderManager.swift */; };
+		B61803F722F21830002526F3 /* Plane.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61803F622F2182F002526F3 /* Plane.swift */; };
+		B61803F922F383C8002526F3 /* BlinnPhong.metal in Sources */ = {isa = PBXBuildFile; fileRef = B61803F822F383C8002526F3 /* BlinnPhong.metal */; };
 		B61E2B2722249D500031955F /* ActivityIndicatorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B61E2B2622249D500031955F /* ActivityIndicatorButton.swift */; };
 		B620ED0E21F7B2E90066B4A8 /* ARKController+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */; };
 		B620ED1021FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */; };
@@ -129,6 +131,8 @@
 		B61803EE22F11D1C002526F3 /* BufferAllocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BufferAllocator.swift; sourceTree = "<group>"; };
 		B61803F022F11D23002526F3 /* Material.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Material.swift; sourceTree = "<group>"; };
 		B61803F222F12184002526F3 /* ShaderManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShaderManager.swift; sourceTree = "<group>"; };
+		B61803F622F2182F002526F3 /* Plane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Plane.swift; sourceTree = "<group>"; };
+		B61803F822F383C8002526F3 /* BlinnPhong.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = BlinnPhong.metal; sourceTree = "<group>"; };
 		B61E2B2622249D500031955F /* ActivityIndicatorButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorButton.swift; sourceTree = "<group>"; };
 		B620ED0D21F7B2E90066B4A8 /* ARKController+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+Images.swift"; sourceTree = "<group>"; };
 		B620ED0F21FB90A50066B4A8 /* ARKController+ARSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ARKController+ARSessionDelegate.swift"; sourceTree = "<group>"; };
@@ -278,12 +282,14 @@
 			isa = PBXGroup;
 			children = (
 				B61803EE22F11D1C002526F3 /* BufferAllocator.swift */,
+				B61803F822F383C8002526F3 /* BlinnPhong.metal */,
 				B61803E422F11CA7002526F3 /* Camera.swift */,
 				B61803E622F11CB1002526F3 /* Geometry.swift */,
 				B61803EA22F11CC3002526F3 /* Light.swift */,
 				B61803F022F11D23002526F3 /* Material.swift */,
 				B61803EC22F11CFB002526F3 /* MathUtilities.swift */,
 				B61803E222F11C94002526F3 /* Node.swift */,
+				B61803F622F2182F002526F3 /* Plane.swift */,
 				B6143C172298626300CF5E95 /* Renderer.swift */,
 				B61803E022F11C36002526F3 /* Scene.swift */,
 				B61803F222F12184002526F3 /* ShaderManager.swift */,
@@ -576,6 +582,7 @@
 				B69C048221B838A300C9A4EC /* ARSCNView+HitTest.swift in Sources */,
 				B69C047B21B73E9800C9A4EC /* FocusNode.swift in Sources */,
 				62242AC0201F037F00506412 /* SettingsViewController.swift in Sources */,
+				B61803F722F21830002526F3 /* Plane.swift in Sources */,
 				B61803ED22F11CFB002526F3 /* MathUtilities.swift in Sources */,
 				B698074021DA7A8900322782 /* AppState.swift in Sources */,
 				B64B19FE21B9832A00787AA5 /* ARKSceneKitController.swift in Sources */,
@@ -591,6 +598,7 @@
 				62242ACB201F2D3600506412 /* TextTableViewCell.swift in Sources */,
 				B67D97A721C9843B0075FE0A /* Animator.swift in Sources */,
 				B62CE86321CAD3B00053F9B3 /* ViewController.swift in Sources */,
+				B61803F922F383C8002526F3 /* BlinnPhong.metal in Sources */,
 				B658C0F221BF43D500538D57 /* WebController.swift in Sources */,
 				B6FAD7C0221F2F9100310114 /* ARKMetalController.swift in Sources */,
 				B620ED142204B5480066B4A8 /* ARKController+Camera.swift in Sources */,
