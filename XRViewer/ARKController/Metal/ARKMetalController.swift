@@ -9,6 +9,8 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     
     private var session: ARSession
     var renderer: Renderer!
+    var bufferAllocator: BufferAllocator!
+    var device: MTLDevice!
     private var renderView: MTKView?
     private var anchorsNodes: [AnchorNode] = []
     
@@ -129,6 +131,12 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
 
         renderer = Renderer(session: session, metalDevice: device, renderDestination: renderView)
         renderer.drawRectResized(size: renderView.bounds.size)
+        let scene = Scene()
+        let cameraNode = Node()
+        cameraNode.camera = Camera()
+        renderer.scene = scene
+        renderer.pointOfView = cameraNode
+        bufferAllocator = BufferAllocator(device: device)
         
         return true
     }
@@ -163,6 +171,35 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         guard readyToRenderFrame || initializingRender else {
             return
         }
-        renderer.update()
+        renderer.update(view: view)
+    }
+    
+    // MARK: - Plane Rendering
+    
+    func renderer(didAddNode node: Node, forAnchor anchor: ARAnchor) {
+        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
+        let planeGeometry = planeAnchor.geometry
+        let nodeGeometry = Plane(vertices: planeGeometry.vertices,
+                                 texCoords: planeGeometry.textureCoordinates,
+                                 indices: planeGeometry.triangleIndices, bufferAllocator: bufferAllocator)
+        node.geometry = nodeGeometry
+        let material = node.geometry?.elements.first?.material
+        material?.diffuse.contents = UIColor.yellow
+//        material?.fillMode = .solid
+        material?.fillMode = .wireframe
+    }
+    
+    func renderer(didUpdateNode node: Node, forAnchor anchor: ARAnchor) {
+        if let planeAnchor = anchor as? ARPlaneAnchor {
+            let planeGeometry = planeAnchor.geometry
+            node.geometry = Plane(vertices: planeGeometry.vertices,
+                                  texCoords: planeGeometry.textureCoordinates,
+                                  indices: planeGeometry.triangleIndices,
+                                  bufferAllocator: bufferAllocator)
+            let material = node.geometry?.elements.first?.material
+            material?.diffuse.contents = UIColor.yellow
+//            material?.fillMode = .solid
+            material?.fillMode = .wireframe
+        }
     }
 }

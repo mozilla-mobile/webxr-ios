@@ -31,6 +31,17 @@ extension ARKController: ARSessionDelegate {
                 print("Trying to add a face anchor to a session configuration that's not ARFaceTrackingConfiguration")
                 continue
             }
+
+            if usingMetal {
+                let node = Node()
+                anchorsForNodes[node.identifier] = addedAnchor
+                nodesForAnchors[addedAnchor.identifier] = node
+                node.transform = Transform(from: addedAnchor.transform)
+                controller.renderer.scene?.rootNode.addChildNode(node)
+                if let controller = controller as? ARKMetalController {
+                    controller.renderer(didAddNode: node, forAnchor: addedAnchor)
+                }
+            }
             
             if shouldSend(addedAnchor)
                 || webXRAuthorizationStatus == .worldSensing
@@ -75,6 +86,14 @@ extension ARKController: ARSessionDelegate {
                 continue
             }
             
+            if usingMetal {
+                if let node = node(forAnchor: updatedAnchor),
+                    let controller = controller as? ARKMetalController
+                {
+                    node.transform = Transform(from: updatedAnchor.transform)
+                    controller.renderer(didUpdateNode: node, forAnchor: updatedAnchor)
+                }
+            }
             updateDictionary(for: updatedAnchor)
         }
     }
@@ -84,10 +103,14 @@ extension ARKController: ARSessionDelegate {
         appDelegate().logger.debug("Remove Anchors - \(anchors.debugDescription)")
         for removedAnchor: ARAnchor in anchors {
             
-            // logic makes no sense:  if the anchor is in objects[] list, remove it and send removed flag.  otherwise, ignore
-            //        BOOL mustSendAnchor = [self shouldSendAnchor: removedAnchor];
-            //        if (mustSendAnchor ||
-            //            self.sendingWorldSensingDataAuthorizationStatus == SendWorldSensingDataAuthorizationStateAuthorized) {
+            if usingMetal {
+                if let node = node(forAnchor: removedAnchor) {
+                    node.removeFromParentNode()
+                    anchorsForNodes[node.identifier] = nil
+                    nodesForAnchors[removedAnchor.identifier] = nil
+                }
+            }
+            
             let anchorID = self.anchorID(for: removedAnchor)
             if objects[anchorID] != nil {
                 removedAnchorsSinceLastFrame.add(anchorID)
@@ -106,5 +129,11 @@ extension ARKController: ARSessionDelegate {
                 }
             }
         }
+    }
+    
+    // MARK: -  Helpers
+    
+    public func node(forAnchor anchor: ARAnchor) -> Node? {
+        return nodesForAnchors?[anchor.identifier] as? Node
     }
 }

@@ -29,6 +29,16 @@ let kImagePlaneVertexData: [Float] = [
     1.0,  1.0,  1.0, 0.0,
 ]
 
+fileprivate struct InstanceUniforms {
+    var modelMatrix = matrix_identity_float4x4
+    var normalMatrix = matrix_identity_float3x3
+}
+
+fileprivate struct FrameUniforms {
+    var viewMatrix = matrix_identity_float4x4
+    var viewProjectionMatrix = matrix_identity_float4x4
+}
+
 typealias Block = () -> Void
 
 @objc class Renderer: NSObject {
@@ -36,6 +46,17 @@ typealias Block = () -> Void
     let device: MTLDevice
     let inFlightSemaphore = DispatchSemaphore(value: kMaxBuffersInFlight)
     var renderDestination: RenderDestinationProvider
+    
+    public var scene: Scene?
+    public var pointOfView: Node?
+    public var interfaceOrientation: UIInterfaceOrientation = .portrait
+    private var renderCommandEncoder: MTLRenderCommandEncoder!
+    private let shaderManager: ShaderManager
+    private var instanceUniformBuffer: MTLBuffer!
+    private var instanceUniformBufferOffset: Int = 0
+    private let bufferAllocator: BufferAllocator
+    private let sceneDepthStencilState: MTLDepthStencilState
+    private let textureLoader: MTKTextureLoader
     
     // Metal objects
     var commandQueue: MTLCommandQueue!
@@ -89,17 +110,150 @@ typealias Block = () -> Void
         self.session = session
         self.device = device
         self.renderDestination = renderDestination
+        shaderManager = ShaderManager(device: device)
+        bufferAllocator = BufferAllocator(device: device)
+        sceneDepthStencilState = Renderer.makeDepthStencilState(device: device, depthReadEnabled: true, depthWriteEnabled: true)
+        textureLoader = MTKTextureLoader(device: device)
         super.init()
         loadMetal()
         loadAssets()
     }
     
+    private static func makeDepthStencilState(device: MTLDevice, depthReadEnabled: Bool, depthWriteEnabled: Bool) -> MTLDepthStencilState {
+        let descriptor = MTLDepthStencilDescriptor()
+        descriptor.isDepthWriteEnabled = depthWriteEnabled
+        descriptor.depthCompareFunction = depthReadEnabled ? .less : .always
+        return device.makeDepthStencilState(descriptor: descriptor)!
+    }
+
     func drawRectResized(size: CGSize) {
         viewportSize = size
         viewportSizeDidChange = true
     }
     
-    func update() {
+    public func visibleNodes(in scene: Scene) -> [Node] {
+        var nodes = [Node]()
+        var queue = [scene.rootNode]
+        while queue.count > 0 {
+            let node = queue.removeFirst()
+            if node.geometry != nil {
+                nodes.append(node)
+            }
+            queue.append(contentsOf: node.childNodes)
+        }
+        return nodes
+    }
+    
+    private func textureForImage(_ cgImage: CGImage) -> MTLTexture? {
+        let options: [MTKTextureLoader.Option : Any] = [ .generateMipmaps : true ]
+        do {
+            return try textureLoader.newTexture(cgImage: cgImage, options: options)
+        } catch {
+            print("Error loading texture from CGImage: \(error)")
+            return nil
+        }
+    }
+
+    private func textureForSolidColor(_ color: CGColor) -> MTLTexture? {
+        let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
+        let bitmapInfo = UInt32(CGImageAlphaInfo.premultipliedLast.rawValue)
+        let context = CGContext(data: nil,
+                                width: 1,
+                                height: 1,
+                                bitsPerComponent: 8,
+                                bytesPerRow: 4,
+                                space: colorSpace,
+                                bitmapInfo: bitmapInfo)
+        context?.setFillColor(color)
+        context?.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 1, height: 1, mipmapped: false)
+        let texture = device.makeTexture(descriptor: descriptor)!
+        if let imageData = context?.makeImage()?.dataProvider?.data, let bytes = CFDataGetBytePtr(imageData) {
+            texture.replace(region: MTLRegionMake2D(0, 0, 1, 1), mipmapLevel: 0, withBytes: bytes, bytesPerRow: 4)
+        }
+        return texture
+    }
+
+    private func textureForFloat(_ value: Float) -> MTLTexture? {
+        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 1, height: 1, mipmapped: false)
+        let texture = device.makeTexture(descriptor: descriptor)!
+        let byte = UInt8(value * 255)
+        let componentBytes = [ byte, byte, byte, byte ]
+        texture.replace(region: MTLRegionMake2D(0, 0, 1, 1), mipmapLevel: 0, withBytes: componentBytes, bytesPerRow: 4)
+        return texture
+    }
+
+    private func textureForMaterialProperty(_ property: MaterialProperty) -> MTLTexture? {
+        if property.contents == nil { return nil }
+
+        if property.cachedTexture != nil { return property.cachedTexture }
+
+        if let textureContents = property.contents as? MTLTexture {
+            property.cachedTexture = textureContents
+        } else if let imageName = property.contents as? String {
+            if let image = UIImage(named: imageName)?.cgImage {
+                property.cachedTexture = textureForImage(image)
+            }
+        } else if let uiColor = property.contents as? UIColor {
+            property.cachedTexture = textureForSolidColor(uiColor.cgColor)
+        } else if (CFGetTypeID(property.contents as CFTypeRef) == CGColor.typeID) {
+            let colorContents = property.contents as! CGColor
+            property.cachedTexture = textureForSolidColor(colorContents)
+        } else if let floatContents = property.contents as? Float {
+            property.cachedTexture = textureForFloat(floatContents)
+        } else {
+            fatalError("Couldn't understand type of material property contents \(String(describing: property.contents))")
+        }
+
+        if property.cachedTexture == nil {
+            property.cachedTexture = textureForFloat(0.0)
+        }
+
+        return property.cachedTexture
+    }
+
+    private func drawNode(_ node: Node, viewMatrix: float4x4, pass: MTLRenderPassDescriptor, renderEncoder: MTLRenderCommandEncoder) {
+        guard let geometry = node.geometry else { return }
+
+        let renderPipelineState = shaderManager.pipelineState(for: geometry, pass: pass, renderDestination: renderDestination)
+        renderEncoder.setRenderPipelineState(renderPipelineState)
+
+        for (index, buffer) in geometry.buffers.enumerated() {
+            renderEncoder.setVertexBuffer(buffer, offset: 0, index: index)
+        }
+
+        var instanceUniforms = InstanceUniforms()
+        instanceUniforms.modelMatrix = node.worldTransform.matrix
+        instanceUniforms.normalMatrix = (viewMatrix.upperLeft * instanceUniforms.modelMatrix.upperLeft).transpose.inverse
+
+        let uniformPtr = instanceUniformBuffer.contents().advanced(by: instanceUniformBufferOffset).assumingMemoryBound(to: InstanceUniforms.self)
+        uniformPtr.pointee = instanceUniforms
+        renderEncoder.setVertexBuffer(instanceUniformBuffer, offset: instanceUniformBufferOffset, index: Material.BufferIndex.instanceUniforms)
+        instanceUniformBufferOffset += 256
+
+        renderEncoder.setDepthStencilState(sceneDepthStencilState)
+
+        for element in geometry.elements {
+            let material = element.material
+
+            renderEncoder.setTriangleFillMode(material.fillMode == .solid ? .fill : .lines)
+            renderEncoder.setFragmentTexture(textureForMaterialProperty(material.diffuse), index: Material.TextureIndex.diffuse)
+//            renderEncoder.setFragmentTexture(textureForImage((UIImage(named: "Models.scnassets/plane_grid1.png")?.cgImage)!), index: Material.TextureIndex.diffuse)
+            renderEncoder.setFragmentTexture(textureForMaterialProperty(material.normal), index: Material.TextureIndex.normal)
+            renderEncoder.setFragmentTexture(textureForMaterialProperty(material.emissive), index: Material.TextureIndex.emissive)
+            //            renderCommandEncoder.setFragmentTexture(textureForMaterialProperty(material.metalness), index: Material.TextureIndex.metalness)
+            //            renderCommandEncoder.setFragmentTexture(textureForMaterialProperty(material.roughness), index: Material.TextureIndex.roughness)
+            //            renderCommandEncoder.setFragmentTexture(textureForMaterialProperty(material.occlusion), index: Material.TextureIndex.occlusion)
+
+            renderEncoder.drawIndexedPrimitives(type: element.primitiveType,
+                                                indexCount: element.indexCount,
+                                                indexType: element.indexType,
+                                                indexBuffer: element.indexBuffer,
+                                                indexBufferOffset: element.indexBufferOffset)
+        }
+    }
+    
+    func update(view: MTKView) {
         // Wait to ensure only kMaxBuffersInFlight are getting proccessed by any stage in the Metal
         //   pipeline (App, Metal, Drivers, GPU, etc)
         let _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
@@ -108,6 +262,9 @@ typealias Block = () -> Void
         if let commandBuffer = commandQueue.makeCommandBuffer() {
             commandBuffer.label = "MyCommand"
             
+            instanceUniformBuffer = bufferAllocator.dequeueReusableBuffer(length: 64 * 256)
+            instanceUniformBufferOffset = 0
+
             // Add completion hander which signal _inFlightSemaphore when Metal and the GPU has fully
             //   finished proccssing the commands we're encoding this frame.  This indicates when the
             //   dynamic buffers, that we're writing to this frame, will no longer be needed by Metal
@@ -127,17 +284,46 @@ typealias Block = () -> Void
             updateBufferStates()
             updateGameState()
             
+            guard let pass = view.currentRenderPassDescriptor,
+                let pointOfView = pointOfView,
+                let camera = pointOfView.camera,
+                let scene = scene else {
+                print("Issue with currentRenderPassDescriptor/pointOfView/camera/scene")
+                return
+            }
+            
+            if let frameCamera = session.currentFrame?.camera {
+                let cameraTransform = frameCamera.viewMatrix(for: interfaceOrientation)
+                pointOfView.transform = Transform(from: cameraTransform)
+                pointOfView.camera?.projectionTransform = frameCamera.projectionMatrix(for: interfaceOrientation,
+                                                                                       viewportSize: view.bounds.size,
+                                                                                       zNear: 0.01, zFar: 100)
+            }
+            
+            let viewMatrix = pointOfView.worldTransform.matrix
+            let projectionMatrix = camera.projectionTransform
+            
             weak var blockSelf: Renderer? = self
             rendererShouldUpdateFrame?({ 
                 if let renderPassDescriptor = blockSelf?.renderDestination.currentRenderPassDescriptor,
                     let currentDrawable = blockSelf?.renderDestination.currentDrawable,
                     let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
                 {
-                    
+                    blockSelf?.renderCommandEncoder = renderEncoder
                     renderEncoder.label = "MyRenderEncoder"
                     
                     blockSelf?.drawCapturedImage(renderEncoder: renderEncoder)
-                    blockSelf?.drawAnchorGeometry(renderEncoder: renderEncoder)
+//                    blockSelf?.drawAnchorGeometry(renderEncoder: renderEncoder)
+                    
+                    var frameUniforms = FrameUniforms()
+                    frameUniforms.viewMatrix = viewMatrix
+                    frameUniforms.viewProjectionMatrix = projectionMatrix * viewMatrix
+                    renderEncoder.setVertexBytes(&frameUniforms, length: MemoryLayout.size(ofValue: frameUniforms), index: Material.BufferIndex.frameUniforms)
+                    if let nodes = blockSelf?.visibleNodes(in: scene) {
+                        for node in nodes {
+                            blockSelf?.drawNode(node, viewMatrix: viewMatrix, pass: pass, renderEncoder: renderEncoder)
+                        }
+                    }
                     
                     // We're done encoding commands
                     renderEncoder.endEncoding()
@@ -146,6 +332,12 @@ typealias Block = () -> Void
                     commandBuffer.present(currentDrawable)
                 }
                 
+                if let uniformBuffer: MTLBuffer = blockSelf?.instanceUniformBuffer {
+                    commandBuffer.addScheduledHandler { _ in
+                        blockSelf?.bufferAllocator.enqueueReusableBuffer(uniformBuffer)
+                    }
+                }
+
                 // Finalize rendering here & push the command buffer to the GPU
                 commandBuffer.commit()
             })
@@ -312,7 +504,11 @@ typealias Block = () -> Void
         (vertexDescriptor.attributes[Int(kVertexAttributeNormal.rawValue)] as! MDLVertexAttribute).name   = MDLVertexAttributeNormal
         
         // Use ModelIO to create a box mesh as our object
-        let mesh = MDLMesh(boxWithExtent: vector3(0.075, 0.075, 0.075), segments: vector3(1, 1, 1), inwardNormals: false, geometryType: .triangles, allocator: metalAllocator)
+        let mesh = MDLMesh(boxWithExtent: vector3(0.075, 0.075, 0.075),
+                           segments: vector3(1, 1, 1),
+                           inwardNormals: false,
+                           geometryType: .triangles,
+                           allocator: metalAllocator)
         
         // Perform the format/relayout of mesh vertices by setting the new vertex descriptor in our
         //   Model IO mesh
@@ -493,15 +689,22 @@ typealias Block = () -> Void
         renderEncoder.setFragmentBuffer(sharedUniformBuffer, offset: sharedUniformBufferOffset, index: Int(kBufferIndexSharedUniforms.rawValue))
         
         // Set mesh's vertex buffers
-//        for bufferIndex in 0..<cubeMesh.vertexBuffers.count {
-//            let vertexBuffer = cubeMesh.vertexBuffers[bufferIndex]
-//            renderEncoder.setVertexBuffer(vertexBuffer.buffer, offset: vertexBuffer.offset, index:bufferIndex)
-//        }
+        for bufferIndex in 0..<cubeMesh.vertexBuffers.count {
+            let vertexBuffer = cubeMesh.vertexBuffers[bufferIndex]
+            renderEncoder.setVertexBuffer(vertexBuffer.buffer,
+                                          offset: vertexBuffer.offset,
+                                          index:bufferIndex)
+        }
         
         // Draw each submesh of our mesh
-//        for submesh in cubeMesh.submeshes {
-//            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset, instanceCount: anchorInstanceCount)
-//        }
+        for submesh in cubeMesh.submeshes {
+            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
+                                                indexCount: submesh.indexCount,
+                                                indexType: submesh.indexType,
+                                                indexBuffer: submesh.indexBuffer.buffer,
+                                                indexBufferOffset: submesh.indexBuffer.offset,
+                                                instanceCount: anchorInstanceCount)
+        }
         
         renderEncoder.popDebugGroup()
     }
