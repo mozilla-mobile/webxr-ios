@@ -97,13 +97,10 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
 
     func updateModes() {
         guard let showMode = showMode else { return }
-//        guard let showOptions = showOptions else { return }
         if showMode == ShowMode.urlDebug || showMode == ShowMode.debug {
-//            renderView?.showsStatistics = (showOptions.rawValue & ShowOptions.ARStatistics.rawValue) != 0
-//            renderView?.debugOptions = (showOptions.rawValue & ShowOptions.ARPoints.rawValue) != 0 ? .showFeaturePoints : []
+            renderer.showDebugPlanes = true
         } else {
-//            renderView?.showsStatistics = false
-//            renderView?.debugOptions = []
+            renderer.showDebugPlanes = false
         }
     }
     

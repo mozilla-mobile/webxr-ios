@@ -50,6 +50,7 @@ typealias Block = () -> Void
     public var scene: Scene?
     public var pointOfView: Node?
     public var interfaceOrientation: UIInterfaceOrientation = .portrait
+    public var showDebugPlanes = false
     private var renderCommandEncoder: MTLRenderCommandEncoder!
     private let shaderManager: ShaderManager
     private var instanceUniformBuffer: MTLBuffer!
@@ -319,7 +320,9 @@ typealias Block = () -> Void
                     frameUniforms.viewMatrix = viewMatrix
                     frameUniforms.viewProjectionMatrix = projectionMatrix * viewMatrix
                     renderEncoder.setVertexBytes(&frameUniforms, length: MemoryLayout.size(ofValue: frameUniforms), index: Material.BufferIndex.frameUniforms)
-                    if let nodes = blockSelf?.visibleNodes(in: scene) {
+                    if blockSelf?.showDebugPlanes ?? false,
+                        let nodes = blockSelf?.visibleNodes(in: scene) {
+                        
                         for node in nodes {
                             blockSelf?.drawNode(node, viewMatrix: viewMatrix, pass: pass, renderEncoder: renderEncoder)
                         }
