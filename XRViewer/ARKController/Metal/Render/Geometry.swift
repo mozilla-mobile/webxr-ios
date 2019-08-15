@@ -24,11 +24,8 @@ public class GeometryElement {
 open class Geometry {
     
     public var name: String?
-
     public let buffers: [MTLBuffer]
-
     public let elements: [GeometryElement]
-    
     public let vertexDescriptor: MTLVertexDescriptor
     
     public init(buffers: [MTLBuffer], elements: [GeometryElement], vertexDescriptor: MTLVertexDescriptor) {

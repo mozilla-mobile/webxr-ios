@@ -147,7 +147,7 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     }
     
     func setHitTestFocus(_ point: CGPoint) {
-        return
+        hitTestFocusPoint = point
     }
     
     func setShowMode(_ mode: ShowMode) {
