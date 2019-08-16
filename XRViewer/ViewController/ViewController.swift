@@ -815,11 +815,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     var array = [[AnyHashable: Any]]()
                     switch blockSelf?.arkController?.interfaceOrientation {
                     case .landscapeLeft?:
-                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: 1-x, y: 1-y), types: 8) ?? []
+                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: 1-x, y: 1-y), types: mask) ?? []
                     case .landscapeRight?:
-                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: 8) ?? []
+                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: x, y: y), types: mask) ?? []
                     default:
-                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: y, y: 1-x), types: 8) ?? []
+                        array = blockSelf?.arkController?.hitTestNormPoint(CGPoint(x: y, y: 1-x), types: mask) ?? []
                     }
                     result(array)
                 } else {
