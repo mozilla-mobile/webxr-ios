@@ -8,6 +8,23 @@ extension ARKController: ARSessionDelegate {
         if !usingMetal {
             updateARKData(with: frame)
             didUpdate(self)
+        } else {
+            if controller.previewingSinglePlane,
+                let frame = session.currentFrame,
+                let boundsSize = controller.getRenderView()?.bounds.size
+            {
+                let transform = frame.displayTransform(for: .portrait, viewportSize: boundsSize)
+                let frameUnitPoint = CGPoint(x: 0.5, y: 0.5).applying(transform.inverted())
+                
+                if let firstHitTestResult = frame.hitTest(frameUnitPoint, types: .existingPlaneUsingGeometry).first,
+                    let anchor = firstHitTestResult.anchor,
+                    let metalController = controller as? ARKMetalController,
+                    let node = metalController.planes[anchor.identifier]
+                {
+                    metalController.focusedPlane = node
+                    node.geometry?.elements.first?.material.diffuse.contents = UIColor.green
+                }
+            }
         }
         if shouldUpdateWindowSize {
             self.shouldUpdateWindowSize = false
@@ -32,15 +49,14 @@ extension ARKController: ARSessionDelegate {
                 continue
             }
 
-            if usingMetal {
+            if usingMetal,
+                let controller = controller as? ARKMetalController
+            {
                 let node = Node()
-                anchorsForNodes[node.identifier] = addedAnchor
-                nodesForAnchors[addedAnchor.identifier] = node
+                controller.planes[addedAnchor.identifier] = node
                 node.transform = Transform(from: addedAnchor.transform)
                 controller.renderer.scene?.rootNode.addChildNode(node)
-                if let controller = controller as? ARKMetalController {
-                    controller.renderer(didAddNode: node, forAnchor: addedAnchor)
-                }
+                controller.renderer(didAddNode: node, forAnchor: addedAnchor)
             }
             
             if shouldSend(addedAnchor)
@@ -86,13 +102,12 @@ extension ARKController: ARSessionDelegate {
                 continue
             }
             
-            if usingMetal {
-                if let node = node(forAnchor: updatedAnchor),
-                    let controller = controller as? ARKMetalController
-                {
-                    node.transform = Transform(from: updatedAnchor.transform)
-                    controller.renderer(didUpdateNode: node, forAnchor: updatedAnchor)
-                }
+            if usingMetal,
+                let controller = controller as? ARKMetalController,
+                let node = controller.planes[updatedAnchor.identifier]
+            {
+                node.transform = Transform(from: updatedAnchor.transform)
+                controller.renderer(didUpdateNode: node, forAnchor: updatedAnchor)
             }
             updateDictionary(for: updatedAnchor)
         }
@@ -103,12 +118,12 @@ extension ARKController: ARSessionDelegate {
         appDelegate().logger.debug("Remove Anchors - \(anchors.debugDescription)")
         for removedAnchor: ARAnchor in anchors {
             
-            if usingMetal {
-                if let node = node(forAnchor: removedAnchor) {
-                    node.removeFromParentNode()
-                    anchorsForNodes[node.identifier] = nil
-                    nodesForAnchors[removedAnchor.identifier] = nil
-                }
+            if usingMetal,
+                let controller = controller as? ARKMetalController,
+                let node = controller.planes[removedAnchor.identifier]
+            {
+                node.removeFromParentNode()
+                controller.planes[removedAnchor.identifier] = nil
             }
             
             let anchorID = self.anchorID(for: removedAnchor)
@@ -129,11 +144,5 @@ extension ARKController: ARSessionDelegate {
                 }
             }
         }
-    }
-    
-    // MARK: -  Helpers
-    
-    public func node(forAnchor anchor: ARAnchor) -> Node? {
-        return nodesForAnchors?[anchor.identifier] as? Node
     }
 }

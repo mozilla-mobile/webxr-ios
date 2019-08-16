@@ -10,8 +10,6 @@
     func setShowMode(_ mode: ShowMode)
     func setShowOptions(_ options: ShowOptions)
     var previewingSinglePlane: Bool { get set }
-    var focusedPlane: PlaneNode? { get set }
-    var planes: [UUID : PlaneNode] { get set }
     var readyToRenderFrame: Bool { get set }
     var initializingRender: Bool { get set }
     var renderer: Renderer! { get set }

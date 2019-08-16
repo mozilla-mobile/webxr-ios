@@ -33,8 +33,6 @@
         self.addedAnchorsSinceLastFrame = [NSMutableArray new];
         self.removedAnchorsSinceLastFrame = [NSMutableArray new];
         self.arkitGeneratedAnchorIDUserAnchorIDMap = [NSMutableDictionary new];
-        self.anchorsForNodes = [NSMutableDictionary new];
-        self.nodesForAnchors = [NSMutableDictionary new];
         [self setShouldUpdateWindowSize:YES];
         [self setGeometryArrays:NO];
 

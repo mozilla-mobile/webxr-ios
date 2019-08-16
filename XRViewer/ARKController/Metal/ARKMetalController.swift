@@ -24,16 +24,14 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
             updateModes()
         }
     }
-    var planes: [UUID : PlaneNode] = [:]
+    var planes: [UUID : Node] = [:]
     private var planeHitTestResults: [ARHitTestResult] = []
     private var currentHitTest: HitTestResult?
     private var hitTestFocusPoint = CGPoint.zero
     var previewingSinglePlane: Bool = false
-    var focusedPlane: PlaneNode? {
+    var focusedPlane: Node? {
         didSet {
-            if focusedPlane == nil {
-                oldValue?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "Models.scnassets/plane_grid1.png")
-            }
+            oldValue?.geometry?.elements.first?.material.diffuse.contents = UIColor.yellow
         }
     }
     var readyToRenderFrame: Bool = true

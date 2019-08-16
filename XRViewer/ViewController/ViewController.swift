@@ -1177,7 +1177,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             return
         }
         arkController?.controller.previewingSinglePlane = false
-        arkController?.controller.focusedPlane = nil
+        if let arController = arkController?.controller as? ARKMetalController {
+            arController.focusedPlane = nil
+        } else if let arController = arkController?.controller as? ARKSceneKitController {
+            arController.focusedPlane = nil
+        }
         chooseSinglePlaneButton.isHidden = true
 
         stateController.state.numberOfTimesSendNativeTimeWasCalled = 0
@@ -1300,14 +1304,27 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         let videoCamAccess = stateController.state.aRRequest[WEB_AR_CV_INFORMATION_OPTION] as? Bool ?? false
         let worldSensing = stateController.state.aRRequest[WEB_AR_WORLD_SENSING_DATA_OPTION] as? Bool ?? false
         if videoCamAccess || worldSensing {
-            guard let chosenPlane = arkController?.controller.focusedPlane else { return }
-            if let anchorIdentifier = arkController?.controller.planes.someKey(forValue: chosenPlane) {
-                let allFrameAnchors = arkController?.session.currentFrame?.anchors
-                let anchor = allFrameAnchors?.filter { $0.identifier == anchorIdentifier }.first
-                if let anchor = anchor {
-                    let addedAnchorDictionary = arkController?.createDictionary(for: anchor)
-                    arkController?.addedAnchorsSinceLastFrame.add(addedAnchorDictionary ?? [:])
-                    arkController?.objects[anchor.identifier.uuidString] = addedAnchorDictionary
+            if let arController = arkController?.controller as? ARKMetalController {
+                guard let chosenPlane = arController.focusedPlane else { return }
+                if let anchorIdentifier = arController.planes.someKey(forValue: chosenPlane) {
+                    let allFrameAnchors = arkController?.session.currentFrame?.anchors
+                    let anchor = allFrameAnchors?.filter { $0.identifier == anchorIdentifier }.first
+                    if let anchor = anchor {
+                        let addedAnchorDictionary = arkController?.createDictionary(for: anchor)
+                        arkController?.addedAnchorsSinceLastFrame.add(addedAnchorDictionary ?? [:])
+                        arkController?.objects[anchor.identifier.uuidString] = addedAnchorDictionary
+                    }
+                }
+            } else if let arController = arkController?.controller as? ARKSceneKitController {
+                guard let chosenPlane = arController.focusedPlane else { return }
+                if let anchorIdentifier = arController.planes.someKey(forValue: chosenPlane) {
+                    let allFrameAnchors = arkController?.session.currentFrame?.anchors
+                    let anchor = allFrameAnchors?.filter { $0.identifier == anchorIdentifier }.first
+                    if let anchor = anchor {
+                        let addedAnchorDictionary = arkController?.createDictionary(for: anchor)
+                        arkController?.addedAnchorsSinceLastFrame.add(addedAnchorDictionary ?? [:])
+                        arkController?.objects[anchor.identifier.uuidString] = addedAnchorDictionary
+                    }
                 }
             }
         }
