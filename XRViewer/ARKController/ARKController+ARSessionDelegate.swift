@@ -9,20 +9,23 @@ extension ARKController: ARSessionDelegate {
             updateARKData(with: frame)
             didUpdate(self)
         } else {
-            if controller.previewingSinglePlane,
-                let frame = session.currentFrame,
-                let boundsSize = controller.getRenderView()?.bounds.size
-            {
-                let transform = frame.displayTransform(for: .portrait, viewportSize: boundsSize)
-                let frameUnitPoint = CGPoint(x: 0.5, y: 0.5).applying(transform.inverted())
+            if let controller = controller as? ARKMetalController {
+                controller.renderer.interfaceOrientation = UIApplication.shared.statusBarOrientation
                 
-                if let firstHitTestResult = frame.hitTest(frameUnitPoint, types: .existingPlaneUsingGeometry).first,
-                    let anchor = firstHitTestResult.anchor,
-                    let metalController = controller as? ARKMetalController,
-                    let node = metalController.planes[anchor.identifier]
+                if controller.previewingSinglePlane,
+                    let frame = session.currentFrame,
+                    let boundsSize = controller.getRenderView()?.bounds.size
                 {
-                    metalController.focusedPlane = node
-                    node.geometry?.elements.first?.material.diffuse.contents = UIColor.green
+                    let transform = frame.displayTransform(for: controller.renderer.interfaceOrientation, viewportSize: boundsSize)
+                    let frameUnitPoint = CGPoint(x: 0.5, y: 0.5).applying(transform.inverted())
+                    
+                    if let firstHitTestResult = frame.hitTest(frameUnitPoint, types: .existingPlaneUsingGeometry).first,
+                        let anchor = firstHitTestResult.anchor,
+                        let node = controller.planes[anchor.identifier]
+                    {
+                        controller.focusedPlane = node
+                        node.geometry?.elements.first?.material.diffuse.contents = UIColor.green
+                    }
                 }
             }
         }
