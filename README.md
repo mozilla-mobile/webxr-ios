@@ -1,14 +1,14 @@
 #  Project WebXR Viewer: An AR Project by Mozilla
 
-Help Mozilla Research by taking part in Project WebXR Viewer, an augmented reality viewer that lets you navigate to AR experiences just like websites, using Apple/iOS ARKit for it's AR capabilities.  The application currently supports ARKit 1.5 features, including plane and face anchors, and image recognition.
+Help Mozilla Research by using Project WebXR Viewer, an augmented reality viewer that lets you navigate to AR experiences just like websites, using Apple/iOS ARKit for its AR capabilities.  The application currently supports ARKit 1.5 features, including plane and face anchors, and image recognition.
 
 The master branch of this repository is built and availble in the iOS App Store as the [WebXR Viewer](https://itunes.apple.com/us/app/webxr-viewer/id1295998056?mt=8).
 
 ## WARNING: Experimental Exploration of the Future of WebXR
 
-This experimental browser lets you navigate to websites written using [our non-standard, experimental version of the WebXR API](https://github.com/mozilla/webxr-polyfill/).  The version of WebXR implemented by this application (the javascript library) is based on a [proposed draft proposal for WebXR](https://github.com/mozilla/webxr-api) we created as a starting point for discussing WebXR in the fall of 2017, to explore what it might mean to expand WebVR to include AR/MR capabilities.
+This experimental browser lets you navigate to websites written using [our non-standard, experimental version of the WebXR API](https://github.com/mozilla/webxr-polyfill/).  The version of WebXR (the javascript library) implemented by this application is based on a [proposed draft proposal for WebXR](https://github.com/mozilla/webxr-api) we created as a starting point for discussing WebXR in the fall of 2017, to explore what it might mean to expand WebVR to include AR/MR capabilities.
 
-The WebVR community has shifted from WebVR to WebXR, and is now called the [Immersive Web Community Group](https://github.com/immersive-web/), with the WebVR specification becoming the [WebXR Device API](https://github.com/immersive-web/webxr). You should consider that spec as ground-truth for the future of WebXR, and it is what you will likely see appearing in browsers through the rest of 2018 and into 2019. 
+The WebVR community has shifted from WebVR to WebXR, and is now called the [Immersive Web Community Group](https://github.com/immersive-web/), with the WebVR specification becoming the [WebXR Device API](https://github.com/immersive-web/webxr). You should consider that spec as ground-truth for the future of WebXR, and it is what you will likely see appearing in browsers. 
 
 When the spec has settled and is more mature, we will shift this app and [our version of WebXR](https://github.com/mozilla/webxr-polyfill/) to align with it.  
 
@@ -16,19 +16,20 @@ To learn more about the WebXR Viewer and other ways Mozilla is working to bring 
 
 ## WARNING: Not a full-featured Browser
 
-This application is *not* intended to replace a fully featured web browser. It is meant only for experimenting with experimenting with WebXR applications on iOS.
+This application is *not* intended to replace a fully featured web browser. It is meant only for experimenting with WebXR applications on iOS.
 
 ## Building the app for iOS 11
 
-Building this app requires XCode 9 (beta 6 or newer) and an iPhone or iPad running at least iOS 11.
+Building this app requires Xcode 9 (beta 6 or newer) and an iPhone or iPad running at least iOS 11.
 
-Before opening XCode, update cocoapods by running:
+This app uses Carthage as a dependency manager. Follow the [Carthage installation instructions here](https://github.com/Carthage/Carthage#installing-carthage).
+
+Before opening Xcode, navigate to the project folder in Terminal and update dependencies using Carthage by running:
 
 	cd webxr-ios
-	pod repo update
-	pod install
+	carthage update
 
-Then use XCode to open webxr-ios/XRViewer.xcworkspace (not the project file) so that you get the cocoapods.
+Then use Xcode to open: webxr-ios/XRViewer.xcodeproj
 
 The app will only build if your build target is an iOS 11 *device*, not the simulator. The symptom of this is a missing `CVMetalTextureRef` reference.
 
