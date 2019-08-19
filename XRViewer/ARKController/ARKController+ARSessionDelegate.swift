@@ -16,6 +16,7 @@ extension ARKController: ARSessionDelegate {
                     let frame = session.currentFrame,
                     let boundsSize = controller.getRenderView()?.bounds.size
                 {
+                    controller.renderer.showDebugPlanes = true
                     let transform = frame.displayTransform(for: controller.renderer.interfaceOrientation, viewportSize: boundsSize)
                     let frameUnitPoint = CGPoint(x: 0.5, y: 0.5).applying(transform.inverted())
                     
@@ -26,6 +27,8 @@ extension ARKController: ARSessionDelegate {
                         controller.focusedPlane = node
                         node.geometry?.elements.first?.material.diffuse.contents = UIColor.green
                     }
+                } else if controller.showMode != .debug && controller.showMode != .urlDebug {
+                    controller.renderer.showDebugPlanes = false
                 }
             }
         }

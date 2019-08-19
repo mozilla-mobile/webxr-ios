@@ -14,7 +14,7 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     private var renderView: MTKView?
     private var anchorsNodes: [AnchorNode] = []
     
-    private var showMode: ShowMode? {
+    var showMode: ShowMode? {
         didSet {
             updateModes()
         }
