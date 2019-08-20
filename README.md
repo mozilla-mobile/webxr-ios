@@ -40,7 +40,7 @@ Our experimental [WebXR polyfill](https://github.com/mozilla/webxr-polyfill/) ca
 
 If you build this app yourself, you can use Safari 11 or newer to connect developer tools via Safari's `Develop` menu.
 
-It can be handy to change the default URL loaded by the app by changing the `WEB_URL` string in WebARKHeader.h to the URL of your local web server. 
+It can be handy to change the default URL loaded by the app by changing the `WEB_URL` string in `Utilities/Constants.swift` to the URL of your local web server. 
 
 ## Telemetry and Data Collection
 
