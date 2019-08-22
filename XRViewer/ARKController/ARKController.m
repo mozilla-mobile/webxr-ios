@@ -183,36 +183,4 @@
     }
 }
 
-#pragma mark Private
-
-- (void)updateFaceAnchorData:(ARFaceAnchor *)faceAnchor toDictionary:(NSMutableDictionary *)faceAnchorDictionary {
-    NSMutableDictionary *geometryDictionary = faceAnchorDictionary[@"geometry"];
-    if (!geometryDictionary) {
-        geometryDictionary = [NSMutableDictionary new];
-        faceAnchorDictionary[@"geometry"] = geometryDictionary;
-    }
- 
-    NSMutableArray* vertices = [NSMutableArray arrayWithCapacity:faceAnchor.geometry.vertexCount];
-    for (int i = 0; i < faceAnchor.geometry.vertexCount; i++) {
-        if (self.geometryArrays) {
-            [vertices addObject:[NSNumber numberWithFloat:faceAnchor.geometry.vertices[i].x]];
-            [vertices addObject:[NSNumber numberWithFloat:faceAnchor.geometry.vertices[i].y]];
-            [vertices addObject:[NSNumber numberWithFloat:faceAnchor.geometry.vertices[i].z]];
-        } else {
-            [vertices addObject:dictFromVector3(faceAnchor.geometry.vertices[i])];
-        }
-    }
-    geometryDictionary[@"vertices"] = vertices;
-    
-    NSMutableArray *blendShapesDictionary = faceAnchorDictionary[@"blendshapes"];
-    [self setBlendShapes:faceAnchor.blendShapes toArray:blendShapesDictionary];
-    
-    // Remove the rest of the geometry data, since it doesn't change
-    geometryDictionary[@"vertexCount"] = nil;
-    geometryDictionary[@"textureCoordinateCount"] = nil;
-    geometryDictionary[@"textureCoordinates"] = nil;
-    geometryDictionary[@"triangleCount"] = nil;
-    geometryDictionary[@"triangleIndices"] = nil;
-}
-
 @end

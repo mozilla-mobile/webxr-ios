@@ -17,7 +17,7 @@
         } else if updatedAnchor is ARFaceAnchor {
             // System generated ARFaceAnchor
             guard let faceAnchor = updatedAnchor as? ARFaceAnchor else { return }
-            updateFaceAnchorData(faceAnchor, to: anchorDictionary)
+            updateFaceAnchorData(faceAnchor, toDictionary: anchorDictionary)
         } else {
             // Simple, user generated ARAnchor, do nothing more than updating the transform
             return
@@ -62,30 +62,36 @@
     
     // MARK: - Face Anchors
     
-    // Tony: Commenting this out, conversion to Swift is causing issues again.
-    // Tried several resolutions, none worked so far. Leaving original in place for the moment.
-//    func updateFaceAnchorData(_ faceAnchor: ARFaceAnchor, toDictionary faceAnchorDictionary: NSMutableDictionary) {
-//        var geometryDictionary: [AnyHashable: Any]? = faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] as? Dictionary
-//        if geometryDictionary == nil {
-//            geometryDictionary = [AnyHashable: Any]()
-//            faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary
-//        }
-//        let vertices = NSMutableArray.init(capacity: faceAnchor.geometry.vertices.count)
-//        for i in 0..<faceAnchor.geometry.vertices.count {
-//            vertices.add(faceAnchor.geometry.vertices[i].dictionary())
-//        }
-//        geometryDictionary?["vertices"] = vertices
-//
-//        guard let blendShapesDictionary = faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION] as? NSMutableArray else { return }
-//        setBlendShapes(faceAnchor.blendShapes as NSDictionary, toArray: blendShapesDictionary)
-//
-//        // Remove the rest of the geometry data, since it doesn't change
-//        geometryDictionary?["vertexCount"] = nil
-//        geometryDictionary?["textureCoordinateCount"] = nil
-//        geometryDictionary?["textureCoordinates"] = nil
-//        geometryDictionary?["triangleCount"] = nil
-//        geometryDictionary?["triangleIndices"] = nil
-//    }
+    func updateFaceAnchorData(_ faceAnchor: ARFaceAnchor, toDictionary faceAnchorDictionary: NSMutableDictionary) {
+        var geometryDictionary = faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] as? NSMutableDictionary
+        if geometryDictionary == nil {
+            geometryDictionary = NSMutableDictionary.init()
+            faceAnchorDictionary[WEB_AR_GEOMETRY_OPTION] = geometryDictionary
+        }
+        let vertices = NSMutableArray.init(capacity: faceAnchor.geometry.vertices.count)
+        let faceVertices = faceAnchor.geometry.vertices
+        for i in 0..<faceAnchor.geometry.vertices.count {
+            if geometryArrays {
+                vertices.add(NSNumber(value: faceVertices[i].x))
+                vertices.add(NSNumber(value: faceVertices[i].y))
+                vertices.add(NSNumber(value: faceVertices[i].z))
+            } else {
+                vertices.add(dictFromVector3(faceAnchor.geometry.vertices[i]))
+            }
+        }
+        geometryDictionary?["vertices"] = vertices
+        
+        if let blendShapesDictionary = faceAnchorDictionary[WEB_AR_BLEND_SHAPES_OPTION] as? NSMutableArray {
+            setBlendShapes(faceAnchor.blendShapes as NSDictionary, toArray: blendShapesDictionary)
+        }
+
+        // Remove the rest of the geometry data, since it doesn't change
+        geometryDictionary?["vertexCount"] = nil
+        geometryDictionary?["textureCoordinateCount"] = nil
+        geometryDictionary?["textureCoordinates"] = nil
+        geometryDictionary?["triangleCount"] = nil
+        geometryDictionary?["triangleIndices"] = nil
+    }
     
     func addFaceAnchorData(_ faceAnchor: ARFaceAnchor, toDictionary faceAnchorDictionary: NSMutableDictionary) {
         let blendShapesArray = NSMutableArray.init()
@@ -134,7 +140,6 @@
     }
     
     func setBlendShapes(_ blendShapes: NSDictionary, toArray blendShapesArray: NSMutableArray) {
-        let blendShapesArray = blendShapesArray
         blendShapesArray[0] = blendShapes[ARFaceAnchor.BlendShapeLocation.browDownLeft] ?? 0
         blendShapesArray[1] = blendShapes[ARFaceAnchor.BlendShapeLocation.browDownRight] ?? 0
         blendShapesArray[2] = blendShapes[ARFaceAnchor.BlendShapeLocation.browInnerUp] ?? 0
