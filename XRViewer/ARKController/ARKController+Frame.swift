@@ -1,12 +1,11 @@
+import Accelerate
+
 extension ARKController {
     
     @objc func updateARKData(with frame: ARFrame) {
         
         synced(self) {
-            if request == nil {
-                return
-            }
-            guard let controller = controller, let configuration = configuration else { return }
+            
             var newData = [AnyHashable: Any].init(minimumCapacity: 3) // max request object
             let ts = Int(frame.timestamp * 1000.0)
             newData["timestamp"] = ts

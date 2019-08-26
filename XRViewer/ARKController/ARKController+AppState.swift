@@ -12,8 +12,8 @@ extension ARKController {
      */
     func startSession(with state: AppState) {
         updateARConfiguration(with: state)
-        session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-        arSessionState = .ARKSessionRunning
+        session?.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+        arSessionState = .arkSessionRunning
         
         // if we are removing anchors, clear the user map
         arkitGeneratedAnchorIDUserAnchorIDMap = NSMutableDictionary()
@@ -43,24 +43,24 @@ extension ARKController {
      */
     func runSession(with state: AppState) {
         updateARConfiguration(with: state)
-        session.run(configuration, options: [])
-        arSessionState = .ARKSessionRunning
+        session?.run(configuration, options: [])
+        arSessionState = .arkSessionRunning
     }
     
     func runSessionRemovingAnchors(with state: AppState) {
         updateARConfiguration(with: state)
-        session.run(configuration, options: .removeExistingAnchors)
+        session?.run(configuration, options: .removeExistingAnchors)
         // If we are removing anchors, clear the user map
         arkitGeneratedAnchorIDUserAnchorIDMap = NSMutableDictionary()
-        arSessionState = .ARKSessionRunning
+        arSessionState = .arkSessionRunning
     }
     
     func runSessionResettingTrackingAndRemovingAnchors(with state: AppState) {
         updateARConfiguration(with: state)
-        session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+        session?.run(configuration, options: [.resetTracking, .removeExistingAnchors])
         // If we are removing anchors, clear the user map
         arkitGeneratedAnchorIDUserAnchorIDMap = NSMutableDictionary()
-        arSessionState = .ARKSessionRunning
+        arSessionState = .arkSessionRunning
         UserDefaults.standard.set(Date(), forKey: Constant.lastResetSessionTrackingDateKey())
     }
     
@@ -90,8 +90,8 @@ extension ARKController {
         } else {
             appDelegate().logger.error("resume session on a face-tracking camera")
         }
-        session.run(configuration, options: [])
-        arSessionState = .ARKSessionRunning
+        session?.run(configuration, options: [])
+        arSessionState = .arkSessionRunning
         setupDeviceCamera()
         setShowMode(state.showMode)
         setShowOptions(state.showOptions)
@@ -123,16 +123,16 @@ extension ARKController {
         } else {
             appDelegate().logger.error("resume session on a face-tracking camera")
         }
-        session.run(configuration, options: [])
-        arSessionState = .ARKSessionRunning
+        session?.run(configuration, options: [])
+        arSessionState = .arkSessionRunning
     }
     
     /**
      Pauses the AR session and sets the arSessionState to paused
      */
     func pauseSession() {
-        session.pause()
-        arSessionState = .ARKSessionPaused
+        session?.pause()
+        arSessionState = .arkSessionPaused
     }
     
     func updateARConfiguration(with state: AppState) {
@@ -178,20 +178,20 @@ extension ARKController {
         }
         
         if state.aRRequest[WEB_AR_WORLD_ALIGNMENT] as? Bool ?? false {
-            configuration?.worldAlignment = .gravityAndHeading
+            configuration.worldAlignment = .gravityAndHeading
         } else {
-            configuration?.worldAlignment = .gravity
+            configuration.worldAlignment = .gravity
         }
     }
     
     // MARK: - Helpers
     
     func currentFrameTimeInMilliseconds() -> TimeInterval {
-        return TimeInterval((session.currentFrame?.timestamp ?? 0.0) * 1000)
+        return TimeInterval((session?.currentFrame?.timestamp ?? 0.0) * 1000)
     }
     
     func trackingStateNormal() -> Bool {
-        guard let ts = session.currentFrame?.camera.trackingState.presentationString else {
+        guard let ts = session?.currentFrame?.camera.trackingState.presentationString else {
             print("Unable to check if camera trackingState presentationString is normal")
             return false
         }
@@ -199,7 +199,7 @@ extension ARKController {
     }
     
     func trackingStateRelocalizing() -> Bool {
-        guard let ts = session.currentFrame?.camera.trackingState.presentationString else {
+        guard let ts = session?.currentFrame?.camera.trackingState.presentationString else {
             print("Unable to check if camera trackingState presentationString is relocalizing")
             return false
         }
@@ -207,12 +207,12 @@ extension ARKController {
     }
     
     func setShowMode(_ showMode: ShowMode) {
-        controller?.setShowMode(showMode)
+        controller.setShowMode(showMode)
     }
     
     func setShowOptions(_ showOptions: ShowOptions) {
         self.showOptions = showOptions
-        controller?.setShowOptions(showOptions)
+        controller.setShowOptions(showOptions)
     }
     
     /**

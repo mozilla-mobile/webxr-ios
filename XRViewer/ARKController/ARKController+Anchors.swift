@@ -50,7 +50,7 @@
             anchorDictionary[WEB_AR_ANCHOR_TYPE] = "face"
         } else {
             // Simple, user generated ARAnchor
-            let userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap?[addedAnchor.identifier.uuidString] as? String
+            let userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[addedAnchor.identifier.uuidString] as? String
             let name = userAnchorID != nil ? userAnchorID : addedAnchor.identifier.uuidString
             anchorDictionary[WEB_AR_UUID_OPTION] = name ?? ""
             anchorDictionary[WEB_AR_ANCHOR_TYPE] = "anchor"
@@ -272,11 +272,11 @@
         for anchorIDToDelete in anchorIDsToDelete as? [String] ?? [] {
             var anchorToDelete: ARAnchor? = getAnchorFromUserAnchorID(anchorIDToDelete)
             if let anchorToDelete = anchorToDelete {
-                session.remove(anchor: anchorToDelete)
+                session?.remove(anchor: anchorToDelete)
             } else {
                 anchorToDelete = getAnchorFromARKitAnchorID(anchorIDToDelete)
                 if let anchorToDelete = anchorToDelete {
-                    session.remove(anchor: anchorToDelete)
+                    session?.remove(anchor: anchorToDelete)
                 }
             }
         }
@@ -287,7 +287,7 @@
      key "distantAnchorsDistanceKey"
      */
     func removeDistantAnchors() {
-        guard let currentFrame = session.currentFrame else { return }
+        guard let currentFrame = session?.currentFrame else { return }
         let cameraTransform = currentFrame.camera.transform
         let distanceThreshold: Float = UserDefaults.standard.float(forKey: Constant.distantAnchorsDistanceKey())
         
@@ -316,13 +316,13 @@
                     (center2 + extent2) < -distanceThreshold {
                     
                     print("\n\n*********\n\nRemoving distant plane \(anchor.identifier.uuidString)\n\n*********")
-                    session.remove(anchor: anchor)
+                    session?.remove(anchor: anchor)
                 }
             } else {
                 let distance = simd_distance(anchor.transform.columns.3, cameraTransform.columns.3)
                 if distance >= distanceThreshold {
                     print("\n\n*********\n\nRemoving distant anchor \(anchor.identifier.uuidString)\n\n*********")
-                    session.remove(anchor: anchor)
+                    session?.remove(anchor: anchor)
                 }
             }
         }
@@ -428,7 +428,7 @@
             anchorID = anchor.identifier.uuidString
         } else {
             // Simple, user generated ARAnchor
-            let userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap?[anchor.identifier.uuidString] as? String
+            let userAnchorID = arkitGeneratedAnchorIDUserAnchorIDMap[anchor.identifier.uuidString] as? String
             //        NSString *anchorName = anchor.name;
             //        NSString *name;
             //        if (userAnchorID) {
@@ -463,8 +463,8 @@
         var matrix = matrix_float4x4()
         matrix = transform.matrix()
         let anchor = ARAnchor(name: userGeneratedAnchorID ?? "", transform: matrix)
-        session.add(anchor: anchor)
-        arkitGeneratedAnchorIDUserAnchorIDMap?[anchor.identifier.uuidString] = userGeneratedAnchorID ?? ""
+        session?.add(anchor: anchor)
+        arkitGeneratedAnchorIDUserAnchorIDMap[anchor.identifier.uuidString] = userGeneratedAnchorID ?? ""
 
         return true
     }

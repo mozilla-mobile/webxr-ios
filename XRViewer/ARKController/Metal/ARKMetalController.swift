@@ -11,7 +11,7 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     var renderer: Renderer!
     var bufferAllocator: BufferAllocator!
     var device: MTLDevice!
-    private var renderView: MTKView?
+    private var renderView = MTKView()
     private var anchorsNodes: [AnchorNode] = []
     
     var showMode: ShowMode? {
@@ -38,19 +38,17 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     var initializingRender: Bool = true
     
     deinit {
-        for view in renderView?.subviews ?? [] {
+        for view in renderView.subviews {
             view.removeFromSuperview()
         }
-        renderView?.delegate = nil
-        if let _ = renderView {
-            renderView = nil
-        }
+        renderView.delegate = nil
         appDelegate().logger.debug("ARKMetalController dealloc")
     }
     
     required init(sesion session: ARSession, size: CGSize) {
         self.session = session
         super.init()
+        
         if setupAR(with: session) == false {
             print("Error setting up AR Session with Metal")
         }
@@ -112,13 +110,9 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     func setupAR(with session: ARSession) -> Bool {
         renderView = MTKView()
         renderView = MTKView(frame: UIScreen.main.bounds, device: MTLCreateSystemDefaultDevice())
-        renderView?.backgroundColor = UIColor.clear
-        renderView?.delegate = self
+        renderView.backgroundColor = UIColor.clear
+        renderView.delegate = self
         
-        guard let renderView = renderView else {
-            appDelegate().logger.error("Error accessing the renderView")
-            return false
-        }
         guard let device = renderView.device else {
             appDelegate().logger.error("Metal is not supported on this device")
             return false
@@ -140,7 +134,7 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     
     // MARK: - ARKControllerProtocol
     
-    func getRenderView() -> UIView! {
+    func getRenderView() -> UIView {
         return renderView
     }
     

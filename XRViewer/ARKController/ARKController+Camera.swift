@@ -3,36 +3,36 @@
     // MARK: - Camera Device
     
     func setupDeviceCamera() {
-        device = AVCaptureDevice.default(for: .video)
-        
-        if device == nil {
-            appDelegate().logger.error("Camera device is NIL")
+        if let videoDevice = AVCaptureDevice.default(for: .video) {
+            device = videoDevice
+        } else {
+            appDelegate().logger.error("Unable to set camera device")
             return
         }
         
         do {
-            try device.lockForConfiguration()
+            try device?.lockForConfiguration()
         } catch {
             appDelegate().logger.error("Camera lock error")
             return
         }
         
-        if device.isFocusModeSupported(.continuousAutoFocus) {
+        if device?.isFocusModeSupported(.continuousAutoFocus) ?? false {
             appDelegate().logger.debug("AVCaptureFocusModeContinuousAutoFocus Supported")
-            device.focusMode = .continuousAutoFocus
+            device?.focusMode = .continuousAutoFocus
         }
         
-        if device.isFocusPointOfInterestSupported {
+        if device?.isFocusPointOfInterestSupported ?? false {
             appDelegate().logger.debug("FocusPointOfInterest Supported")
-            device.focusPointOfInterest = CGPoint(x: 0.5, y: 0.5)
+            device?.focusPointOfInterest = CGPoint(x: 0.5, y: 0.5)
         }
         
-        if device.isSmoothAutoFocusSupported {
+        if device?.isSmoothAutoFocusSupported ?? false {
             appDelegate().logger.debug("SmoothAutoFocus Supported")
-            device.isSmoothAutoFocusEnabled = true
+            device?.isSmoothAutoFocusEnabled = true
         }
         
-        device.unlockForConfiguration()
+        device?.unlockForConfiguration()
     }
     
     // MARK: - Camera Button
@@ -47,9 +47,9 @@
      in the previous ARWorldTrackingConfiguration session, and run the session.
      */
     func switchCameraButtonTapped(_ state: AppState) { // numberOfTrackedImages: Int) {
-        guard let currentFrame = session.currentFrame else { return }
+        guard let currentFrame = session?.currentFrame else { return }
         for anchor in currentFrame.anchors {
-            session.remove(anchor: anchor)
+            session?.remove(anchor: anchor)
         }
         
         if !(configuration is ARFaceTrackingConfiguration) {

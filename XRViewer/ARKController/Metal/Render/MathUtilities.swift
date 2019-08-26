@@ -7,7 +7,7 @@ public extension float4 {
         return float3(x, y, z)
     }
     
-    public init(_ v: float3, _ w: Float) {
+    init(_ v: float3, _ w: Float) {
         self.init(v.x, v.y, v.z, w)
     }
 }
@@ -37,14 +37,14 @@ public extension float3x3 {
 }
 
 public extension float4x4 {
-    public init(translationBy t: float3) {
+    init(translationBy t: float3) {
         self.init(float4(1, 0, 0, 0),
                   float4(0, 1, 0, 0),
                   float4(0, 0, 1, 0),
                   float4(t.x, t.y, t.z, 1))
     }
     
-    public init(rotationFrom q: simd_quatf) {
+    init(rotationFrom q: simd_quatf) {
         let (x, y, z) = (q.imag.x, q.imag.y, q.imag.z)
         let w = q.real
         self.init(float4( 1 - 2*y*y - 2*z*z,     2*x*y + 2*z*w,     2*x*z - 2*y*w, 0),
@@ -53,7 +53,7 @@ public extension float4x4 {
                   float4(                 0,                 0,                 0, 1))
     }
     
-    public init(rotationFromEulerAngles v: float3) {
+    init(rotationFromEulerAngles v: float3) {
         let sx = sin(v.x)
         let cx = cos(v.x)
         let sy = sin(v.y)
@@ -67,11 +67,11 @@ public extension float4x4 {
         self.init(columns)
     }
 
-    public init(scaleBy s: float3) {
+    init(scaleBy s: float3) {
         self.init([float4(s.x, 0, 0, 0), float4(0, s.y, 0, 0), float4(0, 0, s.z, 0), float4(0, 0, 0, 1)])
     }
     
-    public var upperLeft: float3x3 {
+    var upperLeft: float3x3 {
         return float3x3(self[0].xyz, self[1].xyz, self[2].xyz)
     }
 

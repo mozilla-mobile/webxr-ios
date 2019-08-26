@@ -56,7 +56,7 @@ import Compression
             return
         }
         
-        session.getCurrentWorldMap(completionHandler: { worldMap, error in
+        session?.getCurrentWorldMap(completionHandler: { worldMap, error in
             if worldMap != nil {
                 appDelegate().logger.error("saving WorldMap as we transition to background")
                 self.backgroundWorldMap = worldMap
@@ -106,7 +106,7 @@ import Compression
      */
     func getWorldMap(_ completion: @escaping GetWorldMapCompletionBlock) {
         if getWorldMapPromise != nil {
-            getWorldMapPromise(false, "World Map request cancelled by subsequent call to get World Map.", nil)
+            getWorldMapPromise?(false, "World Map request cancelled by subsequent call to get World Map.", nil)
             getWorldMapPromise = nil
         }
         
@@ -219,7 +219,7 @@ import Compression
      */
     func setWorldMap(_ worldMapDictionary: [AnyHashable : Any], completion: @escaping SetWorldMapCompletionBlock) {
         if setWorldMapPromise != nil {
-            setWorldMapPromise(false, "World Map set request cancelled by subsequent call to set World Map.")
+            setWorldMapPromise?(false, "World Map set request cancelled by subsequent call to set World Map.")
         }
         
         switch webXRAuthorizationStatus {
@@ -234,7 +234,7 @@ import Compression
                 _setWorldMap(map)
             } else {
                 if setWorldMapPromise != nil {
-                    setWorldMapPromise(false, "The World Map may be invalid, it couldn't be decoded.")
+                    setWorldMapPromise?(false, "The World Map may be invalid, it couldn't be decoded.")
                     setWorldMapPromise = nil
                 }
             }
@@ -262,9 +262,7 @@ import Compression
             worldTrackingConfiguration?.initialWorldMap = map
             printWorldMapInfo(map)
             
-            if let configuration = configuration {
-                session?.run(configuration, options: [.resetTracking, .removeExistingAnchors])
-            }
+            session?.run(configuration, options: [.resetTracking, .removeExistingAnchors])
             
             // if we are removing anchors, clear the user map
             arkitGeneratedAnchorIDUserAnchorIDMap = NSMutableDictionary.init()
@@ -279,7 +277,7 @@ import Compression
             // now remove the map from the config
             worldTrackingConfiguration?.initialWorldMap = nil
             
-            self.arSessionState = .ARKSessionRunning
+            self.arSessionState = .arkSessionRunning
             // [self setupDeviceCamera];
             
             completion?(true, nil)
@@ -300,7 +298,7 @@ import Compression
         compressed.copyBytes(to: &src_buffer, count: compressed.count)
         
         while true {
-            var dst_buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dst_buffer_size)
+            let dst_buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dst_buffer_size)
             let decompressedSize: size_t = compression_decode_buffer(dst_buffer, dst_buffer_size, &src_buffer, compressed.count, nil, COMPRESSION_ZLIB)
             
             // error!
@@ -328,7 +326,7 @@ import Compression
         input?.copyBytes(to: &src_buffer, count: input?.count ?? 0)
         
         while true {
-            var dst_buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dst_buffer_size)
+            let dst_buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: dst_buffer_size)
             let compressedSize = compression_encode_buffer(dst_buffer, dst_buffer_size, &src_buffer, (input?.count ?? 0), nil, COMPRESSION_ZLIB)
             
             // overflow, try again

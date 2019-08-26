@@ -5,7 +5,7 @@ import XCGLogger
 class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate {
     
     private var session: ARSession
-    private var renderView: ARSCNView?
+    private var renderView: ARSCNView
     private weak var camera: SCNCamera?
     private var anchorsNodes: [AnchorNode] = []
 
@@ -34,13 +34,13 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     }
 
     deinit {
-        renderView?.delegate = nil
-        renderView = nil
+        renderView.delegate = nil
         appDelegate().logger.debug("ARKSceneKitController dealloc")
     }
 
     required init(sesion session: ARSession, size: CGSize) {
         self.session = session
+        renderView = ARSCNView()
         super.init()
         
         setupAR(with: session, size: size)
@@ -52,7 +52,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
     func update(_ session: ARSession) {
         self.session = session
-        renderView?.session = session
+        renderView.session = session
     }
 
     func clean() {
@@ -73,8 +73,8 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
     func hitTest(_ point: CGPoint, with type: ARHitTestResult.ResultType) -> [ARHitTestResult] {
         if focusedPlane != nil {
-            guard let results = renderView?.hitTest(point, types: type) else { return [] }
             guard let chosenPlane = focusedPlane else { return [] }
+            let results = renderView.hitTest(point, types: type)
             if let anchorIdentifier = planes.someKey(forValue: chosenPlane) {
                 let anchor = results.filter { $0.anchor?.identifier == anchorIdentifier }.first
                 if let anchor = anchor {
@@ -83,7 +83,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
             }
             return []
         } else {
-            return renderView?.hitTest(point, types: type) ?? []
+            return renderView.hitTest(point, types: type)
         }
     }
 
@@ -91,11 +91,11 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         guard let showMode = showMode else { return }
         guard let showOptions = showOptions else { return }
         if showMode == ShowMode.urlDebug || showMode == ShowMode.debug {
-            renderView?.showsStatistics = (showOptions.rawValue & ShowOptions.ARStatistics.rawValue) != 0
-            renderView?.debugOptions = (showOptions.rawValue & ShowOptions.ARPoints.rawValue) != 0 ? .showFeaturePoints : []
+            renderView.showsStatistics = (showOptions.rawValue & ShowOptions.ARStatistics.rawValue) != 0
+            renderView.debugOptions = (showOptions.rawValue & ShowOptions.ARPoints.rawValue) != 0 ? .showFeaturePoints : []
         } else {
-            renderView?.showsStatistics = false
-            renderView?.debugOptions = []
+            renderView.showsStatistics = false
+            renderView.debugOptions = []
         }
     }
     
@@ -120,19 +120,19 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         // However, it looks like this is a bogus option and ARSCNView defaults to Metal as the
         // preferredRenderingAPI regardless of what you feed into 'options'.
         renderView = ARSCNView(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height), options: [SCNView.Option.preferredRenderingAPI.rawValue: NSNumber(value: SCNRenderingAPI.openGLES2.rawValue)])
-        renderView?.session = session
-        renderView?.scene = SCNScene()
-        renderView?.showsStatistics = false
-        renderView?.allowsCameraControl = true
-        renderView?.automaticallyUpdatesLighting = false
-        renderView?.preferredFramesPerSecond = Int(PREFER_FPS)
-        renderView?.delegate = self
+        renderView.session = session
+        renderView.scene = SCNScene()
+        renderView.showsStatistics = false
+        renderView.allowsCameraControl = true
+        renderView.automaticallyUpdatesLighting = false
+        renderView.preferredFramesPerSecond = Int(PREFER_FPS)
+        renderView.delegate = self
 
-        camera = renderView?.pointOfView?.camera
+        camera = renderView.pointOfView?.camera
         camera?.wantsHDR = true
 
-        renderView?.scene.lightingEnvironment.contents = UIColor.white
-        renderView?.scene.lightingEnvironment.intensity = 50
+        renderView.scene.lightingEnvironment.contents = UIColor.white
+        renderView.scene.lightingEnvironment.intensity = 50
     }
 
 // MARK: Focus
@@ -144,7 +144,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
         focus = FocusNode()
         if let aFocus = focus {
-            renderView?.scene.rootNode.addChildNode(aFocus)
+            renderView.scene.rootNode.addChildNode(aFocus)
         }
     }
 
@@ -152,7 +152,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         guard let showOptions = showOptions else { return }
         // hit testing only for Focus node!
         if (showOptions.rawValue & ShowOptions.ARFocus.rawValue) != 0 {
-            if let aFocus = renderView?.hitTest(point: hitTestFocusPoint, withResult: { result in
+            if let aFocus = renderView.hitTest(point: hitTestFocusPoint, withResult: { result in
                 self.currentHitTest = result
 
                 self.updateFocus()
@@ -166,9 +166,9 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         }
         
         guard previewingSinglePlane else { return }
-        guard let firstHitTestResult = renderView?.hitTest(hitTestFocusPoint, types: .existingPlaneUsingGeometry).first else { return }
+        guard let firstHitTestResult = renderView.hitTest(hitTestFocusPoint, types: .existingPlaneUsingGeometry).first else { return }
         if let plane = firstHitTestResult.anchor as? ARPlaneAnchor {
-            let node = renderView?.node(for: plane)
+            let node = renderView.node(for: plane)
             let child = node?.childNodes.first as? PlaneNode
             child?.opacity = 1
             focusedPlane = child
@@ -192,7 +192,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
 
         if focus?.opacity ?? 0 > 0 {
             let focusPosition: SCNVector3? = focus?.position
-            let cameraPosition: SCNVector3? = renderView?.pointOfView?.position
+            let cameraPosition: SCNVector3? = renderView.pointOfView?.position
 
             let vector: SCNVector3 = SCNVector3Make((focusPosition?.x ?? 0.0) - (cameraPosition?.x ?? 0.0), (focusPosition?.y ?? 0.0) - (cameraPosition?.y ?? 0.0), (focusPosition?.z ?? 0.0) - (cameraPosition?.z ?? 0.0))
 
@@ -226,7 +226,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
         DispatchQueue.main.async(execute: {
             let lightEstimate: CGFloat? = self.session.currentFrame?.lightEstimate?.ambientIntensity
 
-            self.renderView?.scene.lightingEnvironment.intensity = (lightEstimate ?? 0.0) / 40
+            self.renderView.scene.lightingEnvironment.intensity = (lightEstimate ?? 0.0) / 40
 
             self.hitTest()
             self.updateCameraFocus()
@@ -283,7 +283,7 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     
     // MARK: - ARKControllerProtocol
     
-    func getRenderView() -> UIView! {
+    func getRenderView() -> UIView {
         return renderView
     }
     

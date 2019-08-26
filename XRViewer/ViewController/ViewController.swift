@@ -292,7 +292,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 blockSelf?.stateController.setShowMode(.nothing)
                 blockSelf?.webController?.barView?.permissionLevelButton?.buttonImage = nil
                 blockSelf?.webController?.barView?.permissionLevelButton?.isEnabled = blockSelf?.arkController?.webXRAuthorizationStatus == .denied ? true : false
-                if blockSelf?.arkController?.arSessionState == .ARKSessionRunning {
+                if blockSelf?.arkController?.arSessionState == .arkSessionRunning {
                     blockSelf?.timerSessionRunningInBackground?.invalidate()
                     let timerSeconds: Int = UserDefaults.standard.integer(forKey: Constant.secondsInBackgroundKey())
                     print(String(format: "\n\n*********\n\nMoving away from an XR site, keep ARKit running, and launch the timer for %ld seconds\n\n*********", timerSeconds))
@@ -330,16 +330,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             } else {
                 guard let arSessionState = blockSelf?.arkController?.arSessionState else { return }
                 switch arSessionState {
-                    case .ARKSessionUnknown:
+                    case .arkSessionUnknown:
                         print("\n\n*********\n\nMoving to foreground while ARKit is not initialized, do nothing\n\n*********")
-                    case .ARKSessionPaused:
+                    case .arkSessionPaused:
                         guard let hasWorldMap = blockSelf?.arkController?.hasBackgroundWorldMap() else { return }
                         if !hasWorldMap {
                             // if no background map, then need to remove anchors on next session
                             print("\n\n*********\n\nMoving to foreground while the session is paused, remember to remove anchors on next AR request\n\n*********")
                             blockSelf?.stateController.state.shouldRemoveAnchorsOnNextARSession = true
                         }
-                    case .ARKSessionRunning:
+                    case .arkSessionRunning:
                         guard let hasWorldMap = blockSelf?.arkController?.hasBackgroundWorldMap() else { return }
                         if hasWorldMap {
                             print("\n\n*********\n\nMoving to foreground while the session is running and it was in BG\n\n*********")
@@ -357,8 +357,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                                 }
                             }
                         }
-                    default:
-                        break
                 }
             }
 
@@ -408,10 +406,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                 }
                 
                 switch arSessionState {
-                    case .ARKSessionUnknown:
+                    case .arkSessionUnknown:
                         print("\n\n*********\n\nARKit is in unknown state, instantiate and start a session\n\n*********")
                         blockSelf?.arkController?.runSessionResettingTrackingAndRemovingAnchors(with: state)
-                    case .ARKSessionRunning:
+                    case .arkSessionRunning:
                         if let lastTrackingResetDate = UserDefaults.standard.object(forKey: Constant.lastResetSessionTrackingDateKey()) as? Date,
                             Date().timeIntervalSince(lastTrackingResetDate) >= Constant.thresholdTimeInSecondsSinceLastTrackingReset() {
                             print("\n\n*********\n\nSession is running but it's been a while since last resetting tracking, resetting tracking and removing anchors now to prevent coordinate system drift\n\n*********")
@@ -423,7 +421,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                         } else {
                             print("\n\n*********\n\nThis site is the last XR site visited, and the timer hasn't expired yet. Continue with the session\n\n*********")
                         }
-                    case .ARKSessionPaused:
+                    case .arkSessionPaused:
                         print("\n\n*********\n\nRequest of a new AR session when it's paused\n\n*********")
                         guard let shouldRemoveAnchors = blockSelf?.stateController.state.shouldRemoveAnchorsOnNextARSession else { return }
                         if let lastTrackingResetDate = UserDefaults.standard.object(forKey: Constant.lastResetSessionTrackingDateKey()) as? Date,
@@ -486,22 +484,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             if blockSelf?.arkController?.arSessionState != nil {
                 arSessionState = (blockSelf?.arkController?.arSessionState)!
             } else {
-                arSessionState = .ARKSessionUnknown
+                arSessionState = .arkSessionUnknown
             }
             switch arSessionState {
-                case .ARKSessionUnknown:
+                case .arkSessionUnknown:
                     print("\n\n*********\n\nMoving to background while ARKit is not initialized, nothing to do\n\n*********")
-                case .ARKSessionPaused:
+                case .arkSessionPaused:
                     print("\n\n*********\n\nMoving to background while the session is paused, nothing to do\n\n*********")
                     // need to try and save WorldMap here.  May fail?
                     blockSelf?.arkController?.saveWorldMapInBackground()
-                case .ARKSessionRunning:
+                case .arkSessionRunning:
                     print("\n\n*********\n\nMoving to background while the session is running, store the timestamp\n\n*********")
                     UserDefaults.standard.set(Date(), forKey: Constant.backgroundOrPausedDateKey())
                     // need to save WorldMap here
                     blockSelf?.arkController?.saveWorldMapInBackground()
-                default:
-                    break
             }
 
             blockSelf?.webController?.didBackgroundAction(true)
@@ -567,7 +563,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         weak var blockSelf: ViewController? = self
 
-        arkController = ARKController(type: UserDefaults.standard.bool(forKey: Constant.useMetalForARKey()) ? .metal : .sceneKit, rootView: arkLayerView)
+        arkController = ARKController(type: UserDefaults.standard.bool(forKey: Constant.useMetalForARKey()) ? .arkMetal : .arkSceneKit, rootView: arkLayerView)
 
         arkController?.didUpdate = { c in
             guard let shouldSendNativeTime = blockSelf?.stateController.shouldSendNativeTime() else { return }
@@ -622,7 +618,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         }
         arkController?.didFailSession = { error in
             guard let error = error as NSError? else { return }
-            blockSelf?.arkController?.arSessionState = .ARKSessionUnknown
+            blockSelf?.arkController?.arSessionState = .arkSessionUnknown
             blockSelf?.webController?.didReceiveError(error: error)
 
             if error.code == SENSOR_FAILED_ARKIT_ERROR_CODE {
@@ -673,11 +669,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         
         if arkController?.usingMetal ?? false {
             arkController?.controller.renderer.rendererShouldUpdateFrame = { block in
-                if let frame = blockSelf?.arkController?.session.currentFrame {
+                if let frame = blockSelf?.arkController?.session?.currentFrame {
                     blockSelf?.arkController?.controller.readyToRenderFrame = false
                     blockSelf?.savedRender = block
                     blockSelf?.arkController?.updateARKData(with: frame)
-                    blockSelf?.arkController?.didUpdate(blockSelf?.arkController)
+                    blockSelf?.arkController?.didUpdate?(blockSelf?.arkController)
                 } else {
                     print("Unable to updateARKData since ARFrame isn't ready")
                     block()
@@ -1307,7 +1303,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             if let arController = arkController?.controller as? ARKMetalController {
                 guard let chosenPlane = arController.focusedPlane else { return }
                 if let anchorIdentifier = arController.planes.someKey(forValue: chosenPlane) {
-                    let allFrameAnchors = arkController?.session.currentFrame?.anchors
+                    let allFrameAnchors = arkController?.session?.currentFrame?.anchors
                     let anchor = allFrameAnchors?.filter { $0.identifier == anchorIdentifier }.first
                     if let anchor = anchor {
                         let addedAnchorDictionary = arkController?.createDictionary(for: anchor)
@@ -1318,7 +1314,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             } else if let arController = arkController?.controller as? ARKSceneKitController {
                 guard let chosenPlane = arController.focusedPlane else { return }
                 if let anchorIdentifier = arController.planes.someKey(forValue: chosenPlane) {
-                    let allFrameAnchors = arkController?.session.currentFrame?.anchors
+                    let allFrameAnchors = arkController?.session?.currentFrame?.anchors
                     let anchor = allFrameAnchors?.filter { $0.identifier == anchorIdentifier }.first
                     if let anchor = anchor {
                         let addedAnchorDictionary = arkController?.createDictionary(for: anchor)

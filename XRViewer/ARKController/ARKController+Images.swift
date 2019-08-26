@@ -1,4 +1,6 @@
-@objc extension ARKController {
+import Accelerate
+
+extension ARKController {
     
     func createReferenceImage(fromDictionary referenceImageDictionary: [AnyHashable: Any]) -> ARReferenceImage? {
         let physicalWidth: CGFloat = referenceImageDictionary["physicalWidth"] as? CGFloat ?? 0
@@ -52,7 +54,7 @@
     func createDetectionImage(_ referenceImageDictionary: [AnyHashable : Any], completion: @escaping DetectionImageCreatedCompletionType) {
         switch webXRAuthorizationStatus {
         case .lite, .worldSensing, .videoCameraAccess:
-            detectionImageCreationPromises?[referenceImageDictionary["uid"] as Any] = completion
+            detectionImageCreationPromises[referenceImageDictionary["uid"] as Any] = completion
             _createDetectionImage(referenceImageDictionary)
 //        case .lite:
 //            completion(false, "The user only provided access to a single plane, not detection images")
@@ -60,17 +62,17 @@
             completion(false, "The user denied access to world sensing data")
         case .notDetermined:
             print("Attempt to create a detection image but world sensing data authorization is not determined, enqueue the request")
-            detectionImageCreationPromises?[referenceImageDictionary["uid"] as Any] = completion
+            detectionImageCreationPromises[referenceImageDictionary["uid"] as Any] = completion
             detectionImageCreationRequests.add(referenceImageDictionary)
         }
     }
     
     func _createDetectionImage(_ referenceImageDictionary: [AnyHashable : Any]) {
         let referenceImage: ARReferenceImage? = createReferenceImage(fromDictionary: referenceImageDictionary)
-        let block = detectionImageCreationPromises?[referenceImageDictionary["uid"] as Any] as? DetectionImageCreatedCompletionType
+        let block = detectionImageCreationPromises[referenceImageDictionary["uid"] as Any] as? DetectionImageCreatedCompletionType
         if referenceImage != nil {
             if let referenceImage = referenceImage {
-                referenceImageMap?[referenceImage.name ?? ""] = referenceImage
+                referenceImageMap[referenceImage.name ?? ""] = referenceImage
             }
             print("Detection image created: \(referenceImage?.name ?? "")")
             
@@ -117,16 +119,16 @@
                 detectionImageActivationPromises[referenceImage.name ?? ""] = completion
                 session?.run(configuration, options: [])
             } else {
-                if detectionImageActivationPromises?[referenceImage.name ?? ""] != nil {
+                if detectionImageActivationPromises[referenceImage.name ?? ""] != nil {
                     // Trying to reactivate an active image that hasn't been found yet, return an error on the first promise, keep the second
-                    let activationBlock = detectionImageActivationPromises?[referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
+                    let activationBlock = detectionImageActivationPromises[referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
                     activationBlock?(false, "Image reactived, only can have one active at a time", nil)
                     detectionImageActivationAfterRemovalPromises[referenceImage.name ?? ""] = completion
                     return
                 } else {
                     // Activating an already activated and found image, remove the anchor from the scene
                     // so it can be detected again
-                    guard let anchors = session.currentFrame?.anchors else { return }
+                    guard let anchors = session?.currentFrame?.anchors else { return }
                     for anchor in anchors {
                         if let imageAnchor = anchor as? ARImageAnchor,
                             imageAnchor.referenceImage.name == imageName
@@ -176,11 +178,11 @@
         var currentDetectionImages = worldTrackingConfiguration?.detectionImages != nil ? worldTrackingConfiguration?.detectionImages : Set<AnyHashable>()
         if let referenceImage = referenceImage {
             if currentDetectionImages?.contains(referenceImage) ?? false {
-                if detectionImageActivationPromises?[referenceImage.name ?? ""] != nil {
+                if detectionImageActivationPromises[referenceImage.name ?? ""] != nil {
                     // The image trying to be deactivated hasn't been found yet, return an error on the activation block and remove it
-                    let activationBlock = detectionImageActivationPromises?[referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
+                    let activationBlock = detectionImageActivationPromises[referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
                     activationBlock?(false, "The image has been deactivated", nil)
-                    detectionImageActivationPromises?[referenceImage.name ?? ""] = nil
+                    detectionImageActivationPromises[referenceImage.name ?? ""] = nil
                 }
                 
                 // remove the image from the set being searched for
@@ -188,7 +190,7 @@
                 if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
                     worldTrackingConfiguration?.detectionImages = currentDetectionImages
                 }
-                session.run(configuration, options: [])
+                session?.run(configuration, options: [])
                 completion(true, nil)
             } else {
                 completion(false, "The image attempting to be deactivated doesn't exist")
@@ -217,10 +219,10 @@
                 
                 if currentDetectionImages?.contains(referenceImage) ?? false {
                     // The image trying to be deactivated hasn't been found yet, return an error on the activation block and remove it
-                    if (detectionImageActivationPromises?[referenceImage.name ?? ""] != nil) {
-                        let activationBlock = detectionImageActivationPromises?[referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
+                    if (detectionImageActivationPromises[referenceImage.name ?? ""] != nil) {
+                        let activationBlock = detectionImageActivationPromises[referenceImage.name ?? ""] as? ActivateDetectionImageCompletionBlock
                         activationBlock?(false, "The image has been deactivated and destroyed", nil)
-                        detectionImageActivationPromises?[referenceImage.name ?? ""] = nil
+                        detectionImageActivationPromises[referenceImage.name ?? ""] = nil
                     }
 
                     // remove the image from the set being searched for
@@ -228,7 +230,7 @@
                     if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
                         worldTrackingConfiguration?.detectionImages = currentDetectionImages
                     }
-                    session.run(configuration, options: [])
+                    session?.run(configuration, options: [])
                 }
             }
             referenceImageMap[imageName] = nil
@@ -298,11 +300,8 @@
             lumaDataBuffer?.replaceBytes(in: NSRange(location: Int(lumaBuffer.width) * currentRow, length: Int(lumaBuffer.width)), withBytes: lumaBuffer.data + lumaBuffer.rowBytes * currentRow)
         }
         
-        if lumaBase64StringBuffer == nil {
-            lumaBase64StringBuffer = ""
-        }
-        if let stringBuffer = lumaDataBuffer.base64EncodedString(options: []) as? NSMutableString {
-            lumaBase64StringBuffer = stringBuffer
+        if let stringBuffer = lumaDataBuffer?.base64EncodedString(options: []) as? NSMutableString {
+            lumaBase64StringBuffer = stringBuffer as String
         }
         
         // Chroma
@@ -333,11 +332,8 @@
             chromaDataBuffer?.replaceBytes(in: NSRange(location: Int(chromaBuffer.width) * currentRow * MemoryLayout<Pixel_16U>.size, length: Int(chromaBuffer.width) * MemoryLayout<Pixel_16U>.size), withBytes: chromaBuffer.data + chromaBuffer.rowBytes * currentRow)
         }
         
-        if chromaBase64StringBuffer == nil {
-            chromaBase64StringBuffer = ""
-        }
-        if let chromaStringBuffer = chromaDataBuffer.base64EncodedString(options: []) as? NSMutableString {
-            chromaBase64StringBuffer = chromaStringBuffer
+        if let chromaStringBuffer = chromaDataBuffer?.base64EncodedString(options: []) as? NSMutableString {
+            chromaBase64StringBuffer = chromaStringBuffer as String
         }
         
         CVPixelBufferUnlockBaseAddress(capturedImagePixelBuffer, CVPixelBufferLockFlags.readOnly)

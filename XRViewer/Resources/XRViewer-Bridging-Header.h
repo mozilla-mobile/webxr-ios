@@ -3,7 +3,6 @@
 //
 
 #import "ARKHelper.h"
-#import "ARKController.h"
 #import "ShaderTypes.h"
 
 typedef void (^HotAction)(BOOL); // long

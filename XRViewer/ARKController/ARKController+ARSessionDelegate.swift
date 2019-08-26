@@ -7,15 +7,15 @@ extension ARKController: ARSessionDelegate {
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         if !usingMetal {
             updateARKData(with: frame)
-            didUpdate(self)
+            didUpdate?(self)
         } else {
             if let controller = controller as? ARKMetalController {
                 controller.renderer.interfaceOrientation = UIApplication.shared.statusBarOrientation
                 
                 if controller.previewingSinglePlane,
-                    let frame = session.currentFrame,
-                    let boundsSize = controller.getRenderView()?.bounds.size
+                    let frame = session.currentFrame
                 {
+                    let boundsSize = controller.getRenderView().bounds.size
                     controller.renderer.showDebugPlanes = true
                     let transform = frame.displayTransform(for: controller.renderer.interfaceOrientation, viewportSize: boundsSize)
                     let frameUnitPoint = CGPoint(x: 0.5, y: 0.5).applying(transform.inverted())
@@ -34,7 +34,7 @@ extension ARKController: ARSessionDelegate {
         }
         if shouldUpdateWindowSize {
             self.shouldUpdateWindowSize = false
-            didUpdateWindowSize()
+            didUpdateWindowSize?()
         }
     }
     
