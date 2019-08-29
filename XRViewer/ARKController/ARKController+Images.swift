@@ -117,7 +117,7 @@ extension ARKController {
                 }
                 
                 detectionImageActivationPromises[referenceImage.name ?? ""] = completion
-                session?.run(configuration, options: [])
+                session.run(configuration, options: [])
             } else {
                 if detectionImageActivationPromises[referenceImage.name ?? ""] != nil {
                     // Trying to reactivate an active image that hasn't been found yet, return an error on the first promise, keep the second
@@ -128,7 +128,7 @@ extension ARKController {
                 } else {
                     // Activating an already activated and found image, remove the anchor from the scene
                     // so it can be detected again
-                    guard let anchors = session?.currentFrame?.anchors else { return }
+                    guard let anchors = session.currentFrame?.anchors else { return }
                     for anchor in anchors {
                         if let imageAnchor = anchor as? ARImageAnchor,
                             imageAnchor.referenceImage.name == imageName
@@ -138,13 +138,13 @@ extension ARKController {
                             if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
                                 worldTrackingConfiguration?.detectionImages = currentDetectionImages
                             }
-                            session?.run(configuration, options: [])
+                            session.run(configuration, options: [])
                             
                             // When the anchor is removed and didRemoveAnchor callback gets called, look in this map
                             // and see if there is a promise for the recently removed image anchor. If so, call
                             // activateDetectionImage again with the image name of the removed anchor, and the completion set here
                             detectionImageActivationAfterRemovalPromises[referenceImage.name ?? ""] = completion
-                            session?.remove(anchor: anchor)
+                            session.remove(anchor: anchor)
                             return
                         }
                     }
@@ -190,7 +190,7 @@ extension ARKController {
                 if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
                     worldTrackingConfiguration?.detectionImages = currentDetectionImages
                 }
-                session?.run(configuration, options: [])
+                session.run(configuration, options: [])
                 completion(true, nil)
             } else {
                 completion(false, "The image attempting to be deactivated doesn't exist")
@@ -230,7 +230,7 @@ extension ARKController {
                     if let currentDetectionImages = currentDetectionImages as? Set<ARReferenceImage> {
                         worldTrackingConfiguration?.detectionImages = currentDetectionImages
                     }
-                    session?.run(configuration, options: [])
+                    session.run(configuration, options: [])
                 }
             }
             referenceImageMap[imageName] = nil
@@ -440,7 +440,7 @@ extension ARKController {
     func setNumberOfTrackedImages(_ numberOfTrackedImages: Int) {
         if let trackingConfiguration = configuration as? ARWorldTrackingConfiguration {
             trackingConfiguration.maximumNumberOfTrackedImages = numberOfTrackedImages
-            session?.run(trackingConfiguration, options: [])
+            session.run(trackingConfiguration, options: [])
         } else {
             print("Error: Cannot set tracked images on an ARFaceTrackingConfiguration session.")
         }

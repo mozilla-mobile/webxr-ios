@@ -669,7 +669,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         
         if arkController?.usingMetal ?? false {
             arkController?.controller.renderer.rendererShouldUpdateFrame = { block in
-                if let frame = blockSelf?.arkController?.session?.currentFrame {
+                if let frame = blockSelf?.arkController?.session.currentFrame {
                     blockSelf?.arkController?.controller.readyToRenderFrame = false
                     blockSelf?.savedRender = block
                     blockSelf?.arkController?.updateARKData(with: frame)
@@ -1303,7 +1303,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             if let arController = arkController?.controller as? ARKMetalController {
                 guard let chosenPlane = arController.focusedPlane else { return }
                 if let anchorIdentifier = arController.planes.someKey(forValue: chosenPlane) {
-                    let allFrameAnchors = arkController?.session?.currentFrame?.anchors
+                    let allFrameAnchors = arkController?.session.currentFrame?.anchors
                     let anchor = allFrameAnchors?.filter { $0.identifier == anchorIdentifier }.first
                     if let anchor = anchor {
                         let addedAnchorDictionary = arkController?.createDictionary(for: anchor)
@@ -1314,7 +1314,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             } else if let arController = arkController?.controller as? ARKSceneKitController {
                 guard let chosenPlane = arController.focusedPlane else { return }
                 if let anchorIdentifier = arController.planes.someKey(forValue: chosenPlane) {
-                    let allFrameAnchors = arkController?.session?.currentFrame?.anchors
+                    let allFrameAnchors = arkController?.session.currentFrame?.anchors
                     let anchor = allFrameAnchors?.filter { $0.identifier == anchorIdentifier }.first
                     if let anchor = anchor {
                         let addedAnchorDictionary = arkController?.createDictionary(for: anchor)

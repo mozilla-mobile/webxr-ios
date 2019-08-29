@@ -20,7 +20,7 @@ import Compression
             return
         }
         
-        session?.getCurrentWorldMap(completionHandler: { worldMap, error in
+        session.getCurrentWorldMap(completionHandler: { worldMap, error in
             if let worldMap = worldMap {
                 appDelegate().logger.error("saving WorldMap to local storage")
                 self._save(worldMap)
@@ -56,7 +56,7 @@ import Compression
             return
         }
         
-        session?.getCurrentWorldMap(completionHandler: { worldMap, error in
+        session.getCurrentWorldMap(completionHandler: { worldMap, error in
             if worldMap != nil {
                 appDelegate().logger.error("saving WorldMap as we transition to background")
                 self.backgroundWorldMap = worldMap
@@ -154,7 +154,7 @@ import Compression
             return
         }
         
-        session?.getCurrentWorldMap(completionHandler: { worldMap, error in
+        session.getCurrentWorldMap(completionHandler: { worldMap, error in
             if let worldMap = worldMap {
                 if let completion = completion {
                     var mapData = [AnyHashable: Any]()
@@ -262,14 +262,14 @@ import Compression
             worldTrackingConfiguration?.initialWorldMap = map
             printWorldMapInfo(map)
             
-            session?.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+            session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
             
             // if we are removing anchors, clear the user map
             arkitGeneratedAnchorIDUserAnchorIDMap = NSMutableDictionary.init()
             print("Restarted, loading map.")
             
             for anchor in map.anchors {
-                session?.add(anchor: anchor)
+                session.add(anchor: anchor)
                 arkitGeneratedAnchorIDUserAnchorIDMap[anchor.identifier.uuidString] = anchor.name ?? ""
                 print("WorldMap loaded anchor: \(anchor.name ?? "nameless anchor")")
             }
@@ -385,7 +385,7 @@ import Compression
     }
     
     func worldMappingAvailable() -> Bool {
-        guard let ws = session?.currentFrame?.worldMappingStatus else { return false }
+        guard let ws = session.currentFrame?.worldMappingStatus else { return false }
         return ws != .notAvailable
     }
     

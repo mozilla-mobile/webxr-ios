@@ -47,9 +47,9 @@
      in the previous ARWorldTrackingConfiguration session, and run the session.
      */
     func switchCameraButtonTapped(_ state: AppState) { // numberOfTrackedImages: Int) {
-        guard let currentFrame = session?.currentFrame else { return }
+        guard let currentFrame = session.currentFrame else { return }
         for anchor in currentFrame.anchors {
-            session?.remove(anchor: anchor)
+            session.remove(anchor: anchor)
         }
         
         if !(configuration is ARFaceTrackingConfiguration) {

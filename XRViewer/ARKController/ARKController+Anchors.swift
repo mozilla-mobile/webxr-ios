@@ -272,11 +272,11 @@
         for anchorIDToDelete in anchorIDsToDelete as? [String] ?? [] {
             var anchorToDelete: ARAnchor? = getAnchorFromUserAnchorID(anchorIDToDelete)
             if let anchorToDelete = anchorToDelete {
-                session?.remove(anchor: anchorToDelete)
+                session.remove(anchor: anchorToDelete)
             } else {
                 anchorToDelete = getAnchorFromARKitAnchorID(anchorIDToDelete)
                 if let anchorToDelete = anchorToDelete {
-                    session?.remove(anchor: anchorToDelete)
+                    session.remove(anchor: anchorToDelete)
                 }
             }
         }
@@ -287,7 +287,7 @@
      key "distantAnchorsDistanceKey"
      */
     func removeDistantAnchors() {
-        guard let currentFrame = session?.currentFrame else { return }
+        guard let currentFrame = session.currentFrame else { return }
         let cameraTransform = currentFrame.camera.transform
         let distanceThreshold: Float = UserDefaults.standard.float(forKey: Constant.distantAnchorsDistanceKey())
         
@@ -316,13 +316,13 @@
                     (center2 + extent2) < -distanceThreshold {
                     
                     print("\n\n*********\n\nRemoving distant plane \(anchor.identifier.uuidString)\n\n*********")
-                    session?.remove(anchor: anchor)
+                    session.remove(anchor: anchor)
                 }
             } else {
                 let distance = simd_distance(anchor.transform.columns.3, cameraTransform.columns.3)
                 if distance >= distanceThreshold {
                     print("\n\n*********\n\nRemoving distant anchor \(anchor.identifier.uuidString)\n\n*********")
-                    session?.remove(anchor: anchor)
+                    session.remove(anchor: anchor)
                 }
             }
         }
@@ -331,21 +331,21 @@
     func removeAllAnchors() {
         clearImageDetectionDictionaries()
         
-        guard let currentFrame = session?.currentFrame else { return }
+        guard let currentFrame = session.currentFrame else { return }
         
         for anchor in currentFrame.anchors {
-            session?.remove(anchor: anchor)
+            session.remove(anchor: anchor)
         }
     }
     
     func removeAllAnchorsExceptPlanes() {
         clearImageDetectionDictionaries()
         
-        guard let currentFrame = session?.currentFrame else { return }
+        guard let currentFrame = session.currentFrame else { return }
         
         for anchor in currentFrame.anchors {
             if !(anchor is ARPlaneAnchor) {
-                session?.remove(anchor: anchor)
+                session.remove(anchor: anchor)
             }
         }
     }
@@ -354,7 +354,7 @@
     
     func getAnchorFromARKitAnchorID(_ arkitAnchorID: String) -> ARAnchor? {
         var anchor: ARAnchor? = nil
-        guard let currentFrame: ARFrame = session?.currentFrame else { return nil }
+        guard let currentFrame: ARFrame = session.currentFrame else { return nil }
         for currentAnchor in currentFrame.anchors {
             if currentAnchor.identifier.uuidString == arkitAnchorID {
                 anchor = currentAnchor
@@ -370,7 +370,7 @@
             guard let userID = userID as? String else { return }
             guard let arkitID = arkitID as? String else { return }
             if userID == userAnchorID {
-                guard let currentFrame = self.session?.currentFrame else { return }
+                guard let currentFrame = self.session.currentFrame else { return }
                 let anchors = currentFrame.anchors
                 for currentAnchor in anchors {
                     if currentAnchor.identifier.uuidString == arkitID {
@@ -463,7 +463,7 @@
         var matrix = matrix_float4x4()
         matrix = transform.matrix()
         let anchor = ARAnchor(name: userGeneratedAnchorID ?? "", transform: matrix)
-        session?.add(anchor: anchor)
+        session.add(anchor: anchor)
         arkitGeneratedAnchorIDUserAnchorIDMap[anchor.identifier.uuidString] = userGeneratedAnchorID ?? ""
 
         return true
