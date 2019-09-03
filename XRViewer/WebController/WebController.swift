@@ -227,7 +227,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         })
     }
 
-    @objc func userGrantedWebXRAuthorizationState(_ access: WebXRAuthorizationState) {
+    func userGrantedWebXRAuthorizationState(_ access: WebXRAuthorizationState) {
         barView?.permissionLevelButton?.isEnabled = true
         switch access {
         case .videoCameraAccess:

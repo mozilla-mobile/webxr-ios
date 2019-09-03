@@ -1,4 +1,6 @@
-@objc protocol ARKControllerProtocol: NSObjectProtocol {
+import ARKit
+
+protocol ARKControllerProtocol: NSObjectProtocol {
     init(sesion session: ARSession, size: CGSize)
     func update(_ session: ARSession)
     func clean()

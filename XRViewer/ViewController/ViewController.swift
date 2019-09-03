@@ -2,6 +2,7 @@ import UIKit
 import CoreLocation
 import XCGLogger
 import GCDWebServers
+import ARKit
 
 /**
  The main view controller of the app. It's the holder of the other controllers.
@@ -958,45 +959,45 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     
     private func showOptionsFormDict(dict: [AnyHashable : Any]?) -> ShowOptions {
         if dict == nil {
-            return .Browser
+            return .browser
         }
         
         var options: ShowOptions = .init(rawValue: 0)
         
         if (dict?[WEB_AR_UI_BROWSER_OPTION] as? NSNumber)?.boolValue ?? false {
-            options = [options, .Browser]
+            options = [options, .browser]
         }
         
         if (dict?[WEB_AR_UI_POINTS_OPTION] as? NSNumber)?.boolValue ?? false {
-            options = [options, .ARPoints]
+            options = [options, .arPoints]
         }
         
         if (dict?[WEB_AR_UI_DEBUG_OPTION] as? NSNumber)?.boolValue ?? false {
-            options = [options, .Debug]
+            options = [options, .debug]
         }
         
         if (dict?[WEB_AR_UI_STATISTICS_OPTION] as? NSNumber)?.boolValue ?? false {
-            options = [options, .ARStatistics]
+            options = [options, .arStatistics]
         }
         
         if (dict?[WEB_AR_UI_FOCUS_OPTION] as? NSNumber)?.boolValue ?? false {
-            options = [options, .ARFocus]
+            options = [options, .arFocus]
         }
         
         if (dict?[WEB_AR_UI_BUILD_OPTION] as? NSNumber)?.boolValue ?? false {
-            options = [options, .BuildNumber]
+            options = [options, .buildNumber]
         }
         
         if (dict?[WEB_AR_UI_PLANE_OPTION] as? NSNumber)?.boolValue ?? false {
-            options = [options, .ARPlanes]
+            options = [options, .arPlanes]
         }
         
         if (dict?[WEB_AR_UI_WARNINGS_OPTION] as? NSNumber)?.boolValue ?? false {
-            options = [options, .ARWarnings]
+            options = [options, .arWarnings]
         }
         
         if (dict?[WEB_AR_UI_ANCHORS_OPTION] as? NSNumber)?.boolValue ?? false {
-            options = [options, .ARObject]
+            options = [options, .arObject]
         }
         
         return options

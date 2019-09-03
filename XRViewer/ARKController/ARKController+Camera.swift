@@ -1,4 +1,6 @@
-@objc extension ARKController {
+import ARKit
+
+extension ARKController {
     
     // MARK: - Camera Device
     

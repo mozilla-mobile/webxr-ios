@@ -188,7 +188,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         viewController?.present(permissionsViewController, animated: true)
     }
     
-    @objc func showMessageAboutEnteringXR(_ authorizationRequested: WebXRAuthorizationState, authorizationGranted: @escaping (WebXRAuthorizationState) -> Void, url: URL) {
+    func showMessageAboutEnteringXR(_ authorizationRequested: WebXRAuthorizationState, authorizationGranted: @escaping (WebXRAuthorizationState) -> Void, url: URL) {
         weak var blockSelf: MessageController? = self
         let standardUserDefaults = UserDefaults.standard
         let allowedMinimalSites = standardUserDefaults.dictionary(forKey: Constant.allowedMinimalSitesKey())

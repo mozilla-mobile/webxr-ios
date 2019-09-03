@@ -1,6 +1,7 @@
 import Compression
+import ARKit
 
-@objc extension ARKController {
+extension ARKController {
     
     // MARK: - Saving
     

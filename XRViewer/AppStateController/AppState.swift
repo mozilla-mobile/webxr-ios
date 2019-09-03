@@ -18,7 +18,7 @@ import Foundation
     var numberOfTrackedImages: Int = 0
     @objc var userGrantedSendingComputerVisionData = false
     @objc var askedComputerVisionData = false
-    @objc var userGrantedSendingWorldStateData: WebXRAuthorizationState = .notDetermined
+    var userGrantedSendingWorldStateData: WebXRAuthorizationState = .notDetermined
     @objc var askedWorldStateData = false
 
     class func defaultState() -> AppState {

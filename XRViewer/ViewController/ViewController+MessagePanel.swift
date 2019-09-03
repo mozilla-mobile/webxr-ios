@@ -1,3 +1,5 @@
+import ARKit
+
 enum MessageType {
     case trackingStateEscalation
     case planeEstimation

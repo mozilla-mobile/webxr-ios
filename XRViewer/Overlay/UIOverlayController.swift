@@ -40,7 +40,7 @@ class UIOverlayController: NSObject {
         guard let showOptions = showOptions else { return }
         
         if showMode.rawValue >= ShowMode.url.rawValue {
-            if showOptions.rawValue & ShowOptions.Browser.rawValue != 0 {
+            if showOptions.rawValue & ShowOptions.browser.rawValue != 0 {
                 updRect.origin.y = CGFloat(Constant.urlBarHeight())
             }
         }

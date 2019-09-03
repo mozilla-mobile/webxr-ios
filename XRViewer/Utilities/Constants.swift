@@ -4,6 +4,7 @@
 //  Copyright © 2018 Mozilla. All rights reserved.
 
 import Foundation
+import ARKit
 
 /// The NSUserDefaults key for the boolean that tells us whether
 /// the AnalyticsManager should be used

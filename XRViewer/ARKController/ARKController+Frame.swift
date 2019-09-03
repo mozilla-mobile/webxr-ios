@@ -1,8 +1,9 @@
 import Accelerate
+import ARKit
 
 extension ARKController {
     
-    @objc func updateARKData(with frame: ARFrame) {
+    func updateARKData(with frame: ARFrame) {
         
         synced(self) {
             

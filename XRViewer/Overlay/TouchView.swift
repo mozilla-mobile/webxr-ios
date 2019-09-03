@@ -42,7 +42,7 @@ class TouchView: UIView {
         showMode = mode
     }
     
-    @objc func setShowOptions(_ options: ShowOptions) {
+    func setShowOptions(_ options: ShowOptions) {
         showOptions = options
     }
     

@@ -1,4 +1,4 @@
-import Foundation
+import ARKit
 
 class HitTestResult: NSObject {
     var position: SCNVector3?

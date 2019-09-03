@@ -2,6 +2,7 @@ import AVFoundation
 import os
 import Accelerate
 import Compression
+import ARKit
 
 // The ARSessionConfiguration object passed to the run(_:options:) method is not supported by the current device.
 let UNSUPPORTED_CONFIGURATION_ARKIT_ERROR_CODE = 100
@@ -31,6 +32,59 @@ enum ARKitSessionState : Int {
     case arkSessionRunning
 }
 
+/**
+ Enum representing the WebXR authorization status
+ 
+ - WebXRAuthorizationStateNotDetermined: The user didn't say anything about the world sensing
+ - WebXRAuthorizationStateDenied: The user denied sending world sensing data
+ - WebXRAuthorizationStateMinimal: The user allowed minimal sending world sensing data, which
+ displays video from the camera without giving the page access to the video
+ - WebXRAuthorizationStateLite: The user allowed Lite Mode world sensing data, which only shares
+ one plane from the real world with the site and enables face-based experiences
+ - WebXRAuthorizationStateWorldSensing: The user allowed sending world sensing data
+ - WebXRAuthorizationStateVideoCameraAccess: The user allowed access to the video camera and sending world sensing data
+ 
+ */
+enum WebXRAuthorizationState {
+    case notDetermined
+    case denied
+    case minimal
+    case lite
+    case worldSensing
+    case videoCameraAccess
+}
+
+/**
+ Show options. This option set is built from the AR Request dictionary received on initAR
+ 
+ - None: Shows nothing
+ - Browser: Shows in browser mode
+ - ARWarnings: Shows warnings reported by ARKit
+ - ARFocus: Shows a focus node
+ - ARObject: Shows AR objects
+ - Debug: Not used
+ - ARPlanes: Shows AR planes
+ - ARPoints: Shows AR feature points
+ - ARStatistics: Shows AR Statistics
+ - BuildNumber: Shows the app build number
+ - Full: Shows everything
+ */
+struct ShowOptions: OptionSet {
+    let rawValue: Int
+    
+    static let none = ShowOptions(rawValue: 0)
+    static let browser = ShowOptions(rawValue: 1 << 0)
+    static let arWarnings = ShowOptions(rawValue: 1 << 1)
+    static let arFocus = ShowOptions(rawValue: 1 << 2)
+    static let arObject = ShowOptions(rawValue: 1 << 3)
+    static let debug = ShowOptions(rawValue: 1 << 4)
+    static let arPlanes = ShowOptions(rawValue: 1 << 5)
+    static let arPoints = ShowOptions(rawValue: 1 << 6)
+    static let arStatistics = ShowOptions(rawValue: 1 << 7)
+    static let buildNumber = ShowOptions(rawValue: 1 << 8)
+    static let full = ShowOptions(rawValue: Int.max)
+}
+
 enum ARKType : Int {
     case arkMetal
     case arkSceneKit
@@ -43,6 +97,7 @@ typealias SessionInterruptionEnded = () -> Void
 typealias DidFailSession = (Error?) -> Void
 typealias DidUpdateWindowSize = () -> Void
 typealias DetectionImageCreatedCompletionType = (Bool, String?) -> Void
+typealias HotAction = (Bool) -> Void
 
 class ARKController: NSObject {
     

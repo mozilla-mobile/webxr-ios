@@ -1,3 +1,5 @@
+import ARKit
+
 extension ARKController: ARSessionDelegate {
     
     // Tony: Per SO, a bug that's been around for 3+ years necessitates these @objc calls
