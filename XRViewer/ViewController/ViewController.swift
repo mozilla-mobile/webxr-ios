@@ -158,11 +158,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         return true
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        appDelegate().logger.error("didReceiveMemoryWarning")
-        processMemoryWarning()
-    }
+    // 9/3/19: Commenting to monitor default failure response and frequency
+//    override func didReceiveMemoryWarning() {
+//        super.didReceiveMemoryWarning()
+//        appDelegate().logger.error("didReceiveMemoryWarning")
+//        processMemoryWarning()
+//    }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         let webXR = stateController.state.webXR
