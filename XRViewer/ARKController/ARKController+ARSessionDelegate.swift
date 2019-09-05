@@ -58,7 +58,8 @@ extension ARKController: ARSessionDelegate {
             }
 
             if usingMetal,
-                let controller = controller as? ARKMetalController
+                let controller = controller as? ARKMetalController,
+                addedAnchor is ARPlaneAnchor
             {
                 let node = Node()
                 controller.planes[addedAnchor.identifier] = node
@@ -112,6 +113,7 @@ extension ARKController: ARSessionDelegate {
             
             if usingMetal,
                 let controller = controller as? ARKMetalController,
+                updatedAnchor is ARPlaneAnchor,
                 let node = controller.planes[updatedAnchor.identifier]
             {
                 node.transform = Transform(from: updatedAnchor.transform)
@@ -128,6 +130,7 @@ extension ARKController: ARSessionDelegate {
             
             if usingMetal,
                 let controller = controller as? ARKMetalController,
+                removedAnchor is ARPlaneAnchor,
                 let node = controller.planes[removedAnchor.identifier]
             {
                 node.removeFromParentNode()
