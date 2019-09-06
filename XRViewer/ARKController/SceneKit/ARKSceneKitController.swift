@@ -32,6 +32,9 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
             }
         }
     }
+    var readyToRenderFrame: Bool = true
+    var initializingRender: Bool = true
+    var renderer: Renderer! = nil
 
     deinit {
         renderView.delegate = nil
@@ -298,8 +301,4 @@ class ARKSceneKitController: NSObject, ARKControllerProtocol, ARSCNViewDelegate 
     func setShowOptions(_ options: ShowOptions) {
         showOptions = options
     }
-    
-    var readyToRenderFrame: Bool = true
-    var initializingRender: Bool = true
-    var renderer: Renderer! = nil
 }
