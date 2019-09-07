@@ -292,10 +292,10 @@ class ARKController: NSObject {
         let renderView = controller.getRenderView()
         rootView.addSubview(renderView)
         renderView.translatesAutoresizingMaskIntoConstraints = false
-        renderView.topAnchor.constraint(equalTo: rootView.topAnchor)
-        renderView.leftAnchor.constraint(equalTo: rootView.leftAnchor)
-        renderView.rightAnchor.constraint(equalTo: rootView.rightAnchor)
-        renderView.bottomAnchor.constraint(equalTo: rootView.bottomAnchor)
+        renderView.topAnchor.constraint(equalTo: rootView.topAnchor).isActive = true
+        renderView.leftAnchor.constraint(equalTo: rootView.leftAnchor).isActive = true
+        renderView.rightAnchor.constraint(equalTo: rootView.rightAnchor).isActive = true
+        renderView.bottomAnchor.constraint(equalTo: rootView.bottomAnchor).isActive = true
         
         controller.setHitTestFocus(renderView.center)
         
