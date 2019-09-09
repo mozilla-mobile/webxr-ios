@@ -42,6 +42,8 @@ If you build this app yourself, you can use Safari 11 or newer to connect develo
 
 It can be handy to change the default URL loaded by the app by changing the `WEB_URL` string in `Utilities/Constants.swift` to the URL of your local web server. 
 
+The XR Viewer registers wxrv:// as a protocol consequently allowing the resulting URL to be opened directly from the XR Viewer. A typical use case is to provide a QR code that would directly open WebXR page.
+
 ## Telemetry and Data Collection
 
 The WebXR Viewer for iOS uses Mozilla's own Telemetry service (developed for Firefox and Focus) for anonymous insight into usage of various app features. This event tracking is turned on by default for the WebXR Viewer for iOS (opt-out).
