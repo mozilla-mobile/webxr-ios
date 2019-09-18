@@ -119,7 +119,12 @@ extension ARKController: ARSessionDelegate {
                 node.transform = Transform(from: updatedAnchor.transform)
                 controller.renderer(didUpdateNode: node, forAnchor: updatedAnchor)
             }
-            updateDictionary(for: updatedAnchor)
+            
+            if let anchorDictionary = objects[anchorID(for: updatedAnchor)] as? NSDictionary,
+                !addedAnchorsSinceLastFrame.contains(anchorDictionary)
+            {
+                updateDictionary(for: updatedAnchor)
+            }
         }
     }
     

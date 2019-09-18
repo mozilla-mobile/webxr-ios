@@ -754,9 +754,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         
         webController?.onJSFinishedRendering = {
             blockSelf?.arkController?.controller.initializingRender = false
-            blockSelf?.arkController?.controller.readyToRenderFrame = true
             blockSelf?.savedRender?()
             blockSelf?.savedRender = nil
+            blockSelf?.arkController?.controller.readyToRenderFrame = true
         }
 
         webController?.onStopAR = {
