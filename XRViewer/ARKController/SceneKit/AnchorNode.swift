@@ -19,7 +19,7 @@ class AnchorNode: SCNNode {
     private var figure: AnchorFigure?
     let boxSize = Constant.boxSize()
     
-    @objc init(anchor: ARAnchor) {
+    init(anchor: ARAnchor) {
         super.init()
 
         appDelegate().logger.debug("+ anchor")
@@ -58,7 +58,7 @@ class AnchorNode: SCNNode {
         appDelegate().logger.debug("- anchor")
     }
 
-    @objc func size() -> CGFloat {
+    func size() -> CGFloat {
         switch figure {
             case .anchorBox?:
                 return (geometry as? SCNBox)?.width ?? 0.0

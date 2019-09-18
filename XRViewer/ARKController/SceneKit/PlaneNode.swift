@@ -2,7 +2,7 @@ import ARKit
 import SceneKit
 
 class PlaneNode: SCNNode {
-    @objc init(anchor: ARPlaneAnchor?) {
+    init(anchor: ARPlaneAnchor?) {
         super.init()
 
         setup()
@@ -13,7 +13,7 @@ class PlaneNode: SCNNode {
         super.init(coder: aDecoder)
     }
     
-    @objc func update(_ anchor: ARPlaneAnchor?) {
+    func update(_ anchor: ARPlaneAnchor?) {
         guard let anchor = anchor else { return }
         let plane = geometry as? SCNPlane
         plane?.width = CGFloat(anchor.extent.x)

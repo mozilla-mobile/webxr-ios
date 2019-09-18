@@ -34,12 +34,12 @@ class Animator: NSObject, CAAnimationDelegate {
         appDelegate().logger.debug("Animator dealloc")
     }
     
-    @objc func clean() {
+    func clean() {
         animationCompletions.removeAll()
         UIApplication.shared.keyWindow?.layer.removeAllAnimations()
     }
 
-    @objc func animate(_ view: UIView?, toFade fade: Bool) {
+    func animate(_ view: UIView?, toFade fade: Bool) {
         animate(view, toFade: fade) { (bool) in
         }
     }

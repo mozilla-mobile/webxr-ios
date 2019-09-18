@@ -10,9 +10,9 @@ enum ResetTrackingOption {
 
 class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     
-    @objc var didShowMessage: (() -> Void)?
-    @objc var didHideMessage: (() -> Void)?
-    @objc var didHideMessageByUser: (() -> Void)?
+    var didShowMessage: (() -> Void)?
+    var didHideMessage: (() -> Void)?
+    var didHideMessageByUser: (() -> Void)?
     private weak var viewController: UIViewController?
     private weak var arPopup: UIAlertController?
     var requestXRPermissionsVC: RequestXRPermissionsViewController?
@@ -21,7 +21,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
     var permissionsPopup: UIViewController?
     var forceShowPermissionsPopup = false
 
-    @objc init(viewController vc: UIViewController?) {
+    init(viewController vc: UIViewController?) {
         super.init()
         
         viewController = vc
@@ -31,7 +31,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         appDelegate().logger.debug("MessageController dealloc")
     }
     
-    @objc func clean() {
+    func clean() {
         if arPopup != nil {
             arPopup?.dismiss(animated: false)
             arPopup = nil
@@ -46,11 +46,11 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         return arPopup != nil
     }
     
-    @objc func hideMessages() {
+    func hideMessages() {
         viewController?.presentedViewController?.dismiss(animated: true)
     }
 
-    @objc func showMessageAboutWebError(_ error: Error?, withCompletion reloadCompletion: @escaping (_ reload: Bool) -> Void) {
+    func showMessageAboutWebError(_ error: Error?, withCompletion reloadCompletion: @escaping (_ reload: Bool) -> Void) {
         weak var blockSelf: MessageController? = self
         let popup = UIAlertController(title: "Cannot Open the Page",
                                       message: "Please check the URL and try again",
@@ -71,7 +71,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         didShowMessage?()
     }
 
-    @objc func showMessageAboutARInterruption(_ interrupt: Bool) {
+    func showMessageAboutARInterruption(_ interrupt: Bool) {
         if interrupt && arPopup == nil {
             let popup = UIAlertController(title: "AR Interruption Occurred",
                                           message: "Please wait, it should be fixed automatically",
@@ -87,7 +87,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
     }
 
-    @objc func showMessageAboutFailSession(withMessage message: String?, completion: @escaping () -> Void) {
+    func showMessageAboutFailSession(withMessage message: String?, completion: @escaping () -> Void) {
         weak var blockSelf: MessageController? = self
         let popup = UIAlertController(title: "AR Session Failed",
                                       message: message,
@@ -103,7 +103,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         didShowMessage?()
     }
 
-    @objc func showMessage(withTitle title: String?, message: String?, hideAfter seconds: Int) {
+    func showMessage(withTitle title: String?, message: String?, hideAfter seconds: Int) {
         let popup = UIAlertController(title: title,
                                       message: message,
                                       preferredStyle: .alert)
@@ -114,7 +114,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         })
     }
 
-    @objc func showMessageAboutMemoryWarning(withCompletion completion: @escaping () -> Void) {
+    func showMessageAboutMemoryWarning(withCompletion completion: @escaping () -> Void) {
         weak var blockSelf: MessageController? = self
         let popup = UIAlertController(title: "Memory Issue Occurred",
                                       message: "There was not enough memory for the application to keep working",
@@ -131,7 +131,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         didShowMessage?()
     }
 
-    @objc func showMessageAboutConnectionRequired() {
+    func showMessageAboutConnectionRequired() {
         weak var blockSelf: MessageController? = self
         let popup = UIAlertController(title: "Internet Connection is Unavailable",
                                       message: "Application will restart automatically when a connection becomes available",
@@ -178,7 +178,7 @@ class MessageController: NSObject, UITableViewDelegate, UITableViewDataSource {
         viewController?.present(popup, animated: true)
     }
 
-    @objc func showPermissionsPopup() {
+    func showPermissionsPopup() {
         let storyboard = UIStoryboard(name: "RequestPermissionsViewController", bundle: nil)
         let permissionsViewController = storyboard.instantiateViewController(withIdentifier: "requestAlert")
         permissionsViewController.view.translatesAutoresizingMaskIntoConstraints = true

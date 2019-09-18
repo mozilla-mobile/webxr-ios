@@ -68,19 +68,19 @@ let ExposeWebXRAPIKey = "exposeWebXRAPI"
 let UseMetalForARKey = "useMetalForAR"
 let BOX_SIZE: CGFloat = 0.05
 
-@objc class Constant: NSObject {
+class Constant: NSObject {
     override private init() {}
     
     static func useAnalyticsKey() -> String { return UseAnalyticsKey }
-    @objc static func homeURLKey() -> String { return HomeURLKey }
-    @objc static func secondsInBackgroundKey() -> String { return SecondsInBackgroundKey }
-    @objc static func distantAnchorsDistanceKey() -> String { return DistantAnchorsDistanceKey }
-    @objc static func backgroundOrPausedDateKey() -> String { return BackgroundOrPausedDateKey }
+    static func homeURLKey() -> String { return HomeURLKey }
+    static func secondsInBackgroundKey() -> String { return SecondsInBackgroundKey }
+    static func distantAnchorsDistanceKey() -> String { return DistantAnchorsDistanceKey }
+    static func backgroundOrPausedDateKey() -> String { return BackgroundOrPausedDateKey }
     static func lastResetSessionTrackingDateKey() -> String { return LastResetSessionTrackingDateKey }
     static func thresholdTimeInSecondsSinceLastTrackingReset() -> Double { return ThresholdTimeInSecondsSinceLastTrackingReset }
     static func sessionInBackgroundDefaultTimeInSeconds() -> Int { return SessionInBackgroundDefaultTimeInSeconds }
     static func distantAnchorsDefaultDistanceInMeters() -> Float { return DistantAnchorsDefaultDistanceInMeters }
-    @objc static func pauseTimeInSecondsToRemoveAnchors() -> Double { return PauseTimeInSecondsToRemoveAnchors }
+    static func pauseTimeInSecondsToRemoveAnchors() -> Double { return PauseTimeInSecondsToRemoveAnchors }
     static func minimalWebXREnabled() -> String { return MinimalWebXREnabledKey }
     static func allowedMinimalSitesKey() -> String { return AllowedMinimalSitesKey }
     static func liteModeWebXREnabled() -> String { return LiteModeWebXREnabledKey }
@@ -92,15 +92,15 @@ let BOX_SIZE: CGFloat = 0.05
     static func exposeWebXRAPIKey() -> String { return ExposeWebXRAPIKey }
     static func useMetalForARKey() -> String { return UseMetalForARKey }
     
-    @objc static func swipeGestureAreaHeight() -> CGFloat { return 200 }
-    @objc static func recordSize() -> CGFloat { return 60.5 }
-    @objc static func recordOffsetX() -> CGFloat { return 25.5 }
-    @objc static func recordOffsetY() -> CGFloat { return 25.5 }
-    @objc static func micSizeW() -> CGFloat { return 27.75 }
-    @objc static func micSizeH() -> CGFloat { return 27.75 }
-    @objc static func urlBarHeight() -> CGFloat { return 49 }
-    @objc static func urlBarAnimationTimeInSeconds() -> TimeInterval { return 0.2 }
-    @objc static func boxSize() -> CGFloat { return BOX_SIZE }
+    static func swipeGestureAreaHeight() -> CGFloat { return 200 }
+    static func recordSize() -> CGFloat { return 60.5 }
+    static func recordOffsetX() -> CGFloat { return 25.5 }
+    static func recordOffsetY() -> CGFloat { return 25.5 }
+    static func micSizeW() -> CGFloat { return 27.75 }
+    static func micSizeH() -> CGFloat { return 27.75 }
+    static func urlBarHeight() -> CGFloat { return 49 }
+    static func urlBarAnimationTimeInSeconds() -> TimeInterval { return 0.2 }
+    static func boxSize() -> CGFloat { return BOX_SIZE }
 }
 
 // Old WebARKHeader.h Constants

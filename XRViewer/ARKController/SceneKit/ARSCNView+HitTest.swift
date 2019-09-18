@@ -24,7 +24,7 @@ extension ARSCNView {
     
     // MARK: - Hit Tests
     
-    @objc func hitTest(point: CGPoint, withResult resultBlock: HitTestResultBlock) -> [Any]? {
+    func hitTest(point: CGPoint, withResult resultBlock: HitTestResultBlock) -> [Any]? {
         // 1. Always do a hit test against exisiting plane anchors first.
         //    (If any such anchors exist & only within their extents.)
 

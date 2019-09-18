@@ -8,7 +8,7 @@ import UIKit
  - url: Shows the URL Bar
  - urlDebug: Shows the URL Bar and the AR debug info
  */
-@objc enum ShowMode: Int {
+enum ShowMode: Int {
     case nothing    = 0
     case debug      = 1
     case url        = 2
@@ -23,18 +23,18 @@ enum ExclusiveStateType: Int {
 }
 
 class AppStateController: NSObject {
-    @objc var state: AppState
+    var state: AppState
     var onModeUpdate: ((ShowMode) -> Void)?
     var onOptionsUpdate: ((ShowOptions) -> Void)?
-    @objc var onXRUpdate: ((Bool) -> Void)?
-    @objc var onRequestUpdate: (([AnyHashable : Any]?) -> Void)?
-    @objc var onDebug: ((Bool) -> Void)?
-    @objc var onMemoryWarning: ((String?) -> Void)?
-    @objc var onEnterForeground: ((String?) -> Void)?
-    @objc var onReachable: ((String?) -> Void)?
+    var onXRUpdate: ((Bool) -> Void)?
+    var onRequestUpdate: (([AnyHashable : Any]?) -> Void)?
+    var onDebug: ((Bool) -> Void)?
+    var onMemoryWarning: ((String?) -> Void)?
+    var onEnterForeground: ((String?) -> Void)?
+    var onReachable: ((String?) -> Void)?
     private var exclusives: [ExclusiveState] = []
 
-    @objc init(state: AppState) {
+    init(state: AppState) {
         self.state = state
         super.init()
 
@@ -66,7 +66,7 @@ class AppStateController: NSObject {
         }
     }
 
-    @objc func setWebXR(_ webXR: Bool) {
+    func setWebXR(_ webXR: Bool) {
         state = state.updatedWebXR(webXR)
         guard let onXRUpdate = onXRUpdate else { return }
         let webXR = state.webXR
@@ -75,7 +75,7 @@ class AppStateController: NSObject {
         }
     }
 
-    @objc func setARRequest(_ dict: [AnyHashable : Any], completed: @escaping () -> ()) {
+    func setARRequest(_ dict: [AnyHashable : Any], completed: @escaping () -> ()) {
         state = state.updated(withARRequest: dict)
         guard let onRequestUpdate = onRequestUpdate else { return }
         DispatchQueue.main.async {
@@ -84,11 +84,11 @@ class AppStateController: NSObject {
         }
     }
 
-    @objc func invertDebugMode() {
+    func invertDebugMode() {
         state.showMode == ShowMode.url ? setShowMode(ShowMode.urlDebug) : setShowMode(ShowMode.url)
     }
 
-    @objc func shouldShowURLBar() -> Bool {
+    func shouldShowURLBar() -> Bool {
 
         var showURLBar = false
 
@@ -107,19 +107,19 @@ class AppStateController: NSObject {
         return showURLBar
     }
 
-    @objc func shouldSendARKData() -> Bool {
+    func shouldSendARKData() -> Bool {
         return state.webXR && !state.aRRequest.isEmpty
     }
 
-    @objc func shouldSendCVData() -> Bool {
+    func shouldSendCVData() -> Bool {
         return state.computerVisionFrameRequested && state.sendComputerVisionData && state.userGrantedSendingComputerVisionData
     }
 
-    @objc func shouldSendNativeTime() -> Bool {
+    func shouldSendNativeTime() -> Bool {
         return state.numberOfTimesSendNativeTimeWasCalled < 2
     }
 
-    @objc func wasMemoryWarning() -> Bool {
+    func wasMemoryWarning() -> Bool {
         var was = false
 
         (exclusives as NSArray).enumerateObjects({ obj, idx, stop in
@@ -135,42 +135,42 @@ class AppStateController: NSObject {
     }
     // rf ?
 
-    @objc func saveOnMessageShowMode() {
+    func saveOnMessageShowMode() {
         save(on: .exclusiveStateMessage, url: nil, mode: state.showMode)
     }
 
-    @objc func applyOnMessageShowMode() {
+    func applyOnMessageShowMode() {
         apply(on: .exclusiveStateMessage)
     }
 
-    @objc func saveDidReceiveMemoryWarning(onURL url: String?) {
+    func saveDidReceiveMemoryWarning(onURL url: String?) {
         if let aMode = ShowMode(rawValue: 0) {
             save(on: .exclusiveStateMemory, url: url, mode: aMode)
         }
     }
 
-    @objc func applyOnDidReceiveMemoryAction() {
+    func applyOnDidReceiveMemoryAction() {
         apply(on: .exclusiveStateMemory)
     }
 
-    @objc func saveMoveToBackground(onURL url: String?) {
+    func saveMoveToBackground(onURL url: String?) {
         setShowMode(ShowMode.nothing)
         if let aMode = ShowMode(rawValue: 0) {
             save(on: .exclusiveStateBackground, url: url, mode: aMode)
         }
     }
 
-    @objc func applyOnEnterForegroundAction() {
+    func applyOnEnterForegroundAction() {
         apply(on: .exclusiveStateBackground)
     }
 
-    @objc func saveNotReachable(onURL url: String?) {
+    func saveNotReachable(onURL url: String?) {
         if let aMode = ShowMode(rawValue: 0) {
             save(on: .exclusiveStateReachability, url: url, mode: aMode)
         }
     }
 
-    @objc func applyOnReachableAction() {
+    func applyOnReachableAction() {
         apply(on: .exclusiveStateReachability)
     }
 

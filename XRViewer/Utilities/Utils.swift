@@ -8,7 +8,7 @@ class Utils: NSObject {
      @return the UIInterfaceOrientation of the app
      */
 
-    @objc class func getInterfaceOrientationFromDeviceOrientation() -> UIInterfaceOrientation {
+    class func getInterfaceOrientationFromDeviceOrientation() -> UIInterfaceOrientation {
         let deviceOrientation: UIDeviceOrientation = UIDevice.current.orientation
         var interfaceOrientation: UIInterfaceOrientation = .landscapeLeft
         switch deviceOrientation {

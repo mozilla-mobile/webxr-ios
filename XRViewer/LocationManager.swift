@@ -88,7 +88,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
         return altitude
     }
 
-    @objc func setup(forRequest request: [AnyHashable : Any]?) {
+    func setup(forRequest request: [AnyHashable : Any]?) {
         guard let request = request else { return }
         self.request = request
 

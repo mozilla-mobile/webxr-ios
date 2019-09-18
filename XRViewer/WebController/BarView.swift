@@ -7,17 +7,17 @@ class BarView: UIView, UITextFieldDelegate {
     
     // MARK: - Properties & Outlets
     
-    @objc var backActionBlock: ((Any?) -> Void)?
-    @objc var forwardActionBlock: ((Any?) -> Void)?
-    @objc var homeActionBlock: ((Any?) -> Void)?
-    @objc var reloadActionBlock: ((Any?) -> Void)?
-    @objc var cancelActionBlock: ((Any?) -> Void)?
-    @objc var showPermissionsActionBlock: ((Any?) -> Void)?
-    @objc var goActionBlock: ((String?) -> Void)?
-    @objc var debugButtonToggledAction: ((Bool) -> Void)?
-    @objc var settingsActionBlock: (() -> Void)?
-    @objc var restartTrackingActionBlock: (() -> Void)?
-    @objc var switchCameraActionBlock: (() -> Void)?
+    var backActionBlock: ((Any?) -> Void)?
+    var forwardActionBlock: ((Any?) -> Void)?
+    var homeActionBlock: ((Any?) -> Void)?
+    var reloadActionBlock: ((Any?) -> Void)?
+    var cancelActionBlock: ((Any?) -> Void)?
+    var showPermissionsActionBlock: ((Any?) -> Void)?
+    var goActionBlock: ((String?) -> Void)?
+    var debugButtonToggledAction: ((Bool) -> Void)?
+    var settingsActionBlock: (() -> Void)?
+    var restartTrackingActionBlock: (() -> Void)?
+    var switchCameraActionBlock: (() -> Void)?
 
     @IBOutlet weak var urlField: URLTextField!
     @IBOutlet private weak var backBtn: UIButton!
@@ -95,30 +95,30 @@ class BarView: UIView, UITextFieldDelegate {
 
     // MARK: - Helpers
     
-    @objc func urlFieldText() -> String? {
+    func urlFieldText() -> String? {
         return urlField.text
     }
     
     // MARK: - Actions
     
-    @objc func startLoading(_ url: String?) {
+    func startLoading(_ url: String?) {
         permissionLevelButton?.startAnimating()
         cancelBtn?.isHidden = false
         reloadBtn?.isHidden = true
         urlField.text = url
     }
     
-    @objc func finishLoading(_ url: String?) {
+    func finishLoading(_ url: String?) {
         permissionLevelButton?.stopAnimating()
         cancelBtn?.isHidden = true
         reloadBtn?.isHidden = false
     }
     
-    @objc func setBackEnabled(_ enabled: Bool) {
+    func setBackEnabled(_ enabled: Bool) {
         backBtn.isEnabled = enabled
     }
     
-    @objc func setForwardEnabled(_ enabled: Bool) {
+    func setForwardEnabled(_ enabled: Bool) {
         forwardBtn.isEnabled = enabled
     }
     
@@ -126,23 +126,23 @@ class BarView: UIView, UITextFieldDelegate {
         debugBtn.isSelected = selected
     }
     
-    @objc func setDebugVisible(_ visible: Bool) {
+    func setDebugVisible(_ visible: Bool) {
         debugBtn.isHidden = !visible
     }
     
-    @objc func setRestartTrackingVisible(_ visible: Bool) {
+    func setRestartTrackingVisible(_ visible: Bool) {
         restartTrackingBtn.isHidden = !visible
     }
     
-    @objc func hideKeyboard() {
+    func hideKeyboard() {
         urlField.resignFirstResponder()
     }
     
-    @objc func isDebugButtonSelected() -> Bool {
+    func isDebugButtonSelected() -> Bool {
         return debugBtn.isSelected
     }
     
-    @objc func hideCameraFlipButton() {
+    func hideCameraFlipButton() {
         switchCameraBtn.removeFromSuperview()
     }
     

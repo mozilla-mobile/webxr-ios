@@ -3,8 +3,8 @@ import Foundation
 /**
  The app internal state
  */
-@objc class AppState: NSObject, NSCopying {
-    @objc var aRRequest: [AnyHashable : Any] = [:]
+class AppState: NSObject, NSCopying {
+    var aRRequest: [AnyHashable : Any] = [:]
     var showMode: ShowMode = .nothing
     var showOptions: ShowOptions = .init(rawValue: 0)
     var webXR = false
@@ -16,10 +16,10 @@ import Foundation
     var shouldShowLiteModePopup = false
     var numberOfTimesSendNativeTimeWasCalled: Int = 0
     var numberOfTrackedImages: Int = 0
-    @objc var userGrantedSendingComputerVisionData = false
-    @objc var askedComputerVisionData = false
+    var userGrantedSendingComputerVisionData = false
+    var askedComputerVisionData = false
     var userGrantedSendingWorldStateData: WebXRAuthorizationState = .notDetermined
-    @objc var askedWorldStateData = false
+    var askedWorldStateData = false
 
     class func defaultState() -> AppState {
         let state = AppState()

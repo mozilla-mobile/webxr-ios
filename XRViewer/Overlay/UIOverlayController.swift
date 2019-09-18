@@ -5,7 +5,7 @@ typealias OnSwipeDown = () -> Void
 typealias OnSwipeUp = () -> Void
 
 class UIOverlayController: NSObject {
-    @objc var animator: Animator? {
+    var animator: Animator? {
         didSet(animator) {
             overlayVC?.animator = animator
         }
@@ -20,7 +20,7 @@ class UIOverlayController: NSObject {
     private var showMode: ShowMode?
     private var showOptions: ShowOptions?
 
-    @objc init(rootView: UIView, debugAction: @escaping HotAction) {
+    init(rootView: UIView, debugAction: @escaping HotAction) {
         super.init()
         self.rootView = rootView
         self.debugAction = debugAction
@@ -28,13 +28,13 @@ class UIOverlayController: NSObject {
         setupOverlayWindow()
     }
 
-    @objc func clean() {
+    func clean() {
         hotView()?.removeFromSuperview()
         overlayWindow?.isHidden = true
         self.overlayWindow = nil
     }
 
-    @objc func viewWillTransition(to size: CGSize) {
+    func viewWillTransition(to size: CGSize) {
         var updRect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         guard let showMode = showMode else { return }
         guard let showOptions = showOptions else { return }
@@ -70,7 +70,7 @@ class UIOverlayController: NSObject {
         })
     }
 
-    @objc func setARKitInterruption(_ interruption: Bool) {
+    func setARKitInterruption(_ interruption: Bool) {
         overlayWindow?.alpha = interruption ? 1 : 0
     }
 

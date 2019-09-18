@@ -41,7 +41,7 @@ fileprivate struct FrameUniforms {
 
 typealias Block = () -> Void
 
-@objc class Renderer: NSObject {
+class Renderer: NSObject {
     let session: ARSession
     let device: MTLDevice
     let inFlightSemaphore = DispatchSemaphore(value: kMaxBuffersInFlight)

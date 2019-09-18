@@ -55,7 +55,7 @@ class FocusNode: SCNNode {
         super.init(coder: aDecoder)
     }
 
-    @objc func update(forPosition position: SCNVector3, planeAnchor anchor: ARPlaneAnchor?, camera: ARCamera?) {
+    func update(forPosition position: SCNVector3, planeAnchor anchor: ARPlaneAnchor?, camera: ARCamera?) {
         self.lastPosition = position
         
         if anchor != nil {

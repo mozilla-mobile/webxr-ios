@@ -1,7 +1,7 @@
 import SceneKit
 
 extension SCNNode {
-    @objc func show(_ show: Bool) {
+    func show(_ show: Bool) {
         if show {
             unhide()
         } else {

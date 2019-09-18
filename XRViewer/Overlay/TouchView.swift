@@ -15,7 +15,7 @@ class TouchView: UIView {
     let MAX_INCREASE_ZONE_SIZE = 10
     private var increaseHotZoneValue: CGFloat = 0.0
     
-    @objc init(frame: CGRect, debugAction: @escaping HotAction) {
+    init(frame: CGRect, debugAction: @escaping HotAction) {
         super.init(frame: frame)
         
         self.debugAction = debugAction
@@ -25,11 +25,11 @@ class TouchView: UIView {
         super.init(coder: aDecoder)
     }
     
-    @objc func setProcessTouches(_ process: Bool) {
+    func setProcessTouches(_ process: Bool) {
         (superview as? LayerView)?.processTouchInSubview = process
     }
     
-    @objc func setCameraRect(_ cameraRect: CGRect, micRect: CGRect, showRect: CGRect, debugRect: CGRect) {
+    func setCameraRect(_ cameraRect: CGRect, micRect: CGRect, showRect: CGRect, debugRect: CGRect) {
         self.cameraRect = cameraRect
         self.micRect = micRect
         self.showRect = showRect
