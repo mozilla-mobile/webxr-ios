@@ -5,7 +5,7 @@ extension ARKController: ARSessionDelegate {
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         if !usingMetal {
             updateARKData(with: frame)
-            didUpdate?(self)
+            didUpdate?()
         } else {
             if let controller = controller as? ARKMetalController {
                 controller.renderer.interfaceOrientation = UIApplication.shared.statusBarOrientation

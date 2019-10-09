@@ -90,7 +90,7 @@ enum ARKType : Int {
     case arkSceneKit
 }
 
-typealias DidUpdate = (ARKController?) -> Void
+typealias DidUpdate = () -> Void
 typealias DidChangeTrackingState = (ARCamera?) -> Void
 typealias SessionWasInterrupted = () -> Void
 typealias SessionInterruptionEnded = () -> Void

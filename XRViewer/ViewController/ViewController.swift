@@ -567,7 +567,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
 
         arkController = ARKController(type: UserDefaults.standard.bool(forKey: Constant.useMetalForARKey()) ? .arkMetal : .arkSceneKit, rootView: arkLayerView)
 
-        arkController?.didUpdate = { c in
+        arkController?.didUpdate = {
             guard let shouldSendNativeTime = blockSelf?.stateController.shouldSendNativeTime() else { return }
             guard let shouldSendARKData = blockSelf?.stateController.shouldSendARKData() else { return }
             guard let shouldSendCVData = blockSelf?.stateController.shouldSendCVData() else { return }
@@ -675,7 +675,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
                     blockSelf?.arkController?.controller.readyToRenderFrame = false
                     blockSelf?.savedRender = block
                     blockSelf?.arkController?.updateARKData(with: frame)
-                    blockSelf?.arkController?.didUpdate?(blockSelf?.arkController)
+                    blockSelf?.arkController?.didUpdate?()
                 } else {
                     print("Unable to updateARKData since ARFrame isn't ready")
                     block()
