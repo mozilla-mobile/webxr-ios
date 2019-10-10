@@ -3,6 +3,7 @@ import CoreLocation
 import XCGLogger
 import GCDWebServers
 import ARKit
+import MetalKit
 
 /**
  The main view controller of the app. It's the holder of the other controllers.
@@ -47,7 +48,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
     var contentPlacementMessageTimer: Timer?
     // Timer for tracking state escalation
     var trackingStateFeedbackEscalationTimer: Timer?
-    
     
     // MARK: - View Lifecycle
     deinit {
@@ -757,6 +757,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
             blockSelf?.savedRender?()
             blockSelf?.savedRender = nil
             blockSelf?.arkController?.controller.readyToRenderFrame = true
+            if let controller = blockSelf?.arkController?.controller as? ARKMetalController {
+                controller.draw(in: controller.renderView)
+            }
         }
 
         webController?.onStopAR = {

@@ -11,7 +11,7 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
     var renderer: Renderer!
     var bufferAllocator: BufferAllocator!
     var device: MTLDevice!
-    private var renderView = MTKView()
+    var renderView = MTKView()
     private var anchorsNodes: [AnchorNode] = []
     
     var showMode: ShowMode? {
@@ -129,8 +129,6 @@ class ARKMetalController: NSObject, ARKControllerProtocol, MTKViewDelegate {
         
         return true
     }
-    
-    
     
     // MARK: - ARKControllerProtocol
     
