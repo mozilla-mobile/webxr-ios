@@ -493,7 +493,7 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
     func callWebMethod(_ name: String, paramJSON: Any?, webCompletion completion: WebCompletion?) {
         var jsonData: Data? = nil
         if let aJSON = paramJSON {
-            jsonData = paramJSON != nil ? try? JSONSerialization.data(withJSONObject: aJSON, options: []) : Data()
+            jsonData = try? JSONSerialization.data(withJSONObject: aJSON, options: [])
         }
         callWebMethod(name, jsonData: jsonData, webCompletion: completion)
     }
