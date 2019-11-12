@@ -732,6 +732,8 @@ class WebController: NSObject, WKUIDelegate, WKNavigationDelegate, WKScriptMessa
         contentController?.removeScriptMessageHandler(forName: WEB_AR_ACTIVATE_DETECTION_IMAGE_MESSAGE)
         contentController?.removeScriptMessageHandler(forName: WEB_AR_DEACTIVATE_DETECTION_IMAGE_MESSAGE)
         contentController?.removeScriptMessageHandler(forName: WEB_AR_DESTROY_DETECTION_IMAGE_MESSAGE)
+        contentController?.removeScriptMessageHandler(forName: WEB_AR_GET_WORLD_MAP_MESSAGE)
+        contentController?.removeScriptMessageHandler(forName: WEB_AR_SET_WORLD_MAP_MESSAGE)
     }
 
     func appVersion() -> String? {
