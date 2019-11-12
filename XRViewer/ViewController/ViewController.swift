@@ -3,7 +3,6 @@ import CoreLocation
 import XCGLogger
 import GCDWebServers
 import ARKit
-import MetalKit
 
 /**
  The main view controller of the app. It's the holder of the other controllers.
@@ -242,6 +241,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         setupReachability()
         setupNotifications()
     }
+    
+    // MARK: - Setup: StateController
 
     func setupStateController() {
         weak var blockSelf: ViewController? = self
@@ -560,6 +561,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         locationManager?.setup(forRequest: stateController.state.aRRequest)
     }
 
+    // MARK: - Setup: ARKController
+    
     func setupARKController() {
         CLEAN_VIEW(v: arkLayerView)
 
@@ -687,6 +690,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, GCDWebServe
         AnalyticsManager.sharedInstance.sendEvent(category: .action, method: .webXR, object: .initialize)
     }
 
+    // MARK: - Setup: WebController
+    
     func setupWebController() {
         CLEAN_VIEW(v: webLayerView)
 
