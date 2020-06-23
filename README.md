@@ -1,6 +1,6 @@
 #  Project WebXR Viewer: An AR Project by Mozilla
 
-## *This is the code for Version 1 of the WebXR Viewer, and is no longer used* 
+## *This is the code for Version 1 of the WebXR Viewer, and is no longer used.  Version 2 of the WebXR Viewer is based on the [Firefox for iOS source](https://github.com/mozilla-mobile/firefox-ios), located in the "webxr" branch for the initial release.*
 
 Help Mozilla Research by taking part in Project WebXR Viewer, an augmented reality viewer that lets you navigate to AR experiences just like websites, using Apple/iOS ARKit for it's AR capabilities.  The application currently support ARKit 1.5 features, including plane and face anchors, and image recognition.
 
